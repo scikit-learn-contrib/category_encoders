@@ -6,11 +6,13 @@ A set of toy problems examining different encoding methods for categorical varia
 Encoding Methods
 ----------------
 
- * Naive Ordinal
- * Informed Ordinal (if possible)
+ * Ordinal
  * One-Hot
- * Binary Encoding of Naive Ordinal
- * Binary Encoding of Informed Ordinal (if possible)
+ * Binary
+ * Helmert Contrast
+ * Sum Contrast
+ * Polynomial Contrast
+ * Backward Difference Contrast
 
 Datasets
 --------
