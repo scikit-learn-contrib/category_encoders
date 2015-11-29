@@ -1,0 +1,6 @@
+numpy
+scipy
+pandas
+scikit-learn
+statsmodels
+patsy
