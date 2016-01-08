@@ -4,7 +4,7 @@ import time
 import pandas as pd
 import numpy as np
 from patsy.highlevel import dmatrix
-from sklearn import cross_validation, naive_bayes, preprocessing
+from sklearn import cross_validation, naive_bayes, preprocessing, metrics
 
 __author__ = 'willmcginnis'
 
@@ -86,8 +86,9 @@ def score_models(clf, X, y, runs=10):
 
     scores = []
 
+    # scorer = metrics.make_scorer(metrics.average_precision_score)
     for _ in range(runs):
-        scores.append(cross_validation.cross_val_score(clf, X, y, n_jobs=-1))
+        scores.append(cross_validation.cross_val_score(clf, X, y, scoring=scorer, n_jobs=-1, cv=5))
 
     return float(np.mean(scores))
 
@@ -248,6 +249,29 @@ def backward_difference_coding(X_in):
     return X
 
 
+def hashing_trick(X_in, N=4):
+    """
+    A basic hashing implementation with configurable dimensionality/precision
+    :param X_in:
+    :return:
+    """
+
+    X = copy.deepcopy(X_in)
+
+    def xform(x):
+        tmp = [0 for _ in range(N)]
+        tmp[hash(x) % N] = 1
+        return pd.Series(tmp, index=cols)
+
+    for col in X.columns.values:
+        cols = [col + '_' + str(x) for x in range(N)]
+
+        X[cols] = X[col].apply(xform)
+        X = X.drop(col, axis=1)
+
+    return X
+
+
 def main():
     """
     Here we iterate through the datasets and score them with a classifier using different encodings.
@@ -290,6 +314,36 @@ def main():
         X_sum_coded = sum_coding(X_ordinal)
         score_sum_coded = score_models(clf, X_sum_coded, y)
         scores.append(['Sum Coding', gen[0], X_sum_coded.shape[1], score_sum_coded, time.time() - start_time])
+
+        # feature hashing with uninformed basis
+        start_time = time.time()
+        X_hash_4_coded = hashing_trick(X_ordinal, N=2)
+        score_hash_4_coded = score_models(clf, X_hash_4_coded, y)
+        scores.append(['Hash(2) Coding', gen[0], X_hash_4_coded.shape[1], score_hash_4_coded, time.time() - start_time])
+
+        # feature hashing with uninformed basis
+        start_time = time.time()
+        X_hash_4_coded = hashing_trick(X_ordinal, N=4)
+        score_hash_4_coded = score_models(clf, X_hash_4_coded, y)
+        scores.append(['Hash(4) Coding', gen[0], X_hash_4_coded.shape[1], score_hash_4_coded, time.time() - start_time])
+
+        # feature hashing with uninformed basis
+        start_time = time.time()
+        X_hash_4_coded = hashing_trick(X_ordinal, N=8)
+        score_hash_4_coded = score_models(clf, X_hash_4_coded, y)
+        scores.append(['Hash(8) Coding', gen[0], X_hash_4_coded.shape[1], score_hash_4_coded, time.time() - start_time])
+
+        # feature hashing with uninformed basis
+        start_time = time.time()
+        X_hash_4_coded = hashing_trick(X_ordinal, N=16)
+        score_hash_4_coded = score_models(clf, X_hash_4_coded, y)
+        scores.append(['Hash(16) Coding', gen[0], X_hash_4_coded.shape[1], score_hash_4_coded, time.time() - start_time])
+
+        # feature hashing with uninformed basis
+        start_time = time.time()
+        X_hash_4_coded = hashing_trick(X_ordinal, N=32)
+        score_hash_4_coded = score_models(clf, X_hash_4_coded, y)
+        scores.append(['Hash(32) Coding', gen[0], X_hash_4_coded.shape[1], score_hash_4_coded, time.time() - start_time])
 
         if gen[0] != 'Splice':
             # polynomial encoding with uninformed basis
