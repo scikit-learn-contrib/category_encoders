@@ -5,6 +5,7 @@ python:
   - "3.4"
   - "3.5"
 install:
+  - "apt-get install liblapack-dev liblapack3 libopenblas-base libopenblas-dev"
   - "pip install -U -r requirements.txt"
   - "pip install coveralls"
 script:
