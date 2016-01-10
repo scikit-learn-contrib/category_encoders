@@ -13,6 +13,7 @@ Encoding Methods
  * Sum Contrast
  * Polynomial Contrast
  * Backward Difference Contrast
+ * Simple Hashing
 
 Datasets
 --------
