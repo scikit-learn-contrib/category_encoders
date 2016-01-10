@@ -27,6 +27,13 @@ setup(
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     author='Will McGinnis',
-    install_requires=[],
+    install_requires=[
+        'numpy',
+        'scipy',
+        'pandas',
+        'scikit-learn',
+        'statsmodels',
+        'patsy',
+    ],
     author_email='will@pedalwrencher.com'
 )
