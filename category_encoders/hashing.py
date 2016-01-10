@@ -30,14 +30,13 @@ def hashing_trick(X_in, N=2):
 
     X = copy.deepcopy(X_in)
 
-    def xform(x):
+    def hash_fn(x):
         tmp = [0 for _ in range(N)]
-        tmp[hash(x) % N] = 1
+        for val in x.values:
+            tmp[hash(val) % N] += 1
         return pd.Series(tmp, index=cols)
 
-    for col in X.columns.values:
-        cols = [col + '_' + str(x) for x in range(N)]
-        X[cols] = X[col].apply(xform)
-        X = X.drop(col, axis=1)
+    cols = ['col_%d' % d for d in range(N)]
+    X = X.apply(hash_fn, axis=1)
 
     return X
