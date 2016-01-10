@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn import cross_validation, naive_bayes, metrics
 
-import encoders
+import category_encoders
 from source_data.loaders import get_cars_data, get_mushroom_data, get_splice_data
 
 __author__ = 'willmcginnis'
@@ -38,15 +38,15 @@ def main(loader, name):
 
     # first get the dataset
     X, y, mapping = loader()
-    X = encoders.ordinal_encoding(X)
+    X = category_encoders.ordinal_encoding(X)
 
     # create a simple classifier for evaluating encodings (we use bernoulli naive bayed because the data will all be
     # boolean (1/0) by the time the classifier sees it.
     clf = naive_bayes.BernoulliNB()
 
     # try each encoding method available
-    for encoder_name in encoders.__all__:
-        encoder = encoders.__dict__[encoder_name]
+    for encoder_name in category_encoders.__all__:
+        encoder = category_encoders.__dict__[encoder_name]
         start_time = time.time()
         X_coded = encoder(X)
         score = score_models(clf, X_coded, y)

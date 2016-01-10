@@ -1,7 +1,8 @@
 Categorical Encoding Methods
 ============================
 
-A set of toy problems examining different encoding methods for categorical variables for the purpose of classification.
+A set of example problems examining different encoding methods for categorical variables for the purpose of 
+classification. Optionally, install the library of encoders as a package and use them in your projects directly.
 
 Encoding Methods
 ----------------
@@ -14,6 +15,13 @@ Encoding Methods
  * Polynomial Contrast
  * Backward Difference Contrast
  * Simple Hashing
+
+Usage
+-----
+
+Either run the exampels in encoding_examples.py, or install as:
+
+    pip install git+https://github.com/wdm0006/categorical_encoding.git
 
 Datasets
 --------
