@@ -20,6 +20,14 @@ def hashing_trick_32(X_in):
     return hashing_trick(X_in, N=32)
 
 
+def hashing_trick_64(X_in):
+    return hashing_trick(X_in, N=64)
+
+
+def hashing_trick_128(X_in):
+    return hashing_trick(X_in, N=128)
+
+
 def hashing_trick(X_in, N=2):
     """
     A basic hashing implementation with configurable dimensionality/precision

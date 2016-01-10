@@ -1,6 +1,6 @@
 from category_encoders.backward_difference import backward_difference_coding
 from category_encoders.binary import binary
-from category_encoders.hashing import hashing_trick, hashing_trick_4, hashing_trick_8, hashing_trick_16, hashing_trick_32
+from category_encoders.hashing import hashing_trick, hashing_trick_4, hashing_trick_8, hashing_trick_16, hashing_trick_32, hashing_trick_64, hashing_trick_128
 from category_encoders.helmert import helmert_coding
 from category_encoders.one_hot import one_hot
 from category_encoders.ordinal import ordinal_encoding
@@ -17,6 +17,8 @@ __all__ = [
     'hashing_trick_8',
     'hashing_trick_16',
     'hashing_trick_32',
+    'hashing_trick_64',
+    'hashing_trick_128',
     'helmert_coding',
     'one_hot',
     'ordinal_encoding',
