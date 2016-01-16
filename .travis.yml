@@ -5,12 +5,18 @@ python:
   - "3.4"
   - "3.5"
 virtualenv:
-  system_site-packages: true
+  system_site_packages: true
 before_install:
-  - "sudo apt-get install -qq python-numpy python-scipy python3-numpy python3-scipy"
+  - SITE_PKG_DIR=$VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/site-packages
+  - rm -f $VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/no-global-site-packages.txt
+  - apt-get install python-numpy
+  - apt-get install python-scipy
 install:
-  - "pip install -r requirements.txt"
-  - "pip install coveralls"
+  - "sudo pip install -U pandas"
+  - "sudo pip install -U scikit-learn"
+  - "sudo pip install -U statsmodels"
+  - "sudo pip install -U patsy"
+  - "sudo pip install -U coveralls"
 script:
   - nosetests --with-coverage --cover-package=category_encoders
 after_success:
