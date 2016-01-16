@@ -4,9 +4,12 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
+virtualenv:
+  system_site-packages: true
+before_install:
+  - "sudo apt-get install -qq python-numpy python-scipy python3-numpy python3-scipy"
 install:
-  - "sudo pip install -U scikit-learn"
-  - "sudo pip install -r requirements.txt"
+  - "pip install -r requirements.txt"
   - "pip install coveralls"
 script:
   - nosetests --with-coverage --cover-package=category_encoders
