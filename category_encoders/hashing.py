@@ -1,4 +1,5 @@
 import copy
+from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 
 __author__ = 'willmcginnis'
@@ -48,3 +49,15 @@ def hashing_trick(X_in, N=2):
     X = X.apply(hash_fn, axis=1)
 
     return X
+
+
+class HashingEncoder(BaseEstimator, TransformerMixin):
+    def __init__(self, verbose=0, n_components=2):
+        self.verbose = verbose
+        self.n_components = n_components
+
+    def fit(self, X, y=None, **kwargs):
+        return self
+
+    def transform(self, X):
+        return hashing_trick(X, N=self.n_components)

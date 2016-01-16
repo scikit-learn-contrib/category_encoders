@@ -1,4 +1,5 @@
 import copy
+from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
 
 __author__ = 'willmcginnis'
@@ -23,3 +24,14 @@ def polynomial_coding(X_in):
     X = X.reindex(columns=bin_cols)
 
     return X
+
+
+class PolynomialEncoder(BaseEstimator, TransformerMixin):
+    def __init__(self, verbose=0):
+        self.verbose = verbose
+
+    def fit(self, X, y=None, **kwargs):
+        return self
+
+    def transform(self, X):
+        return polynomial_coding(X)

@@ -2,7 +2,8 @@ Categorical Encoding Methods
 ============================
 
 A set of example problems examining different encoding methods for categorical variables for the purpose of 
-classification. Optionally, install the library of encoders as a package and use them in your projects directly.
+classification. Optionally, install the library of encoders as a package and use them in your projects directly.  They 
+are all available as methods or as scikit-learn compatible transformers. 
 
 Encoding Methods
 ----------------

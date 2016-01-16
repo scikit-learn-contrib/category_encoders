@@ -1,4 +1,5 @@
 import copy
+from sklearn.base import BaseEstimator, TransformerMixin
 import random
 
 __author__ = 'willmcginnis'
@@ -30,3 +31,14 @@ def ordinal_encoding(X_in, mapping=None):
             X[col] = X[col].astype(int).reshape(-1, )
 
     return X
+
+
+class OrdinalEncoder(BaseEstimator, TransformerMixin):
+    def __init__(self, verbose=0):
+        self.verbose = verbose
+
+    def fit(self, X, y=None, **kwargs):
+        return self
+
+    def transform(self, X):
+        return ordinal_encoding(X)
