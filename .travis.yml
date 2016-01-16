@@ -9,8 +9,8 @@ virtualenv:
 before_install:
   - SITE_PKG_DIR=$VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/site-packages
   - rm -f $VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/no-global-site-packages.txt
-  - apt-get install python-numpy
-  - apt-get install python-scipy
+  - sudo apt-get install python-numpy
+  - sudo apt-get install python-scipy
 install:
   - "sudo pip install -U pandas"
   - "sudo pip install -U scikit-learn"
