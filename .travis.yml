@@ -5,7 +5,8 @@ python:
   - "3.4"
   - "3.5"
 install:
-  - "sudo pip install -U -r requirements.txt"
+  - "sudo pip install -U scikit-learn"
+  - "sudo pip install -r requirements.txt"
   - "pip install coveralls"
 script:
   - nosetests --with-coverage --cover-package=category_encoders
