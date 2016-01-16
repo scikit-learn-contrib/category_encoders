@@ -28,8 +28,9 @@ setup(
     include_package_data=True,
     author='Will McGinnis',
     install_requires=[
+        'numpy>=1.9.0',
+        'pandas>=0.16.0',
         'scikit-learn>=0.15.0',
-        'pandas>=0.15.0',
         'statsmodels>=0.6.0',
         'patsy>=0.4.0',
     ],
