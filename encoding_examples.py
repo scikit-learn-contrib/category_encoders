@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import gc
 from sklearn import cross_validation, naive_bayes, metrics, linear_model
+from sklearn.pipeline import Pipeline
 import matplotlib.pyplot as plt
 import category_encoders
 from source_data.loaders import get_cars_data, get_mushroom_data, get_splice_data
@@ -11,7 +12,7 @@ plt.style.use('ggplot')
 __author__ = 'willmcginnis'
 
 
-def score_models(clf, X, y, encoder, runs=100):
+def score_models(clf, X, y, encoder, runs=1):
     """
     Takes in a classifier that supports multiclass classification, and X and a y, and returns a cross validation score.
 
@@ -23,13 +24,15 @@ def score_models(clf, X, y, encoder, runs=100):
 
     scores = []
 
+    X_test = None
     for _ in range(runs):
-        scores.append(cross_validation.cross_val_score(clf, encoder(X), y, n_jobs=-1, cv=5))
+        X_test = encoder().fit_transform(X)
+        scores.append(cross_validation.cross_val_score(clf, X_test, y, n_jobs=1, cv=5))
         gc.collect()
 
     scores = [y for z in [x for x in scores] for y in z]
 
-    return float(np.mean(scores)), float(np.std(scores)), scores, encoder(X).shape[1]
+    return float(np.mean(scores)), float(np.std(scores)), scores, X_test.shape[1]
 
 
 def main(loader, name):
@@ -45,7 +48,7 @@ def main(loader, name):
     X, y, mapping = loader()
     X = category_encoders.ordinal_encoding(X)
 
-    clf = linear_model.SGDClassifier(n_iter=500)
+    clf = linear_model.LogisticRegression()
 
     # try each encoding method available
     for encoder_name in category_encoders.__all__:

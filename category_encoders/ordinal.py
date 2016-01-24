@@ -5,7 +5,7 @@ import random
 __author__ = 'willmcginnis'
 
 
-def ordinal_encoding(X_in, mapping=None):
+def ordinal_encoding(X_in, mapping=None, cols=None):
     """
     Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
     in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
@@ -17,13 +17,16 @@ def ordinal_encoding(X_in, mapping=None):
 
     X = copy.deepcopy(X_in)
 
+    if cols is None:
+        cols = X.columns.values
+
     if mapping is not None:
         for switch in mapping:
             for category in switch.get('mapping'):
                 X.loc[X[switch.get('col')] == category[0], switch.get('col')] = str(category[1])
             X[switch.get('col')] = X[switch.get('col')].astype(int).reshape(-1, )
     else:
-        for col in X.columns.values:
+        for col in cols:
             categories = list(set(X[col].values))
             random.shuffle(categories)
             for idx, val in enumerate(categories):
@@ -34,11 +37,12 @@ def ordinal_encoding(X_in, mapping=None):
 
 
 class OrdinalEncoder(BaseEstimator, TransformerMixin):
-    def __init__(self, verbose=0):
+    def __init__(self, verbose=0, cols=None):
         self.verbose = verbose
+        self.cols = cols
 
     def fit(self, X, y=None, **kwargs):
         return self
 
     def transform(self, X):
-        return ordinal_encoding(X)
+        return ordinal_encoding(X, cols=self.cols)

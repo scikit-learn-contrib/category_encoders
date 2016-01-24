@@ -18,19 +18,5 @@ __all__ = [
     'OneHotEncoder',
     'OrdinalEncoder',
     'SumEncoder',
-    'PolynomialEncoder',
-    'backward_difference_coding',
-    'binary',
-    'hashing_trick',
-    'hashing_trick_4',
-    'hashing_trick_8',
-    'hashing_trick_16',
-    'hashing_trick_32',
-    'hashing_trick_64',
-    'hashing_trick_128',
-    'helmert_coding',
-    'one_hot',
-    'ordinal_encoding',
-    'sum_coding',
-    'polynomial_coding'
+    'PolynomialEncoder'
 ]

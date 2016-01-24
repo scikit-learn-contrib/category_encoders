@@ -5,7 +5,7 @@ import numpy as np
 __author__ = 'willmcginnis'
 
 
-def binary(X_in):
+def binary(X_in, cols=None):
     """
     Binary encoding encodes the integers as binary code with one column per digit.
 
@@ -15,8 +15,11 @@ def binary(X_in):
 
     X = copy.deepcopy(X_in)
 
+    if cols is None:
+        cols = X.columns.values
+
     bin_cols = []
-    for col in X.columns.values:
+    for col in cols:
         # figure out how many digits we need to represent the classes present
         if X[col].max() == 0:
             digits = 1
@@ -37,11 +40,12 @@ def binary(X_in):
 
 
 class BinaryEncoder(BaseEstimator, TransformerMixin):
-    def __init__(self, verbose=0):
+    def __init__(self, verbose=0, cols=None):
         self.verbose = verbose
+        self.cols = cols
 
     def fit(self, X, y=None, **kwargs):
         return self
 
     def transform(self, X):
-        return binary(X)
+        return binary(X, cols=self.cols)

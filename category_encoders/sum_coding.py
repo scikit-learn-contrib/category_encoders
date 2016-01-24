@@ -5,7 +5,7 @@ from patsy.highlevel import dmatrix
 __author__ = 'willmcginnis'
 
 
-def sum_coding(X_in):
+def sum_coding(X_in, cols=None):
     """
 
     :param X:
@@ -14,8 +14,11 @@ def sum_coding(X_in):
 
     X = copy.deepcopy(X_in)
 
+    if cols is None:
+        cols = X.columns.values
+
     bin_cols = []
-    for col in X.columns.values:
+    for col in cols:
         mod = dmatrix("C(%s, Sum)" % (col, ), X)
         for dig in range(len(mod[0])):
             X[col + '_%d' % (dig, )] = mod[:, dig]
@@ -27,11 +30,12 @@ def sum_coding(X_in):
 
 
 class SumEncoder(BaseEstimator, TransformerMixin):
-    def __init__(self, verbose=0):
+    def __init__(self, verbose=0, cols=None):
         self.verbose = verbose
+        self.cols = cols
 
     def fit(self, X, y=None, **kwargs):
         return self
 
     def transform(self, X):
-        return sum_coding(X)
+        return sum_coding(X, cols=self.cols)
