@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-VERSION = '1.0.0'
+__version__ = '1.0.0'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -12,11 +12,11 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='category_encoders',
-    version=VERSION,
-    description='A collection functions to encode categorical variables as numeric',
+    version=__version__,
+    description='A collection sklearn transformers to encode categorical variables as numeric',
     long_description=long_description,
     url='https://github.com/wdm0006/categorical_encoding',
-    download_url='https://github.com/wdm0006/categorical_encoding/tarball/' + VERSION,
+    download_url='https://github.com/wdm0006/categorical_encoding/tarball/' + __version__,
     license='BSD',
     classifiers=[
       'Development Status :: 3 - Alpha',
