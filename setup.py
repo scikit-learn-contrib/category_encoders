@@ -4,6 +4,7 @@ from os import path
 
 __version__ = '1.0.0'
 
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
@@ -29,6 +30,7 @@ setup(
     author='Will McGinnis',
     install_requires=[
         'numpy>=1.9.0',
+        'scipy>=0.9.0',
         'pandas>=0.16.0',
         'scikit-learn>=0.15.0',
         'statsmodels>=0.6.0',

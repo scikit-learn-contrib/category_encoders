@@ -1,3 +1,11 @@
+"""
+
+.. module:: binary
+  :synopsis:
+  :platform:
+
+"""
+
 import copy
 from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
@@ -40,12 +48,37 @@ def binary(X_in, cols=None):
 
 
 class BinaryEncoder(BaseEstimator, TransformerMixin):
+    """
+    Binary encoding encodes the integers as binary code with one column per digit.
+
+    """
     def __init__(self, verbose=0, cols=None):
+        """
+
+        :param verbose:
+        :param cols:
+        :return:
+        """
+
         self.verbose = verbose
         self.cols = cols
 
     def fit(self, X, y=None, **kwargs):
+        """
+
+        :param X:
+        :param y:
+        :param kwargs:
+        :return:
+        """
+
         return self
 
     def transform(self, X):
+        """
+
+        :param X:
+        :return:
+        """
+
         return binary(X, cols=self.cols)

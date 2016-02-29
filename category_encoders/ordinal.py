@@ -1,3 +1,11 @@
+"""
+
+.. module:: ordinal
+  :synopsis:
+  :platform:
+
+"""
+
 import copy
 from sklearn.base import BaseEstimator, TransformerMixin
 import random
@@ -37,12 +45,40 @@ def ordinal_encoding(X_in, mapping=None, cols=None):
 
 
 class OrdinalEncoder(BaseEstimator, TransformerMixin):
-    def __init__(self, verbose=0, cols=None):
+    """
+    Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
+    in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
+    are assumed to have no true order and integers are selected at random.
+    """
+    def __init__(self, verbose=0, mapping=None, cols=None):
+        """
+
+        :param verbose: foo
+        :param mapping: bar
+        :param cols: baz
+        :return:
+        """
         self.verbose = verbose
         self.cols = cols
+        self.mapping = mapping
 
     def fit(self, X, y=None, **kwargs):
+        """
+        Fit doesn't actually do anything in this case.  So the same object is just returned as-is.
+
+        :param X:
+        :param y:
+        :param kwargs:
+        :return:
+        """
         return self
 
     def transform(self, X):
-        return ordinal_encoding(X, cols=self.cols)
+        """
+        Will use the mapping (if available) and the column list (if available, otherwise every column) to encode the
+        data ordinally.
+
+        :param X:
+        :return:
+        """
+        return ordinal_encoding(X, mapping=self.mapping, cols=self.cols)

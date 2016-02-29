@@ -1,3 +1,11 @@
+"""
+
+.. module:: hashing
+  :synopsis:
+  :platform:
+
+"""
+
 import copy
 from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
@@ -61,13 +69,39 @@ def hashing_trick(X_in, N=2, cols=None):
 
 
 class HashingEncoder(BaseEstimator, TransformerMixin):
+    """
+    A basic hashing implementation with configurable dimensionality/precision
+
+    """
     def __init__(self, verbose=0, n_components=8, cols=None):
+        """
+
+        :param verbose:
+        :param n_components:
+        :param cols:
+        :return:
+        """
+
         self.verbose = verbose
         self.n_components = n_components
-        self.cols = None
+        self.cols = cols
 
     def fit(self, X, y=None, **kwargs):
+        """
+
+        :param X:
+        :param y:
+        :param kwargs:
+        :return:
+        """
+
         return self
 
     def transform(self, X):
+        """
+
+        :param X:
+        :return:
+        """
+
         return hashing_trick(X, N=self.n_components, cols=self.cols)

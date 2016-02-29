@@ -51,7 +51,24 @@ def main(loader, name):
     clf = linear_model.LogisticRegression()
 
     # try each encoding method available
-    for encoder_name in category_encoders.__all__:
+    encoders = [
+        'backward_difference_coding',
+        'binary',
+        'hashing_trick',
+        'hashing_trick_4',
+        'hashing_trick_8',
+        'hashing_trick_16',
+        'hashing_trick_32',
+        'hashing_trick_64',
+        'hashing_trick_128',
+        'helmert_coding',
+        'one_hot',
+        'ordinal_encoding',
+        'sum_coding',
+        'polynomial_coding'
+    ]
+
+    for encoder_name in encoders:
         encoder = category_encoders.__dict__[encoder_name]
         start_time = time.time()
         score, stds, raw_scores, dim = score_models(clf, X, y, encoder)
@@ -76,9 +93,9 @@ def main(loader, name):
 if __name__ == '__main__':
     out, raw = main(get_mushroom_data, 'Mushroom')
     print(out.sort_values(by=['Dataset', 'Avg. Score']))
-    #
+
     # out, raw = main(get_cars_data, 'Cars')
     # print(out.sort_values(by=['Dataset', 'Avg. Score']))
-
+    #
     # out, raw = main(get_splice_data, 'Splice')
     # print(out.sort_values(by=['Dataset', 'Avg. Score']))

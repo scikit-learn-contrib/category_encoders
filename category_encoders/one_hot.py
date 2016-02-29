@@ -1,3 +1,11 @@
+"""
+
+.. module:: one_hot
+  :synopsis:
+  :platform:
+
+"""
+
 from sklearn import preprocessing
 
 __author__ = 'willmcginnis'
