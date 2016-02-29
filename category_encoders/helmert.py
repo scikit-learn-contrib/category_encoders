@@ -7,6 +7,7 @@
 """
 
 import copy
+import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
 
@@ -67,4 +68,8 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         :param X:
         :return:
         """
+
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
+
         return helmert_coding(X, cols=self.cols)

@@ -104,4 +104,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         :return:
         """
 
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
+
         return hashing_trick(X, N=self.n_components, cols=self.cols)

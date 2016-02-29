@@ -6,6 +6,7 @@
 
 """
 
+import pandas as pd
 import copy
 from sklearn.base import BaseEstimator, TransformerMixin
 import random
@@ -81,4 +82,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         :param X:
         :return:
         """
+
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
+
         return ordinal_encoding(X, mapping=self.mapping, cols=self.cols)

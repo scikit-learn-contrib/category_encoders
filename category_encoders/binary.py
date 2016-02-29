@@ -7,6 +7,7 @@
 """
 
 import copy
+import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
 
@@ -80,5 +81,8 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         :param X:
         :return:
         """
+
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
 
         return binary(X, cols=self.cols)
