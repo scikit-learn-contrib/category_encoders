@@ -5,6 +5,8 @@ A set of example problems examining different encoding methods for categorical v
 classification. Optionally, install the library of encoders as a package and use them in your projects directly.  They 
 are all available as methods or as scikit-learn compatible transformers. 
 
+Docs [here](http://wdm0006.github.io/categorical_encoding/)
+
 Encoding Methods
 ----------------
 
