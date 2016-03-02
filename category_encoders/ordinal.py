@@ -29,6 +29,7 @@ def ordinal_encoding(X_in, mapping=None, cols=None):
     if cols is None:
         cols = X.columns.values
 
+    mapping_out = []
     if mapping is not None:
         for switch in mapping:
             for category in switch.get('mapping'):
@@ -41,8 +42,9 @@ def ordinal_encoding(X_in, mapping=None, cols=None):
             for idx, val in enumerate(categories):
                 X.loc[X[col] == val, col] = str(idx)
             X[col] = X[col].astype(int).reshape(-1, )
+            mapping_out.append({'col': col, 'mapping': list(enumerate(categories))},)
 
-    return X
+    return X, mapping_out
 
 
 class OrdinalEncoder(BaseEstimator, TransformerMixin):
@@ -72,6 +74,13 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         :param kwargs:
         :return:
         """
+
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
+
+        _, categories = ordinal_encoding(X, mapping=self.mapping, cols=self.cols)
+        self.mapping = categories
+
         return self
 
     def transform(self, X):

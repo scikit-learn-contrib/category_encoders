@@ -10,6 +10,7 @@ import copy
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
+from category_encoders.ordinal import OrdinalEncoder
 
 __author__ = 'willmcginnis'
 
@@ -51,6 +52,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         """
         self.verbose = verbose
         self.cols = cols
+        self.ordinal_encoder = OrdinalEncoder(verbose=verbose, cols=cols)
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -60,6 +62,9 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         :param kwargs:
         :return:
         """
+
+        self.ordinal_encoder = self.ordinal_encoder.fit(X)
+
         return self
 
     def transform(self, X):
@@ -71,5 +76,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
         if not isinstance(X, pd.DataFrame):
             X = pd.DataFrame(X)
+
+        X = self.ordinal_encoder.transform(X)
 
         return helmert_coding(X, cols=self.cols)
