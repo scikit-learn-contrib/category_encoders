@@ -48,13 +48,102 @@ class TestEncoders(unittest.TestCase):
 
     def test_ordinal(self):
         """
-        Creates a dataset and encodes with with the hashing trick
 
         :return:
         """
 
         cols = ['C', 'D', 'E', 'F']
         enc = encoders.OrdinalEncoder(verbose=1, cols=cols)
+        X = self.create_dataset(n_rows=1000)
+
+        X_test = enc.fit_transform(X, None)
+
+        for dt in X_test.dtypes:
+            numeric = False
+            if dt == int or dt == float:
+                numeric = True
+            self.assertTrue(numeric)
+
+    def test_backward_difference(self):
+        """
+
+        :return:
+        """
+
+        cols = ['C', 'D', 'E', 'F']
+        enc = encoders.BackwardDifferenceEncoder(verbose=1, cols=cols)
+        X = self.create_dataset(n_rows=1000)
+
+        X_test = enc.fit_transform(X, None)
+
+        for dt in X_test.dtypes:
+            numeric = False
+            if dt == int or dt == float:
+                numeric = True
+            self.assertTrue(numeric)
+
+    def test_binary(self):
+        """
+
+        :return:
+        """
+
+        cols = ['C', 'D', 'E', 'F']
+        enc = encoders.BinaryEncoder(verbose=1, cols=cols)
+        X = self.create_dataset(n_rows=1000)
+
+        X_test = enc.fit_transform(X, None)
+
+        for dt in X_test.dtypes:
+            numeric = False
+            if dt == int or dt == float:
+                numeric = True
+            self.assertTrue(numeric)
+
+    def test_helmert(self):
+        """
+
+        :return:
+        """
+
+        cols = ['C', 'D', 'E', 'F']
+        enc = encoders.HelmertEncoder(verbose=1, cols=cols)
+        X = self.create_dataset(n_rows=1000)
+
+        X_test = enc.fit_transform(X, None)
+
+        for dt in X_test.dtypes:
+            numeric = False
+            if dt == int or dt == float:
+                numeric = True
+            self.assertTrue(numeric)
+
+    def test_polynomial(self):
+        """
+
+        :return:
+        """
+
+        cols = ['C', 'D', 'E', 'F']
+        enc = encoders.PolynomialEncoder(verbose=1, cols=cols)
+        X = self.create_dataset(n_rows=1000)
+
+        X_test = enc.fit_transform(X, None)
+
+        for dt in X_test.dtypes:
+            numeric = False
+            if dt == int or dt == float:
+                numeric = True
+            self.assertTrue(numeric)
+
+    def test_sum(self):
+        """
+
+        :return:
+        """
+
+        cols = ['C', 'D', 'E', 'F']
+        enc = encoders.SumEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
 
         X_test = enc.fit_transform(X, None)
