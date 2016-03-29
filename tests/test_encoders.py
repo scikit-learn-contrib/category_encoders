@@ -24,7 +24,7 @@ class TestEncoders(unittest.TestCase):
             random.choice(['A', 'B', 'C'])
         ] for _ in range(n_rows)]
 
-        df = pd.DataFrame(ds, columns=['A', 'B', 'C', 'D', 'E', 'F'])
+        df = pd.DataFrame(ds, columns=['A', 'B', 'C1', 'D', 'E', 'F'])
         return df
 
     def test_hashing(self):
@@ -34,7 +34,7 @@ class TestEncoders(unittest.TestCase):
         :return:
         """
 
-        cols = ['C', 'D', 'E', 'F']
+        cols = ['C1', 'D', 'E', 'F']
         enc = encoders.HashingEncoder(verbose=1, n_components=128, cols=cols)
         X = self.create_dataset(n_rows=1000)
 
@@ -52,7 +52,7 @@ class TestEncoders(unittest.TestCase):
         :return:
         """
 
-        cols = ['C', 'D', 'E', 'F']
+        cols = ['C1', 'D', 'E', 'F']
         enc = encoders.OrdinalEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
 
@@ -70,7 +70,7 @@ class TestEncoders(unittest.TestCase):
         :return:
         """
 
-        cols = ['C', 'D', 'E', 'F']
+        cols = ['C1', 'D', 'E', 'F']
         enc = encoders.BackwardDifferenceEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
 
@@ -88,7 +88,7 @@ class TestEncoders(unittest.TestCase):
         :return:
         """
 
-        cols = ['C', 'D', 'E', 'F']
+        cols = ['C1', 'D', 'E', 'F']
         enc = encoders.BinaryEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
 
@@ -106,7 +106,7 @@ class TestEncoders(unittest.TestCase):
         :return:
         """
 
-        cols = ['C', 'D', 'E', 'F']
+        cols = ['C1', 'D', 'E', 'F']
         enc = encoders.HelmertEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
 
@@ -124,7 +124,7 @@ class TestEncoders(unittest.TestCase):
         :return:
         """
 
-        cols = ['C', 'D', 'E', 'F']
+        cols = ['C1', 'D', 'E', 'F']
         enc = encoders.PolynomialEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
 
@@ -142,7 +142,7 @@ class TestEncoders(unittest.TestCase):
         :return:
         """
 
-        cols = ['C', 'D', 'E', 'F']
+        cols = ['C1', 'D', 'E', 'F']
         enc = encoders.SumEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
 
