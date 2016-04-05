@@ -26,6 +26,9 @@ def backward_difference_coding(X_in, cols=None):
 
     if cols is None:
         cols = X.columns.values
+        pass_thru = []
+    else:
+        pass_thru = [col for col in X.columns.values if col not in cols]
 
     bin_cols = []
     for col in cols:
@@ -34,7 +37,7 @@ def backward_difference_coding(X_in, cols=None):
             X[col + '_%d' % (dig, )] = mod[:, dig]
             bin_cols.append(col + '_%d' % (dig, ))
 
-    X = X.reindex(columns=bin_cols)
+    X = X.reindex(columns=bin_cols + pass_thru)
     X.fillna(0.0)
     return X
 

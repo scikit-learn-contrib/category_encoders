@@ -27,14 +27,14 @@ def binary(X_in, cols=None):
 
     if cols is None:
         cols = X.columns.values
+        pass_thru = []
+    else:
+        pass_thru = [col for col in X.columns.values if col not in cols]
 
     bin_cols = []
     for col in cols:
         # figure out how many digits we need to represent the classes present
-        if X[col].max() == 0:
-            digits = 1
-        else:
-            digits = int(np.ceil(np.log2(X[col].max())))
+        digits = int(np.ceil(np.log2(len(X[col].unique()))))
 
         # map the ordinal column into a list of these digits, of length digits
         X[col] = X[col].map(lambda x: list("{0:b}".format(int(x)))) \
@@ -44,7 +44,7 @@ def binary(X_in, cols=None):
             X[col + '_%d' % (dig, )] = X[col].map(lambda x: int(x[dig]))
             bin_cols.append(col + '_%d' % (dig, ))
 
-    X = X.reindex(columns=bin_cols)
+    X = X.reindex(columns=bin_cols + pass_thru)
 
     return X
 
