@@ -37,7 +37,7 @@ def hashing_trick_128(X_in):
     return hashing_trick(X_in, N=128)
 
 
-def hashing_trick(X_in, N=2, cols=None, copy=False):
+def hashing_trick(X_in, N=2, cols=None, make_copy=False):
     """
     A basic hashing implementation with configurable dimensionality/precision
 
@@ -45,7 +45,7 @@ def hashing_trick(X_in, N=2, cols=None, copy=False):
     :return:
     """
 
-    if copy:
+    if make_copy:
         X = copy.deepcopy(X_in)
     else:
         X = X_in
