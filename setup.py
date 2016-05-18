@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-__version__ = '1.0.4'
+__version__ = '1.0.5'
 
 
 here = path.abspath(path.dirname(__file__))
@@ -28,13 +28,5 @@ setup(
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     author='Will McGinnis',
-    install_requires=[
-        'numpy>=1.9.0',
-        'scipy>=0.9.0',
-        'pandas>=0.16.0',
-        'scikit-learn>=0.15.0',
-        'statsmodels>=0.6.0',
-        'patsy>=0.4.0',
-    ],
     author_email='will@pedalwrencher.com'
 )

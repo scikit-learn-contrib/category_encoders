@@ -1,3 +1,8 @@
+v1.0.5
+======
+
+ * Changed setup.py to not explicitly force reinstalls of other packages
+ 
 v1.0.4
 ======
 
