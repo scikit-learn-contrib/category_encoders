@@ -1,3 +1,7 @@
+v1.1.0
+======
+
+ * Optionally pass drop_invariant to any encoder to consistently drop columns with 0 variance from the output (based on training set data in fit())
 v1.0.5
 ======
 

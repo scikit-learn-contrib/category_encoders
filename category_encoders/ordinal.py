@@ -53,7 +53,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
     are assumed to have no true order and integers are selected at random.
     """
-    def __init__(self, verbose=0, mapping=None, cols=None):
+    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False):
         """
 
         :param verbose: foo
@@ -61,6 +61,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         :param cols: baz
         :return:
         """
+
+        self.drop_invariant = drop_invariant
+        self.drop_cols = []
         self.verbose = verbose
         self.cols = cols
         self.mapping = mapping
@@ -81,6 +84,11 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         _, categories = ordinal_encoding(X, mapping=self.mapping, cols=self.cols)
         self.mapping = categories
 
+        if self.drop_invariant:
+            self.drop_cols = []
+            X_temp = self.transform(X)
+            self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
+
         return self
 
     def transform(self, X):
@@ -96,4 +104,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             X = pd.DataFrame(X)
 
         X, _ = ordinal_encoding(X, mapping=self.mapping, cols=self.cols)
+
+        if self.drop_invariant:
+            for col in self.drop_cols:
+                X.drop(col, 1, inplace=True)
+
         return X

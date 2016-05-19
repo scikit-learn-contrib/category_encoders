@@ -46,7 +46,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
     """
 
     """
-    def __init__(self, verbose=0, cols=None):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False):
         """
 
         :param verbose:
@@ -54,6 +54,8 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         :return:
         """
 
+        self.drop_invariant = drop_invariant
+        self.drop_cols = []
         self.verbose = verbose
         self.cols = cols
         self.ordinal_encoder = OrdinalEncoder(verbose=verbose, cols=cols)
@@ -69,6 +71,11 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
+        if self.drop_invariant:
+            self.drop_cols = []
+            X_temp = self.transform(X)
+            self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
+
         return self
 
     def transform(self, X):
@@ -83,4 +90,10 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         X = self.ordinal_encoder.transform(X)
 
-        return sum_coding(X, cols=self.cols)
+        X = sum_coding(X, cols=self.cols)
+
+        if self.drop_invariant:
+            for col in self.drop_cols:
+                X.drop(col, 1, inplace=True)
+
+        return X
