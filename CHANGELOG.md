@@ -1,3 +1,8 @@
+v1.1.1
+======
+
+ * Immediately return if cols is empty.
+ 
 v1.1.0
 ======
 
