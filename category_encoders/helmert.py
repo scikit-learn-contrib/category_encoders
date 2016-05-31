@@ -11,6 +11,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
 from category_encoders.ordinal import OrdinalEncoder
+from category_encoders.utils import get_obj_cols
 
 __author__ = 'willmcginnis'
 

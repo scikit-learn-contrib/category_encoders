@@ -2,6 +2,8 @@ v1.1.0
 ======
 
  * Optionally pass drop_invariant to any encoder to consistently drop columns with 0 variance from the output (based on training set data in fit())
+ * If None is passed as the cols param, every string column will be encoded (pandas type = object).
+ 
 v1.0.5
 ======
 

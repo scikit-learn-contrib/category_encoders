@@ -11,6 +11,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
 from category_encoders.ordinal import OrdinalEncoder
+from category_encoders.utils import get_obj_cols
 
 __author__ = 'willmcginnis'
 
@@ -69,8 +70,20 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         :return:
         """
 
+        # if the input dataset isn't already a dataframe, convert it to one (using default column names)
+        if not isinstance(X, pd.DataFrame):
+            X = pd.DataFrame(X)
+
+        # if columns aren't passed, just use every string column
+        if self.cols is None:
+            self.cols = get_obj_cols(X)
+
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
+        # train an ordinal pre-encoder
+        self.ordinal_encoder = self.ordinal_encoder.fit(X)
+
+        # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)

@@ -10,6 +10,7 @@ import pandas as pd
 import copy
 from sklearn.base import BaseEstimator, TransformerMixin
 import random
+from category_encoders.utils import get_obj_cols
 
 __author__ = 'willmcginnis'
 
@@ -34,6 +35,7 @@ def ordinal_encoding(X_in, mapping=None, cols=None):
         for switch in mapping:
             for category in switch.get('mapping'):
                 X.loc[X[switch.get('col')] == category[0], switch.get('col')] = str(category[1])
+
             X[switch.get('col')] = X[switch.get('col')].astype(int).reshape(-1, )
     else:
         for col in cols:
@@ -78,12 +80,18 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         :return:
         """
 
+        # if the input dataset isn't already a dataframe, convert it to one (using default column names)
         if not isinstance(X, pd.DataFrame):
             X = pd.DataFrame(X)
+
+        # if columns aren't passed, just use every string column
+        if self.cols is None:
+            self.cols = get_obj_cols(X)
 
         _, categories = ordinal_encoding(X, mapping=self.mapping, cols=self.cols)
         self.mapping = categories
 
+        # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
