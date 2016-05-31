@@ -127,6 +127,9 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if not isinstance(X, pd.DataFrame):
             X = pd.DataFrame(X)
 
+        if self.cols == []:
+            return X
+
         X = hashing_trick(X, N=self.n_components, cols=self.cols)
 
         if self.drop_invariant:

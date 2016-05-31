@@ -101,6 +101,9 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         if not isinstance(X, pd.DataFrame):
             X = pd.DataFrame(X)
 
+        if self.cols == []:
+            return X
+
         X = self.ordinal_encoder.transform(X)
 
         X = sum_coding(X, cols=self.cols)

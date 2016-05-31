@@ -111,6 +111,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if not isinstance(X, pd.DataFrame):
             X = pd.DataFrame(X)
 
+        if self.cols == []:
+            return X
+
         X, _ = ordinal_encoding(X, mapping=self.mapping, cols=self.cols)
 
         if self.drop_invariant:

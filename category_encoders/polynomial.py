@@ -94,6 +94,9 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         if not isinstance(X, pd.DataFrame):
             X = pd.DataFrame(X)
 
+        if self.cols == []:
+            return X
+
         X = polynomial_coding(X, cols=self.cols)
 
         if self.drop_invariant:
