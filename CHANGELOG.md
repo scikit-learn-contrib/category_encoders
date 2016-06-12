@@ -1,3 +1,8 @@
+v1.1.2
+======
+
+ * Added optional parameter to return a numpy array rather than a dataframe from all transformers.
+ 
 v1.1.1
 ======
 

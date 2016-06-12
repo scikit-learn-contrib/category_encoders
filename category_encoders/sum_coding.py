@@ -47,14 +47,17 @@ class SumEncoder(BaseEstimator, TransformerMixin):
     """
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True):
         """
 
-        :param verbose:
-        :param cols:
+        :param verbose: (optional, default=0) integer indicating verbosity of output. 0 for none.
+        :param cols: (optional, default=None) a list of columns to encode, if None, all string columns will be encoded
+        :param drop_invariant: (optional, default=False) boolean for whether or not to drop columns with 0 variance
+        :param return_df: (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
         :return:
         """
 
+        self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
@@ -101,7 +104,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         if not isinstance(X, pd.DataFrame):
             X = pd.DataFrame(X)
 
-        if self.cols == []:
+        if not self.cols:
             return X
 
         X = self.ordinal_encoder.transform(X)
@@ -112,4 +115,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        return X
+        if self.return_df:
+            return X
+        else:
+            return X.values
