@@ -1,14 +1,42 @@
 language: python
-python:
-  - "2.7"
-  - "3.3"
-  - "3.4"
-  - "3.5"
+sudo: false
+
+matrix:
+  include:
+    # "Legacy" environments: oldest supported versions, without and with numba
+    - python: "2.7"
+      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn>=0.15.0 statsmodels>=0.6.0 patsy>=0.4.0"
+    - python: "3.3"
+      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn>=0.15.0 statsmodels>=0.6.0 patsy>=0.4.0"
+    - python: "3.4"
+      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn>=0.15.0 statsmodels>=0.6.0 patsy>=0.4.0"
+    - python: "3.5"
+      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn>=0.15.0 statsmodels>=0.6.0 patsy>=0.4.0"
+
+
 install:
-  - "pip install -U pip"
-  - "pip install -U wheel"
-  - "pip install -r requirements.txt"
-  - "pip install coveralls"
+  # See:
+  # https://groups.google.com/a/continuum.io/forum/#!topic/conda/RSFENqovnro
+  # - conda update --yes --no-deps conda
+  # OK, this used to *fix* the build, but now it *breaks* the build.
+  # If you're reading this, good luck out there. I'm not sure what to tell you.
+  - conda update --yes conda
+  - conda config --add channels soft-matter
+  - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION
+  - source activate testenv
+  # for debugging...
+  - echo $PATH
+  - which python
+  - conda info
+  - conda list
+  - python setup.py install
+
+before_install:
+  - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then wget http://repo.continuum.io/miniconda/Miniconda-3.5.5-Linux-x86_64.sh -O miniconda.sh; else wget http://repo.continuum.io/miniconda/Miniconda3-3.5.5-Linux-x86_64.sh -O miniconda.sh; fi
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p /home/travis/mc
+  - export PATH=/home/travis/mc/bin:$PATH
+  - pip install coveralls
 script:
   - nosetests --with-coverage --cover-package=category_encoders
 after_success:

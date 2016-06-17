@@ -30,6 +30,7 @@ setup(
     author='Will McGinnis',
     install_requires=[
       'numpy>=1.8.0',
+      'scipy>=0.9',
       'pandas>=0.15.0',
       'scikit-learn>=0.15.0',
       'statsmodels>=0.6.0',
