@@ -6,6 +6,7 @@
 
 """
 
+import sys
 import copy
 import hashlib
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -71,7 +72,7 @@ def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
         tmp = [0 for _ in range(N)]
         for val in x.values:
             hasher = hashlib.new(hashing_method)
-            if isinstance(val, str):
+            if sys.version_info[0] == 2:
                 hasher.update(val)
             else:
                 hasher.update(bytes(val, 'utf-8'))
