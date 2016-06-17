@@ -62,7 +62,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         self.drop_cols = []
         self.verbose = verbose
         self.cols = cols
-        self.ordinal_encoder = OrdinalEncoder(verbose=verbose, cols=cols)
+        self.ordinal_encoder = None
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -73,6 +73,11 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         :return:
         """
 
+        # if columns aren't passed, just use every string column
+        if self.cols is None:
+            self.cols = get_obj_cols(X)
+
+        self.ordinal_encoder = OrdinalEncoder(verbose=self.verbose, cols=self.cols)
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
         if self.drop_invariant:

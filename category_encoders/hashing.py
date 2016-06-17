@@ -7,6 +7,7 @@
 """
 
 import copy
+import hashlib
 from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 from category_encoders.utils import get_obj_cols
@@ -38,13 +39,19 @@ def hashing_trick_128(X_in):
     return hashing_trick(X_in, N=128)
 
 
-def hashing_trick(X_in, N=2, cols=None, make_copy=False):
+def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
     """
     A basic hashing implementation with configurable dimensionality/precision
 
     :param X_in:
     :return:
     """
+
+    if hashing_method not in hashlib.algorithms_available:
+        raise ValueError('Hashing Method: %s Not Available. Please use one from: []' % (
+            hashing_method,
+            ', '.join([str(x) for x in hashlib.algorithms_available])
+        ))
 
     if make_copy:
         X = copy.deepcopy(X_in)
@@ -57,7 +64,9 @@ def hashing_trick(X_in, N=2, cols=None, make_copy=False):
     def hash_fn(x):
         tmp = [0 for _ in range(N)]
         for val in x.values:
-            tmp[hash(val) % N] += 1
+            hasher = hashlib.new(hashing_method)
+            hasher.update(bytes(val, 'utf-8'))
+            tmp[int(hasher.hexdigest(), 16) % N] += 1
         return pd.Series(tmp, index=new_cols)
 
     new_cols = ['col_%d' % d for d in range(N)]
@@ -77,13 +86,14 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     A basic hashing implementation with configurable dimensionality/precision
 
     """
-    def __init__(self, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True):
+    def __init__(self, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
         """
 
         :param verbose: (optional, default=0) integer indicating verbosity of output. 0 for none.
         :param cols: (optional, default=None) a list of columns to encode, if None, all string columns will be encoded
         :param drop_invariant: (optional, default=False) boolean for whether or not to drop columns with 0 variance
         :param return_df: (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+        :param hash_method: (optional, default='md5') which hashing method to use. Any method from hashlib works.
         :return:
         """
 
@@ -93,6 +103,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.n_components = n_components
         self.cols = cols
+        self.hash_method = hash_method
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -132,7 +143,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X
 
-        X = hashing_trick(X, N=self.n_components, cols=self.cols)
+        X = hashing_trick(X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
 
         if self.drop_invariant:
             for col in self.drop_cols:

@@ -23,7 +23,6 @@ install:
   - echo $TRAVIS_PYTHON_VERSION
   - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
-  # for debugging...
   - echo $PATH
   - which python
   - conda info

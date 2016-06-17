@@ -62,7 +62,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         self.drop_cols = []
         self.verbose = verbose
         self.cols = cols
-        self.ordinal_encoder = OrdinalEncoder(verbose=verbose, cols=cols)
+        self.ordinal_encoder = None
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -81,9 +81,8 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         if self.cols is None:
             self.cols = get_obj_cols(X)
 
-        self.ordinal_encoder = self.ordinal_encoder.fit(X)
-
         # train an ordinal pre-encoder
+        self.ordinal_encoder = OrdinalEncoder(verbose=self.verbose, cols=self.cols)
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
         # drop all output columns with 0 variance.

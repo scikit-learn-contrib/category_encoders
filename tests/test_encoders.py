@@ -2,6 +2,7 @@ import unittest
 import random
 import pandas as pd
 import category_encoders as encoders
+import numpy as np
 
 __author__ = 'willmcginnis'
 
@@ -9,6 +10,14 @@ __author__ = 'willmcginnis'
 class TestEncoders(unittest.TestCase):
     """
     """
+
+    def verify_numeric(self, X_test):
+        for dt in X_test.dtypes:
+            numeric = False
+            if dt == int or dt == float:
+                numeric = True
+            self.assertTrue(numeric)
+
     def create_dataset(self, n_rows=1000):
         """
         Creates a dataset with some categorical variables
@@ -35,16 +44,24 @@ class TestEncoders(unittest.TestCase):
         """
 
         cols = ['C1', 'D', 'E', 'F']
-        enc = encoders.HashingEncoder(verbose=1, n_components=128, cols=cols)
         X = self.create_dataset(n_rows=1000)
+        X_t = self.create_dataset(n_rows=100)
 
-        X_test = enc.fit_transform(X, None)
+        enc = encoders.HashingEncoder(verbose=1, n_components=128, cols=cols)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
 
-        for dt in X_test.dtypes:
-            numeric = False
-            if dt == int or dt == float:
-                numeric = True
-            self.assertTrue(numeric)
+        enc = encoders.HashingEncoder(verbose=1, n_components=32)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.HashingEncoder(verbose=1, n_components=32, drop_invariant=True)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.HashingEncoder(verbose=1, n_components=32, return_df=False)
+        enc.fit(X, None)
+        self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
 
     def test_ordinal(self):
         """
@@ -53,16 +70,24 @@ class TestEncoders(unittest.TestCase):
         """
 
         cols = ['C1', 'D', 'E', 'F']
-        enc = encoders.OrdinalEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
+        X_t = self.create_dataset(n_rows=100)
 
-        X_test = enc.fit_transform(X, None)
+        enc = encoders.OrdinalEncoder(verbose=1, cols=cols)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
 
-        for dt in X_test.dtypes:
-            numeric = False
-            if dt == int or dt == float:
-                numeric = True
-            self.assertTrue(numeric)
+        enc = encoders.OrdinalEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.OrdinalEncoder(verbose=1, drop_invariant=True)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.OrdinalEncoder(verbose=1, return_df=False)
+        enc.fit(X, None)
+        self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
 
     def test_backward_difference(self):
         """
@@ -71,16 +96,24 @@ class TestEncoders(unittest.TestCase):
         """
 
         cols = ['C1', 'D', 'E', 'F']
-        enc = encoders.BackwardDifferenceEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
+        X_t = self.create_dataset(n_rows=100)
 
-        X_test = enc.fit_transform(X, None)
+        enc = encoders.BackwardDifferenceEncoder(verbose=1, cols=cols)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
 
-        for dt in X_test.dtypes:
-            numeric = False
-            if dt == int or dt == float:
-                numeric = True
-            self.assertTrue(numeric)
+        enc = encoders.BackwardDifferenceEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.BackwardDifferenceEncoder(verbose=1, drop_invariant=True)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.BackwardDifferenceEncoder(verbose=1, return_df=False)
+        enc.fit(X, None)
+        self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
 
     def test_binary(self):
         """
@@ -89,16 +122,24 @@ class TestEncoders(unittest.TestCase):
         """
 
         cols = ['C1', 'D', 'E', 'F']
-        enc = encoders.BinaryEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
+        X_t = self.create_dataset(n_rows=100)
 
-        X_test = enc.fit_transform(X, None)
+        enc = encoders.BinaryEncoder(verbose=1, cols=cols)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
 
-        for dt in X_test.dtypes:
-            numeric = False
-            if dt == int or dt == float:
-                numeric = True
-            self.assertTrue(numeric)
+        enc = encoders.BinaryEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.BinaryEncoder(verbose=1, drop_invariant=True)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.BinaryEncoder(verbose=1, return_df=False)
+        enc.fit(X, None)
+        self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
 
     def test_helmert(self):
         """
@@ -107,16 +148,24 @@ class TestEncoders(unittest.TestCase):
         """
 
         cols = ['C1', 'D', 'E', 'F']
-        enc = encoders.HelmertEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
+        X_t = self.create_dataset(n_rows=100)
 
-        X_test = enc.fit_transform(X, None)
+        enc = encoders.HelmertEncoder(verbose=1, cols=cols)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
 
-        for dt in X_test.dtypes:
-            numeric = False
-            if dt == int or dt == float:
-                numeric = True
-            self.assertTrue(numeric)
+        enc = encoders.HelmertEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.HelmertEncoder(verbose=1, drop_invariant=True)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.HelmertEncoder(verbose=1, return_df=False)
+        enc.fit(X, None)
+        self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
 
     def test_polynomial(self):
         """
@@ -125,16 +174,24 @@ class TestEncoders(unittest.TestCase):
         """
 
         cols = ['C1', 'D', 'E', 'F']
-        enc = encoders.PolynomialEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
+        X_t = self.create_dataset(n_rows=100)
 
-        X_test = enc.fit_transform(X, None)
+        enc = encoders.PolynomialEncoder(verbose=1, cols=cols)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
 
-        for dt in X_test.dtypes:
-            numeric = False
-            if dt == int or dt == float:
-                numeric = True
-            self.assertTrue(numeric)
+        enc = encoders.PolynomialEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.PolynomialEncoder(verbose=1, drop_invariant=True)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.PolynomialEncoder(verbose=1, return_df=False)
+        enc.fit(X, None)
+        self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
 
     def test_sum(self):
         """
@@ -143,13 +200,21 @@ class TestEncoders(unittest.TestCase):
         """
 
         cols = ['C1', 'D', 'E', 'F']
-        enc = encoders.SumEncoder(verbose=1, cols=cols)
         X = self.create_dataset(n_rows=1000)
+        X_t = self.create_dataset(n_rows=100)
 
-        X_test = enc.fit_transform(X, None)
+        enc = encoders.SumEncoder(verbose=1, cols=cols)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
 
-        for dt in X_test.dtypes:
-            numeric = False
-            if dt == int or dt == float:
-                numeric = True
-            self.assertTrue(numeric)
+        enc = encoders.SumEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.SumEncoder(verbose=1, drop_invariant=True)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.SumEncoder(verbose=1, return_df=False)
+        enc.fit(X, None)
+        self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))

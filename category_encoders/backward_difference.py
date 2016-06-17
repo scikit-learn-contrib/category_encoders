@@ -63,7 +63,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
         self.drop_cols = []
         self.verbose = verbose
         self.cols = cols
-        self.ordinal_encoder = OrdinalEncoder(verbose=verbose, cols=cols)
+        self.ordinal_encoder = None
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -85,6 +85,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
             self.cols = get_obj_cols(X)
 
         # train an ordinal pre-encoder
+        self.ordinal_encoder = OrdinalEncoder(verbose=self.verbose, cols=self.cols)
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
         # drop all output columns with 0 variance.
