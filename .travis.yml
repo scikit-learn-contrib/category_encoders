@@ -5,6 +5,8 @@ python:
   - "3.4"
   - "3.5"
 install:
+  - "pip install -U pip"
+  - "pip install -U wheel"
   - "pip install -r requirements.txt"
   - "pip install coveralls"
 script:
