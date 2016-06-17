@@ -47,11 +47,17 @@ def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
     :return:
     """
 
-    if hashing_method not in hashlib.algorithms_available:
-        raise ValueError('Hashing Method: %s Not Available. Please use one from: []' % (
-            hashing_method,
-            ', '.join([str(x) for x in hashlib.algorithms_available])
-        ))
+    try:
+        if hashing_method not in hashlib.algorithms_available:
+            raise ValueError('Hashing Method: %s Not Available. Please use one from: []' % (
+                hashing_method,
+                ', '.join([str(x) for x in hashlib.algorithms_available])
+            ))
+    except Exception as e:
+        try:
+            _ = hashlib.new(hashing_method)
+        except Exception as e:
+            raise ValueError('Hashing Method: %s Not Found.')
 
     if make_copy:
         X = copy.deepcopy(X_in)
@@ -65,7 +71,10 @@ def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
         tmp = [0 for _ in range(N)]
         for val in x.values:
             hasher = hashlib.new(hashing_method)
-            hasher.update(bytes(val, 'utf-8'))
+            if isinstance(val, str):
+                hasher.update(val)
+            else:
+                hasher.update(bytes(val, 'utf-8'))
             tmp[int(hasher.hexdigest(), 16) % N] += 1
         return pd.Series(tmp, index=new_cols)
 
