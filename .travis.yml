@@ -5,11 +5,11 @@ matrix:
   include:
     # "Legacy" environments: oldest supported versions, without and with numba
     - python: "2.7"
-      env: DEPS="pandas=0.13.0 scikit-learn==0.17.1 statsmodels==0.6.1 patsy==0.4.1"
+      env: DEPS="pandas scikit-learn statsmodels patsy"
     - python: "3.4"
-      env: DEPS="pandas=0.13.0 scikit-learn==0.17.1 statsmodels==0.6.1 patsy==0.4.1"
+      env: DEPS="pandas scikit-learn statsmodels patsy"
     - python: "3.5"
-      env: DEPS="pandas=0.13.0 scikit-learn==0.17.1 statsmodels==0.6.1 patsy==0.4.1"
+      env: DEPS="pandas scikit-learn statsmodels patsy"
 
 
 install:
