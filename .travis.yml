@@ -5,13 +5,13 @@ matrix:
   include:
     # "Legacy" environments: oldest supported versions, without and with numba
     - python: "2.7"
-      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn>=0.15.0 statsmodels>=0.6.0 patsy>=0.4.0"
+      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn==0.17.1 statsmodels==0.6.1 patsy==0.4.1"
     - python: "3.3"
-      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn>=0.15.0 statsmodels>=0.6.0 patsy>=0.4.0"
+      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn==0.17.1 statsmodels==0.6.1 patsy==0.4.1"
     - python: "3.4"
-      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn>=0.15.0 statsmodels>=0.6.0 patsy>=0.4.0"
+      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn==0.17.1 statsmodels==0.6.1 patsy==0.4.1"
     - python: "3.5"
-      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn>=0.15.0 statsmodels>=0.6.0 patsy>=0.4.0"
+      env: DEPS="numpy=1.8.2 scipy=0.12.0 pandas=0.13.0 scikit-learn==0.17.1 statsmodels==0.6.1 patsy==0.4.1"
 
 
 install:
@@ -22,6 +22,7 @@ install:
   # If you're reading this, good luck out there. I'm not sure what to tell you.
   - conda update --yes conda
   - conda config --add channels soft-matter
+  - echo $TRAVIS_PYTHON_VERSION
   - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION
   - source activate testenv
   # for debugging...
