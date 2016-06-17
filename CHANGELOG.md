@@ -1,3 +1,9 @@
+v1.2.0
+======
+
+ * Testing enhancements
+ * Hash type in hashing encoder now defaults to md5 using hashlib, but can be set to any valid hashlib hash
+
 v1.1.2
 ======
 
@@ -8,6 +14,7 @@ v1.1.1
 
  * Immediately return if cols is empty.
  
+
 v1.1.0
 ======
 

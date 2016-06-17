@@ -17,7 +17,7 @@ Encoding Methods
  * Sum Contrast
  * Polynomial Contrast
  * Backward Difference Contrast
- * Simple Hashing
+ * Hashing
 
 Usage
 -----
