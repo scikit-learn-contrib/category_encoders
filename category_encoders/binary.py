@@ -24,7 +24,7 @@ def binary(X_in, cols=None):
     :return:
     """
 
-    X = copy.deepcopy(X_in)
+    X = X_in.copy(deep=True)
 
     if cols is None:
         cols = X.columns.values

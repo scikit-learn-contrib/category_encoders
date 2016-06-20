@@ -61,7 +61,7 @@ def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
             raise ValueError('Hashing Method: %s Not Found.')
 
     if make_copy:
-        X = copy.deepcopy(X_in)
+        X = X_in.copy(deep=True)
     else:
         X = X_in
 
@@ -71,12 +71,13 @@ def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
     def hash_fn(x):
         tmp = [0 for _ in range(N)]
         for val in x.values:
-            hasher = hashlib.new(hashing_method)
-            if sys.version_info[0] == 2:
-                hasher.update(val)
-            else:
-                hasher.update(bytes(val, 'utf-8'))
-            tmp[int(hasher.hexdigest(), 16) % N] += 1
+            if val is not None:
+                hasher = hashlib.new(hashing_method)
+                if sys.version_info[0] == 2:
+                    hasher.update(val)
+                else:
+                    hasher.update(bytes(val, 'utf-8'))
+                tmp[int(hasher.hexdigest(), 16) % N] += 1
         return pd.Series(tmp, index=new_cols)
 
     new_cols = ['col_%d' % d for d in range(N)]

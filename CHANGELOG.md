@@ -1,3 +1,8 @@
+v1.2.1
+======
+
+ * Better handling for missing values in hashing encoder
+ 
 v1.2.0
 ======
 

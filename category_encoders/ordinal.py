@@ -25,7 +25,7 @@ def ordinal_encoding(X_in, mapping=None, cols=None):
     :return:
     """
 
-    X = copy.deepcopy(X_in)
+    X = X_in.copy(deep=True)
 
     if cols is None:
         cols = X.columns.values
