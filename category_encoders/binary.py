@@ -16,6 +16,25 @@ from category_encoders.utils import get_obj_cols
 __author__ = 'willmcginnis'
 
 
+def col_transform(col, digits):
+    """
+    The lambda body to transform the column values
+
+    :param col:
+    :return:
+    """
+
+    if col is None or float(col) < 0.0:
+        return None
+    else:
+
+        col = list("{0:b}".format(int(col)))
+        if len(col) == digits:
+            return col
+        else:
+            return [0 for _ in range(digits - len(col))] + col
+
+
 def binary(X_in, cols=None):
     """
     Binary encoding encodes the integers as binary code with one column per digit.
@@ -38,11 +57,10 @@ def binary(X_in, cols=None):
         digits = int(np.ceil(np.log2(len(X[col].unique()))))
 
         # map the ordinal column into a list of these digits, of length digits
-        X[col] = X[col].map(lambda x: list("{0:b}".format(int(x)))) \
-            .map(lambda x: x if len(x) == digits else [0 for _ in range(digits - len(x))] + x)
+        X[col] = X[col].map(lambda x: col_transform(x, digits))
 
         for dig in range(digits):
-            X[col + '_%d' % (dig, )] = X[col].map(lambda x: int(x[dig]))
+            X[col + '_%d' % (dig, )] = X[col].map(lambda x: int(x[dig]) if x is not None else None)
             bin_cols.append(col + '_%d' % (dig, ))
 
     X = X.reindex(columns=bin_cols + pass_thru)

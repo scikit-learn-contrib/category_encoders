@@ -29,7 +29,7 @@ class TestEncoders(unittest.TestCase):
             random.random(),
             random.choice(['A', 'B', 'C']),
             random.choice(['A', 'B', 'C']),
-            random.choice(['A', 'B', 'C']),
+            random.choice(['A', 'B', 'C', None]),
             random.choice(['A', 'B', 'C'])
         ] for _ in range(n_rows)]
 

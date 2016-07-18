@@ -1,3 +1,8 @@
+v1.2.2
+======
+
+ * All encoders handle missing values and are tested for their handling
+ 
 v1.2.1
 ======
 

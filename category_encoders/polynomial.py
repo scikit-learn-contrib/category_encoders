@@ -30,6 +30,8 @@ def polynomial_coding(X_in, cols=None):
     else:
         pass_thru = [col for col in X.columns.values if col not in cols]
 
+    X.fillna(-1, inplace=True)
+
     bin_cols = []
     for col in cols:
         mod = dmatrix("C(%s, Poly)" % (col, ), X)

@@ -15,7 +15,7 @@ from category_encoders.utils import get_obj_cols
 __author__ = 'willmcginnis'
 
 
-def ordinal_encoding(X_in, mapping=None, cols=None):
+def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True):
     """
     Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
     in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
@@ -35,7 +35,8 @@ def ordinal_encoding(X_in, mapping=None, cols=None):
         for switch in mapping:
             for category in switch.get('mapping'):
                 X.loc[X[switch.get('col')] == category[0], switch.get('col')] = str(category[1])
-
+            if impute_missing:
+                X[switch.get('col')].fillna(-1, inplace=True)
             X[switch.get('col')] = X[switch.get('col')].astype(int).reshape(-1, )
     else:
         for col in cols:
@@ -43,7 +44,12 @@ def ordinal_encoding(X_in, mapping=None, cols=None):
             random.shuffle(categories)
             for idx, val in enumerate(categories):
                 X.loc[X[col] == val, col] = str(idx)
+
+            if impute_missing:
+                X[col].fillna(-1, inplace=True)
+
             X[col] = X[col].astype(int).reshape(-1, )
+
             mapping_out.append({'col': col, 'mapping': [(x[1], x[0]) for x in list(enumerate(categories))]},)
 
     return X, mapping_out
@@ -55,13 +61,14 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
     are assumed to have no true order and integers are selected at random.
     """
-    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True):
+    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True):
         """
 
         :param verbose: (optional, default=0) integer indicating verbosity of output. 0 for none.
         :param cols: (optional, default=None) a list of columns to encode, if None, all string columns will be encoded
         :param drop_invariant: (optional, default=False) boolean for whether or not to drop columns with 0 variance
         :param return_df: (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+        :param impute_missing: (optional, default=True) will impute missing values with the category -1
         :return:
         """
 
@@ -71,6 +78,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.cols = cols
         self.mapping = mapping
+        self.impute_missing = impute_missing
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -90,7 +98,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if self.cols is None:
             self.cols = get_obj_cols(X)
 
-        _, categories = ordinal_encoding(X, mapping=self.mapping, cols=self.cols)
+        _, categories = ordinal_encoding(X, mapping=self.mapping, cols=self.cols, impute_missing=self.impute_missing)
         self.mapping = categories
 
         # drop all output columns with 0 variance.
