@@ -14,7 +14,7 @@ class TestEncoders(unittest.TestCase):
     def verify_numeric(self, X_test):
         for dt in X_test.dtypes:
             numeric = False
-            if dt == int or dt == float:
+            if np.issubdtype(dt, int) or np.issubdtype(dt, float):
                 numeric = True
             self.assertTrue(numeric)
 
