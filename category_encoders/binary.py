@@ -17,58 +17,6 @@ from category_encoders.utils import get_obj_cols
 __author__ = 'willmcginnis'
 
 
-def col_transform(col, digits):
-    """
-    The lambda body to transform the column values
-
-    :param col:
-    :return:
-    """
-
-    if col is None or float(col) < 0.0:
-        return None
-    else:
-
-        col = list("{0:b}".format(int(col)))
-        if len(col) == digits:
-            return col
-        else:
-            return [0 for _ in range(digits - len(col))] + col
-
-
-def binary(X_in, cols=None):
-    """
-    Binary encoding encodes the integers as binary code with one column per digit.
-
-    :param X:
-    :return:
-    """
-
-    X = X_in.copy(deep=True)
-
-    if cols is None:
-        cols = X.columns.values
-        pass_thru = []
-    else:
-        pass_thru = [col for col in X.columns.values if col not in cols]
-
-    bin_cols = []
-    for col in cols:
-        # figure out how many digits we need to represent the classes present
-        digits = int(np.ceil(np.log2(len(X[col].unique()))))
-
-        # map the ordinal column into a list of these digits, of length digits
-        X[col] = X[col].map(lambda x: col_transform(x, digits))
-
-        for dig in range(digits):
-            X[col + '_%d' % (dig, )] = X[col].map(lambda x: int(x[dig]) if x is not None else None)
-            bin_cols.append(col + '_%d' % (dig, ))
-
-    X = X.reindex(columns=bin_cols + pass_thru)
-
-    return X
-
-
 class BinaryEncoder(BaseEstimator, TransformerMixin):
     """
     Binary encoding encodes the integers as binary code with one column per digit.
@@ -130,11 +78,22 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        """Perform the transformation to new categorical data.
+
+        Parameters
+        ----------
+
+        X : array-like, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        p : array, shape = [n_samples, n_numeric + N]
+            Transformed values with encoding applied.
+
         """
 
-        :param X:
-        :return:
-        """
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
         if not isinstance(X, pd.DataFrame):
@@ -154,7 +113,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         X = self.ordinal_encoder.transform(X)
 
-        X = binary(X, cols=self.cols)
+        X = self.binary(X, cols=self.cols)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -164,3 +123,54 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
+
+    def binary(self, X_in, cols=None):
+        """
+        Binary encoding encodes the integers as binary code with one column per digit.
+
+        :param X:
+        :return:
+        """
+
+        X = X_in.copy(deep=True)
+
+        if cols is None:
+            cols = X.columns.values
+            pass_thru = []
+        else:
+            pass_thru = [col for col in X.columns.values if col not in cols]
+
+        bin_cols = []
+        for col in cols:
+            # figure out how many digits we need to represent the classes present
+            digits = int(np.ceil(np.log2(len(X[col].unique()))))
+
+            # map the ordinal column into a list of these digits, of length digits
+            X[col] = X[col].map(lambda x: self.col_transform(x, digits))
+
+            for dig in range(digits):
+                X[col + '_%d' % (dig, )] = X[col].map(lambda x: int(x[dig]) if x is not None else None)
+                bin_cols.append(col + '_%d' % (dig, ))
+
+        X = X.reindex(columns=bin_cols + pass_thru)
+
+        return X
+
+    @staticmethod
+    def col_transform(col, digits):
+        """
+        The lambda body to transform the column values
+
+        :param col:
+        :return:
+        """
+
+        if col is None or float(col) < 0.0:
+            return None
+        else:
+
+            col = list("{0:b}".format(int(col)))
+            if len(col) == digits:
+                return col
+            else:
+                return [0 for _ in range(digits - len(col))] + col

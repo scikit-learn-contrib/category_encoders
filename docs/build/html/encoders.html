@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Encoders &mdash; Category Encoders 1.0.0 documentation</title>
+  <title>Encoders &mdash; Category Encoders 1.1.2 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   
 
   
-    <link rel="top" title="Category Encoders 1.0.0 documentation" href="index.html"/>
+    <link rel="top" title="Category Encoders 1.1.2 documentation" href="index.html"/>
         <link rel="prev" title="Category Encoders" href="index.html"/> 
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.1.2
               </div>
             
           
@@ -114,7 +114,7 @@
         <div class="rst-content">
           
 
-
+ 
 
 
 
@@ -144,18 +144,21 @@ each one of these, an equivalent standalone method is also available.</p>
 <h2>Ordinal<a class="headerlink" href="#ordinal" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="category_encoders.ordinal.OrdinalEncoder">
-<em class="property">class </em><code class="descclassname">category_encoders.ordinal.</code><code class="descname">OrdinalEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>mapping=None</em>, <em>cols=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/ordinal.html#OrdinalEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.ordinal.OrdinalEncoder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">category_encoders.ordinal.</code><code class="descname">OrdinalEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>mapping=None</em>, <em>cols=None</em>, <em>drop_invariant=False</em>, <em>return_df=True</em>, <em>impute_missing=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/ordinal.html#OrdinalEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.ordinal.OrdinalEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
 in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
 are assumed to have no true order and integers are selected at random.</p>
+<p class="rubric">Methods</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>verbose</strong> &#8211; foo</li>
-<li><strong>mapping</strong> &#8211; bar</li>
-<li><strong>cols</strong> &#8211; baz</li>
+<li><strong>verbose</strong> &#8211; (optional, default=0) integer indicating verbosity of output. 0 for none.</li>
+<li><strong>cols</strong> &#8211; (optional, default=None) a list of columns to encode, if None, all string columns will be encoded</li>
+<li><strong>drop_invariant</strong> &#8211; (optional, default=False) boolean for whether or not to drop columns with 0 variance</li>
+<li><strong>return_df</strong> &#8211; (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)</li>
+<li><strong>impute_missing</strong> &#8211; (optional, default=True) will impute missing values with the category -1</li>
 </ul>
 </td>
 </tr>
@@ -164,6 +167,7 @@ are assumed to have no true order and integers are selected at random.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="category_encoders.ordinal.OrdinalEncoder.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/ordinal.html#OrdinalEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.ordinal.OrdinalEncoder.fit" title="Permalink to this definition">¶</a></dt>
@@ -215,15 +219,18 @@ docs for detailed information.</p>
 <h2>Binary<a class="headerlink" href="#binary" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="category_encoders.binary.BinaryEncoder">
-<em class="property">class </em><code class="descclassname">category_encoders.binary.</code><code class="descname">BinaryEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/binary.html#BinaryEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.binary.BinaryEncoder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">category_encoders.binary.</code><code class="descname">BinaryEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em>, <em>drop_invariant=False</em>, <em>return_df=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/binary.html#BinaryEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.binary.BinaryEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Binary encoding encodes the integers as binary code with one column per digit.</p>
+<p class="rubric">Methods</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>verbose</strong> &#8211; </li>
-<li><strong>cols</strong> &#8211; </li>
+<li><strong>verbose</strong> &#8211; (optional, default=0) integer indicating verbosity of output. 0 for none.</li>
+<li><strong>cols</strong> &#8211; (optional, default=None) a list of columns to encode, if None, all string columns will be encoded</li>
+<li><strong>drop_invariant</strong> &#8211; (optional, default=False) boolean for whether or not to drop columns with 0 variance</li>
+<li><strong>return_df</strong> &#8211; (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)</li>
 </ul>
 </td>
 </tr>
@@ -232,6 +239,7 @@ docs for detailed information.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="category_encoders.binary.BinaryEncoder.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/binary.html#BinaryEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.binary.BinaryEncoder.fit" title="Permalink to this definition">¶</a></dt>
@@ -275,55 +283,126 @@ docs for detailed information.</p>
 <h2>Hashing<a class="headerlink" href="#hashing" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="category_encoders.hashing.HashingEncoder">
-<em class="property">class </em><code class="descclassname">category_encoders.hashing.</code><code class="descname">HashingEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>n_components=8</em>, <em>cols=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/hashing.html#HashingEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.hashing.HashingEncoder" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">category_encoders.hashing.</code><code class="descname">HashingEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>n_components=8</em>, <em>cols=None</em>, <em>drop_invariant=False</em>, <em>return_df=True</em>, <em>hash_method='md5'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/hashing.html#HashingEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.hashing.HashingEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>A basic hashing implementation with configurable dimensionality/precision</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>verbose</strong> &#8211; </li>
-<li><strong>n_components</strong> &#8211; </li>
-<li><strong>cols</strong> &#8211; </li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>verbose: int</strong></p>
+<blockquote>
+<div><p>integer indicating verbosity of output. 0 for none.</p>
+</div></blockquote>
+<p><strong>cols: list</strong></p>
+<blockquote>
+<div><p>a list of columns to encode, if None, all string columns will be encoded</p>
+</div></blockquote>
+<p><strong>drop_invariant: bool</strong></p>
+<blockquote>
+<div><p>boolean for whether or not to drop columns with 0 variance</p>
+</div></blockquote>
+<p><strong>return_df: bool</strong></p>
+<blockquote>
+<div><p>boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)</p>
+</div></blockquote>
+<p><strong>hash_method: str</strong></p>
+<blockquote class="last">
+<div><p>which hashing method to use. Any method from hashlib works.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">References</p>
+<p>Cite the relevant literature, e.g. [R1].  You may also cite these
+references in the notes section above.
+.. [R1] Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing for
+Large Scale Multitask Learning. Proc. ICML.</p>
+<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="category_encoders.hashing.HashingEncoder.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/hashing.html#HashingEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.hashing.HashingEncoder.fit" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>Fit encoder according to X and y.
+Parameters
+&#8212;&#8212;&#8212;-
+X : array-like, shape = [n_samples, n_features]</p>
+<blockquote>
+<div>Training vectors, where n_samples is the number of samples
+and n_features is the number of features.</div></blockquote>
+<dl class="docutils">
+<dt>y <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples]</span></dt>
+<dd>Target values.</dd>
+</dl>
+<dl class="docutils">
+<dt>self <span class="classifier-delimiter">:</span> <span class="classifier">classifier</span></dt>
+<dd>Returns self.</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="category_encoders.hashing.HashingEncoder.hashing_trick">
+<em class="property">static </em><code class="descname">hashing_trick</code><span class="sig-paren">(</span><em>X_in</em>, <em>hashing_method='md5'</em>, <em>N=2</em>, <em>cols=None</em>, <em>make_copy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/hashing.html#HashingEncoder.hashing_trick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.hashing.HashingEncoder.hashing_trick" title="Permalink to this definition">¶</a></dt>
+<dd><p>A basic hashing implementation with configurable dimensionality/precision</p>
+<p>Performs the hashing trick on a pandas dataframe, <cite>X</cite>, using the hashing method from hashlib
+identified by <cite>hashing_method</cite>.  The number of output dimensions (<cite>N</cite>), and columns to hash (<cite>cols</cite>) are
+also configurable.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>X</strong> &#8211; </li>
-<li><strong>y</strong> &#8211; </li>
-<li><strong>kwargs</strong> &#8211; </li>
-</ul>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X_in: pandas dataframe</strong></p>
+<blockquote>
+<div><p>description text</p>
+</div></blockquote>
+<p><strong>hashing_method: string, optional</strong></p>
+<blockquote>
+<div><p>description text</p>
+</div></blockquote>
+<p><strong>N: int, optional</strong></p>
+<blockquote>
+<div><p>description text</p>
+</div></blockquote>
+<p><strong>cols: list, optional</strong></p>
+<blockquote>
+<div><p>description text</p>
+</div></blockquote>
+<p><strong>make_copy: bool, optional</strong></p>
+<blockquote>
+<div><p>description text</p>
+</div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : dataframe</p>
+<blockquote class="last">
+<div><p>A hashing encoded dataframe.</p>
+</div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
+<p class="rubric">References</p>
+<p>Cite the relevant literature, e.g. [R2].  You may also cite these
+references in the notes section above.
+.. [R2] Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing
+for Large Scale Multitask Learning. Proc. ICML.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="category_encoders.hashing.HashingEncoder.transform">
 <code class="descname">transform</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/hashing.html#HashingEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.hashing.HashingEncoder.transform" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>Perform the hashing transformation to new categorical data.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> &#8211; </td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : array-like, shape = [n_samples, n_features]</p>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>p</strong> : array, shape = [n_samples, n_numeric + N]</p>
+<blockquote class="last">
+<div><p>Transformed values with hashing applied.</p>
+</div></blockquote>
+</td>
 </tr>
 </tbody>
 </table>
@@ -336,14 +415,17 @@ docs for detailed information.</p>
 <h2>Backward Difference Coding<a class="headerlink" href="#backward-difference-coding" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="category_encoders.backward_difference.BackwardDifferenceEncoder">
-<em class="property">class </em><code class="descclassname">category_encoders.backward_difference.</code><code class="descname">BackwardDifferenceEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/backward_difference.html#BackwardDifferenceEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.backward_difference.BackwardDifferenceEncoder" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<em class="property">class </em><code class="descclassname">category_encoders.backward_difference.</code><code class="descname">BackwardDifferenceEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em>, <em>drop_invariant=False</em>, <em>return_df=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/backward_difference.html#BackwardDifferenceEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.backward_difference.BackwardDifferenceEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Methods</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>verbose</strong> &#8211; </li>
-<li><strong>cols</strong> &#8211; </li>
+<li><strong>verbose</strong> &#8211; (optional, default=0) integer indicating verbosity of output. 0 for none.</li>
+<li><strong>cols</strong> &#8211; (optional, default=None) a list of columns to encode, if None, all string columns will be encoded</li>
+<li><strong>drop_invariant</strong> &#8211; (optional, default=False) boolean for whether or not to drop columns with 0 variance</li>
+<li><strong>return_df</strong> &#8211; (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)</li>
 </ul>
 </td>
 </tr>
@@ -352,10 +434,13 @@ docs for detailed information.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="category_encoders.backward_difference.BackwardDifferenceEncoder.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/backward_difference.html#BackwardDifferenceEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.backward_difference.BackwardDifferenceEncoder.fit" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p>Fits an ordinal encoder to produce a consistent mapping across applications and optionally finds
+generally invariant columns to drop consistently.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
@@ -395,14 +480,17 @@ docs for detailed information.</p>
 <h2>Helmert Coding<a class="headerlink" href="#helmert-coding" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="category_encoders.helmert.HelmertEncoder">
-<em class="property">class </em><code class="descclassname">category_encoders.helmert.</code><code class="descname">HelmertEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/helmert.html#HelmertEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.helmert.HelmertEncoder" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<em class="property">class </em><code class="descclassname">category_encoders.helmert.</code><code class="descname">HelmertEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em>, <em>drop_invariant=False</em>, <em>return_df=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/helmert.html#HelmertEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.helmert.HelmertEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Methods</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>verbose</strong> &#8211; </li>
-<li><strong>cols</strong> &#8211; </li>
+<li><strong>verbose</strong> &#8211; (optional, default=0) integer indicating verbosity of output. 0 for none.</li>
+<li><strong>cols</strong> &#8211; (optional, default=None) a list of columns to encode, if None, all string columns will be encoded</li>
+<li><strong>drop_invariant</strong> &#8211; (optional, default=False) boolean for whether or not to drop columns with 0 variance</li>
+<li><strong>return_df</strong> &#8211; (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)</li>
 </ul>
 </td>
 </tr>
@@ -411,6 +499,7 @@ docs for detailed information.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="category_encoders.helmert.HelmertEncoder.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/helmert.html#HelmertEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.helmert.HelmertEncoder.fit" title="Permalink to this definition">¶</a></dt>
@@ -454,14 +543,17 @@ docs for detailed information.</p>
 <h2>Polynomial Coding<a class="headerlink" href="#polynomial-coding" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="category_encoders.polynomial.PolynomialEncoder">
-<em class="property">class </em><code class="descclassname">category_encoders.polynomial.</code><code class="descname">PolynomialEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/polynomial.html#PolynomialEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.polynomial.PolynomialEncoder" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<em class="property">class </em><code class="descclassname">category_encoders.polynomial.</code><code class="descname">PolynomialEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em>, <em>drop_invariant=False</em>, <em>return_df=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/polynomial.html#PolynomialEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.polynomial.PolynomialEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Methods</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>verbose</strong> &#8211; </li>
-<li><strong>cols</strong> &#8211; </li>
+<li><strong>verbose</strong> &#8211; (optional, default=0) integer indicating verbosity of output. 0 for none.</li>
+<li><strong>cols</strong> &#8211; (optional, default=None) a list of columns to encode, if None, all string columns will be encoded</li>
+<li><strong>drop_invariant</strong> &#8211; (optional, default=False) boolean for whether or not to drop columns with 0 variance</li>
+<li><strong>return_df</strong> &#8211; (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)</li>
 </ul>
 </td>
 </tr>
@@ -470,6 +562,7 @@ docs for detailed information.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="category_encoders.polynomial.PolynomialEncoder.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/polynomial.html#PolynomialEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.polynomial.PolynomialEncoder.fit" title="Permalink to this definition">¶</a></dt>
@@ -513,14 +606,17 @@ docs for detailed information.</p>
 <h2>Sum Coding<a class="headerlink" href="#sum-coding" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="category_encoders.sum_coding.SumEncoder">
-<em class="property">class </em><code class="descclassname">category_encoders.sum_coding.</code><code class="descname">SumEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/sum_coding.html#SumEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.sum_coding.SumEncoder" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<em class="property">class </em><code class="descclassname">category_encoders.sum_coding.</code><code class="descname">SumEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em>, <em>drop_invariant=False</em>, <em>return_df=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/sum_coding.html#SumEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.sum_coding.SumEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Methods</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>verbose</strong> &#8211; </li>
-<li><strong>cols</strong> &#8211; </li>
+<li><strong>verbose</strong> &#8211; (optional, default=0) integer indicating verbosity of output. 0 for none.</li>
+<li><strong>cols</strong> &#8211; (optional, default=None) a list of columns to encode, if None, all string columns will be encoded</li>
+<li><strong>drop_invariant</strong> &#8211; (optional, default=False) boolean for whether or not to drop columns with 0 variance</li>
+<li><strong>return_df</strong> &#8211; (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)</li>
 </ul>
 </td>
 </tr>
@@ -529,6 +625,7 @@ docs for detailed information.</p>
 </tr>
 </tbody>
 </table>
+<p class="rubric">Methods</p>
 <dl class="method">
 <dt id="category_encoders.sum_coding.SumEncoder.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>X</em>, <em>y=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/sum_coding.html#SumEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.sum_coding.SumEncoder.fit" title="Permalink to this definition">¶</a></dt>
@@ -609,7 +706,7 @@ docs for detailed information.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'1.0.0',
+            VERSION:'1.1.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true

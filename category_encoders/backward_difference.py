@@ -17,34 +17,6 @@ from category_encoders.utils import get_obj_cols
 __author__ = 'willmcginnis'
 
 
-def backward_difference_coding(X_in, cols=None):
-    """
-
-    :param X:
-    :return:
-    """
-
-    X = X_in.copy(deep=True)
-
-    if cols is None:
-        cols = X.columns.values
-        pass_thru = []
-    else:
-        pass_thru = [col for col in X.columns.values if col not in cols]
-
-    bin_cols = []
-    for col in cols:
-        mod = dmatrix("C(%s, Diff)" % (col, ), X)
-        for dig in range(len(mod[0])):
-            X[col + '_%d' % (dig, )] = mod[:, dig]
-            bin_cols.append(col + '_%d' % (dig, ))
-
-    X = X.reindex(columns=bin_cols + pass_thru)
-    X.fillna(0.0)
-
-    return X
-
-
 class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
     """
 
@@ -107,11 +79,22 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        """Perform the transformation to new categorical data.
+
+        Parameters
+        ----------
+
+        X : array-like, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        p : array, shape = [n_samples, n_numeric + N]
+            Transformed values with encoding applied.
+
         """
 
-        :param X:
-        :return:
-        """
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
         if not isinstance(X, pd.DataFrame):
@@ -130,7 +113,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
             return X
 
         X = self.ordinal_encoder.transform(X)
-        X = backward_difference_coding(X, cols=self.cols)
+        X = self.backward_difference_coding(X, cols=self.cols)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -140,3 +123,31 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
+
+    @staticmethod
+    def backward_difference_coding(X_in, cols=None):
+        """
+
+        :param X:
+        :return:
+        """
+
+        X = X_in.copy(deep=True)
+
+        if cols is None:
+            cols = X.columns.values
+            pass_thru = []
+        else:
+            pass_thru = [col for col in X.columns.values if col not in cols]
+
+        bin_cols = []
+        for col in cols:
+            mod = dmatrix("C(%s, Diff)" % (col, ), X)
+            for dig in range(len(mod[0])):
+                X[col + '_%d' % (dig, )] = mod[:, dig]
+                bin_cols.append(col + '_%d' % (dig, ))
+
+        X = X.reindex(columns=bin_cols + pass_thru)
+        X.fillna(0.0)
+
+        return X

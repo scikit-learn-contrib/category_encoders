@@ -16,46 +16,6 @@ from category_encoders.utils import get_obj_cols
 __author__ = 'willmcginnis'
 
 
-def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True):
-    """
-    Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
-    in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
-    are assumed to have no true order and integers are selected at random.
-
-    :param X:
-    :return:
-    """
-
-    X = X_in.copy(deep=True)
-
-    if cols is None:
-        cols = X.columns.values
-
-    mapping_out = []
-    if mapping is not None:
-        for switch in mapping:
-            for category in switch.get('mapping'):
-                X.loc[X[switch.get('col')] == category[0], switch.get('col')] = str(category[1])
-            if impute_missing:
-                X[switch.get('col')].fillna(-1, inplace=True)
-            X[switch.get('col')] = X[switch.get('col')].astype(int).reshape(-1, )
-    else:
-        for col in cols:
-            categories = list(set(X[col].values))
-            random.shuffle(categories)
-            for idx, val in enumerate(categories):
-                X.loc[X[col] == val, col] = str(idx)
-
-            if impute_missing:
-                X[col].fillna(-1, inplace=True)
-
-            X[col] = X[col].astype(int).reshape(-1, )
-
-            mapping_out.append({'col': col, 'mapping': [(x[1], x[0]) for x in list(enumerate(categories))]},)
-
-    return X, mapping_out
-
-
 class OrdinalEncoder(BaseEstimator, TransformerMixin):
     """
     Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
@@ -107,7 +67,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if self.cols is None:
             self.cols = get_obj_cols(X)
 
-        _, categories = ordinal_encoding(X, mapping=self.mapping, cols=self.cols, impute_missing=self.impute_missing)
+        _, categories = self.ordinal_encoding(X, mapping=self.mapping, cols=self.cols, impute_missing=self.impute_missing)
         self.mapping = categories
 
         # drop all output columns with 0 variance.
@@ -119,13 +79,26 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        """
+        """Perform the transformation to new categorical data.
+
         Will use the mapping (if available) and the column list (if available, otherwise every column) to encode the
         data ordinally.
 
-        :param X:
-        :return:
+        Parameters
+        ----------
+
+        X : array-like, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        p : array, shape = [n_samples, n_numeric + N]
+            Transformed values with encoding applied.
+
         """
+
+
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
         if not isinstance(X, pd.DataFrame):
@@ -143,7 +116,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X
 
-        X, _ = ordinal_encoding(X, mapping=self.mapping, cols=self.cols)
+        X, _ = self.ordinal_encoding(X, mapping=self.mapping, cols=self.cols)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -153,3 +126,43 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
+
+    @staticmethod
+    def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True):
+        """
+        Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
+        in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
+        are assumed to have no true order and integers are selected at random.
+
+        :param X:
+        :return:
+        """
+
+        X = X_in.copy(deep=True)
+
+        if cols is None:
+            cols = X.columns.values
+
+        mapping_out = []
+        if mapping is not None:
+            for switch in mapping:
+                for category in switch.get('mapping'):
+                    X.loc[X[switch.get('col')] == category[0], switch.get('col')] = str(category[1])
+                if impute_missing:
+                    X[switch.get('col')].fillna(-1, inplace=True)
+                X[switch.get('col')] = X[switch.get('col')].astype(int).reshape(-1, )
+        else:
+            for col in cols:
+                categories = list(set(X[col].values))
+                random.shuffle(categories)
+                for idx, val in enumerate(categories):
+                    X.loc[X[col] == val, col] = str(idx)
+
+                if impute_missing:
+                    X[col].fillna(-1, inplace=True)
+
+                X[col] = X[col].astype(int).reshape(-1, )
+
+                mapping_out.append({'col': col, 'mapping': [(x[1], x[0]) for x in list(enumerate(categories))]},)
+
+        return X, mapping_out

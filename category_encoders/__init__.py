@@ -6,24 +6,14 @@
 
 """
 
-from category_encoders.backward_difference import backward_difference_coding, BackwardDifferenceEncoder
-from category_encoders.binary import binary, BinaryEncoder
-from category_encoders.hashing import (
-    hashing_trick,
-    hashing_trick_4,
-    hashing_trick_8,
-    hashing_trick_16,
-    hashing_trick_32,
-    hashing_trick_64,
-    hashing_trick_128,
-    HashingEncoder
-)
-from category_encoders.helmert import helmert_coding, HelmertEncoder
-from category_encoders.one_hot import one_hot
-from sklearn.preprocessing import OneHotEncoder
-from category_encoders.ordinal import ordinal_encoding, OrdinalEncoder
-from category_encoders.sum_coding import sum_coding, SumEncoder
-from category_encoders.polynomial import polynomial_coding, PolynomialEncoder
+from category_encoders.backward_difference import BackwardDifferenceEncoder
+from category_encoders.binary import BinaryEncoder
+from category_encoders.hashing import HashingEncoder
+from category_encoders.helmert import HelmertEncoder
+from category_encoders.one_hot import OneHotEncoder
+from category_encoders.ordinal import OrdinalEncoder
+from category_encoders.sum_coding import SumEncoder
+from category_encoders.polynomial import PolynomialEncoder
 
 __author__ = 'willmcginnis'
 

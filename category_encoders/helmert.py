@@ -17,33 +17,6 @@ from category_encoders.utils import get_obj_cols
 __author__ = 'willmcginnis'
 
 
-def helmert_coding(X_in, cols=None):
-    """
-
-    :param X:
-    :return:
-    """
-
-    X = X_in.copy(deep=True)
-
-    if cols is None:
-        cols = X.columns.values
-        pass_thru = []
-    else:
-        pass_thru = [col for col in X.columns.values if col not in cols]
-
-    bin_cols = []
-    for col in cols:
-        mod = dmatrix("C(%s, Helmert)" % (col, ), X)
-        for dig in range(len(mod[0])):
-            X[col + '_%d' % (dig, )] = mod[:, dig]
-            bin_cols.append(col + '_%d' % (dig, ))
-
-    X = X.reindex(columns=bin_cols + pass_thru)
-
-    return X
-
-
 class HelmertEncoder(BaseEstimator, TransformerMixin):
     """
 
@@ -101,11 +74,22 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        """Perform the transformation to new categorical data.
+
+        Parameters
+        ----------
+
+        X : array-like, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        p : array, shape = [n_samples, n_numeric + N]
+            Transformed values with encoding applied.
+
         """
 
-        :param X:
-        :return:
-        """
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
         if not isinstance(X, pd.DataFrame):
@@ -125,7 +109,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
         X = self.ordinal_encoder.transform(X)
 
-        X = helmert_coding(X, cols=self.cols)
+        X = self.helmert_coding(X, cols=self.cols)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -135,3 +119,30 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
+
+    @staticmethod
+    def helmert_coding(X_in, cols=None):
+        """
+
+        :param X:
+        :return:
+        """
+
+        X = X_in.copy(deep=True)
+
+        if cols is None:
+            cols = X.columns.values
+            pass_thru = []
+        else:
+            pass_thru = [col for col in X.columns.values if col not in cols]
+
+        bin_cols = []
+        for col in cols:
+            mod = dmatrix("C(%s, Helmert)" % (col, ), X)
+            for dig in range(len(mod[0])):
+                X[col + '_%d' % (dig, )] = mod[:, dig]
+                bin_cols.append(col + '_%d' % (dig, ))
+
+        X = X.reindex(columns=bin_cols + pass_thru)
+
+        return X

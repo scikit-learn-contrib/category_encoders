@@ -16,14 +16,14 @@ Documentation: [http://wdm0006.github.io/categorical_encoding/](http://wdm0006.g
 Encoding Methods
 ----------------
 
- * Ordinal
- * One-Hot
+ * Ordinal [2][3]
+ * One-Hot [2][3]
  * Binary
- * Helmert Contrast
- * Sum Contrast
- * Polynomial Contrast
- * Backward Difference Contrast
- * Hashing
+ * Helmert Contrast [2][3]
+ * Sum Contrast [2][3]
+ * Polynomial Contrast [2][3]
+ * Backward Difference Contrast [2][3]
+ * Hashing [1]
 
 Usage
 -----
@@ -32,6 +32,7 @@ The package by itself comes with a single module and an estimator. Before
 installing the module you will need `numpy`, `statsmodels`, and `scipy`.
 
 To install the module execute:
+
 ```shell
 $ python setup.py install
 ```
@@ -73,4 +74,12 @@ from the UCI dataset repository, found here:
 License
 -------
 
-BSD
+BSD 3-Clause
+
+References:
+-----------
+
+ 1. Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing for Large Scale Multitask Learning. Proc. ICML.
+ 2. Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from http://www.ats.ucla.edu/stat/r/library/contrast_coding.
+ 3. Gregory Carey (2003). Coding Categorical Variables, from http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
+ 
