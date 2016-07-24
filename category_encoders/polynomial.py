@@ -7,6 +7,7 @@
 """
 
 import copy
+import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
@@ -63,6 +64,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         self.drop_cols = []
         self.verbose = verbose
         self.cols = cols
+        self._dim = None
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -74,8 +76,16 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         """
 
         # if the input dataset isn't already a dataframe, convert it to one (using default column names)
+        # first check the type
         if not isinstance(X, pd.DataFrame):
-            X = pd.DataFrame(X)
+            if isinstance(X, list):
+                X = pd.DataFrame(np.array(X))
+            elif isinstance(X, (np.generic, np.ndarray)):
+                X = pd.DataFrame(X)
+            else:
+                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+
+        self._dim = X.shape[1]
 
         # if columns aren't passed, just use every string column
         if self.cols is None:
@@ -96,8 +106,18 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         :return:
         """
 
+        # first check the type
         if not isinstance(X, pd.DataFrame):
-            X = pd.DataFrame(X)
+            if isinstance(X, list):
+                X = pd.DataFrame(np.array(X))
+            elif isinstance(X, (np.generic, np.ndarray)):
+                X = pd.DataFrame(X)
+            else:
+                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+
+        # then make sure that it is the right size
+        if X.shape[1] != self._dim:
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
 
         if not self.cols:
             return X

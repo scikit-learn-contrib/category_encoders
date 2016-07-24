@@ -1,41 +1,23 @@
 language: python
-sudo: false
 
-matrix:
-  include:
-    # "Legacy" environments: oldest supported versions, without and with numba
-    - python: "2.7"
-      env: DEPS="pandas scikit-learn statsmodels patsy"
-    - python: "3.4"
-      env: DEPS="pandas scikit-learn statsmodels patsy"
-    - python: "3.5"
-      env: DEPS="pandas scikit-learn statsmodels patsy"
+cache:
+  apt: true
+  # We use three different cache directory
+  # to work around a Travis bug with multi-platform cache
+  directories:
+  - $HOME/.cache/pip
+  - $HOME/download
+env:
+  global:
+    # Directory where tests are run from
+    - TEST_DIR=/tmp/test_dir/
+    - MODULE=category_encoders
+  matrix:
+    - DISTRIB="conda" PYTHON_VERSION="2.7"
+      NUMPY_VERSION="1.6.2" SCIPY_VERSION="0.11.0" CYTHON_VERSION="0.21"
+    - DISTRIB="conda" PYTHON_VERSION="3.5" COVERAGE="true"
+      NUMPY_VERSION="1.10.4" SCIPY_VERSION="0.17.0" CYTHON_VERSION="0.23.4"
 
-
-install:
-  # See:
-  # https://groups.google.com/a/continuum.io/forum/#!topic/conda/RSFENqovnro
-  # - conda update --yes --no-deps conda
-  # OK, this used to *fix* the build, but now it *breaks* the build.
-  # If you're reading this, good luck out there. I'm not sure what to tell you.
-  - conda update --yes conda
-  - conda config --add channels soft-matter
-  - echo $TRAVIS_PYTHON_VERSION
-  - conda create -n testenv --yes $DEPS pip nose setuptools python=$TRAVIS_PYTHON_VERSION
-  - source activate testenv
-  - echo $PATH
-  - which python
-  - conda info
-  - conda list
-  - python setup.py install
-
-before_install:
-  - if [ ${TRAVIS_PYTHON_VERSION:0:1} == "2" ]; then wget http://repo.continuum.io/miniconda/Miniconda-3.5.5-Linux-x86_64.sh -O miniconda.sh; else wget http://repo.continuum.io/miniconda/Miniconda3-3.5.5-Linux-x86_64.sh -O miniconda.sh; fi
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b -p /home/travis/mc
-  - export PATH=/home/travis/mc/bin:$PATH
-  - pip install coveralls
-script:
-  - nosetests --with-coverage --cover-package=category_encoders
-after_success:
-  - coveralls
+install: source ci_scripts/install.sh
+script: bash ci_scripts/test.sh
+after_success: source ci_scripts/success.sh

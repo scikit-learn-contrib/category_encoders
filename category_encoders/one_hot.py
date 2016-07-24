@@ -5,7 +5,6 @@
   :platform:
 
 """
-
 from sklearn import preprocessing
 
 __author__ = 'willmcginnis'

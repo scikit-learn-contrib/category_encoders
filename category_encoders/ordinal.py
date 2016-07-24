@@ -8,6 +8,7 @@
 
 import pandas as pd
 import copy
+import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 import random
 from category_encoders.utils import get_obj_cols
@@ -79,6 +80,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self.mapping = mapping
         self.impute_missing = impute_missing
+        self._dim = None
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -90,9 +92,16 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         :return:
         """
 
-        # if the input dataset isn't already a dataframe, convert it to one (using default column names)
+        # first check the type
         if not isinstance(X, pd.DataFrame):
-            X = pd.DataFrame(X)
+            if isinstance(X, list):
+                X = pd.DataFrame(np.array(X))
+            elif isinstance(X, (np.generic, np.ndarray)):
+                X = pd.DataFrame(X)
+            else:
+                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+
+        self._dim = X.shape[1]
 
         # if columns aren't passed, just use every string column
         if self.cols is None:
@@ -118,8 +127,18 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         :return:
         """
 
+        # first check the type
         if not isinstance(X, pd.DataFrame):
-            X = pd.DataFrame(X)
+            if isinstance(X, list):
+                X = pd.DataFrame(np.array(X))
+            elif isinstance(X, (np.generic, np.ndarray)):
+                X = pd.DataFrame(X)
+            else:
+                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+
+        # then make sure that it is the right size
+        if X.shape[1] != self._dim:
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
 
         if not self.cols:
             return X

@@ -8,6 +8,7 @@
 
 import copy
 import pandas as pd
+import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
 from category_encoders.ordinal import OrdinalEncoder
@@ -63,6 +64,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.cols = cols
         self.ordinal_encoder = None
+        self._dim = None
 
     def fit(self, X, y=None, **kwargs):
         """
@@ -72,6 +74,17 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         :param kwargs:
         :return:
         """
+
+        # first check the type
+        if not isinstance(X, pd.DataFrame):
+            if isinstance(X, list):
+                X = pd.DataFrame(np.array(X))
+            elif isinstance(X, (np.generic, np.ndarray)):
+                X = pd.DataFrame(X)
+            else:
+                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+
+        self._dim = X.shape[1]
 
         # if columns aren't passed, just use every string column
         if self.cols is None:
@@ -94,8 +107,18 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         :return:
         """
 
+        # first check the type
         if not isinstance(X, pd.DataFrame):
-            X = pd.DataFrame(X)
+            if isinstance(X, list):
+                X = pd.DataFrame(np.array(X))
+            elif isinstance(X, (np.generic, np.ndarray)):
+                X = pd.DataFrame(X)
+            else:
+                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+
+        # then make sure that it is the right size
+        if X.shape[1] != self._dim:
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
 
         if not self.cols:
             return X
