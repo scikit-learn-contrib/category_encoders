@@ -127,13 +127,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for category_encoders.ordinal</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">.. module:: ordinal</span>
-<span class="sd">  :synopsis:</span>
-<span class="sd">  :platform:</span>
-
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Ordinal or label encoding&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">copy</span>
@@ -145,63 +139,46 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;willmcginnis&#39;</span>
 
 
-<span class="k">def</span> <span class="nf">ordinal_encoding</span><span class="p">(</span><span class="n">X_in</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">impute_missing</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed</span>
-<span class="sd">    in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes</span>
-<span class="sd">    are assumed to have no true order and integers are selected at random.</span>
-
-<span class="sd">    :param X:</span>
-<span class="sd">    :return:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
-
-    <span class="n">mapping_out</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">mapping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mapping&#39;</span><span class="p">):</span>
-                <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span> <span class="o">==</span> <span class="n">category</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">category</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">impute_missing</span><span class="p">:</span>
-                <span class="n">X</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-            <span class="n">X</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-            <span class="n">categories</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
-            <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">categories</span><span class="p">):</span>
-                <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="n">val</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">impute_missing</span><span class="p">:</span>
-                <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-            <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span>
-
-            <span class="n">mapping_out</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;col&#39;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">categories</span><span class="p">))]},)</span>
-
-    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">mapping_out</span>
-
-
 <div class="viewcode-block" id="OrdinalEncoder"><a class="viewcode-back" href="../../encoders.html#category_encoders.ordinal.OrdinalEncoder">[docs]</a><span class="k">class</span> <span class="nc">OrdinalEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed</span>
+    <span class="sd">&quot;&quot;&quot;Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed</span>
 <span class="sd">    in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes</span>
 <span class="sd">    are assumed to have no true order and integers are selected at random.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    verbose: int</span>
+<span class="sd">        integer indicating verbosity of output. 0 for none.</span>
+<span class="sd">    cols: list</span>
+<span class="sd">        a list of columns to encode, if None, all string columns will be encoded</span>
+<span class="sd">    drop_invariant: bool</span>
+<span class="sd">        boolean for whether or not to drop columns with 0 variance</span>
+<span class="sd">    return_df: bool</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)</span>
+<span class="sd">    mapping: dict</span>
+<span class="sd">        a mapping of class to label to use for the encoding, optional.</span>
+<span class="sd">    impute_missing: bool</span>
+<span class="sd">        will impute missing categories with -1.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; from category_encoders import OrdinalEncoder</span>
+<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_20newsgroups_vectorized</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_20newsgroups_vectorized(subset=&quot;all&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; X, y = bunch.data, bunch.target</span>
+<span class="sd">    &gt;&gt;&gt; enc = OrdinalEncoder(return_df=False).fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; numeric_dataset = enc.transform(X)</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from</span>
+<span class="sd">    http://www.ats.ucla.edu/stat/r/library/contrast_coding.</span>
+<span class="sd">    .. [2] Gregory Carey (2003). Coding Categorical Variables, from</span>
+<span class="sd">    http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf</span>
+
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">impute_missing</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">        :param verbose: (optional, default=0) integer indicating verbosity of output. 0 for none.</span>
-<span class="sd">        :param cols: (optional, default=None) a list of columns to encode, if None, all string columns will be encoded</span>
-<span class="sd">        :param drop_invariant: (optional, default=False) boolean for whether or not to drop columns with 0 variance</span>
-<span class="sd">        :param return_df: (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)</span>
-<span class="sd">        :param impute_missing: (optional, default=True) will impute missing values with the category -1</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="o">=</span> <span class="n">return_df</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span> <span class="o">=</span> <span class="n">drop_invariant</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span> <span class="o">=</span> <span class="p">[]</span>
@@ -212,13 +189,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="bp">None</span>
 
 <div class="viewcode-block" id="OrdinalEncoder.fit"><a class="viewcode-back" href="../../encoders.html#category_encoders.ordinal.OrdinalEncoder.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fit doesn&#39;t actually do anything in this case.  So the same object is just returned as-is.</span>
-
-<span class="sd">        :param X:</span>
-<span class="sd">        :param y:</span>
-<span class="sd">        :param kwargs:</span>
-<span class="sd">        :return:</span>
+        <span class="sd">&quot;&quot;&quot;Fit encoder according to X and y.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
+<span class="sd">            Training vectors, where n_samples is the number of samples</span>
+<span class="sd">            and n_features is the number of features.</span>
+<span class="sd">        y : array-like, shape = [n_samples]</span>
+<span class="sd">            Target values.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self : classifier</span>
+<span class="sd">            Returns self.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># first check the type</span>
@@ -236,7 +218,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">get_obj_cols</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-        <span class="n">_</span><span class="p">,</span> <span class="n">categories</span> <span class="o">=</span> <span class="n">ordinal_encoding</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">impute_missing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">impute_missing</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoding</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">impute_missing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">impute_missing</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="n">categories</span>
 
         <span class="c1"># drop all output columns with 0 variance.</span>
@@ -248,13 +230,26 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="OrdinalEncoder.transform"><a class="viewcode-back" href="../../encoders.html#category_encoders.ordinal.OrdinalEncoder.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Perform the transformation to new categorical data.</span>
+
 <span class="sd">        Will use the mapping (if available) and the column list (if available, otherwise every column) to encode the</span>
 <span class="sd">        data ordinally.</span>
 
-<span class="sd">        :param X:</span>
-<span class="sd">        :return:</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        p : array, shape = [n_samples, n_numeric + N]</span>
+<span class="sd">            Transformed values with encoding applied.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must train encoder before it can be used to transform data.&#39;</span><span class="p">)</span>
 
         <span class="c1"># first check the type</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -272,7 +267,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">X</span>
 
-        <span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ordinal_encoding</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoding</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span><span class="p">:</span>
@@ -281,7 +276,44 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">X</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span></div></div>
+            <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span></div>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="OrdinalEncoder.ordinal_encoding"><a class="viewcode-back" href="../../encoders.html#category_encoders.ordinal.OrdinalEncoder.ordinal_encoding">[docs]</a>    <span class="k">def</span> <span class="nf">ordinal_encoding</span><span class="p">(</span><span class="n">X_in</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">impute_missing</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed</span>
+<span class="sd">        in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes</span>
+<span class="sd">        are assumed to have no true order and integers are selected at random.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="n">mapping_out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">mapping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mapping&#39;</span><span class="p">):</span>
+                    <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span> <span class="o">==</span> <span class="n">category</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">category</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">impute_missing</span><span class="p">:</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="n">X</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="n">categories</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+                <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">categories</span><span class="p">):</span>
+                    <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="n">val</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">impute_missing</span><span class="p">:</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+                <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span>
+
+                <span class="n">mapping_out</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;col&#39;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">categories</span><span class="p">))]},)</span>
+
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">mapping_out</span></div></div>
 </pre></div>
 
            </div>

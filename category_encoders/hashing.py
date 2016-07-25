@@ -39,8 +39,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     References
     ----------
-    Cite the relevant literature, e.g. [1]_.  You may also cite these
-    references in the notes section above.
     .. [1] Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing for
     Large Scale Multitask Learning. Proc. ICML.
 

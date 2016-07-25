@@ -1,10 +1,4 @@
-"""
-
-.. module:: ordinal
-  :synopsis:
-  :platform:
-
-"""
+"""Ordinal or label encoding"""
 
 import pandas as pd
 import copy
@@ -17,22 +11,45 @@ __author__ = 'willmcginnis'
 
 
 class OrdinalEncoder(BaseEstimator, TransformerMixin):
-    """
-    Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
+    """Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
     in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
     are assumed to have no true order and integers are selected at random.
+
+    Parameters
+    ----------
+
+    verbose: int
+        integer indicating verbosity of output. 0 for none.
+    cols: list
+        a list of columns to encode, if None, all string columns will be encoded
+    drop_invariant: bool
+        boolean for whether or not to drop columns with 0 variance
+    return_df: bool
+        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+    mapping: dict
+        a mapping of class to label to use for the encoding, optional.
+    impute_missing: bool
+        will impute missing categories with -1.
+
+    Example
+    -------
+    >>> from category_encoders import OrdinalEncoder
+    >>> from sklearn.datasets import fetch_20newsgroups_vectorized
+    >>> bunch = fetch_20newsgroups_vectorized(subset="all")
+    >>> X, y = bunch.data, bunch.target
+    >>> enc = OrdinalEncoder(return_df=False).fit(X, y)
+    >>> numeric_dataset = enc.transform(X)
+
+    References
+    ----------
+    .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
+    http://www.ats.ucla.edu/stat/r/library/contrast_coding.
+    .. [2] Gregory Carey (2003). Coding Categorical Variables, from
+    http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
+
+
     """
     def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True):
-        """
-
-        :param verbose: (optional, default=0) integer indicating verbosity of output. 0 for none.
-        :param cols: (optional, default=None) a list of columns to encode, if None, all string columns will be encoded
-        :param drop_invariant: (optional, default=False) boolean for whether or not to drop columns with 0 variance
-        :param return_df: (optional, default=True) boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
-        :param impute_missing: (optional, default=True) will impute missing values with the category -1
-        :return:
-        """
-
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -43,13 +60,18 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self._dim = None
 
     def fit(self, X, y=None, **kwargs):
-        """
-        Fit doesn't actually do anything in this case.  So the same object is just returned as-is.
-
-        :param X:
-        :param y:
-        :param kwargs:
-        :return:
+        """Fit encoder according to X and y.
+        Parameters
+        ----------
+        X : array-like, shape = [n_samples, n_features]
+            Training vectors, where n_samples is the number of samples
+            and n_features is the number of features.
+        y : array-like, shape = [n_samples]
+            Target values.
+        Returns
+        -------
+        self : classifier
+            Returns self.
         """
 
         # first check the type
@@ -133,9 +155,6 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
         in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
         are assumed to have no true order and integers are selected at random.
-
-        :param X:
-        :return:
         """
 
         X = X_in.copy(deep=True)
