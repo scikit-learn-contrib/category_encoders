@@ -1,10 +1,4 @@
-"""
-
-.. module:: utils
-  :synopsis: generic helper functions shared by many encoders
-  :platform:
-
-"""
+"""A collection of shared utilities for all encoders, not intended for external use."""
 
 __author__ = 'willmcginnis'
 

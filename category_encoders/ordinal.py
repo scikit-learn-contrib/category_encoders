@@ -42,8 +42,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
     References
     ----------
+
     .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
     http://www.ats.ucla.edu/stat/r/library/contrast_coding.
+
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
@@ -61,17 +63,22 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
+
         Parameters
         ----------
+
         X : array-like, shape = [n_samples, n_features]
             Training vectors, where n_samples is the number of samples
             and n_features is the number of features.
         y : array-like, shape = [n_samples]
             Target values.
+
         Returns
         -------
-        self : classifier
+
+        self : encoder
             Returns self.
+
         """
 
         # first check the type
@@ -113,11 +120,11 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
         Returns
         -------
+
         p : array, shape = [n_samples, n_numeric + N]
             Transformed values with encoding applied.
 
         """
-
 
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')

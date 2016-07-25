@@ -55,17 +55,22 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
+
         Parameters
         ----------
+
         X : array-like, shape = [n_samples, n_features]
             Training vectors, where n_samples is the number of samples
             and n_features is the number of features.
         y : array-like, shape = [n_samples]
             Target values.
+
         Returns
         -------
-        self : classifier
+
+        self : encoder
             Returns self.
+
         """
 
         # first check the type
@@ -101,6 +106,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         Returns
         -------
+
         p : array, shape = [n_samples, n_numeric + N]
             Transformed values with encoding applied.
 
