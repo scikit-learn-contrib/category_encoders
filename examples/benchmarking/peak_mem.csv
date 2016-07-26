@@ -1,0 +1,10 @@
+encoder,dataset,version,peak_mem(MiB),initial_df_size(MB),final_df_size(MB)
+hashing,mushroom,1.2.2,76.3359,1.4,0.5712
+backward_difference,mushroom,1.2.2,100.1133,1.4,7.3
+binary,mushroom,1.2.2,85.6445,1.4,3.4
+helmert,mushroom,1.2.2,101.2109,1.4,7.3
+onehot,mushroom,1.2.2,78.0586,1.4,7.3
+ordinal,mushroom,1.2.2,72.9688,1.4,1.4
+polynomial,mushroom,1.2.2,96.7070,1.4,7.3
+sum,mushroom,1.2.2,100.4258,1.4,7.3
+control,mushroom,1.2.2,61.6094,1.4,1.4

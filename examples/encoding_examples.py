@@ -48,7 +48,6 @@ def main(loader, name):
 
     # first get the dataset
     X, y, mapping = loader()
-    X = category_encoders.ordinal_encoding(X)
 
     clf = linear_model.LogisticRegression()
 

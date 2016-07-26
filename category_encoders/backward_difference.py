@@ -155,9 +155,6 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
     @staticmethod
     def backward_difference_coding(X_in, cols=None):
         """
-
-        :param X:
-        :return:
         """
 
         X = X_in.copy(deep=True)

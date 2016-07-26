@@ -153,9 +153,6 @@ class SumEncoder(BaseEstimator, TransformerMixin):
     @staticmethod
     def sum_coding(X_in, cols=None):
         """
-
-        :param X:
-        :return:
         """
 
         X = X_in.copy(deep=True)

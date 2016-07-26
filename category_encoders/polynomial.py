@@ -145,9 +145,6 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
     @staticmethod
     def polynomial_coding(X_in, cols=None):
         """
-
-        :param X:
-        :return:
         """
 
         X = X_in.copy(deep=True)

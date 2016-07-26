@@ -2,6 +2,12 @@ v1.2.2
 ======
 
  * All encoders handle missing values and are tested for their handling
+ * Created a onehot encoder that follows the same conventions as the rest of the library instead of using sklearns.
+ * Did some basic benchmarking for data compression and memory usage, made some performance improvements
+ * Changed all docstrings to numpy style and added more documentation
+ * Moved all logic methods into staticmethods of the transformer classes themselves.
+ * Added more detailed checks for type and shape of input data in fit and transform
+ * Support input as list of lists, alongside numpy arrays and pandas dataframes.
  
 v1.2.1
 ======

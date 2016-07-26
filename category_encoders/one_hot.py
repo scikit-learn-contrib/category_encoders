@@ -148,9 +148,6 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     @staticmethod
     def get_dummies(X_in, cols=None):
         """
-
-        :param X:
-        :return:
         """
 
         X = X_in.copy(deep=True)
@@ -166,10 +163,13 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             classes = set(X[col].values.tolist())
             for class_ in classes:
                 n_col_name = col + '_%s' % (class_, )
-                X[n_col_name] = 0
-                X.loc[X[col] == class_, n_col_name] = 1
+                X[n_col_name] = X[col] == class_
                 bin_cols.append(n_col_name)
 
         X = X.reindex(columns=bin_cols + pass_thru)
+
+        # convert all of the bools into integers.
+        for col in bin_cols:
+            X[col] = X[col].astype(int)
 
         return X

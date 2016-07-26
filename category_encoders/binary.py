@@ -144,9 +144,6 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     def binary(self, X_in, cols=None):
         """
         Binary encoding encodes the integers as binary code with one column per digit.
-
-        :param X:
-        :return:
         """
 
         X = X_in.copy(deep=True)
@@ -177,9 +174,6 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     def col_transform(col, digits):
         """
         The lambda body to transform the column values
-
-        :param col:
-        :return:
         """
 
         if col is None or float(col) < 0.0:
