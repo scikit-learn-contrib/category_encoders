@@ -1,3 +1,8 @@
+v1.2.3
+======
+
+ * Full support for numpy arrays as input, not just dataframes.
+ 
 v1.2.2
 ======
 

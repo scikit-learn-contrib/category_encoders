@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
 from category_encoders.ordinal import OrdinalEncoder
-from category_encoders.utils import get_obj_cols
+from category_encoders.utils import get_obj_cols, convert_input
 
 __author__ = 'willmcginnis'
 
@@ -76,13 +76,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         # if the input dataset isn't already a dataframe, convert it to one (using default column names)
         # first check the type
-        if not isinstance(X, pd.DataFrame):
-            if isinstance(X, list):
-                X = pd.DataFrame(np.array(X))
-            elif isinstance(X, (np.generic, np.ndarray)):
-                X = pd.DataFrame(X)
-            else:
-                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+        X = convert_input(X)
 
         self._dim = X.shape[1]
 
@@ -122,13 +116,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        if not isinstance(X, pd.DataFrame):
-            if isinstance(X, list):
-                X = pd.DataFrame(np.array(X))
-            elif isinstance(X, (np.generic, np.ndarray)):
-                X = pd.DataFrame(X)
-            else:
-                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+        X = convert_input(X)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -157,6 +145,9 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         X = X_in.copy(deep=True)
 
+        X.columns = ['col_' + str(x) for x in X.columns.values]
+        cols = ['col_' + str(x) for x in cols]
+
         if cols is None:
             cols = X.columns.values
             pass_thru = []
@@ -167,8 +158,8 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         for col in cols:
             mod = dmatrix("C(%s, Sum)" % (col, ), X)
             for dig in range(len(mod[0])):
-                X[col + '_%d' % (dig, )] = mod[:, dig]
-                bin_cols.append(col + '_%d' % (dig, ))
+                X[str(col) + '_%d' % (dig, )] = mod[:, dig]
+                bin_cols.append(str(col) + '_%d' % (dig, ))
 
         X = X.reindex(columns=bin_cols + pass_thru)
 

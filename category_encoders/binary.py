@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
 from category_encoders.ordinal import OrdinalEncoder
-from category_encoders.utils import get_obj_cols
+from category_encoders.utils import get_obj_cols, convert_input
 
 __author__ = 'willmcginnis'
 
@@ -67,13 +67,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         # if the input dataset isn't already a dataframe, convert it to one (using default column names)
         # first check the type
-        if not isinstance(X, pd.DataFrame):
-            if isinstance(X, list):
-                X = pd.DataFrame(np.array(X))
-            elif isinstance(X, (np.generic, np.ndarray)):
-                X = pd.DataFrame(X)
-            else:
-                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+        X = convert_input(X)
 
         self._dim = X.shape[1]
 
@@ -113,13 +107,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        if not isinstance(X, pd.DataFrame):
-            if isinstance(X, list):
-                X = pd.DataFrame(np.array(X))
-            elif isinstance(X, (np.generic, np.ndarray)):
-                X = pd.DataFrame(X)
-            else:
-                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+        X = convert_input(X)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -163,8 +151,8 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             X[col] = X[col].map(lambda x: self.col_transform(x, digits))
 
             for dig in range(digits):
-                X[col + '_%d' % (dig, )] = X[col].map(lambda x: int(x[dig]) if x is not None else None)
-                bin_cols.append(col + '_%d' % (dig, ))
+                X[str(col) + '_%d' % (dig, )] = X[col].map(lambda r: int(r[dig]) if r is not None else None)
+                bin_cols.append(str(col) + '_%d' % (dig, ))
 
         X = X.reindex(columns=bin_cols + pass_thru)
 

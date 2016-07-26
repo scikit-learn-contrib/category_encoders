@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
-from category_encoders.utils import get_obj_cols
+from category_encoders.utils import get_obj_cols, convert_input
 
 __author__ = 'willmcginnis'
 
@@ -73,13 +73,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        if not isinstance(X, pd.DataFrame):
-            if isinstance(X, list):
-                X = pd.DataFrame(np.array(X))
-            elif isinstance(X, (np.generic, np.ndarray)):
-                X = pd.DataFrame(X)
-            else:
-                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+        X = convert_input(X)
 
         self._dim = X.shape[1]
 
@@ -117,13 +111,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        if not isinstance(X, pd.DataFrame):
-            if isinstance(X, list):
-                X = pd.DataFrame(np.array(X))
-            elif isinstance(X, (np.generic, np.ndarray)):
-                X = pd.DataFrame(X)
-            else:
-                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+        X = convert_input(X)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -162,7 +150,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         for col in cols:
             classes = set(X[col].values.tolist())
             for class_ in classes:
-                n_col_name = col + '_%s' % (class_, )
+                n_col_name = str(col) + '_%s' % (class_, )
                 X[n_col_name] = X[col] == class_
                 bin_cols.append(n_col_name)
 
