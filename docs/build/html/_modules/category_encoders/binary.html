@@ -280,9 +280,6 @@
 <div class="viewcode-block" id="BinaryEncoder.binary"><a class="viewcode-back" href="../../binary.html#category_encoders.binary.BinaryEncoder.binary">[docs]</a>    <span class="k">def</span> <span class="nf">binary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Binary encoding encodes the integers as binary code with one column per digit.</span>
-
-<span class="sd">        :param X:</span>
-<span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -313,9 +310,6 @@
 <div class="viewcode-block" id="BinaryEncoder.col_transform"><a class="viewcode-back" href="../../binary.html#category_encoders.binary.BinaryEncoder.col_transform">[docs]</a>    <span class="k">def</span> <span class="nf">col_transform</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The lambda body to transform the column values</span>
-
-<span class="sd">        :param col:</span>
-<span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">float</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
