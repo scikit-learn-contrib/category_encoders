@@ -42,6 +42,12 @@ or
 ```
 pip install category_encoders
 ```
+
+or
+
+```
+conda install -c conda-forge category_encoders
+```
     
 To use:
 
