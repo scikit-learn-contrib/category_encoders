@@ -192,9 +192,9 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 if val is not None:
                     hasher = hashlib.new(hashing_method)
                     if sys.version_info[0] == 2:
-                        hasher.update(val)
+                        hasher.update(str(val))
                     else:
-                        hasher.update(bytes(val, 'utf-8'))
+                        hasher.update(bytes(str(val), 'utf-8'))
                     tmp[int(hasher.hexdigest(), 16) % N] += 1
             return pd.Series(tmp, index=new_cols)
 
