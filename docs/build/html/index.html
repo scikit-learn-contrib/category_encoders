@@ -135,12 +135,39 @@
             
   <div class="section" id="category-encoders">
 <h1>Category Encoders<a class="headerlink" href="#category-encoders" title="Permalink to this headline">¶</a></h1>
-<p>A set of scikit-learn-style transformers for encoding categorical variables into numeric by means of different
-techniques.</p>
+<p>A set of scikit-learn-style transformers for encoding categorical variables into numeric with different
+techniques.  Currently implemented are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Ordinal</li>
+<li>One-Hot</li>
+<li>Binary</li>
+<li>Helmert Contrast</li>
+<li>Sum Contrast</li>
+<li>Polynomial Contrast</li>
+<li>Backward Difference Contrast</li>
+<li>Hashing</li>
+</ul>
+</div></blockquote>
+<p>The ordinal, one-hot, and hashing encoders have similar equivalents in the existing scikit-learn version, but the
+transformers in this library all share a few useful properties:</p>
+<blockquote>
+<div><ul class="simple">
+<li>First-class support for pandas dataframes as an input (and optionally as output)</li>
+<li>Can explicitly configure which columns in the data are encoded by name or index, or infer non-numeric columns regardless of input type</li>
+<li>Can drop any columns with very low variance based on training set optionally</li>
+<li>Portability: train a transformer on data, pickle it, reuse it later and get the same thing out.</li>
+<li>Full compatibility with sklearn pipelines, input an array-like dataset like any other transformer</li>
+</ul>
+</div></blockquote>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>Either run the examples in encoding_examples.py, or install as:</p>
+<p>install as:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">category_encoders</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="o">-</span><span class="n">c</span> <span class="n">conda</span><span class="o">-</span><span class="n">forge</span> <span class="n">category_encoders</span>
 </pre></div>
 </div>
 <p>To use:</p>
@@ -154,10 +181,13 @@ techniques.</p>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">SumEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">PolynomialEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+
+<span class="n">encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">X_cleaned</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_dirty</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. If
-the cols parameter isn&#8217;t passed, every column will be encoded, so be careful with that. See below for detailed documentation</p>
+the cols parameter isn&#8217;t passed, every non-numeric column will be converted. See below for detailed documentation</p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
