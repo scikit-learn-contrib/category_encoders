@@ -133,7 +133,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X
 
-        X, _ = self.ordinal_encoding(X, mapping=self.mapping, cols=self.cols)
+        X, _ = self.ordinal_encoding(X, mapping=self.mapping, cols=self.cols, impute_missing=self.impute_missing)
 
         if self.drop_invariant:
             for col in self.drop_cols:
