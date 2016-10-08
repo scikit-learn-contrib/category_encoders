@@ -164,7 +164,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                     X.loc[X[switch.get('col')] == category[0], switch.get('col')] = str(category[1])
                 if impute_missing:
                     X[switch.get('col')].fillna(-1, inplace=True)
-                X[switch.get('col')] = X[switch.get('col')].astype(int).reshape(-1, )
+                X[switch.get('col')] = X[switch.get('col')].astype(int).values.reshape(-1, )
         else:
             for col in cols:
                 categories = list(set(X[col].values))
@@ -175,7 +175,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 if impute_missing:
                     X[col].fillna(-1, inplace=True)
 
-                X[col] = X[col].astype(int).reshape(-1, )
+                X[col] = X[col].astype(int).values.reshape(-1, )
 
                 mapping_out.append({'col': col, 'mapping': [(x[1], x[0]) for x in list(enumerate(categories))]},)
 
