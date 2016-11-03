@@ -10,7 +10,7 @@ cd $HOME
 # Copy the build docs to a temporary folder
 rm -rf tmp
 mkdir tmp
-cp -R $HOME/$DOC_REPO/docs/_build/html/* ./tmp/
+cp -R $HOME/$DOC_REPO/docs/build/html/* ./tmp/
 
 # Clone the docs repo if it isnt already there
 if [ ! -d $DOC_REPO ];

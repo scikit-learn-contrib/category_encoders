@@ -48,7 +48,7 @@ deployment:
 general:
   # Open the doc to the API
   artifacts:
-    - "docs/_build/html"
+    - "docs/build/html"
     - "~/log.txt"
   # Restric the build to the branch master only
   branches:
