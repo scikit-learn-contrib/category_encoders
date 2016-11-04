@@ -11,7 +11,9 @@ __author__ = 'willmcginnis'
 
 
 class OrdinalEncoder(BaseEstimator, TransformerMixin):
-    """Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
+    """Encodes categorical features as ordinal, in one ordered feature
+
+    Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
     in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
     are assumed to have no true order and integers are selected at random.
 
@@ -33,12 +35,35 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
     Example
     -------
-    >>> from category_encoders import OrdinalEncoder
-    >>> from sklearn.datasets import fetch_20newsgroups_vectorized
-    >>> bunch = fetch_20newsgroups_vectorized(subset="all")
-    >>> X, y = bunch.data, bunch.target
-    >>> enc = OrdinalEncoder(return_df=False).fit(X, y)
-    >>> numeric_dataset = enc.transform(X)
+    >>>from category_encoders import *
+    >>>import pandas as pd
+    >>>from sklearn.datasets import load_boston
+    >>>bunch = load_boston()
+    >>>y = bunch.target
+    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>>enc = OrdinalEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>>numeric_dataset = enc.transform(X)
+    >>>print(numeric_dataset.info())
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 506 entries, 0 to 505
+    Data columns (total 13 columns):
+    CRIM       506 non-null float64
+    ZN         506 non-null float64
+    INDUS      506 non-null float64
+    CHAS       506 non-null int64
+    NOX        506 non-null float64
+    RM         506 non-null float64
+    AGE        506 non-null float64
+    DIS        506 non-null float64
+    RAD        506 non-null int64
+    TAX        506 non-null float64
+    PTRATIO    506 non-null float64
+    B          506 non-null float64
+    LSTAT      506 non-null float64
+    dtypes: float64(11), int64(2)
+    memory usage: 51.5 KB
+    None
 
     References
     ----------

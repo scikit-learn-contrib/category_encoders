@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+from scipy.sparse.csr import csr_matrix
 
 __author__ = 'willmcginnis'
 
@@ -19,10 +20,13 @@ def convert_input(X):
     if not isinstance(X, pd.DataFrame):
         if isinstance(X, list):
             X = pd.DataFrame(np.array(X))
-            X = X.convert_objects(convert_numeric=True)
         elif isinstance(X, (np.generic, np.ndarray)):
             X = pd.DataFrame(X)
-            X = X.convert_objects(convert_numeric=True)
+        elif isinstance(X, csr_matrix):
+            X = pd.DataFrame(X.todense())
         else:
             raise ValueError('Unexpected input type: %s' % (str(type(X))))
+
+        X = X.convert_objects(convert_numeric=True)
+
     return X

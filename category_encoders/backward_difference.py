@@ -12,7 +12,7 @@ __author__ = 'willmcginnis'
 
 
 class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
-    """
+    """Backward difference contrast coding for encoding categorical variables.
 
     Parameters
     ----------
@@ -28,12 +28,44 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
 
     Example
     -------
-    >>> from category_encoders import BackwardDifferenceEncoder
-    >>> from sklearn.datasets import fetch_20newsgroups_vectorized
-    >>> bunch = fetch_20newsgroups_vectorized(subset="all")
-    >>> X, y = bunch.data, bunch.target
-    >>> enc = BackwardDifferenceEncoder(return_df=False).fit(X, y)
-    >>> numeric_dataset = enc.transform(X)
+    >>>from category_encoders import *
+    >>>import pandas as pd
+    >>>from sklearn.datasets import load_boston
+    >>>bunch = load_boston()
+    >>>y = bunch.target
+    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>>enc = BackwardDifferenceEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>>numeric_dataset = enc.transform(X)
+    >>>print(numeric_dataset.info())
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 506 entries, 0 to 505
+    Data columns (total 22 columns):
+    col_CHAS_0     506 non-null float64
+    col_CHAS_1     506 non-null float64
+    col_RAD_0      506 non-null float64
+    col_RAD_1      506 non-null float64
+    col_RAD_2      506 non-null float64
+    col_RAD_3      506 non-null float64
+    col_RAD_4      506 non-null float64
+    col_RAD_5      506 non-null float64
+    col_RAD_6      506 non-null float64
+    col_RAD_7      506 non-null float64
+    col_RAD_8      506 non-null float64
+    col_CRIM       506 non-null float64
+    col_ZN         506 non-null float64
+    col_INDUS      506 non-null float64
+    col_NOX        506 non-null float64
+    col_RM         506 non-null float64
+    col_AGE        506 non-null float64
+    col_DIS        506 non-null float64
+    col_TAX        506 non-null float64
+    col_PTRATIO    506 non-null float64
+    col_B          506 non-null float64
+    col_LSTAT      506 non-null float64
+    dtypes: float64(22)
+    memory usage: 87.0 KB
+    None
 
     References
     ----------

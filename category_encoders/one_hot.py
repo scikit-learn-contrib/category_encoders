@@ -9,7 +9,7 @@ __author__ = 'willmcginnis'
 
 
 class OneHotEncoder(BaseEstimator, TransformerMixin):
-    """
+    """Onehot (or dummy) coding for categorical features, produces one feature per category, each binary.
 
     Parameters
     ----------
@@ -25,12 +25,44 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
     Example
     -------
-    >>> from category_encoders import OneHotEncoder
-    >>> from sklearn.datasets import fetch_20newsgroups_vectorized
-    >>> bunch = fetch_20newsgroups_vectorized(subset="all")
-    >>> X, y = bunch.data, bunch.target
-    >>> enc = OneHotEncoder(return_df=False).fit(X, y)
-    >>> numeric_dataset = enc.transform(X)
+    >>>from category_encoders import *
+    >>>import pandas as pd
+    >>>from sklearn.datasets import load_boston
+    >>>bunch = load_boston()
+    >>>y = bunch.target
+    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>>enc = OneHotEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>>numeric_dataset = enc.transform(X)
+    >>>print(numeric_dataset.info())
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 506 entries, 0 to 505
+    Data columns (total 22 columns):
+    CHAS_0     506 non-null int64
+    CHAS_1     506 non-null int64
+    RAD_0      506 non-null int64
+    RAD_1      506 non-null int64
+    RAD_2      506 non-null int64
+    RAD_3      506 non-null int64
+    RAD_4      506 non-null int64
+    RAD_5      506 non-null int64
+    RAD_6      506 non-null int64
+    RAD_7      506 non-null int64
+    RAD_8      506 non-null int64
+    CRIM       506 non-null float64
+    ZN         506 non-null float64
+    INDUS      506 non-null float64
+    NOX        506 non-null float64
+    RM         506 non-null float64
+    AGE        506 non-null float64
+    DIS        506 non-null float64
+    TAX        506 non-null float64
+    PTRATIO    506 non-null float64
+    B          506 non-null float64
+    LSTAT      506 non-null float64
+    dtypes: float64(11), int64(11)
+    memory usage: 87.0 KB
+    None
 
     References
     ----------

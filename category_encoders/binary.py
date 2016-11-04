@@ -12,7 +12,7 @@ __author__ = 'willmcginnis'
 
 
 class BinaryEncoder(BaseEstimator, TransformerMixin):
-    """
+    """Binary encoding for categorical variables, similar to onehot, but stores categories as binary bitstrings.
 
     Parameters
     ----------
@@ -28,12 +28,38 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
     Example
     -------
-    >>> from category_encoders import BinaryEncoder
-    >>> from sklearn.datasets import fetch_20newsgroups_vectorized
-    >>> bunch = fetch_20newsgroups_vectorized(subset="all")
-    >>> X, y = bunch.data, bunch.target
-    >>> enc = BinaryEncoderr(return_df=False).fit(X, y)
-    >>> numeric_dataset = enc.transform(X)
+    >>>from category_encoders import *
+    >>>import pandas as pd
+    >>>from sklearn.datasets import load_boston
+    >>>bunch = load_boston()
+    >>>y = bunch.target
+    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>>enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>>numeric_dataset = enc.transform(X)
+    >>>print(numeric_dataset.info())
+
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 506 entries, 0 to 505
+    Data columns (total 16 columns):
+    CHAS_0     506 non-null int64
+    RAD_0      506 non-null int64
+    RAD_1      506 non-null int64
+    RAD_2      506 non-null int64
+    RAD_3      506 non-null int64
+    CRIM       506 non-null float64
+    ZN         506 non-null float64
+    INDUS      506 non-null float64
+    NOX        506 non-null float64
+    RM         506 non-null float64
+    AGE        506 non-null float64
+    DIS        506 non-null float64
+    TAX        506 non-null float64
+    PTRATIO    506 non-null float64
+    B          506 non-null float64
+    LSTAT      506 non-null float64
+    dtypes: float64(11), int64(5)
+    memory usage: 63.3 KB
+    None
 
     """
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True):
