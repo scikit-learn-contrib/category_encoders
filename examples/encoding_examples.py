@@ -55,7 +55,7 @@ def main(loader, name):
     encoders = category_encoders.__all__
 
     for encoder_name in encoders:
-        encoder = category_encoders.__dict__[encoder_name]
+        encoder = getattr(category_encoders, encoder_name)
         start_time = time.time()
         score, stds, raw_scores, dim = score_models(clf, X, y, encoder)
         scores.append([encoder_name, name, dim, score, stds, time.time() - start_time])
@@ -80,8 +80,8 @@ if __name__ == '__main__':
     out, raw = main(get_mushroom_data, 'Mushroom')
     print(out.sort_values(by=['Dataset', 'Avg. Score']))
 
-    # out, raw = main(get_cars_data, 'Cars')
-    # print(out.sort_values(by=['Dataset', 'Avg. Score']))
-    #
-    # out, raw = main(get_splice_data, 'Splice')
-    # print(out.sort_values(by=['Dataset', 'Avg. Score']))
+    out, raw = main(get_cars_data, 'Cars')
+    print(out.sort_values(by=['Dataset', 'Avg. Score']))
+
+    out, raw = main(get_splice_data, 'Splice')
+    print(out.sort_values(by=['Dataset', 'Avg. Score']))
