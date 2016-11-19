@@ -11,7 +11,7 @@ variables into numeric by means of different techniques.
 Important Links
 ---------------
 
-Documentation: [http://wdm0006.github.io/categorical_encoding/](http://wdm0006.github.io/categorical_encoding/)
+Documentation: [http://contrib.scikit-learn.org/categorical-encoding/](http://contrib.scikit-learn.org/categorical-encoding/)
 
 Encoding Methods
 ----------------
