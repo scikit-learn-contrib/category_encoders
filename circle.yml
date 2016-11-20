@@ -2,10 +2,10 @@ machine:
   environment:
     # The github organization or username of the repository which hosts the
     # project and documentation.
-    USERNAME: "wdm0006"
+    USERNAME: "scikit-learn-contrib"
 
     # The repository where the documentation will be hosted
-    DOC_REPO: "categorical_encoding"
+    DOC_REPO: "categorical-encoding"
 
     # The base URL for the Github page where the documentation will be hosted
     DOC_URL: ""
