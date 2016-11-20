@@ -1,9 +1,9 @@
 Categorical Encoding Methods
 ============================
 
-[![Travis Status](https://travis-ci.org/wdm0006/categorical_encoding.svg?branch=master)](https://travis-ci.org/wdm0006/categorical_encoding)
-[![Coveralls Status](https://coveralls.io/repos/wdm0006/categorical_encoding/badge.svg?branch=master&service=github)](https://coveralls.io/r/wdm0006/categorical_encoding)
-[![CircleCI Status](https://circleci.com/gh/wdm0006/categorical_encoding.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/wdm0006/categorical_encoding/tree/master)
+[![Travis Status](https://travis-ci.org/scikit-learn-contrib/categorical-encoding.svg?branch=master)](https://travis-ci.org/scikit-learn-contrib/categorical-encoding)
+[![Coveralls Status](https://coveralls.io/repos/scikit-learn-contrib/categorical-encoding/badge.svg?branch=master&service=github)](https://coveralls.io/r/scikit-learn-contrib/categorical-encoding)
+[![CircleCI Status](https://circleci.com/gh/scikit-learn-contrib/categorical-encoding.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/scikit-learn-contrib/categorical-encoding/tree/master)
 
 A set of scikit-learn-style transformers for encoding categorical 
 variables into numeric by means of different techniques.
