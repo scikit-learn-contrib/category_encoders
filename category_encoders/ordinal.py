@@ -200,11 +200,11 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         mapping_out = []
         if mapping is not None:
             for switch in mapping:
-                X[switch.get('col') + '_tmp'] = np.nan
+                X[str(switch.get('col')) + '_tmp'] = np.nan
                 for category in switch.get('mapping'):
-                    X.loc[X[switch.get('col')] == category[0], switch.get('col') + '_tmp'] = str(category[1])
+                    X.loc[X[switch.get('col')] == category[0], str(switch.get('col')) + '_tmp'] = str(category[1])
                 del X[switch.get('col')]
-                X.rename(columns={switch.get('col') + '_tmp': switch.get('col')}, inplace=True)
+                X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
 
                 if impute_missing:
                     if handle_unknown == 'impute':
@@ -222,11 +222,11 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 categories = list(set(X[col].values))
                 random.shuffle(categories)
 
-                X[col + '_tmp'] = np.nan
+                X[str(col) + '_tmp'] = np.nan
                 for idx, val in enumerate(categories):
-                    X.loc[X[col] == val, col + '_tmp'] = str(idx)
+                    X.loc[X[col] == val, str(col) + '_tmp'] = str(idx)
                 del X[col]
-                X.rename(columns={col + '_tmp': col}, inplace=True)
+                X.rename(columns={str(col) + '_tmp': col}, inplace=True)
 
                 if impute_missing:
                     if handle_unknown == 'impute':
