@@ -22,6 +22,12 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+    impute_missing: bool
+        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
+    handle_unknown: str
+        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
+        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        unexpected changes in dimension in some cases.
 
     Example
     -------
@@ -75,7 +81,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -83,6 +89,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
+        self.impute_missing = impute_missing
+        self.handle_unknown = handle_unknown
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -113,7 +121,12 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if self.cols is None:
             self.cols = get_obj_cols(X)
 
-        self.ordinal_encoder = OrdinalEncoder(verbose=self.verbose, cols=self.cols)
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            impute_missing=self.impute_missing,
+            handle_unknown=self.handle_unknown
+        )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
         if self.drop_invariant:
@@ -180,7 +193,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         bin_cols = []
         for col in cols:
-            classes = set(X[col].values.tolist())
+            classes = [x for x in set(X[col].values.tolist()) if np.isfinite(x)]
             for class_ in classes:
                 n_col_name = str(col) + '_%s' % (class_, )
                 X[n_col_name] = X[col] == class_

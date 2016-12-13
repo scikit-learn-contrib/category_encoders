@@ -1,3 +1,10 @@
+v1.2.4
+======
+
+ * Added more sophisticated missing value or unknown category handling to ordinal
+ * Passing through missing value config from onehot into ordinal
+ * Onehot will return an extra column when unknown categories are passed in if impute is used.
+ 
 v1.2.3
 ======
 

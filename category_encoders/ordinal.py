@@ -31,7 +31,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     mapping: dict
         a mapping of class to label to use for the encoding, optional.
     impute_missing: bool
-        will impute missing categories with -1.
+        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
+    handle_unknown: str
+        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1
 
     Example
     -------
@@ -76,7 +78,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True):
+    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -84,6 +86,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self.mapping = mapping
         self.impute_missing = impute_missing
+        self.handle_unknown = handle_unknown
         self._dim = None
 
     def fit(self, X, y=None, **kwargs):
@@ -115,7 +118,13 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if self.cols is None:
             self.cols = get_obj_cols(X)
 
-        _, categories = self.ordinal_encoding(X, mapping=self.mapping, cols=self.cols, impute_missing=self.impute_missing)
+        _, categories = self.ordinal_encoding(
+            X,
+            mapping=self.mapping,
+            cols=self.cols,
+            impute_missing=self.impute_missing,
+            handle_unknown=self.handle_unknown
+        )
         self.mapping = categories
 
         # drop all output columns with 0 variance.
@@ -158,7 +167,13 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X
 
-        X, _ = self.ordinal_encoding(X, mapping=self.mapping, cols=self.cols, impute_missing=self.impute_missing)
+        X, _ = self.ordinal_encoding(
+            X,
+            mapping=self.mapping,
+            cols=self.cols,
+            impute_missing=self.impute_missing,
+            handle_unknown=self.handle_unknown
+        )
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -170,7 +185,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             return X.values
 
     @staticmethod
-    def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True):
+    def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='impute'):
         """
         Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
         in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
@@ -185,22 +200,42 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         mapping_out = []
         if mapping is not None:
             for switch in mapping:
+                X[switch.get('col') + '_tmp'] = np.nan
                 for category in switch.get('mapping'):
-                    X.loc[X[switch.get('col')] == category[0], switch.get('col')] = str(category[1])
+                    X.loc[X[switch.get('col')] == category[0], switch.get('col') + '_tmp'] = str(category[1])
+                del X[switch.get('col')]
+                X.rename(columns={switch.get('col') + '_tmp': switch.get('col')}, inplace=True)
+
                 if impute_missing:
-                    X[switch.get('col')].fillna(-1, inplace=True)
-                X[switch.get('col')] = X[switch.get('col')].astype(int).reshape(-1, )
+                    if handle_unknown == 'impute':
+                        X[switch.get('col')].fillna(-1, inplace=True)
+                    elif handle_unknown == 'error':
+                        if X[~X['D'].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
+                            raise ValueError('Unexpected categories found in %s' % (switch.get('col'), ))
+
+                try:
+                    X[switch.get('col')] = X[switch.get('col')].astype(int).reshape(-1, )
+                except ValueError as e:
+                    X[switch.get('col')] = X[switch.get('col')].astype(float).reshape(-1, )
         else:
             for col in cols:
                 categories = list(set(X[col].values))
                 random.shuffle(categories)
+
+                X[col + '_tmp'] = np.nan
                 for idx, val in enumerate(categories):
-                    X.loc[X[col] == val, col] = str(idx)
+                    X.loc[X[col] == val, col + '_tmp'] = str(idx)
+                del X[col]
+                X.rename(columns={col + '_tmp': col}, inplace=True)
 
                 if impute_missing:
-                    X[col].fillna(-1, inplace=True)
+                    if handle_unknown == 'impute':
+                        X[col].fillna(-1, inplace=True)
 
-                X[col] = X[col].astype(int).reshape(-1, )
+                try:
+                    X[col] = X[col].astype(int).reshape(-1, )
+                except ValueError as e:
+                    X[col] = X[col].astype(float).reshape(-1, )
 
                 mapping_out.append({'col': col, 'mapping': [(x[1], x[0]) for x in list(enumerate(categories))]},)
 

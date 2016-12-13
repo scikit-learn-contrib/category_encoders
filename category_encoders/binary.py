@@ -4,7 +4,6 @@ import copy
 import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-import numpy as np
 from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.utils import get_obj_cols, convert_input
 

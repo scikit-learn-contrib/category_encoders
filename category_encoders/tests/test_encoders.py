@@ -18,7 +18,7 @@ class TestEncoders(unittest.TestCase):
                 numeric = True
             self.assertTrue(numeric)
 
-    def create_dataset(self, n_rows=1000):
+    def create_dataset(self, n_rows=1000, extras=False):
         """
         Creates a dataset with some categorical variables
         :return:
@@ -28,7 +28,7 @@ class TestEncoders(unittest.TestCase):
             random.random(),
             random.random(),
             random.choice(['A', 'B', 'C']),
-            random.choice(['A', 'B', 'C']),
+            random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),
             random.choice(['A', 'B', 'C', None]),
             random.choice(['A', 'B', 'C'])
         ] for _ in range(n_rows)]
@@ -36,7 +36,7 @@ class TestEncoders(unittest.TestCase):
         df = pd.DataFrame(ds, columns=['A', 'B', 'C1', 'D', 'E', 'F'])
         return df
 
-    def create_array(self, n_rows=1000):
+    def create_array(self, n_rows=1000, extras=False):
         """
         Creates a dataset with some categorical variables
         :return:
@@ -46,7 +46,7 @@ class TestEncoders(unittest.TestCase):
             random.random(),
             random.random(),
             random.choice(['A', 'B', 'C']),
-            random.choice(['A', 'B', 'C']),
+            random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),
             random.choice(['A', 'B', 'C', None]),
             random.choice(['A', 'B', 'C'])
         ] for _ in range(n_rows)]
@@ -116,6 +116,7 @@ class TestEncoders(unittest.TestCase):
         cols = ['C1', 'D', 'E', 'F']
         X = self.create_dataset(n_rows=1000)
         X_t = self.create_dataset(n_rows=100)
+        X_t_extra = self.create_dataset(n_rows=100, extras=True)
 
         enc = encoders.OrdinalEncoder(verbose=1, cols=cols)
         enc.fit(X, None)
@@ -132,6 +133,25 @@ class TestEncoders(unittest.TestCase):
         enc = encoders.OrdinalEncoder(verbose=1, return_df=False)
         enc.fit(X, None)
         self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
+
+        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='impute')
+        enc.fit(X, None)
+        out = enc.transform(X_t_extra)
+        self.assertEqual(len(set(out['D'].values)), 4)
+        self.assertIn(-1, set(out['D'].values))
+        self.assertFalse(enc.mapping is None)
+
+        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
+        enc.fit(X, None)
+        out = enc.transform(X_t_extra)
+        out_cats = [x for x in set(out['D'].values) if np.isfinite(x)]
+        self.assertEqual(len(out_cats), 3)
+        self.assertFalse(enc.mapping is None)
+
+        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='error')
+        enc.fit(X, None)
+        with self.assertRaises(ValueError):
+            out = enc.transform(X_t_extra)
 
     def test_backward_difference_np(self):
         """
@@ -350,6 +370,7 @@ class TestEncoders(unittest.TestCase):
         cols = ['C1', 'D', 'E', 'F']
         X = self.create_dataset(n_rows=1000)
         X_t = self.create_dataset(n_rows=100)
+        X_t_extra = self.create_dataset(n_rows=100, extras=True)
 
         enc = encoders.OneHotEncoder(verbose=1, cols=cols)
         enc.fit(X, None)
@@ -366,3 +387,18 @@ class TestEncoders(unittest.TestCase):
         enc = encoders.OneHotEncoder(verbose=1, return_df=False)
         enc.fit(X, None)
         self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
+
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='impute')
+        enc.fit(X, None)
+        out = enc.transform(X_t_extra)
+        self.assertIn('D_-1', out.columns.values)
+
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
+        enc.fit(X, None)
+        out = enc.transform(X_t_extra)
+        self.assertEqual(len([x for x in out.columns.values if x.startswith('D_')]), 3)
+
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='error')
+        enc.fit(X, None)
+        with self.assertRaises(ValueError):
+            out = enc.transform(X_t_extra)
