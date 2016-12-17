@@ -14,6 +14,7 @@ from category_encoders.one_hot import OneHotEncoder
 from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.sum_coding import SumEncoder
 from category_encoders.polynomial import PolynomialEncoder
+from category_encoders.basen import BaseNEncoder
 
 __author__ = 'willmcginnis'
 
@@ -25,5 +26,6 @@ __all__ = [
     'OneHotEncoder',
     'OrdinalEncoder',
     'SumEncoder',
-    'PolynomialEncoder'
+    'PolynomialEncoder',
+    'BaseNEncoder'
 ]

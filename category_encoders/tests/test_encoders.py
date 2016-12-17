@@ -231,6 +231,45 @@ class TestEncoders(unittest.TestCase):
         enc.fit(X, None)
         self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
 
+    def test_basen_np(self):
+        """
+
+        :return:
+        """
+
+        X = self.create_array(n_rows=1000)
+        X_t = self.create_array(n_rows=100)
+
+        enc = encoders.BaseNEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+    def test_basen(self):
+        """
+
+        :return:
+        """
+
+        cols = ['C1', 'D', 'E', 'F']
+        X = self.create_dataset(n_rows=1000)
+        X_t = self.create_dataset(n_rows=100)
+
+        enc = encoders.BaseNEncoder(verbose=1, cols=cols)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.BaseNEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.BaseNEncoder(verbose=1, drop_invariant=True)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+
+        enc = encoders.BaseNEncoder(verbose=1, return_df=False)
+        enc.fit(X, None)
+        self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
+
     def test_helmert_np(self):
         """
 

@@ -18,3 +18,4 @@ class TestEncoders(unittest.TestCase):
         check_transformer_general('polynomial_encoder', PolynomialEncoder)
         check_transformer_general('sum_coding', SumEncoder)
         check_transformer_general('one_hot', OneHotEncoder)
+        check_transformer_general('basen', BaseNEncoder)
