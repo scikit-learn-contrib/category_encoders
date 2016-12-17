@@ -71,6 +71,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = None
         self._dim = None
         self.base = base
+        self._encoded_columns = None
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -106,6 +107,10 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = OrdinalEncoder(verbose=self.verbose, cols=self.cols)
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
+        # do a transform on the training data to get a column list
+        X_t = self.transform(X, override_return_df=True)
+        self._encoded_columns = X_t.columns.values
+
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
@@ -114,7 +119,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X):
+    def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -144,21 +149,20 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             return X
 
         X = self.ordinal_encoder.transform(X)
-
-        X = self.binary(X, cols=self.cols)
+        X = self.basen_encode(X, cols=self.cols)
 
         if self.drop_invariant:
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        if self.return_df:
+        X.fillna(0.0, inplace=True)
+        if self.return_df or override_return_df:
             return X
         else:
             return X.values
 
-    def binary(self, X_in, cols=None):
+    def basen_encode(self, X_in, cols=None):
         """
-        Binary encoding encodes the integers as binary code with one column per digit.
         """
 
         X = X_in.copy(deep=True)
@@ -184,7 +188,10 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
                 X[str(col) + '_%d' % (dig, )] = X[col].map(lambda r: int(r[dig]) if r is not None else None)
                 bin_cols.append(str(col) + '_%d' % (dig, ))
 
-        X = X.reindex(columns=bin_cols + pass_thru)
+        if self._encoded_columns is None:
+            X = X.reindex(columns=bin_cols + pass_thru)
+        else:
+            X = X.reindex(columns=self._encoded_columns)
 
         return X
 
@@ -196,7 +203,6 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if col is None or float(col) < 0.0:
             return None
         else:
-
             col = self.numberToBase(int(col), self.base, digits)
             if len(col) == digits:
                 return col
