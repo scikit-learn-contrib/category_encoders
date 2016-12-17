@@ -77,6 +77,7 @@ Contents:
    ordinal
    polynomial
    sum
+   basen
 
 
 Indices and tables

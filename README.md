@@ -24,6 +24,7 @@ Encoding Methods
  * Polynomial Contrast [2][3]
  * Backward Difference Contrast [2][3]
  * Hashing [1]
+ * BaseN
 
 Usage
 -----
@@ -61,6 +62,7 @@ To use:
     encoder = ce.OrdinalEncoder(cols=[...])
     encoder = ce.SumEncoder(cols=[...])
     encoder = ce.PolynomialEncoder(cols=[...])
+    encoder = ce.BaseNEncoder(cols=[...])
 
 All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. If 
 the cols parameter isn't passed, every non-numeric column will be encoded. Please see the 
