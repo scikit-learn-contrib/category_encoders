@@ -178,8 +178,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    @staticmethod
-    def get_dummies(X_in, cols=None):
+    def get_dummies(self, X_in, cols=None):
         """
         """
 
@@ -193,8 +192,11 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         bin_cols = []
         for col in cols:
-            classes = [x for x in set(X[col].values.tolist()) if np.isfinite(x)]
-            for class_ in classes:
+            col_tuples = [class_map['mapping'] for class_map in self.ordinal_encoder.mapping if class_map['col'] == col][0]
+            fit_classes = [col_val[1] for col_val in col_tuples]
+            if self.handle_unknown == 'impute':
+                fit_classes.append(-1)
+            for class_ in fit_classes:
                 n_col_name = str(col) + '_%s' % (class_, )
                 X[n_col_name] = X[col] == class_
                 bin_cols.append(n_col_name)
