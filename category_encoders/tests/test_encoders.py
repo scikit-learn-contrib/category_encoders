@@ -427,6 +427,10 @@ class TestEncoders(unittest.TestCase):
         enc.fit(X, None)
         self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
 
+        enc = encoders.OneHotEncoder(verbose=1, return_df=False)
+        enc.fit(X, None)
+        self.assertTrue(enc.transform(X_t[X_t['D'] != 'A']).shape[1] == 19)
+
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='impute')
         enc.fit(X, None)
         out = enc.transform(X_t_extra)
