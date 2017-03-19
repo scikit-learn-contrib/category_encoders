@@ -24,6 +24,12 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+    impute_missing: bool
+        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
+    handle_unknown: str
+        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
+        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        unexpected changes in dimension in some cases.
 
     Example
     -------
