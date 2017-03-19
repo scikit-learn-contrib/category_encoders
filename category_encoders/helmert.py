@@ -78,11 +78,13 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
+        self.impute_missing = impute_missing
+        self.handle_unknown = handle_unknown
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
@@ -116,7 +118,12 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         if self.cols is None:
             self.cols = get_obj_cols(X)
 
-        self.ordinal_encoder = OrdinalEncoder(verbose=self.verbose, cols=self.cols)
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            impute_missing=self.impute_missing,
+            handle_unknown=self.handle_unknown
+        )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
         if self.drop_invariant:

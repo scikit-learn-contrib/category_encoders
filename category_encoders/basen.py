@@ -62,11 +62,13 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     None
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, base=2):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, base=2, impute_missing=True, handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
+        self.impute_missing = impute_missing
+        self.handle_unknown = handle_unknown
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
@@ -104,7 +106,12 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             self.cols = get_obj_cols(X)
 
         # train an ordinal pre-encoder
-        self.ordinal_encoder = OrdinalEncoder(verbose=self.verbose, cols=self.cols)
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            impute_missing=self.impute_missing,
+            handle_unknown=self.handle_unknown
+        )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
         # do a transform on the training data to get a column list

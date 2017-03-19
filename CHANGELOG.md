@@ -1,3 +1,9 @@
+v1.2.5
+======
+
+ * Onehot transform returns same columns always
+ * Missing value and unknown handling now configurable in all relevant encoders
+ 
 v1.2.4
 ======
 

@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+from category_encoders.ordinal import OrdinalEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
 from category_encoders.utils import get_obj_cols, convert_input
@@ -76,11 +77,13 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
+        self.impute_missing = impute_missing
+        self.handle_unknown = handle_unknown
         self.cols = cols
         self._dim = None
 
@@ -113,6 +116,15 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         # if columns aren't passed, just use every string column
         if self.cols is None:
             self.cols = get_obj_cols(X)
+
+        # train an ordinal pre-encoder
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            impute_missing=self.impute_missing,
+            handle_unknown=self.handle_unknown
+        )
+        self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
@@ -150,6 +162,8 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
 
         if not self.cols:
             return X
+
+        X = self.ordinal_encoder.transform(X)
 
         X = self.polynomial_coding(X, cols=self.cols)
 
