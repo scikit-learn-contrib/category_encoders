@@ -219,8 +219,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                     X[switch.get('col')] = X[switch.get('col')].astype(float).reshape(-1, )
         else:
             for col in cols:
-                categories = list(set(X[col].values))
-                random.shuffle(categories)
+                categories = pd.unique(X[col].values)
 
                 X[str(col) + '_tmp'] = np.nan
                 for idx, val in enumerate(categories):
