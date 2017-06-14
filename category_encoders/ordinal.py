@@ -197,8 +197,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if cols is None:
             cols = X.columns.values
 
-        mapping_out = []
         if mapping is not None:
+            mapping_out = mapping
             for switch in mapping:
                 X[str(switch.get('col')) + '_tmp'] = np.nan
                 for category in switch.get('mapping'):
@@ -218,6 +218,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 except ValueError as e:
                     X[switch.get('col')] = X[switch.get('col')].astype(float).reshape(-1, )
         else:
+            mapping_out = []
             for col in cols:
                 categories = list(set(X[col].values))
                 random.shuffle(categories)
