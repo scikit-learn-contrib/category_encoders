@@ -214,9 +214,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                             raise ValueError('Unexpected categories found in %s' % (switch.get('col'), ))
 
                 try:
-                    X[switch.get('col')] = X[switch.get('col')].astype(int).reshape(-1, )
+                    X[switch.get('col')] = X[switch.get('col')].astype(int).values.reshape(-1, )
                 except ValueError as e:
-                    X[switch.get('col')] = X[switch.get('col')].astype(float).reshape(-1, )
+                    X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
         else:
             for col in cols:
                 categories = list(set(X[col].values))
@@ -233,9 +233,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                         X[col].fillna(-1, inplace=True)
 
                 try:
-                    X[col] = X[col].astype(int).reshape(-1, )
+                    X[col] = X[col].astype(int).values.reshape(-1, )
                 except ValueError as e:
-                    X[col] = X[col].astype(float).reshape(-1, )
+                    X[col] = X[col].astype(float).values.reshape(-1, )
 
                 mapping_out.append({'col': col, 'mapping': [(x[1], x[0]) for x in list(enumerate(categories))]},)
 
