@@ -81,7 +81,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute'):
+                 handle_unknown='impute', random_state=None):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -92,6 +92,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self._mean = None
+        self.random_state = random_state
 
     def fit(self, X, y, **kwargs):
         """Fit encoder according to X and y.
@@ -123,6 +124,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         # if columns aren't passed, just use every string column
         if self.cols is None:
             self.cols = get_obj_cols(X)
+        self.random_state_ = check_random_state(self.random_state)
 
         _, categories = self.leave_one_out(
             X, y,
@@ -140,7 +142,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X, y=None, random_mized=False, random_state=None, sigma=0.05):
+    def transform(self, X, y=None, random_mized=False, sigma=0.05):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -188,7 +190,6 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown,
             random_mized=random_mized,
-            random_state=random_state,
             sigma=sigma
         )
 
@@ -202,7 +203,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             return X.values
 
     def leave_one_out(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute',
-                      random_mized=False, random_state=None, sigma=0.1):
+                      random_mized=False, sigma=0.1):
         """
         Leave one out encoding uses a single column of float to represent the mean of targe variable.
         """
@@ -214,8 +215,6 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         if mapping is not None:
             mapping_out = mapping
-            if random_mized:
-                gen = check_random_state(random_state)
             for switch in mapping:
                 X[str(switch.get('col')) + '_tmp'] = np.nan
                 for val in switch.get('mapping'):
@@ -240,7 +239,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                             raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
 
                 if random_mized:
-                    X[switch.get('col')] = X[switch.get('col')] * gen.normal(1., sigma, X[switch.get('col')].shape[0])
+                    X[switch.get('col')] = (X[switch.get('col')] *
+                                            self.random_state_.normal(1., sigma, X[switch.get('col')].shape[0]))
 
                 X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
         else:
