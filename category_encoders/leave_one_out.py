@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.utils import get_obj_cols, convert_input
+from sklearn.utils.random import check_random_state
 
 __author__ = 'hbghhy'
 
@@ -115,7 +116,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         # first check the type
         X = convert_input(X)
         y = pd.Series(y, name='target')
-        assert X.shape[0]==y.shape[0]
+        assert X.shape[0] == y.shape[0]
 
         self._dim = X.shape[1]
 
@@ -139,7 +140,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X, y=None):
+    def transform(self, X, y=None, random_mized=False, random_state=None, sigma=0.05):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -148,6 +149,13 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples] when transform by leave one out
             None, when transform withour target infor(such as transform test set)
+        random_mized : boolean, Add normal (Gaussian) distribution randomized to the encoder or not
+        random_state : int, RandomState instance or None, optional (default=None)
+            If int, random_state is the seed used by the random number generator;
+            If RandomState instance, random_state is the random number generator;
+            If None, the random number generator is the RandomState instance used
+            by `np.random`.
+        sigma : float or array_like of floats, Standard deviation (spread or "width") of the distribution.
             
 
         Returns
@@ -168,15 +176,20 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
         assert (y is None or X.shape[0] == y.shape[0])
+        if isinstance(sigma, np.ndarray):
+            assert (sigma.shape[0] == X.shape[0])
 
         if not self.cols:
             return X
         X, _ = self.leave_one_out(
-            X,y,
+            X, y,
             mapping=self.mapping,
             cols=self.cols,
             impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown=self.handle_unknown,
+            random_mized=random_mized,
+            random_state=random_state,
+            sigma=sigma
         )
 
         if self.drop_invariant:
@@ -188,11 +201,10 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def leave_one_out(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute'):
+    def leave_one_out(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute',
+                      random_mized=False, random_state=None, sigma=0.1):
         """
-        Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
-        in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
-        are assumed to have no true order and integers are selected at random.
+        Leave one out encoding uses a single column of float to represent the mean of targe variable.
         """
 
         X = X_in.copy(deep=True)
@@ -202,18 +214,20 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         if mapping is not None:
             mapping_out = mapping
+            if random_mized:
+                gen = check_random_state(random_state)
             for switch in mapping:
                 X[str(switch.get('col')) + '_tmp'] = np.nan
                 for val in switch.get('mapping'):
                     if y is None:
                         X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = \
-                        switch.get('mapping')[val]['mean']
+                            switch.get('mapping')[val]['mean']
                     elif switch.get('mapping')[val]['count'] == 1:
                         X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = self._mean
                     else:
                         X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = (
                             (switch.get('mapping')[val]['sum'] - y[(X[switch.get('col')] == val).values]) / (
-                            switch.get('mapping')[val]['count'] - 1)
+                                switch.get('mapping')[val]['count'] - 1)
                         )
                 del X[switch.get('col')]
                 X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
@@ -224,6 +238,9 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                     elif handle_unknown == 'error':
                         if X[~X['D'].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
                             raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
+
+                if random_mized:
+                    X[switch.get('col')] = X[switch.get('col')] * gen.normal(1., sigma, X[switch.get('col')].shape[0])
 
                 X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
         else:
@@ -255,4 +272,3 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                 mapping_out.append({'col': col, 'mapping': tmp}, )
 
         return X, mapping_out
-
