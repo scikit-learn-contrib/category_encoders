@@ -29,6 +29,9 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
         unexpected changes in dimension in some cases.
 
+    randomized : boolean, Add normal (Gaussian) distribution randomized to the encoder or not
+    sigma : float, Standard deviation (spread or "width") of the distribution.
+
     Example
     -------
     >>>from category_encoders import *
@@ -81,7 +84,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', random_state=None):
+                 handle_unknown='impute', random_state=None, randomized=False, sigma=0.05):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -93,6 +96,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self.handle_unknown = handle_unknown
         self._mean = None
         self.random_state = random_state
+        self.randomized = randomized
+        self.sigma = sigma
 
     def fit(self, X, y, **kwargs):
         """Fit encoder according to X and y.
@@ -142,7 +147,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X, y=None, random_mized=False, sigma=0.05):
+    def transform(self, X, y=None):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -151,13 +156,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples] when transform by leave one out
             None, when transform withour target infor(such as transform test set)
-        random_mized : boolean, Add normal (Gaussian) distribution randomized to the encoder or not
-        random_state : int, RandomState instance or None, optional (default=None)
-            If int, random_state is the seed used by the random number generator;
-            If RandomState instance, random_state is the random number generator;
-            If None, the random number generator is the RandomState instance used
-            by `np.random`.
-        sigma : float or array_like of floats, Standard deviation (spread or "width") of the distribution.
+
             
 
         Returns
@@ -178,8 +177,6 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
         assert (y is None or X.shape[0] == y.shape[0])
-        if isinstance(sigma, np.ndarray):
-            assert (sigma.shape[0] == X.shape[0])
 
         if not self.cols:
             return X
@@ -188,9 +185,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             mapping=self.mapping,
             cols=self.cols,
             impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown,
-            random_mized=random_mized,
-            sigma=sigma
+            handle_unknown=self.handle_unknown
         )
 
         if self.drop_invariant:
@@ -202,8 +197,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def leave_one_out(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute',
-                      random_mized=False, sigma=0.1):
+    def leave_one_out(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute'):
         """
         Leave one out encoding uses a single column of float to represent the mean of targe variable.
         """
@@ -238,9 +232,9 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                         if X[~X['D'].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
                             raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
 
-                if random_mized:
+                if self.randomized and y is None:
                     X[switch.get('col')] = (X[switch.get('col')] *
-                                            self.random_state_.normal(1., sigma, X[switch.get('col')].shape[0]))
+                                            self.random_state_.normal(1., self.sigma, X[switch.get('col')].shape[0]))
 
                 X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
         else:
