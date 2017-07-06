@@ -2,6 +2,7 @@ import unittest
 from sklearn.utils.estimator_checks import check_transformer_general
 from category_encoders import *
 
+
 __author__ = 'willmcginnis'
 
 
@@ -19,3 +20,4 @@ class TestEncoders(unittest.TestCase):
         check_transformer_general('sum_coding', SumEncoder)
         check_transformer_general('one_hot', OneHotEncoder)
         check_transformer_general('basen', BaseNEncoder)
+        check_transformer_general('leave_one_out',LeaveOneOutEncoder)

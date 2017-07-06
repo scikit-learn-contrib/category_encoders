@@ -15,6 +15,7 @@ from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.sum_coding import SumEncoder
 from category_encoders.polynomial import PolynomialEncoder
 from category_encoders.basen import BaseNEncoder
+from category_encoders.leave_one_out import LeaveOneOutEncoder
 
 __author__ = 'willmcginnis'
 
@@ -27,5 +28,6 @@ __all__ = [
     'OrdinalEncoder',
     'SumEncoder',
     'PolynomialEncoder',
-    'BaseNEncoder'
+    'BaseNEncoder',
+    'LeaveOneOutEncoder'
 ]

@@ -142,7 +142,8 @@ class TestEncoders(unittest.TestCase):
         self.assertFalse(enc.mapping is None)
         self.assertTrue(len(enc.mapping) > 0)
 
-        enc = encoders.OrdinalEncoder(verbose=1, mapping=enc.mapping, return_df=True, impute_missing=True, handle_unknown='impute')
+        enc = encoders.OrdinalEncoder(verbose=1, mapping=enc.mapping, return_df=True, impute_missing=True,
+                                      handle_unknown='impute')
         enc.fit(X, None)
         out = enc.transform(X_t_extra)
         self.assertEqual(len(set(out['D'].values)), 4)
@@ -453,3 +454,56 @@ class TestEncoders(unittest.TestCase):
         enc.fit(X, None)
         with self.assertRaises(ValueError):
             out = enc.transform(X_t_extra)
+
+    def test_leave_one_out_np(self):
+        """
+
+        :return:
+        """
+
+        X = self.create_array(n_rows=1000)
+        X_t = self.create_array(n_rows=100)
+        y = np.random.randn(X.shape[0])
+        y_t = np.random.randn(X_t.shape[0])
+
+        enc = encoders.LeaveOneOutEncoder(verbose=1)
+        enc.fit(X, y)
+        self.verify_numeric(enc.transform(X_t))
+        self.verify_numeric(enc.transform(X_t, y_t))
+
+    def test_leave_one_out(self):
+        """
+
+        :return:
+        """
+
+        cols = ['C1', 'D', 'E', 'F']
+        X = self.create_dataset(n_rows=1000)
+        X_t = self.create_dataset(n_rows=100)
+        y = np.random.randn(X.shape[0])
+        y_t = np.random.randn(X_t.shape[0])
+
+        enc = encoders.LeaveOneOutEncoder(verbose=1, cols=cols)
+        enc.fit(X, y)
+        self.verify_numeric(enc.transform(X_t))
+        self.verify_numeric(enc.transform(X_t, y_t))
+
+        enc = encoders.LeaveOneOutEncoder(verbose=1)
+        enc.fit(X, y)
+        self.verify_numeric(enc.transform(X_t))
+        self.verify_numeric(enc.transform(X_t, y_t))
+
+        enc = encoders.LeaveOneOutEncoder(verbose=1, drop_invariant=True)
+        enc.fit(X, y)
+        self.verify_numeric(enc.transform(X_t))
+        self.verify_numeric(enc.transform(X_t, y_t))
+
+        enc = encoders.LeaveOneOutEncoder(verbose=1, return_df=False)
+        enc.fit(X, y)
+        self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
+        self.assertTrue(isinstance(enc.transform(X_t, y_t), np.ndarray))
+
+        enc = encoders.LeaveOneOutEncoder(verbose=1, randomized=True, sigma=0.1)
+        enc.fit(X, y)
+        self.verify_numeric(enc.transform(X_t))
+        self.verify_numeric(enc.transform(X_t, y_t))
