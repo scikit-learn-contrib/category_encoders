@@ -220,8 +220,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         else:
             mapping_out = []
             for col in cols:
-                categories = list(set(X[col].values))
-                random.shuffle(categories)
+                categories = pd.unique(X[col].values)
 
                 X[str(col) + '_tmp'] = np.nan
                 for idx, val in enumerate(categories):
