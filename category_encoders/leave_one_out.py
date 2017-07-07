@@ -232,7 +232,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                         if X[~X['D'].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
                             raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
 
-                if self.randomized and y is None:
+                if self.randomized and y is not None:
                     X[switch.get('col')] = (X[switch.get('col')] *
                                             self.random_state_.normal(1., self.sigma, X[switch.get('col')].shape[0]))
 
