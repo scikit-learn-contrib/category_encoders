@@ -18,13 +18,14 @@ Encoding Methods
 
  * Ordinal [2][3]
  * One-Hot [2][3]
- * Binary
+ * Binary [5]
  * Helmert Contrast [2][3]
  * Sum Contrast [2][3]
  * Polynomial Contrast [2][3]
  * Backward Difference Contrast [2][3]
  * Hashing [1]
- * BaseN
+ * BaseN [6]
+ * LeaveOneOut [4]
 
 Usage
 -----
@@ -90,4 +91,7 @@ References:
  1. Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing for Large Scale Multitask Learning. Proc. ICML.
  2. Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from http://www.ats.ucla.edu/stat/r/library/contrast_coding.
  3. Gregory Carey (2003). Coding Categorical Variables, from http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
+ 4. Strategies to encode categorical variables with many categories. from https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
+ 5. Beyond One-Hot: an exploration of categorical variables. from http://www.willmcginnis.com/2015/11/29/beyond-one-hot-an-exploration-of-categorical-variables/
+ 6. BaseN Encoding and Grid Search in categorical variables. from http://www.willmcginnis.com/2016/12/18/basen-encoding-grid-search-category_encoders/
  
