@@ -78,6 +78,7 @@ Contents:
    polynomial
    sum
    basen
+   leaveoneout
 
 
 Indices and tables

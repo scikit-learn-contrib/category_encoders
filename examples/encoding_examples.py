@@ -28,7 +28,7 @@ def score_models(clf, X, y, encoder, runs=1):
 
     X_test = None
     for _ in range(runs):
-        X_test = encoder().fit_transform(X)
+        X_test = encoder().fit_transform(X, y)
         scores.append(cross_validation.cross_val_score(clf, X_test, y, n_jobs=1, cv=5))
         gc.collect()
 
@@ -77,11 +77,11 @@ def main(loader, name):
     return results, raw
 
 if __name__ == '__main__':
-    out, raw = main(get_mushroom_data, 'Mushroom')
-    print(out.sort_values(by=['Dataset', 'Avg. Score']))
+    # out, raw = main(get_mushroom_data, 'Mushroom')
+    # print(out.sort_values(by=['Dataset', 'Avg. Score']))
 
     out, raw = main(get_cars_data, 'Cars')
     print(out.sort_values(by=['Dataset', 'Avg. Score']))
-
-    out, raw = main(get_splice_data, 'Splice')
-    print(out.sort_values(by=['Dataset', 'Avg. Score']))
+    #
+    # out, raw = main(get_splice_data, 'Splice')
+    # print(out.sort_values(by=['Dataset', 'Avg. Score']))

@@ -18,6 +18,17 @@ def hashing():
 
 
 @profile(precision=4)
+def leaveoneout():
+    X, _, _ = get_mushroom_data()
+    print(X.info())
+    enc = ce.LeaveOneOutEncoder()
+    enc.fit(X, None)
+    out = enc.transform(X)
+    print(out.info())
+    del enc, _, X, out
+
+
+@profile(precision=4)
 def onehot():
     X, _, _ = get_mushroom_data()
     print(X.info())
@@ -101,5 +112,5 @@ def control():
 
 if __name__ == '__main__':
     gc.collect()
-    onehot()
+    leaveoneout()
     gc.collect()
