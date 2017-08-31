@@ -118,6 +118,9 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
+        for col in self.cols:
+            self.digits_per_col[col] = self.calc_required_digits(X, col)
+
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
@@ -125,8 +128,6 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
 
 
-        for col in self.cols:
-            self.digits_per_col[col] = self.calc_required_digits(X, col)
 
         return self
 
