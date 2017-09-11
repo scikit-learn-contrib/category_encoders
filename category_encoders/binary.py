@@ -77,6 +77,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
+        self.digits_per_col = {}
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -117,11 +118,16 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
+        for col in self.cols:
+            self.digits_per_col[col] = self.calc_required_digits(X, col)
+
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
             self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
+
+
 
         return self
 
@@ -182,8 +188,8 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         bin_cols = []
         for col in cols:
-            # figure out how many digits we need to represent the classes present
-            digits = int(np.ceil(np.log2(len(X[col].unique()))))
+            # get how many digits we need to represent the classes present
+            digits = self.digits_per_col[col]
 
             # map the ordinal column into a list of these digits, of length digits
             X[col] = X[col].map(lambda x: self.col_transform(x, digits))
@@ -195,6 +201,15 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         X = X.reindex(columns=bin_cols + pass_thru)
 
         return X
+
+    @staticmethod
+    def calc_required_digits(X, col):
+        """
+        figure out how many digits we need to represent the classes present
+        """
+        return int( np.ceil(np.log2(len(X[col].unique()))) )
+
+
 
     @staticmethod
     def col_transform(col, digits):
