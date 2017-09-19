@@ -80,6 +80,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         self._dim = None
         self.base = base
         self._encoded_columns = None
+        self.digits_per_col = {}
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -119,6 +120,9 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             handle_unknown=self.handle_unknown
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
+
+        for col in self.cols:
+            self.digits_per_col[col] = self.calc_required_digits(X, col)
 
         # do a transform on the training data to get a column list
         X_t = self.transform(X, override_return_df=True)
@@ -174,6 +178,15 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
+    def calc_required_digits(self, X, col):
+        # figure out how many digits we need to represent the classes present
+        if self.base == 1:
+            digits = len(X[col].unique())
+        else:
+            digits = int(np.ceil(math.log(len(X[col].unique()), self.base)))
+
+        return digits
+
     def basen_encode(self, X_in, cols=None):
         """
         """
@@ -188,11 +201,8 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         bin_cols = []
         for col in cols:
-            # figure out how many digits we need to represent the classes present
-            if self.base == 1:
-                digits = len(X[col].unique())
-            else:
-                digits = int(np.ceil(math.log(len(X[col].unique()), self.base)))
+            # get how many digits we need to represent the classes present
+            digits = self.calc_required_digits(X, col)
 
             # map the ordinal column into a list of these digits, of length digits
             X[col] = X[col].map(lambda x: self.col_transform(x, digits))
