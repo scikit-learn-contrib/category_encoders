@@ -27,6 +27,6 @@ def convert_input(X):
         else:
             raise ValueError('Unexpected input type: %s' % (str(type(X))))
 
-        X = X.convert_objects(convert_numeric=True)
+        X = X.apply(lambda x: pd.to_numeric(x, errors='ignore'))
 
     return X
