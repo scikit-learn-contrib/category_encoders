@@ -89,6 +89,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.handle_unknown = handle_unknown
         self._dim = None
 
+    @property
+    def category_mapping(self):
+        return self.mapping
+
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
 

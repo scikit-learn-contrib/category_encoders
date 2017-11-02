@@ -92,6 +92,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
 
+    @property
+    def category_mapping(self):
+        return self.ordinal_encoder.category_mapping
+
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
 
