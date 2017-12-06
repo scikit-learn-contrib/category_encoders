@@ -1,5 +1,5 @@
 ---
-title: 'Category Encoders: a scikit-learn contrib package of transformers for encoding categorical data'
+title: 'Category Encoders: a scikit-learn-contrib package of transformers for encoding categorical data'
 tags:
   - machine learning
   - python
