@@ -556,7 +556,7 @@ class TestEncoders(unittest.TestCase):
         self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
         self.assertTrue(isinstance(enc.transform(X_t, y_t), np.ndarray))
 
-        enc = encoders.TargetEncoder(verbose=1, randomized=True, sigma=0.1)
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2)
         enc.fit(X, y)
         self.verify_numeric(enc.transform(X_t))
         self.verify_numeric(enc.transform(X_t, y_t))
