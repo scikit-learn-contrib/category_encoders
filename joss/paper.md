@@ -8,11 +8,16 @@ authors:
  - name: William D McGinnis
    orcid: 0000-0002-3009-9465
    affiliation: "1, 2"
+ - name: Chapman Siu
+   orcid: 0000-0002-2089-3796
+   affiliation: 3
 affiliations:
  - name: Predikto, Inc.
    index: 1
  - name: Helton Tech, LLC
    index: 2
+ - name: Suncorp Group Ltd.
+   index: 3
 date: 5 December 2017
 bibliography: paper.bib
 ---
