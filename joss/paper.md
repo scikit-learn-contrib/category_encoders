@@ -14,6 +14,9 @@ authors:
  - name: Andre S
    orcid: 0000-0001-5104-0465
    affiliation: 4
+ - name: Hanyu Huang
+   orcid:  0000-0001-8503-1014
+   affiliation: 5
 affiliations:
  - name: Predikto, Inc.
    index: 1
@@ -23,6 +26,8 @@ affiliations:
    index: 3
  - name: Jungle AI
    index: 4
+ - name: Tencent, Inc.
+   index: 5
 date: 5 December 2017
 bibliography: paper.bib
 ---
