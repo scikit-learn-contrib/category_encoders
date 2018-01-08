@@ -25,7 +25,7 @@ provided by scikit-learn [@scikit-learn] itself, scipy[@scipy], pandas[@pandas],
 
 It includes a number of pre-existing encoders that are commonly used, notably Ordinal, Hashing and OneHot encoders [@idre][@carey][@hashing]. There are also some
 less frequently used encoders including Backward Difference, Helmert, Polynomial and Sum encoding [@idre][@carey]. Finally there are
-experimental encoders: LeaveOneOut, Binary and BaseN [@zhang][@onehot][@basen].
+experimental encoders: LeaveOneOut, Binary[@andrethrill] and BaseN [@zhang][@onehot][@basen].
 
 The goal of these sorts of transforms is to represent categorical data, which has no true order, as numeric values while
 balancing desires to keep the representation in as few dimensions as possible.  Category_encoders seeks to provide access
