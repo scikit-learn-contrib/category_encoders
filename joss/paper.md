@@ -11,6 +11,9 @@ authors:
  - name: Chapman Siu
    orcid: 0000-0002-2089-3796
    affiliation: 3
+ - name: Andre S
+   orcid: 0000-0001-5104-0465
+   affiliation: 4
 affiliations:
  - name: Predikto, Inc.
    index: 1
@@ -18,6 +21,8 @@ affiliations:
    index: 2
  - name: Suncorp Group Ltd.
    index: 3
+ - name: Jungle AI
+   index: 4
 date: 5 December 2017
 bibliography: paper.bib
 ---
