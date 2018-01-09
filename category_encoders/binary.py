@@ -220,6 +220,15 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     def binary(self, X_in, cols=None):
         """
         Binary encoding encodes the integers as binary code with one column per digit.
+
+        Parameters
+        ----------
+        X_in: DataFrame
+        cols: list-like, default None
+              Column names in the DataFrame to be encoded
+        Returns
+        -------
+        dummies : DataFrame
         """
 
         X = X_in.copy(deep=True)

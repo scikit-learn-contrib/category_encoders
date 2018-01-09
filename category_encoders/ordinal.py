@@ -248,6 +248,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             for switch in mapping:
                 X[str(switch.get('col')) + '_tmp'] = np.nan
                 for category in switch.get('mapping'):
+                    print 'asda', X[switch.get('col')] == category[0]
                     X.loc[X[switch.get('col')] == category[0], str(switch.get('col')) + '_tmp'] = str(category[1])
                 del X[switch.get('col')]
                 X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
