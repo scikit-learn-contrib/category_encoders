@@ -65,6 +65,7 @@ To use:
     encoder = ce.SumEncoder(cols=[...])
     encoder = ce.PolynomialEncoder(cols=[...])
     encoder = ce.BaseNEncoder(cols=[...])
+    encoder = ce.TargetEncoder(cols=[...])
     encoder = ce.LeaveOneOutEncoder(cols=[...])
 
 All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. If 
@@ -74,6 +75,21 @@ docs for transformer-specific configuration options.
 Examples
 --------
 
+    from category_encoders import *
+    import pandas as pd
+    from sklearn.datasets import load_boston
+
+    # prepare some data
+    bunch = load_boston()
+    y = bunch.target
+    X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+
+    # use binary encoding to encode two categorical features
+    enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+
+    # transform the dataset
+    numeric_dataset = enc.transform(X)
+
 In the examples directory, there is an example script used to benchmark
 different encoding techniques on various datasets.
 
@@ -81,6 +97,12 @@ The datasets used in the examples are car, mushroom, and splice datasets
 from the UCI dataset repository, found here:
 
 [datasets](https://archive.ics.uci.edu/ml/datasets)
+
+Contributing
+------------
+
+Category encoders is under active development, if you'd like to be involved, we'd love to have you. Check out the CONTRIBUTING.md file
+or open an issue on the github project to get started.
 
 License
 -------
