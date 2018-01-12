@@ -282,7 +282,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
                                      "the unknown category -1 when encode %s" % (col,))
 
             len0 = len(col_list)
-            value_array = np.array([2 ** (len0 - 1 - i) for i in xrange(len0)])
+            value_array = np.array([2 ** (len0 - 1 - i) for i in range(len0)])
 
             X[col] = np.dot(X[col_list].values, value_array.T)
             out_cols = [col0 for col0 in out_cols if col0 not in col_list]
