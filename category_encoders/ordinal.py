@@ -28,7 +28,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
-    mapping: dict
+    mapping: list of dict
         a mapping of class to label to use for the encoding, optional.
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
@@ -78,7 +78,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
+
+    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
+                 handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -166,10 +168,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
         if not self.cols:
-            return X
+            return X if self.return_df else X.values
 
         X, _ = self.ordinal_encoding(
             X,
@@ -183,10 +185,51 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        if self.return_df:
-            return X
-        else:
-            return X.values
+        return X if self.return_df else X.values
+
+    def inverse_transform(self, Xt):
+        """
+        Perform the inverse transformation to encoded data.
+
+        Parameters
+        ----------
+        X_in : array-like, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        p: array, the same size of X_in
+
+        """
+        X = Xt.copy(deep=True)
+
+        # first check the type
+        X = convert_input(X)
+
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to inverse_transform data')
+
+        # then make sure that it is the right size
+        if X.shape[1] != self._dim:
+            if self.drop_invariant:
+                raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
+                                 "set as False when transform data" % (X.shape[1],))
+            else:
+                raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
+
+        if not self.cols:
+            return X if self.return_df else X.values
+
+        if self.impute_missing and self.handle_unknown == 'impute':
+            for col in self.cols:
+                if any(X[col] == -1):
+                    raise ValueError("inverse_transform is not supported because transform impute "
+                                     "the unknown category -1 when encode %s" % (col,))
+
+        for switch in self.mapping:
+            col_dict = {col_pair[1]: col_pair[0] for col_pair in switch.get('mapping')}
+            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x))
+
+        return X if self.return_df else X.values
 
     @staticmethod
     def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='impute'):
@@ -215,7 +258,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                         X[switch.get('col')].fillna(-1, inplace=True)
                     elif handle_unknown == 'error':
                         if X[~X['D'].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
-                            raise ValueError('Unexpected categories found in %s' % (switch.get('col'), ))
+                            raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
 
                 try:
                     X[switch.get('col')] = X[switch.get('col')].astype(int).values.reshape(-1, )
@@ -241,6 +284,6 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 except ValueError as e:
                     X[col] = X[col].astype(float).values.reshape(-1, )
 
-                mapping_out.append({'col': col, 'mapping': [(x[1], x[0]) for x in list(enumerate(categories))]},)
+                mapping_out.append({'col': col, 'mapping': [(x[1], x[0]) for x in list(enumerate(categories))]}, )
 
         return X, mapping_out

@@ -67,7 +67,9 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     None
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
+
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
+                 handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -127,8 +129,6 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             X_temp = self.transform(X)
             self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
 
-
-
         return self
 
     def transform(self, X):
@@ -155,10 +155,10 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
         if not self.cols:
-            return X
+            return X if self.return_df else X.values
 
         X = self.ordinal_encoder.transform(X)
 
@@ -173,9 +173,64 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
+    def inverse_transform(self, Xt):
+        """
+        Perform the inverse transformation to encoded data.
+
+        Parameters
+        ----------
+        X_in : array-like, shape = [n_samples, n_features]
+
+        Returns
+        -------
+        p: array, the same size of X_in
+
+        """
+        X = Xt.copy(deep=True)
+
+        # first check the type
+        X = convert_input(X)
+
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to inverse_transform data')
+
+        X = self.binery_to_interger(X, self.cols)
+
+        # then make sure that it is the right size
+        if X.shape[1] != self._dim:
+            if self.drop_invariant:
+                raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
+                                 "set as False when transform data" % (X.shape[1],))
+            else:
+                raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
+
+        if not self.cols:
+            return X if self.return_df else X.values
+
+        if self.impute_missing and self.handle_unknown == 'impute':
+            for col in self.cols:
+                if any(X[col] == -1):
+                    raise ValueError("inverse_transform is not supported because transform impute "
+                                     "the unknown category -1 when encode %s" % (col,))
+
+        for switch in self.ordinal_encoder.mapping:
+            col_dict = {col_pair[1]: col_pair[0] for col_pair in switch.get('mapping')}
+            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x))
+
+        return X if self.return_df else X.values
+
     def binary(self, X_in, cols=None):
         """
         Binary encoding encodes the integers as binary code with one column per digit.
+
+        Parameters
+        ----------
+        X_in: DataFrame
+        cols: list-like, default None
+              Column names in the DataFrame to be encoded
+        Returns
+        -------
+        dummies : DataFrame
         """
 
         X = X_in.copy(deep=True)
@@ -195,10 +250,44 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             X[col] = X[col].map(lambda x: self.col_transform(x, digits))
 
             for dig in range(digits):
-                X[str(col) + '_%d' % (dig, )] = X[col].map(lambda r: int(r[dig]) if r is not None else None)
-                bin_cols.append(str(col) + '_%d' % (dig, ))
+                X[str(col) + '_%d' % (dig,)] = X[col].map(lambda r: int(r[dig]) if r is not None else None)
+                bin_cols.append(str(col) + '_%d' % (dig,))
 
         X = X.reindex(columns=bin_cols + pass_thru)
+
+        return X
+
+    def binery_to_interger(self, X, cols):
+        """
+        Convert binary code as integers.
+
+        Parameters
+        ----------
+        X : DataFrame
+            encoded data
+        cols : list-like
+            Column names in the DataFrame that be encoded
+
+        Returns
+        -------
+        numerical: DataFrame
+        """
+        out_cols = X.columns.values
+
+        for col in cols:
+            col_list = [col0 for col0 in out_cols if col0.startswith(col)]
+            for col0 in col_list:
+                if any(X[col0].isnull()):
+                    raise ValueError("inverse_transform is not supported because transform impute "
+                                     "the unknown category -1 when encode %s" % (col,))
+
+            len0 = len(col_list)
+            value_array = np.array([2 ** (len0 - 1 - i) for i in range(len0)])
+
+            X[col] = np.dot(X[col_list].values, value_array.T)
+            out_cols = [col0 for col0 in out_cols if col0 not in col_list]
+
+        X = X.reindex(columns=out_cols + cols)
 
         return X
 
@@ -207,9 +296,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         """
         figure out how many digits we need to represent the classes present
         """
-        return int( np.ceil(np.log2(len(X[col].unique()))) )
-
-
+        return int(np.ceil(np.log2(len(X[col].unique()))))
 
     @staticmethod
     def col_transform(col, digits):
