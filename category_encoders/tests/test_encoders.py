@@ -18,38 +18,48 @@ class TestEncoders(unittest.TestCase):
                 numeric = True
             self.assertTrue(numeric)
 
-    def create_dataset(self, n_rows=1000, extras=False):
+    def verify_inverse_transform(self, x, x_inv):
+        """
+        Verify x is equal to x_inv.
+
+        """
+        is_inv = False
+        if (x.columns == x_inv.columns).all() and x.shape == x_inv.shape:
+            is_inv = (x == x_inv).all(1).all(0)
+        self.assertTrue(is_inv)
+
+    def create_dataset(self, n_rows=1000, extras=False, has_none=True):
         """
         Creates a dataset with some categorical variables
         :return:
         """
 
         ds = [[
-            random.random(),
-            random.random(),
-            random.choice(['A', 'B', 'C']),
-            random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),
-            random.choice(['A', 'B', 'C', None]),
-            random.choice(['A', 'B', 'C'])
-        ] for _ in range(n_rows)]
+                  random.random(),
+                  random.random(),
+                  random.choice(['A', 'B', 'C']),
+                  random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),
+                  random.choice(['A', 'B', 'C', None]) if has_none else random.choice(['A', 'B', 'C']),
+                  random.choice(['A', 'B', 'C'])
+              ] for _ in range(n_rows)]
 
         df = pd.DataFrame(ds, columns=['A', 'B', 'C1', 'D', 'E', 'F'])
         return df
 
-    def create_array(self, n_rows=1000, extras=False):
+    def create_array(self, n_rows=1000, extras=False, has_none=True):
         """
         Creates a dataset with some categorical variables
         :return:
         """
 
         ds = [[
-            random.random(),
-            random.random(),
-            random.choice(['A', 'B', 'C']),
-            random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),
-            random.choice(['A', 'B', 'C', None]),
-            random.choice(['A', 'B', 'C'])
-        ] for _ in range(n_rows)]
+                  random.random(),
+                  random.random(),
+                  random.choice(['A', 'B', 'C']),
+                  random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),
+                  random.choice(['A', 'B', 'C', None]) if has_none else random.choice(['A', 'B', 'C']),
+                  random.choice(['A', 'B', 'C'])
+              ] for _ in range(n_rows)]
 
         return np.array(ds)
 
@@ -162,6 +172,18 @@ class TestEncoders(unittest.TestCase):
         with self.assertRaises(ValueError):
             out = enc.transform(X_t_extra)
 
+        # test inverse_transform
+        X = self.create_dataset(n_rows=1000, has_none=False)
+        X_t = self.create_dataset(n_rows=100, has_none=False)
+        X_t_extra = self.create_dataset(n_rows=100, extras=True, has_none=False)
+
+        enc = encoders.OrdinalEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+        self.verify_inverse_transform(X_t, enc.inverse_transform(enc.transform(X_t)))
+        with self.assertRaises(ValueError):
+            out = enc.inverse_transform(enc.transform(X_t_extra))
+
     def test_backward_difference_np(self):
         """
 
@@ -240,6 +262,18 @@ class TestEncoders(unittest.TestCase):
         enc.fit(X, None)
         self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
 
+        # test inverse_transform
+        X = self.create_dataset(n_rows=1000, has_none=False)
+        X_t = self.create_dataset(n_rows=100, has_none=False)
+        X_t_extra = self.create_dataset(n_rows=100, extras=True, has_none=False)
+
+        enc = encoders.BinaryEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+        self.verify_inverse_transform(X_t, enc.inverse_transform(enc.transform(X_t)))
+        with self.assertRaises(ValueError):
+            out = enc.inverse_transform(enc.transform(X_t_extra))
+
     def test_basen_np(self):
         """
 
@@ -262,6 +296,7 @@ class TestEncoders(unittest.TestCase):
         cols = ['C1', 'D', 'E', 'F']
         X = self.create_dataset(n_rows=1000)
         X_t = self.create_dataset(n_rows=100)
+        X_t_extra = self.create_dataset(n_rows=100, extras=True)
 
         enc = encoders.BaseNEncoder(verbose=1, cols=cols)
         enc.fit(X, None)
@@ -278,6 +313,16 @@ class TestEncoders(unittest.TestCase):
         enc = encoders.BaseNEncoder(verbose=1, return_df=False)
         enc.fit(X, None)
         self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
+
+        # test inverse_transform
+        X = self.create_dataset(n_rows=1000, has_none=False)
+        X_t = self.create_dataset(n_rows=100, has_none=False)
+        X_t_extra = self.create_dataset(n_rows=100, extras=True, has_none=False)
+
+        enc = encoders.BaseNEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+        self.verify_inverse_transform(X_t, enc.inverse_transform(enc.transform(X_t)))
 
     def test_helmert_np(self):
         """
@@ -454,6 +499,18 @@ class TestEncoders(unittest.TestCase):
         enc.fit(X, None)
         with self.assertRaises(ValueError):
             out = enc.transform(X_t_extra)
+
+        # test inverse_transform
+        X = self.create_dataset(n_rows=1000, has_none=False)
+        X_t = self.create_dataset(n_rows=100, has_none=False)
+        X_t_extra = self.create_dataset(n_rows=100, extras=True, has_none=False)
+
+        enc = encoders.OneHotEncoder(verbose=1)
+        enc.fit(X, None)
+        self.verify_numeric(enc.transform(X_t))
+        self.verify_inverse_transform(X_t, enc.inverse_transform(enc.transform(X_t)))
+        with self.assertRaises(ValueError):
+            out = enc.inverse_transform(enc.transform(X_t_extra))
 
     def test_leave_one_out_np(self):
         """

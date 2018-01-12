@@ -68,7 +68,9 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     None
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, base=2, impute_missing=True, handle_unknown='impute'):
+
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, base=2, impute_missing=True,
+                 handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -160,7 +162,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
         if not self.cols:
             return X
@@ -178,7 +180,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def inverse_transform(self, X_in):
+    def inverse_transform(self, Xt):
         """
         Perform the inverse transformation to encoded data.
 
@@ -191,7 +193,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         p: array, the same size of X_in
 
         """
-        X = X_in.copy(deep=True)
+        X = Xt.copy(deep=True)
 
         # first check the type
         X = convert_input(X)
@@ -205,9 +207,9 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if X.shape[1] != self._dim:
             if self.drop_invariant:
                 raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "set as False when transform data"%(X.shape[1],))
+                                 "set as False when transform data" % (X.shape[1],))
             else:
-                raise ValueError('Unexpected input dimension %d, expected %d'% (X.shape[1], self._dim, ))
+                raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
         if not self.cols:
             return X if self.return_df else X.values
@@ -216,14 +218,13 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             for col in self.cols:
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "
-                                     "the unknown category -1 when encode %s"%(col,))
+                                     "the unknown category -1 when encode %s" % (col,))
 
         for switch in self.ordinal_encoder.mapping:
-            col_dict = {col_pair[1] : col_pair[0] for col_pair in switch.get('mapping')}
-            X[switch.get('col')] = X[switch.get('col')].apply(lambda x:col_dict.get(x))
+            col_dict = {col_pair[1]: col_pair[0] for col_pair in switch.get('mapping')}
+            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x))
 
         return X if self.return_df else X.values
-
 
     def calc_required_digits(self, X, col):
         # figure out how many digits we need to represent the classes present
@@ -265,8 +266,8 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             X[col] = X[col].map(lambda x: self.col_transform(x, digits))
 
             for dig in range(digits):
-                X[str(col) + '_%d' % (dig, )] = X[col].map(lambda r: int(r[dig]) if r is not None else None)
-                bin_cols.append(str(col) + '_%d' % (dig, ))
+                X[str(col) + '_%d' % (dig,)] = X[col].map(lambda r: int(r[dig]) if r is not None else None)
+                bin_cols.append(str(col) + '_%d' % (dig,))
 
         if self._encoded_columns is None:
             X = X.reindex(columns=bin_cols + pass_thru)
@@ -299,12 +300,12 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             for col0 in col_list:
                 if any(X[col0].isnull()):
                     raise ValueError("inverse_transform is not supported because transform impute"
-                                     "the unknown category -1 when encode %s"%(col,))
+                                     "the unknown category -1 when encode %s" % (col,))
             if base == 1:
                 value_array = np.array([int(col0.split('_')[1]) for col0 in col_list])
             else:
                 len0 = len(col_list)
-                value_array = np.array([base**(len0 - 1 - i) for i in xrange(len0)])
+                value_array = np.array([base ** (len0 - 1 - i) for i in xrange(len0)])
 
             X[col] = np.dot(X[col_list].values, value_array.T)
             out_cols = [col0 for col0 in out_cols if col0 not in col_list]

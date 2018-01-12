@@ -182,7 +182,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def inverse_transform(self, X_in):
+    def inverse_transform(self, Xt):
         """
         Perform the inverse transformation to encoded data.
 
@@ -195,7 +195,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         p: array, the same size of X_in
 
         """
-        X = X_in.copy(deep=True)
+        X = Xt.copy(deep=True)
 
         # first check the type
         X = convert_input(X)
