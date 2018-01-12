@@ -77,7 +77,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
-    http://www.ats.ucla.edu/stat/r/library/contrast_coding.
+    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
