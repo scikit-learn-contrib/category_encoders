@@ -267,7 +267,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         else:
             mapping_out = []
             for col in cols:
-                categories = pd.unique(X[col].values)
+                categories = [x for x in pd.unique(X[col].values) if x is not None]
 
                 X[str(col) + '_tmp'] = np.nan
                 for idx, val in enumerate(categories):
