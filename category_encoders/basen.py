@@ -2,6 +2,7 @@
 
 import numpy as np
 import math
+import warnings
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.utils import get_obj_cols, convert_input
@@ -193,6 +194,8 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         p: array, the same size of X_in
 
         """
+
+        warnings.warn('Inverse transform in basen is a currently experimental feature, please be careful')
         X = Xt.copy(deep=True)
 
         # first check the type
