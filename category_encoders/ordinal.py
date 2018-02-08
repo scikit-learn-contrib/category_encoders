@@ -247,9 +247,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if mapping is not None:
             mapping_out = mapping
             for switch in mapping:
-                X[str(switch.get('col')) + '_tmp'] = np.nan
-                for category in switch.get('mapping'):
-                    X.loc[X[switch.get('col')] == category[0], str(switch.get('col')) + '_tmp'] = str(category[1])
+                categories_dict = dict(switch.get('mapping'))
+                X[str(switch.get('col')) + '_tmp'] = X[switch.get('col')].map(lambda x: categories_dict.get(x))
                 del X[switch.get('col')]
                 X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
 
@@ -268,10 +267,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping_out = []
             for col in cols:
                 categories = [x for x in pd.unique(X[col].values) if x is not None]
-
-                X[str(col) + '_tmp'] = np.nan
-                for idx, val in enumerate(categories):
-                    X.loc[X[col] == val, str(col) + '_tmp'] = str(idx)
+                categories_dict = {x:i for i,x in enumerate(categories)}
+                X[str(col) + '_tmp'] = X[col].map(lambda x: categories_dict.get(x))
                 del X[col]
                 X.rename(columns={str(col) + '_tmp': col}, inplace=True)
 
