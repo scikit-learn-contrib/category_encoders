@@ -312,4 +312,4 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             if len(col) == digits:
                 return col
             else:
-                return [0 for _ in range(digits - len(col))] + col
+                return [str(0) for _ in range(digits - len(col))] + col
