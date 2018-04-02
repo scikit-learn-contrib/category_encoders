@@ -17,6 +17,9 @@ techniques.  Currently implemented are:
  * Polynomial Contrast
  * Backward Difference Contrast
  * Hashing
+ * BaseN
+ * LeaveOneOut
+ * Target Encoding
 
 The ordinal, one-hot, and hashing encoders have similar equivalents in the existing scikit-learn version, but the
 transformers in this library all share a few useful properties:
@@ -57,6 +60,9 @@ To use:
     encoder = ce.OrdinalEncoder(cols=[...])
     encoder = ce.SumEncoder(cols=[...])
     encoder = ce.PolynomialEncoder(cols=[...])
+    encoder = ce.BaseNEncoder(cols=[...])
+    encoder = ce.TargetEncoder(cols=[...])
+    encoder = ce.LeaveOneOutEncoder(cols=[...])
 
     encoder.fit(X, y)
     X_cleaned = encoder.transform(X_dirty)
@@ -79,6 +85,7 @@ Contents:
    sum
    basen
    leaveoneout
+   targetencoder
 
 
 Indices and tables
