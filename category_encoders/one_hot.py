@@ -1,6 +1,7 @@
 """One-hot or dummy coding"""
 import numpy as np
 import pandas as pd
+import copy
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.utils import get_obj_cols, convert_input
@@ -28,6 +29,9 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
         impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
         unexpected changes in dimension in some cases.
+    use_cat_names: bool
+        if True, category values will be included in the encoded column names. otherwise category
+        indices will be used.
 
     Example
     -------
@@ -81,7 +85,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute', use_cat_names=False):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -91,6 +95,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self._dim = None
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.use_cat_names = use_cat_names
 
     @property
     def category_mapping(self):
@@ -221,10 +226,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "
                                      "the unknown category -1 when encode %s"%(col,))
-
-        for switch in self.ordinal_encoder.mapping:
-            col_dict = {col_pair[1] : col_pair[0] for col_pair in switch.get('mapping')}
-            X[switch.get('col')] = X[switch.get('col')].apply(lambda x:col_dict.get(x))
+        if not self.use_cat_names:
+            for switch in self.ordinal_encoder.mapping:
+                col_dict = {col_pair[1] : col_pair[0] for col_pair in switch.get('mapping')}
+                X[switch.get('col')] = X[switch.get('col')].apply(lambda x:col_dict.get(x))
 
         return X if self.return_df else X.values
 
@@ -252,12 +257,17 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         bin_cols = []
         for col in cols:
-            col_tuples = [class_map['mapping'] for class_map in self.ordinal_encoder.mapping if class_map['col'] == col][0]
-            fit_classes = [col_val[1] for col_val in col_tuples]
+            col_tuples = copy.deepcopy([class_map['mapping'] for class_map in self.ordinal_encoder.mapping if class_map['col'] == col][0])
             if self.handle_unknown == 'impute':
-                fit_classes.append(-1)
-            for class_ in fit_classes:
-                n_col_name = str(col) + '_%s' % (class_, )
+                col_tuples.append(('-1', -1))
+            for col_tuple in col_tuples:
+                class_ = col_tuple[1]
+                cat_name = col_tuple[0]
+                if self.use_cat_names:
+                    n_col_name = str(col) + '_%s' % (cat_name, )
+                else:
+                    n_col_name = str(col) + '_%s' % (class_, )
+
                 X[n_col_name] = X[col] == class_
                 bin_cols.append(n_col_name)
 
@@ -288,8 +298,14 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         for col in cols:
             col_list = [col0 for col0 in out_cols if col0.startswith(col)]
-            value_array = np.array([int(col0.split('_')[1]) for col0 in col_list])
-            X[col] = np.dot(X[col_list].values, value_array.T)
+            if self.use_cat_names:
+                X[col] = 0
+                for tran_col in col_list:
+                    val = tran_col.split('_')[1]
+                    X.loc[X[tran_col] == 1, col] = val
+            else:
+                value_array = np.array([int(col0.split('_')[1]) for col0 in col_list])
+                X[col] = np.dot(X[col_list].values, value_array.T)
             out_cols = [col0 for col0 in out_cols if col0 not in col_list]
 
         X = X.reindex(columns=out_cols + cols)
