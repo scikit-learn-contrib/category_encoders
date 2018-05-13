@@ -500,6 +500,16 @@ class TestEncoders(unittest.TestCase):
         with self.assertRaises(ValueError):
             out = enc.transform(X_t_extra)
 
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='ignore', use_cat_names=True)
+        enc.fit(X, None)
+        out = enc.transform(X_t_extra)
+        self.assertIn('D_A', out.columns.values)
+
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='impute', use_cat_names=True)
+        enc.fit(X, None)
+        out = enc.transform(X_t_extra)
+        self.assertIn('D_-1', out.columns.values)
+
         # test inverse_transform
         X = self.create_dataset(n_rows=1000, has_none=False)
         X_t = self.create_dataset(n_rows=100, has_none=False)
