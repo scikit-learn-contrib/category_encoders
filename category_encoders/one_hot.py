@@ -223,7 +223,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         if self.impute_missing and self.handle_unknown == 'impute':
             for col in self.cols:
-                if any(X[col] == -1):
+                if any(X[col] == 0):
                     raise ValueError("inverse_transform is not supported because transform impute "
                                      "the unknown category -1 when encode %s"%(col,))
         if not self.use_cat_names:

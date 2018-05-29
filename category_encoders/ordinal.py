@@ -221,7 +221,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
         if self.impute_missing and self.handle_unknown == 'impute':
             for col in self.cols:
-                if any(X[col] == -1):
+                if any(X[col] == 0):
                     raise ValueError("inverse_transform is not supported because transform impute "
                                      "the unknown category -1 when encode %s" % (col,))
 
@@ -281,6 +281,6 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 except ValueError as e:
                     X[col] = X[col].astype(float).values.reshape(-1, )
 
-                mapping_out.append({'col': col, 'mapping': [(x[1], x[0]) for x in list(enumerate(categories))]}, )
+                mapping_out.append({'col': col, 'mapping': [(x[1], x[0] + 1) for x in list(enumerate(categories))]}, )
 
         return X, mapping_out

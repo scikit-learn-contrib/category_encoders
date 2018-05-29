@@ -148,7 +148,7 @@ class TestEncoders(unittest.TestCase):
         enc.fit(X, None)
         out = enc.transform(X_t_extra)
         self.assertEqual(len(set(out['D'].values)), 4)
-        self.assertIn(-1, set(out['D'].values))
+        self.assertIn(0, set(out['D'].values))
         self.assertFalse(enc.mapping is None)
         self.assertTrue(len(enc.mapping) > 0)
 
@@ -157,7 +157,7 @@ class TestEncoders(unittest.TestCase):
         enc.fit(X, None)
         out = enc.transform(X_t_extra)
         self.assertEqual(len(set(out['D'].values)), 4)
-        self.assertIn(-1, set(out['D'].values))
+        self.assertIn(0, set(out['D'].values))
         self.assertTrue(len(enc.mapping) > 0)
 
         enc = encoders.OrdinalEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
@@ -167,7 +167,7 @@ class TestEncoders(unittest.TestCase):
         self.assertEqual(len(out_cats), 3)
         self.assertFalse(enc.mapping is None)
 
-        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='error')
+        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, handle_unknown='error')
         enc.fit(X, None)
         with self.assertRaises(ValueError):
             out = enc.transform(X_t_extra)
