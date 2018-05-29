@@ -254,7 +254,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
                 if impute_missing:
                     if handle_unknown == 'impute':
-                        X[switch.get('col')].fillna(-1, inplace=True)
+                        X[switch.get('col')].fillna(0, inplace=True)
                     elif handle_unknown == 'error':
                         if X[~X[switch.get('col')].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
                             raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
@@ -267,14 +267,14 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping_out = []
             for col in cols:
                 categories = [x for x in pd.unique(X[col].values) if x is not None]
-                categories_dict = {x:i for i,x in enumerate(categories)}
+                categories_dict = {x: i + 1 for i, x in enumerate(categories)}
                 X[str(col) + '_tmp'] = X[col].map(lambda x: categories_dict.get(x))
                 del X[col]
                 X.rename(columns={str(col) + '_tmp': col}, inplace=True)
 
                 if impute_missing:
                     if handle_unknown == 'impute':
-                        X[col].fillna(-1, inplace=True)
+                        X[col].fillna(0, inplace=True)
 
                 try:
                     X[col] = X[col].astype(int).values.reshape(-1, )

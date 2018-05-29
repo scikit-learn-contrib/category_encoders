@@ -304,10 +304,9 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         The lambda body to transform the column values
         """
 
-        if col is None or float(col) < 0.0:
+        if col is None or np.isnan(col) or float(col) < 0.0:
             return None
         else:
-
             col = list("{0:b}".format(int(col)))
             if len(col) == digits:
                 return col
