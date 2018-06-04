@@ -1,3 +1,18 @@
+v1.2.7
+======
+
+ * Bugfixes related to missing value imputation
+ * Category names optionally added to encoded column names for some encoders
+ * Documentation updates
+ * Stats models pinned to avoid errors
+ * Performance enhancements
+
+v1.2.6
+======
+
+ * Release for zenodo DOI
+ * Inverse transform implemented for some encoders
+
 v1.2.5
 ======
 
