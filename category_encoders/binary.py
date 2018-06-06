@@ -296,7 +296,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         """
         figure out how many digits we need to represent the classes present
         """
-        return int(np.ceil(np.log2(len(X[col].unique()))))
+        return int(np.ceil(np.log2(len(X[col].unique())))) + 1
 
     @staticmethod
     def col_transform(col, digits):

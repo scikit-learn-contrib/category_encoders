@@ -6,7 +6,7 @@ import numpy as np
 __author__ = 'willmcginnis'
 
 
-class TestDist(unittest.TestCase):
+class TestIssues(unittest.TestCase):
     """
     """
 
@@ -27,3 +27,9 @@ class TestDist(unittest.TestCase):
         a = encoder.transform(data)
         self.assertTrue(np.isnan(a.values[0, 1]))
         self.assertEqual(a.values[1, 1], 1)
+
+    def test_bin(self):
+        data = np.array(['a', 'ba', 'ba'])
+        out = ce.BinaryEncoder().fit_transform(data)
+
+        print(out)
