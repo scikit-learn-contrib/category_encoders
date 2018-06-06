@@ -1,3 +1,8 @@
+v1.2.8
+======
+
+ * critical bugfix in hashing encoder
+
 v1.2.7
 ======
 

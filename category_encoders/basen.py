@@ -232,9 +232,9 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     def calc_required_digits(self, X, col):
         # figure out how many digits we need to represent the classes present
         if self.base == 1:
-            digits = len(X[col].unique())
+            digits = len(X[col].unique()) + 1
         else:
-            digits = int(np.ceil(math.log(len(X[col].unique()), self.base)))
+            digits = int(np.ceil(math.log(len(X[col].unique()), self.base))) + 1
 
         return digits
 
