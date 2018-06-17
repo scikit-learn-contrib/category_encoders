@@ -1,6 +1,7 @@
 import unittest
 import random
 import pandas as pd
+from pandas.api.types import CategoricalDtype
 import category_encoders as encoders
 import numpy as np
 
@@ -28,7 +29,7 @@ class TestEncoders(unittest.TestCase):
             is_inv = (x == x_inv).all(1).all(0)
         self.assertTrue(is_inv)
 
-    def create_dataset(self, n_rows=1000, extras=False, has_none=True):
+    def create_dataset(self, n_rows=1000, extras=False, has_none=True, use_categorical=False):
         """
         Creates a dataset with some categorical variables
         :return:
@@ -44,6 +45,10 @@ class TestEncoders(unittest.TestCase):
               ] for _ in range(n_rows)]
 
         df = pd.DataFrame(ds, columns=['A', 'B', 'C1', 'D', 'E', 'F'])
+        if use_categorical:
+            categories = ['A', 'B', 'C']
+            category_type = CategoricalDtype(categories=categories, ordered=False)
+            df['F'] = df['F'].astype(category_type)
         return df
 
     def create_array(self, n_rows=1000, extras=False, has_none=True):
@@ -171,6 +176,15 @@ class TestEncoders(unittest.TestCase):
         enc.fit(X, None)
         with self.assertRaises(ValueError):
             out = enc.transform(X_t_extra)
+
+        # test support for pandas CategoricalDtype
+        X = self.create_dataset(n_rows=1000, use_categorical=True)
+        X_t = self.create_dataset(n_rows=100)
+        enc = encoders.OrdinalEncoder(verbose=1, cols=cols, impute_missing=False)
+        enc.fit(X, None)
+        col_mapping = encoders.utils.get_mapping_for_col(enc.category_mapping, 'F')
+        self.assertListEqual(sorted(col_mapping),
+                             sorted([(cat, code) for code, cat in enumerate(X['F'].cat.categories)]))
 
         # test inverse_transform
         X = self.create_dataset(n_rows=1000, has_none=False)

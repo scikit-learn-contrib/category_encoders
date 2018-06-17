@@ -30,3 +30,9 @@ def convert_input(X):
         X = X.apply(lambda x: pd.to_numeric(x, errors='ignore'))
 
     return X
+
+
+def get_mapping_for_col(category_mapping, col):
+    for column_mapping in category_mapping:
+        if column_mapping['col'] == col:
+            return column_mapping['mapping']
