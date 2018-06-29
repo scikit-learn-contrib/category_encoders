@@ -118,6 +118,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown
         )
+        X = X.drop_duplicates(subset=self.cols) if self.cols else X
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
         for col in self.cols:
@@ -241,19 +242,27 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         else:
             pass_thru = [col for col in X.columns.values if col not in cols]
 
+        output = []
         bin_cols = []
         for col in cols:
             # get how many digits we need to represent the classes present
             digits = self.digits_per_col[col]
 
+            X_unique = pd.DataFrame(index=X[col].unique())
             # map the ordinal column into a list of these digits, of length digits
-            X[col] = X[col].map(lambda x: self.col_transform(x, digits))
+            X_unique_to_cols = X_unique.index.map(lambda x: self.col_transform(x, digits))
 
             for dig in range(digits):
-                X[str(col) + '_%d' % (dig,)] = X[col].map(lambda r: int(r[dig]) if r is not None else None)
+                X_unique[str(col) + '_%d' % (dig, )] = X_unique_to_cols.map(
+                    lambda r: int(r[dig]) if r is not None else None)
                 bin_cols.append(str(col) + '_%d' % (dig,))
 
-        X = X.reindex(columns=bin_cols + pass_thru)
+            output.append(X[[col]].merge(
+                X_unique, how='left', left_on=col, right_index=True).drop(columns=[col]))
+
+        if pass_thru:
+            output.append(X[pass_thru])
+        X = pd.concat(output, axis=1).reindex(columns=bin_cols + pass_thru)
 
         return X
 
