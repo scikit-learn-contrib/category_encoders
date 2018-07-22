@@ -37,7 +37,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1
+        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the unknown category as 0
 
     Example
     -------
