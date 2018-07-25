@@ -258,7 +258,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
                 bin_cols.append(str(col) + '_%d' % (dig,))
 
             output.append(X[[col]].merge(
-                X_unique, how='left', left_on=col, right_index=True).drop(columns=[col]))
+                X_unique, how='left', left_on=col, right_index=True).drop(labels=col, axis=1))
 
         if pass_thru:
             output.append(X[pass_thru])
