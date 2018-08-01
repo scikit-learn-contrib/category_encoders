@@ -10,6 +10,9 @@ from sklearn.preprocessing import StandardScaler, Imputer
 class Columns(BaseEstimator, TransformerMixin):
     """
     A transformer, which selects only some of the columns based on their names.
+    Will be replaced with columnTransformers:
+    	https://jorisvandenbossche.github.io/blog/2018/05/28/scikit-learn-columntransformer/
+    from scikit-learn 20.0 once it will be released.
     Warning: We assume that the input is a DataFrame.
     """
 
