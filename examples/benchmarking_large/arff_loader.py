@@ -3,34 +3,22 @@ import numpy as np
 import pandas as pd
 import requests
 
-# X, y, attribute_names = dataset.get_dataset(target=dataset.default_target_attribute, return_attribute_names=True)
-# iris = pd.DataFrame(X, columns=attribute_names)
-# iris['class'] = y
-#
-#
-# dataset = openml.download_dataset(61)
-# iris = dataset.get_arff()
-# iris = pd.DataFrame(iris['data'], columns=[attribute[0] for attribute in iris['attributes']])
-# print(iris[:10])
-
-
-
 
 """
-Read data from URL. 
+Read data in arff format from URL. 
 
 E.g.: arff.load('breast.cancer.arff')
 
 """
 def load(file_name):
     # Load ARFF from web
-    # response = requests.get('https://raw.githubusercontent.com/renatopp/arff-datasets/master/classification/' + file_name)
-    # html = response.text
-    # arff_f = arff.loads(html)
+    response = requests.get('https://raw.githubusercontent.com/renatopp/arff-datasets/master/classification/' + file_name)
+    html = response.text
+    arff_f = arff.loads(html)
 
     # Load ARFF from file
-    with open('./datasets/arff-datasets-master/classification/' + file_name, 'r') as file:
-        arff_f = arff.load(file)
+    # with open('./datasets/arff-datasets-master/classification/' + file_name, 'r') as file:
+    #     arff_f = arff.load(file)
 
     # ARFF to pandas
     attrs = arff_f['attributes']
@@ -86,13 +74,6 @@ def load(file_name):
     majority_class = y_unique[np.argmax(y_counts)]
     df[target] = (df[target]==majority_class).astype('uint8')
 
-    # Preserve only rows with a class value that appears at least twice
-    # Justification: It is tough to predict that a testing sample belongs into some class that we have never seen before
-    # (one-class classification/outlier detection would be more appropriate)
-    # df = df.loc[df[target].isin(y_unique[y_counts>1]),:]
-    # y_unique = y_unique[y_counts>1]
-    # y_counts = y_counts[y_counts>1]
-
     # Determine the count of folds that is not going to cause issues.
     # We identify the least common class label and then return min(10, minority_class_count).
     # Justification: If we have only 5 positive samples and 5 negative samples, with stratified cross-validation we can use at best 5 folds.
@@ -108,8 +89,8 @@ def load(file_name):
     for col in X:
         try:
             X[col] = X[col].astype('float', copy=False)
-        except ValueError as e:
-            pass #print(col, e)
+        except ValueError:
+            pass
 
     return X, y, y_unique, fold_count
 
