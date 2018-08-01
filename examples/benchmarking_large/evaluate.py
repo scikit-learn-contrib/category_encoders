@@ -50,10 +50,18 @@ def evaluate(X, y, fold_count, encoder, model, class_values):
     # We have to say which measures require predicted labels and which probabilities.
     # Also, we have to pass all the unique class values, otherwise measures may complain during the cross-validation. Only accuracy does not accept labels parameter.
     # Also, we have to say how to average scores in F-measure.
+    # Justification of the choices:
+    #   Matthews correlation coefficient: represents thresholding measures
+    #   AUC: represents ranking measures
+    #   Brier score: represents calibration measures
     log_loss_score = sklearn.metrics.make_scorer(sklearn.metrics.log_loss, needs_proba=True, labels=class_values)
     accuracy_score = sklearn.metrics.make_scorer(sklearn.metrics.accuracy_score)
     f1_macro = sklearn.metrics.make_scorer(sklearn.metrics.f1_score, average='macro', labels=class_values)
-    score_dict = {'accuracy': accuracy_score, 'f1_macro': f1_macro, 'log_loss': log_loss_score}
+    brier = sklearn.metrics.make_scorer(sklearn.metrics.brier_score_loss)
+    auc = sklearn.metrics.make_scorer(sklearn.metrics.roc_auc_score, average='macro')
+    matthews = sklearn.metrics.make_scorer(sklearn.metrics.matthews_corrcoef)
+    kappa = sklearn.metrics.make_scorer(sklearn.metrics.cohen_kappa_score, labels=class_values)
+    score_dict = {'accuracy': accuracy_score, 'f1_macro': f1_macro, 'log_loss': log_loss_score, 'auc':auc, 'brier':brier, 'matthews':matthews, 'kappa':kappa}
 
     # Perform cross-validation.
     # It returns a dict containing training scores, fit-times and score-times in addition to the test score.

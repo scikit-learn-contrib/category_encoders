@@ -26,19 +26,17 @@ models = [SGDClassifier(loss='modified_huber', max_iter=50, tol=1e-3),
           SVC(kernel='linear', probability=True),
           KNeighborsClassifier(),
           GaussianNB(),
-          BernoulliNB(),
           DecisionTreeClassifier(),
           GradientBoostingClassifier(),
           RandomForestClassifier(),
-          MLPClassifier(),
-          ElasticNet()]
+          MLPClassifier()]
 
 # We use Arff datasets on GitHub. But once OpenML loader will be part of scikit-learn:
 #   https://github.com/scikit-learn/scikit-learn/pull/11419
 # the plan is to move on OpenML.
 # We ignore 'breast.w.arff' and 'zoo.arff' because they use integer data type, which is not supported by the used arff library.
-# We also ignore 'splice.arff' due to high runtime.
-datasets = ['anneal.arff', 'anneal.orig.arff', 'arrhythmia.arff', 'audiology.arff', 'autos.arff', 'balance.scale.arff',
+# We also ignore 'splice.arff', 'anneal.arff', 'anneal.orig.arff' due to high runtime.
+datasets = ['wine.arff', 'arrhythmia.arff', 'audiology.arff', 'autos.arff', 'balance.scale.arff',
             'balance.scale.arff', 'breast.cancer.arff', 'bridges.version1.arff', 'bridges.version2.arff', 'car.arff', 'cmc.arff',
             'colic.arff', 'colic.orig.arff', 'column2C.arff', 'column3C.arff', 'credit.a.arff', 'credit.g.arff', 'cylinder.bands.arff',
             'dermatology.arff', 'diabetes.arff', 'ecoli.arff', 'flags.arff', 'glass.arff', 'haberman.arff', 'heart.c.arff', 'heart.h.arff',
@@ -47,7 +45,7 @@ datasets = ['anneal.arff', 'anneal.orig.arff', 'arrhythmia.arff', 'audiology.arf
             'postoperative.patient.data.arff', 'primary.tumor.arff', 'segment.arff', 'shuttle.landing.control.arff', 'sick.arff',
             'solar.flare1.arff', 'solar.flare2.arff', 'sonar.arff', 'soybean.arff', 'spambase.arff', 'spect.test.arff', 'spect.train.arff',
             'spectf.test.arff', 'spectf.train.arff', 'spectrometer.arff', 'sponge.arff', 'tae.arff', 'tic-tac-toe.arff', 'trains.arff',
-            'vehicle.arff', 'vote.arff', 'vowel.arff', 'waveform5000.arff', 'wine.arff']
+            'vehicle.arff', 'vote.arff', 'vowel.arff', 'waveform5000.arff']
 
 # We ignore encoders {BackwardDifferenceEncoder, HelmertEncoder, PolynomialEncoder and SumEncoder} because of:
 #   https://github.com/scikit-learn-contrib/categorical-encoding/issues/91
@@ -75,7 +73,7 @@ for dataset_name in datasets:
 
             # Log into csv to have something in case of a crash
             result = pd.DataFrame([dataset_name, y.name, encoder.__class__.__name__, model.__class__.__name__, X.shape[1]] + aggregates).T
-            if not os.path.isfile('./output/result.csv'): # If the file does not exist, add header
+            if not os.path.isfile('./output/result.csv'):  # If the file does not exist, add header
                 result.to_csv('./output/result.csv', header=['dataset', 'target', 'encoder', 'model', 'features'] + list(scores), index=False)
             else:  # Else it exists, so append without writing the header
                 result.to_csv('./output/result.csv', mode='a', header=False, index=False)
