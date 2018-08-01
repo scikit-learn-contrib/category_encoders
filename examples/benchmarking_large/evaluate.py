@@ -36,7 +36,7 @@ def evaluate(X, y, fold_count, encoder, model, class_values):
                 ('categorical', make_pipeline(Columns(names=categorical), encoder))
             ])),
             ('model', model)
-        ], memory='./transformers/')
+        ])
     else:
         pipeline = Pipeline([
             ("features", FeatureUnion([
@@ -44,7 +44,7 @@ def evaluate(X, y, fold_count, encoder, model, class_values):
                 ('categorical', make_pipeline(Columns(names=categorical), encoder))
             ])),
             ('model', model)
-        ], memory='./transformers/')
+        ])
 
     # Make a dictionary of the scorers.
     # We have to say which measures require predicted labels and which probabilities.
