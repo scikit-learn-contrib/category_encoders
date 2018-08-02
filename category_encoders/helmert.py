@@ -199,7 +199,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
         bin_cols = []
         for col in cols:
-            mod = dmatrix("C(%s, Helmert)" % (col, ), X)
+            mod = dmatrix("C(Q(\"%s\"), Helmert)" % (col, ), X)
             for dig in range(len(mod[0])):
                 X[str(col) + '_%d' % (dig, )] = mod[:, dig]
                 bin_cols.append(str(col) + '_%d' % (dig, ))

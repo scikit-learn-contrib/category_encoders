@@ -201,7 +201,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         bin_cols = []
         for col in cols:
-            mod = dmatrix("C(%s, Sum)" % (col, ), X)
+            mod = dmatrix("C(Q(\"%s\"), Sum)" % (col, ), X)
             for dig in range(len(mod[0])):
                 X[str(col) + '_%d' % (dig, )] = mod[:, dig]
                 bin_cols.append(str(col) + '_%d' % (dig, ))

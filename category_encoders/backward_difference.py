@@ -203,7 +203,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
 
         bin_cols = []
         for col in cols:
-            mod = dmatrix("C(%s, Diff)" % (col, ), X)
+            mod = dmatrix("C(Q(\"%s\"), Diff)" % (col, ), X)
             for dig in range(len(mod[0])):
                 X[str(col) + '_%d' % (dig, )] = mod[:, dig]
                 bin_cols.append(str(col) + '_%d' % (dig, ))
