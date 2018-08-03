@@ -44,7 +44,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
     >>>bunch = load_boston()
     >>>y = bunch.target
     >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>>enc = TargetEncode(cols=['CHAS', 'RAD']).fit(X, y)
+    >>>enc = TargetEncoder(cols=['CHAS', 'RAD']).fit(X, y)
     >>>numeric_dataset = enc.transform(X)
     >>>print(numeric_dataset.info())
 
