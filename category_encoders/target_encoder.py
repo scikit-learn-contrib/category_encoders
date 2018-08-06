@@ -199,7 +199,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
                     if handle_unknown == 'impute':
                         X[switch.get('col')].fillna(self._mean, inplace=True)
                     elif handle_unknown == 'error':
-                        if X[~X['D'].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
+                        if X[~X[switch.get('col')].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
                             raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
 
                 X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
