@@ -182,22 +182,21 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         if cols is None:
             cols = X.columns.values
 
-        types = X.apply(lambda x: pd.api.types.infer_dtype(x.values))
-        for col in types[types == 'unicode'].index:
-            X[col] = X[col].astype(str)
-
         if mapping is not None:
             mapping_out = mapping
             for switch in mapping:
-                X[switch.get('col') + '_tmp'] = np.nan
+                col = switch.get('col')
+                if not isinstance(col, unicode) and not isinstance(col, str):
+                    col = str(col)
+                X[col + '_tmp'] = np.nan
                 for val in switch.get('mapping'):
                     if switch.get('mapping')[val]['count'] == 1:
-                        X.loc[X[switch.get('col')] == val, switch.get('col') + '_tmp'] = self._mean
+                        X.loc[X[switch.get('col')] == val, col + '_tmp'] = self._mean
                     else:
-                        X.loc[X[switch.get('col')] == val, switch.get('col') + '_tmp'] = \
+                        X.loc[X[switch.get('col')] == val, col + '_tmp'] = \
                             switch.get('mapping')[val]['smoothing']
                 del X[switch.get('col')]
-                X.rename(columns={switch.get('col') + '_tmp': switch.get('col')}, inplace=True)
+                X.rename(columns={col + '_tmp': switch.get('col')}, inplace=True)
 
                 if impute_missing:
                     if handle_unknown == 'impute':
@@ -213,10 +212,11 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             prior = self._mean
             mapping_out = []
             for col in cols:
+                if not isinstance(col, unicode) and not isinstance(col, str):
+                    col = str(col)
                 tmp = y.groupby(X[col]).agg(['sum', 'count'])
                 tmp['mean'] = tmp['sum'] / tmp['count']
                 tmp = tmp.to_dict(orient='index')
-
                 X[col + '_tmp'] = np.nan
                 for val in tmp:
                     tmp[val]['mean'] = tmp[val]['sum']/tmp[val]['count']
