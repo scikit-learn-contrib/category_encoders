@@ -86,9 +86,9 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self._mean = None
-        
-        
-    
+
+
+
     def fit(self, X, y, **kwargs):
         """Fit encoder according to X and y.
         Parameters
@@ -137,7 +137,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples] when transform by leave one out
             None, when transform withour target infor(such as transform test set)
-            
+
         Returns
         -------
         p : array, shape = [n_samples, n_numeric + N]
@@ -162,7 +162,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             mapping=self.mapping,
             cols=self.cols,
             impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown, 
+            handle_unknown=self.handle_unknown,
             min_samples_leaf=self.min_samples_leaf,
             smoothing_in=self.smoothing
         )
@@ -175,25 +175,28 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
-    
+
     def target_encode(self, X_in, y, mapping=None, cols=None, impute_missing=True,
-            handle_unknown='impute', min_samples_leaf=1, smoothing_in=1):
+                      handle_unknown='impute', min_samples_leaf=1, smoothing_in=1):
         X = X_in.copy(deep=True)
         if cols is None:
             cols = X.columns.values
-        
+
         if mapping is not None:
             mapping_out = mapping
             for switch in mapping:
-                X[str(switch.get('col')) + '_tmp'] = np.nan
+                col = switch.get('col')
+                if not isinstance(col, unicode) and not isinstance(col, str):
+                    col = str(col)
+                X[col + '_tmp'] = np.nan
                 for val in switch.get('mapping'):
                     if switch.get('mapping')[val]['count'] == 1:
-                        X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = self._mean
+                        X.loc[X[switch.get('col')] == val, col + '_tmp'] = self._mean
                     else:
-                        X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = \
+                        X.loc[X[switch.get('col')] == val, col + '_tmp'] = \
                             switch.get('mapping')[val]['smoothing']
                 del X[switch.get('col')]
-                X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
+                X.rename(columns={col + '_tmp': switch.get('col')}, inplace=True)
 
                 if impute_missing:
                     if handle_unknown == 'impute':
@@ -203,29 +206,30 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
                             raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
 
                 X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
-        
+
         else:
             self._mean = y.mean()
             prior = self._mean
             mapping_out = []
             for col in cols:
+                if not isinstance(col, unicode) and not isinstance(col, str):
+                    col = str(col)
                 tmp = y.groupby(X[col]).agg(['sum', 'count'])
                 tmp['mean'] = tmp['sum'] / tmp['count']
                 tmp = tmp.to_dict(orient='index')
-
-                X[str(col) + '_tmp'] = np.nan
+                X[col + '_tmp'] = np.nan
                 for val in tmp:
                     tmp[val]['mean'] = tmp[val]['sum']/tmp[val]['count']
                     if tmp[val]['count'] == 1:
-                        X.loc[X[col] == val, str(col) + '_tmp'] = self._mean
+                        X.loc[X[col] == val, col + '_tmp'] = self._mean
                     else:
                         smoothing = smoothing_in
                         smoothing = 1 / (1 + np.exp(-(tmp[val]["count"] - min_samples_leaf) / smoothing))
                         cust_smoothing = prior * (1 - smoothing) + tmp[val]['mean'] * smoothing
-                        X.loc[X[col] == val, str(col) + '_tmp'] = cust_smoothing
+                        X.loc[X[col] == val, col + '_tmp'] = cust_smoothing
                         tmp[val]['smoothing'] = cust_smoothing
                 del X[col]
-                X.rename(columns={str(col) + '_tmp': col}, inplace=True)
+                X.rename(columns={col + '_tmp': col}, inplace=True)
                 if impute_missing:
                     if handle_unknown == 'impute':
                         X[col].fillna(self._mean, inplace=True)
