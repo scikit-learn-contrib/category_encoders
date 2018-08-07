@@ -185,14 +185,14 @@ def _fit_and_score(estimator, X, y, scorer, train, test, verbose,
         ret.append(parameters)
 
     ## Patch start
-    ret.extend([estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.fit_peak_mem,
-                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.score_peak_mem,
-                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.original_df_mem,
-                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.encoded_df_mem,
-                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.blank_encoder_mem,
-                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.trained_encoder_mem,
-                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.fit_encoder_time,
-                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.score_encoder_time
+    ret.extend([estimator.named_steps['features'].transformer_list[-1][1].named_steps.encoderwrapper.fit_peak_mem,
+                estimator.named_steps['features'].transformer_list[-1][1].named_steps.encoderwrapper.score_peak_mem,
+                estimator.named_steps['features'].transformer_list[-1][1].named_steps.encoderwrapper.original_df_mem,
+                estimator.named_steps['features'].transformer_list[-1][1].named_steps.encoderwrapper.encoded_df_mem,
+                estimator.named_steps['features'].transformer_list[-1][1].named_steps.encoderwrapper.blank_encoder_mem,
+                estimator.named_steps['features'].transformer_list[-1][1].named_steps.encoderwrapper.trained_encoder_mem,
+                estimator.named_steps['features'].transformer_list[-1][1].named_steps.encoderwrapper.fit_encoder_time,
+                estimator.named_steps['features'].transformer_list[-1][1].named_steps.encoderwrapper.score_encoder_time
                 ])
     ## Patch end
 
