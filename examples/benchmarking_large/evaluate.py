@@ -1,11 +1,14 @@
 import numpy as np
 import sklearn
 import sklearn.metrics.scorer
+from memory_profiler import memory_usage
+from pympler import asizeof
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import StratifiedKFold, cross_validate
 from sklearn.pipeline import Pipeline, FeatureUnion, make_pipeline
 from sklearn.preprocessing import StandardScaler, Imputer
 
+from examples.benchmarking_large import customizedCV
 
 class Columns(BaseEstimator, TransformerMixin):
     """
@@ -25,6 +28,34 @@ class Columns(BaseEstimator, TransformerMixin):
     def transform(self, X):
         return X[self.names]
 
+class EncoderWrapper(BaseEstimator, TransformerMixin):
+    """
+    A wrapper, which measures encoder's memory consumption.
+    """
+
+    def __init__(self, encoder=None):
+        self.encoder = encoder
+        self.original_df_mem = None     # Size of the original DataFrame
+        self.encoded_df_mem = None      # Size of the encoded DataFrame
+        self.unfit_model_mem = None     # Size of the untrained encoder
+        self.fit_model_mem = None       # Size of the trained encoder
+        self.fit_peak_mem = 2.        # Peak memory consumption in MiB during fitting
+        self.score_peak_mem = 2.      # Peak memory consumption in MiB during scoring
+
+    def fit(self, X, y=None, **fit_params):
+        self.original_df_mem = X.memory_usage().sum()
+        self.unfit_model_mem = asizeof.asizeof(self.encoder)
+        self.fit_peak_mem = memory_usage(proc=(self.encoder.fit, (X, y)), max_usage=True)[0]
+        # self.encoder.fit(X, y)    # Memory_usage breaks debug mode
+        self.fit_model_mem = asizeof.asizeof(self.encoder)
+        return self
+
+    def transform(self, X):
+        score_peak_mem, out = memory_usage(proc=(self.encoder.transform, (X,)), retval=True, max_usage=True)
+        self.score_peak_mem = score_peak_mem[0]
+        # out = self.encoder.transform(X)   # Memory_usage breaks debug mode
+        self.encoded_df_mem = out.memory_usage().sum()
+        return out
 
 def evaluate(X, y, fold_count, encoder, model, class_values):
     numeric = list(X.select_dtypes(include=[np.number]).columns.values)
@@ -33,7 +64,7 @@ def evaluate(X, y, fold_count, encoder, model, class_values):
     if len(numeric) == 0:
         pipeline = Pipeline([
             ("features", FeatureUnion([
-                ('categorical', make_pipeline(Columns(names=categorical), encoder))
+                ('categorical', make_pipeline(Columns(names=categorical), EncoderWrapper(encoder)))
             ])),
             ('model', model)
         ])
@@ -41,30 +72,32 @@ def evaluate(X, y, fold_count, encoder, model, class_values):
         pipeline = Pipeline([
             ("features", FeatureUnion([
                 ('numeric', make_pipeline(Columns(names=numeric), Imputer(), StandardScaler())),
-                ('categorical', make_pipeline(Columns(names=categorical), encoder))
+                ('categorical', make_pipeline(Columns(names=categorical), EncoderWrapper(encoder)))
             ])),
             ('model', model)
         ])
 
     # Make a dictionary of the scorers.
-    # We have to say which measures require predicted labels and which probabilities.
-    # Also, we have to pass all the unique class values, otherwise measures may complain during the cross-validation. Only accuracy does not accept labels parameter.
-    # Also, we have to say how to average scores in F-measure.
     # Justification of the choices:
     #   Matthews correlation coefficient: represents thresholding measures
     #   AUC: represents ranking measures
     #   Brier score: represents calibration measures
+    # Beware:
+    #   All measures that accept "labels" parameter are passed a list with all the unique class values, otherwise they may complain during the cross-validation.
+    #   F-measure is sensitive to the definition of the positive class. In our case, positive class is the majority class.
     log_loss_score = sklearn.metrics.make_scorer(sklearn.metrics.log_loss, needs_proba=True, labels=class_values)
     accuracy_score = sklearn.metrics.make_scorer(sklearn.metrics.accuracy_score)
-    f1_macro = sklearn.metrics.make_scorer(sklearn.metrics.f1_score, average='macro', labels=class_values)
+    f1_macro = sklearn.metrics.make_scorer(sklearn.metrics.f1_score, labels=class_values)
     brier = sklearn.metrics.make_scorer(sklearn.metrics.brier_score_loss)
-    auc = sklearn.metrics.make_scorer(sklearn.metrics.roc_auc_score, average='macro')
+    auc = sklearn.metrics.make_scorer(sklearn.metrics.roc_auc_score)
     matthews = sklearn.metrics.make_scorer(sklearn.metrics.matthews_corrcoef)
     kappa = sklearn.metrics.make_scorer(sklearn.metrics.cohen_kappa_score, labels=class_values)
     score_dict = {'accuracy': accuracy_score, 'f1_macro': f1_macro, 'log_loss': log_loss_score, 'auc':auc, 'brier':brier, 'matthews':matthews, 'kappa':kappa}
 
     # Perform cross-validation.
     # It returns a dict containing training scores, fit-times and score-times in addition to the test score.
-    scores = cross_validate(estimator=pipeline, X=X, y=y, scoring=score_dict, cv=StratifiedKFold(n_splits=fold_count, shuffle=True, random_state=2001), return_train_score=True)
+    # Beware: We monkey-patch the CV in order to measure the memory utilization.
+    sklearn.model_selection._validation._fit_and_score = customizedCV._fit_and_score
+    scores = customizedCV.cross_validate(estimator=pipeline, X=X, y=y, scoring=score_dict, cv=StratifiedKFold(n_splits=fold_count, shuffle=True, random_state=2001), return_train_score=True)
 
     return scores

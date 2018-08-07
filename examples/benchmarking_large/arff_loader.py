@@ -7,7 +7,7 @@ import requests
 """
 Read data in arff format from URL. 
 
-E.g.: arff.load('breast.cancer.arff')
+E.g.: arff_loader.load('breast.cancer.arff')
 
 """
 def load(file_name):
@@ -82,7 +82,7 @@ def load(file_name):
     fold_count = min(np.min(y_counts), 10)
 
     # Target/features split. Encoders expect the target to be in pandas.Series and features in pandas.DataFrame.
-    y = df.ix[:, target]
+    y = df.loc[:, target]
     X = df.drop(target, axis=1)
 
     # Data type estimation
