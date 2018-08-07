@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import sklearn
 import sklearn.metrics.scorer
@@ -37,24 +39,28 @@ class EncoderWrapper(BaseEstimator, TransformerMixin):
         self.encoder = encoder
         self.original_df_mem = None     # Size of the original DataFrame
         self.encoded_df_mem = None      # Size of the encoded DataFrame
-        self.unfit_model_mem = None     # Size of the untrained encoder
-        self.fit_model_mem = None       # Size of the trained encoder
-        self.fit_peak_mem = 2.        # Peak memory consumption in MiB during fitting
-        self.score_peak_mem = 2.      # Peak memory consumption in MiB during scoring
+        self.blank_encoder_mem = None   # Size of the blank encoder
+        self.trained_encoder_mem = None # Size of the trained encoder
+        self.fit_peak_mem = None        # Peak memory consumption in MiB during fitting
+        self.score_peak_mem = None      # Peak memory consumption in MiB during scoring
+        self.fit_encoder_time = None
+        self.score_encoder_time = None
 
     def fit(self, X, y=None, **fit_params):
-        self.original_df_mem = X.memory_usage().sum()
-        self.unfit_model_mem = asizeof.asizeof(self.encoder)
+        self.original_df_mem = X.memory_usage(deep=True).sum()
+        self.blank_encoder_mem = asizeof.asizeof(self.encoder)
+        start_time = time.time()
         self.fit_peak_mem = memory_usage(proc=(self.encoder.fit, (X, y)), max_usage=True)[0]
-        # self.encoder.fit(X, y)    # Memory_usage breaks debug mode
-        self.fit_model_mem = asizeof.asizeof(self.encoder)
+        self.fit_encoder_time = time.time() - start_time
+        self.trained_encoder_mem = asizeof.asizeof(self.encoder)
         return self
 
     def transform(self, X):
+        start_time = time.time()
         score_peak_mem, out = memory_usage(proc=(self.encoder.transform, (X,)), retval=True, max_usage=True)
+        self.score_encoder_time = time.time() - start_time
         self.score_peak_mem = score_peak_mem[0]
-        # out = self.encoder.transform(X)   # Memory_usage breaks debug mode
-        self.encoded_df_mem = out.memory_usage().sum()
+        self.encoded_df_mem = out.memory_usage(deep=True).sum()
         return out
 
 def evaluate(X, y, fold_count, encoder, model, class_values):

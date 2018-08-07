@@ -189,8 +189,10 @@ def _fit_and_score(estimator, X, y, scorer, train, test, verbose,
                 estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.score_peak_mem,
                 estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.original_df_mem,
                 estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.encoded_df_mem,
-                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.unfit_model_mem,
-                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.fit_model_mem
+                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.blank_encoder_mem,
+                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.trained_encoder_mem,
+                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.fit_encoder_time,
+                estimator.named_steps['features'].transformer_list[1][1].named_steps.encoderwrapper.score_encoder_time
                 ])
     ## Patch end
 
@@ -368,10 +370,10 @@ def cross_validate(estimator, X, y=None, groups=None, scoring=None, cv=None,
 
     ## Patch1 start
     if return_train_score:
-        train_scores, test_scores, fit_times, score_times, fit_peak_mem, score_peak_mem, original_df_mem, encoded_df_mem, unfit_model_mem, fit_model_mem = zip(*scores)
+        train_scores, test_scores, fit_times, score_times, fit_peak_mem, score_peak_mem, original_df_mem, encoded_df_mem, blank_encoder_mem, trained_encoder_mem, fit_encoder_time, score_encoder_time = zip(*scores)
         train_scores = _aggregate_score_dicts(train_scores)
     else:
-        test_scores, fit_times, score_times, fit_peak_mem, score_peak_mem, original_df_mem, encoded_df_mem, unfit_model_mem, fit_model_mem = zip(*scores)
+        test_scores, fit_times, score_times, fit_peak_mem, score_peak_mem, original_df_mem, encoded_df_mem, blank_encoder_mem, trained_encoder_mem, fit_encoder_time, score_encoder_time = zip(*scores)
     test_scores = _aggregate_score_dicts(test_scores)
     ## Patch1 end
 
@@ -399,8 +401,10 @@ def cross_validate(estimator, X, y=None, groups=None, scoring=None, cv=None,
     ret['score_peak_mem'] = np.array(score_peak_mem)
     ret['original_df_mem'] = np.array(original_df_mem)
     ret['encoded_df_mem'] = np.array(encoded_df_mem)
-    ret['unfit_model_mem'] = np.array(unfit_model_mem)
-    ret['fit_model_mem'] = np.array(fit_model_mem)
+    ret['blank_encoder_mem'] = np.array(blank_encoder_mem)
+    ret['trained_encoder_mem'] = np.array(trained_encoder_mem)
+    ret['fit_encoder_time'] = np.array(fit_encoder_time)
+    ret['score_encoder_time'] = np.array(score_encoder_time)
     ## Patch2 end
 
     return ret
