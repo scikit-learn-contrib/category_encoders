@@ -168,6 +168,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X
 
+        original_cols = set(X.columns)
         X = self.ordinal_encoder.transform(X)
         X = self.basen_encode(X, cols=self.cols)
 
@@ -175,7 +176,11 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        X.fillna(0.0, inplace=True)
+        # impute missing values only in the generated columns
+        current_cols = set(X.columns)
+        fillna_cols = list(current_cols - (original_cols - set(self.cols)))
+        X[fillna_cols] = X[fillna_cols].fillna(value=0.0)
+
         if self.return_df or override_return_df:
             return X
         else:
@@ -299,13 +304,13 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         out_cols = X.columns.values
 
         for col in cols:
-            col_list = [col0 for col0 in out_cols if col0.startswith(col)]
+            col_list = [col0 for col0 in out_cols if str(col0).startswith(col)]
             for col0 in col_list:
                 if any(X[col0].isnull()):
                     raise ValueError("inverse_transform is not supported because transform impute"
                                      "the unknown category -1 when encode %s" % (col,))
             if base == 1:
-                value_array = np.array([int(col0.split('_')[1]) for col0 in col_list])
+                value_array = np.array([int(col0.split('_')[-1]) for col0 in col_list])
             else:
                 len0 = len(col_list)
                 value_array = np.array([base ** (len0 - 1 - i) for i in range(len0)])

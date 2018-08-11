@@ -297,14 +297,15 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         out_cols = X.columns.values
 
         for col in cols:
-            col_list = [col0 for col0 in out_cols if col0.startswith(col)]
+            col_list = [col0 for col0 in out_cols if str(col0).startswith(col)]
+            prefix_length = len(col)+1 # original column name plus underscore
             if self.use_cat_names:
                 X[col] = 0
                 for tran_col in col_list:
-                    val = tran_col.split('_')[1]
+                    val = tran_col[prefix_length:]
                     X.loc[X[tran_col] == 1, col] = val
             else:
-                value_array = np.array([int(col0.split('_')[1]) for col0 in col_list])
+                value_array = np.array([int(col0[prefix_length:]) for col0 in col_list])
                 X[col] = np.dot(X[col_list].values, value_array.T)
             out_cols = [col0 for col0 in out_cols if col0 not in col_list]
 
