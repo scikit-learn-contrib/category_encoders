@@ -44,18 +44,7 @@ class WoeEncoder(BaseEstimator, TransformerMixin):
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
-    Data columns (total 22 columns):
-    CHAS_0     506 non-null int64
-    CHAS_1     506 non-null int64
-    RAD_0      506 non-null int64
-    RAD_1      506 non-null int64
-    RAD_2      506 non-null int64
-    RAD_3      506 non-null int64
-    RAD_4      506 non-null int64
-    RAD_5      506 non-null int64
-    RAD_6      506 non-null int64
-    RAD_7      506 non-null int64
-    RAD_8      506 non-null int64
+    Data columns (total 13 columns):
     CRIM       506 non-null float64
     ZN         506 non-null float64
     INDUS      506 non-null float64
@@ -67,8 +56,10 @@ class WoeEncoder(BaseEstimator, TransformerMixin):
     PTRATIO    506 non-null float64
     B          506 non-null float64
     LSTAT      506 non-null float64
-    dtypes: float64(11), int64(11)
-    memory usage: 87.0 KB
+    CHAS       506 non-null float64
+    RAD        506 non-null float64
+    dtypes: float64(13)
+    memory usage: 51.5 KB
     None
 
     References
