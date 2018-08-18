@@ -7,7 +7,7 @@ import requests
 """
 Read data in arff format from URL. 
 
-E.g.: arff_loader.load('breast.cancer.arff')
+E.g.: arff_loader.load('car.arff')
 
 """
 def load(file_name):
@@ -56,6 +56,10 @@ def load(file_name):
         target = 'band_type'
     elif 'Survival_status' in list(df):
         target = 'Survival_status'
+    elif 'surgical lesion' in list(df):
+        target = 'surgical lesion'
+    elif 'decision' in list(df):
+        target = 'decision'
     else:
         print('Using the last column...', list(df)[-1])
         target = list(df)[-1]
@@ -92,5 +96,5 @@ def load(file_name):
         except ValueError:
             pass
 
-    return X, y, y_unique, fold_count
+    return X, y, fold_count
 
