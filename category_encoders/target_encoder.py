@@ -119,7 +119,9 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             mapping=self.mapping,
             cols=self.cols,
             impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown=self.handle_unknown,
+            smoothing_in=self.smoothing,
+            min_samples_leaf=self.min_samples_leaf
         )
         self.mapping = categories
 
@@ -163,8 +165,6 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             cols=self.cols,
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown, 
-            min_samples_leaf=self.min_samples_leaf,
-            smoothing_in=self.smoothing
         )
 
         if self.drop_invariant:

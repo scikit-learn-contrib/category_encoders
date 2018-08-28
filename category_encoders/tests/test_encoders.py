@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import category_encoders as encoders
 import numpy as np
+import numpy.testing as npt
 
 __author__ = 'willmcginnis'
 
@@ -627,3 +628,42 @@ class TestEncoders(unittest.TestCase):
         enc.fit(X, y)
         self.verify_numeric(enc.transform(X_t))
         self.verify_numeric(enc.transform(X_t, y_t))
+
+    def test_fit_HaveConstructorSetSmoothingAndMinSamplesLeaf_ExpectUsedInFit(self):
+        """
+
+        :return:
+        """
+        k = 2
+        f = 10
+        binary_cat_example = pd.DataFrame(
+            {'Trend': ['UP', 'UP', 'DOWN', 'FLAT', 'DOWN', 'UP', 'DOWN', 'FLAT', 'FLAT', 'FLAT'],
+             'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
+        encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
+
+        encoder.fit(binary_cat_example, binary_cat_example['target'])
+        trend_mapping = encoder.mapping[0]['mapping']
+
+        npt.assert_almost_equal(0.4125, trend_mapping['DOWN']['smoothing'], 4)
+        npt.assert_almost_equal(.5, trend_mapping['FLAT']['smoothing'], 0)
+        npt.assert_almost_equal(0.5874, trend_mapping['UP']['smoothing'], 4)
+
+    def test_fit_transform_HaveConstructorSetSmoothingAndMinSamplesLeaf_ExpectCorrectValueInResult(self):
+        """
+
+        :return:
+        """
+        k = 2
+        f = 10
+        binary_cat_example = pd.DataFrame(
+            {'Trend': ['UP', 'UP', 'DOWN', 'FLAT', 'DOWN', 'UP', 'DOWN', 'FLAT', 'FLAT', 'FLAT'],
+             'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
+        encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
+
+        result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
+        values = result['Trend'].values
+
+        npt.assert_almost_equal(0.5874, values[0], 4)
+        npt.assert_almost_equal(0.5874, values[1], 4)
+        npt.assert_almost_equal(0.4125, values[2], 4)
+        npt.assert_almost_equal(0.5, values[3], 0)
