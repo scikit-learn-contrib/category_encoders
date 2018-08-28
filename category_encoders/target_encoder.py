@@ -215,11 +215,11 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
                 X[str(col) + '_tmp'] = np.nan
                 for val in tmp:
-                    tmp[val]['mean'] = tmp[val]['sum']/tmp[val]['count']
                     if tmp[val]['count'] == 1:
                         X.loc[X[col] == val, str(col) + '_tmp'] = self._mean
                     else:
-                        smoothing = smoothing_in
+                        # Make smoothing a float so that python 2 does not treat as integer division
+                        smoothing = float(smoothing_in)
                         smoothing = 1 / (1 + np.exp(-(tmp[val]["count"] - min_samples_leaf) / smoothing))
                         cust_smoothing = prior * (1 - smoothing) + tmp[val]['mean'] * smoothing
                         X.loc[X[col] == val, str(col) + '_tmp'] = cust_smoothing
