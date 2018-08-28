@@ -146,7 +146,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples] when transform by leave one out
-            None, when transform withour target infor(such as transform test set)
+            None, when transform without target information (such as transform test set)
 
             
 
@@ -167,7 +167,11 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
-        assert (y is None or X.shape[0] == y.shape[0])
+
+        # if we are encoding the training data, we have to check the target
+        if y is not None:
+            y = pd.Series(y, name='target')
+            assert X.shape[0] == y.shape[0]
 
         if not self.cols:
             return X
@@ -199,7 +203,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
     def leave_one_out(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute'):
         """
-        Leave one out encoding uses a single column of float to represent the mean of targe variable.
+        Leave one out encoding uses a single column of floats to represent the means of the target variables.
         """
 
         X = X_in.copy(deep=True)

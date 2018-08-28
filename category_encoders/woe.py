@@ -172,7 +172,11 @@ class WoeEncoder(BaseEstimator, TransformerMixin):
         # Then make sure that it is the right size
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
-        assert (y is None or X.shape[0] == y.shape[0])
+
+        # If we are encoding the training data, we have to check the target
+        if y is not None:
+            y = pd.Series(y, name='target')
+            assert X.shape[0] == y.shape[0]
 
         if not self.cols:
             return X
