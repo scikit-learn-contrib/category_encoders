@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
-from category_encoders.utils import get_obj_cols, convert_input
+from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
 
 __author__ = 'willmcginnis'
 
@@ -19,11 +19,11 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     verbose: int
         integer indicating verbosity of output. 0 for none.
     cols: list
-        a list of columns to encode, if None, all string columns will be encoded
+        a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
-        boolean for whether or not to drop columns with 0 variance
+        boolean for whether or not to drop columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
@@ -33,24 +33,25 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
     Example
     -------
-    >>>from category_encoders import *
-    >>>import pandas as pd
-    >>>from sklearn.datasets import load_boston
-    >>>bunch = load_boston()
-    >>>y = bunch.target
-    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>>enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>>numeric_dataset = enc.transform(X)
-    >>>print(numeric_dataset.info())
-
+    >>> from category_encoders import *
+    >>> import pandas as pd
+    >>> from sklearn.datasets import load_boston
+    >>> bunch = load_boston()
+    >>> y = bunch.target
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> numeric_dataset = enc.transform(X)
+    >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
-    Data columns (total 16 columns):
+    Data columns (total 18 columns):
     CHAS_0     506 non-null int64
+    CHAS_1     506 non-null int64
     RAD_0      506 non-null int64
     RAD_1      506 non-null int64
     RAD_2      506 non-null int64
     RAD_3      506 non-null int64
+    RAD_4      506 non-null int64
     CRIM       506 non-null float64
     ZN         506 non-null float64
     INDUS      506 non-null float64
@@ -62,8 +63,8 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     PTRATIO    506 non-null float64
     B          506 non-null float64
     LSTAT      506 non-null float64
-    dtypes: float64(11), int64(5)
-    memory usage: 63.3 KB
+    dtypes: float64(11), int64(7)
+    memory usage: 71.2 KB
     None
 
     """
@@ -128,7 +129,8 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
+            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
 
@@ -174,7 +176,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def inverse_transform(self, Xt):
+    def inverse_transform(self, X_in):
         """
         Perform the inverse transformation to encoded data.
 
@@ -187,7 +189,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         p: array, the same size of X_in
 
         """
-        X = Xt.copy(deep=True)
+        X = X_in.copy(deep=True)
 
         # first check the type
         X = convert_input(X)
@@ -195,7 +197,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
-        X = self.binery_to_interger(X, self.cols)
+        X = self.binary_to_integer(X, self.cols)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -266,7 +268,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         return X
 
-    def binery_to_interger(self, X, cols):
+    def binary_to_integer(self, X, cols):
         """
         Convert binary code as integers.
 
@@ -284,7 +286,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         out_cols = X.columns.values
 
         for col in cols:
-            col_list = [col0 for col0 in out_cols if col0.startswith(col)]
+            col_list = [col0 for col0 in out_cols if str(col0).startswith(str(col))]
             for col0 in col_list:
                 if any(X[col0].isnull()):
                     raise ValueError("inverse_transform is not supported because transform impute "
