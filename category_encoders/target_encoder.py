@@ -80,7 +80,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.cols = cols
         self.min_samples_leaf = min_samples_leaf
-        self.smoothing = smoothing
+        # Make smoothing a float so that python 2 does not treat as integer division
+        self.smoothing = float(smoothing)
         self._dim = None
         self.mapping = None
         self.impute_missing = impute_missing
@@ -119,7 +120,9 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             mapping=self.mapping,
             cols=self.cols,
             impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown=self.handle_unknown,
+            smoothing_in=self.smoothing,
+            min_samples_leaf=self.min_samples_leaf
         )
         self.mapping = categories
 
@@ -163,8 +166,6 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             cols=self.cols,
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown, 
-            min_samples_leaf=self.min_samples_leaf,
-            smoothing_in=self.smoothing
         )
 
         if self.drop_invariant:
@@ -215,7 +216,6 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
                 X[str(col) + '_tmp'] = np.nan
                 for val in tmp:
-                    tmp[val]['mean'] = tmp[val]['sum']/tmp[val]['count']
                     if tmp[val]['count'] == 1:
                         X.loc[X[col] == val, str(col) + '_tmp'] = self._mean
                     else:
