@@ -3,7 +3,6 @@ import random
 import pandas as pd
 import category_encoders as encoders
 import numpy as np
-from math import isclose
 
 __author__ = 'willmcginnis'
 
@@ -644,9 +643,9 @@ class TestEncoders(unittest.TestCase):
         encoder.fit(binary_cat_example, binary_cat_example['target'])
         trend_mapping = encoder.mapping[0]['mapping']
 
-        assert isclose(0.4125, trend_mapping['DOWN']['smoothing'], abs_tol=1e-4)
-        assert isclose(.5, trend_mapping['FLAT']['smoothing'], abs_tol=1e-4)
-        assert isclose(0.5874, trend_mapping['UP']['smoothing'], abs_tol=1e-4)
+        self.assertAlmostEquals(0.4125, trend_mapping['DOWN']['smoothing'], delta=1e-4)
+        self.assertEqual(0.5, trend_mapping['FLAT']['smoothing'])
+        self.assertAlmostEquals(0.5874, trend_mapping['UP']['smoothing'], delta=1e-4)
 
     def test_fit_transform_HaveConstructorSetSmoothingAndMinSamplesLeaf_ExpectCorrectValueInResult(self):
         """
@@ -663,7 +662,7 @@ class TestEncoders(unittest.TestCase):
         result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
         values = result['Trend'].values
 
-        assert isclose(0.5874, values[0], abs_tol=1e-4)
-        assert isclose(0.5874, values[1], abs_tol=1e-4)
-        assert isclose(0.4125, values[2], abs_tol=1e-4)
-        assert isclose(0.5, values[3], abs_tol=1e-4)
+        self.assertAlmostEquals(0.5874, values[0], delta=1e-4)
+        self.assertAlmostEquals(0.5874, values[1], delta=1e-4)
+        self.assertAlmostEquals(0.4125, values[2], delta=1e-4)
+        self.assertEqual(0.5, values[3])
