@@ -10,7 +10,7 @@ __author__ = 'chappers'
 
 class TargetEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', min_samples_leaf=1, smoothing=1):
+                 handle_unknown='impute', min_samples_leaf=1, smoothing=1.0):
         """Target Encode for categorical features. Based on leave one out approach.
 
     Parameters
@@ -32,7 +32,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         unexpected changes in the dimension in some cases.
     min_samples_leaf: int
         minimum samples to take category average into account.
-    smoothing: int
+    smoothing: float
         smoothing effect to balance categorical average vs prior.
 
     Example
@@ -78,7 +78,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.cols = cols
         self.min_samples_leaf = min_samples_leaf
-        self.smoothing = smoothing
+        self.smoothing = float(smoothing)  # Make smoothing a float so that python 2 does not treat as integer division
         self._dim = None
         self.mapping = None
         self.impute_missing = impute_missing
@@ -117,7 +117,9 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             mapping=self.mapping,
             cols=self.cols,
             impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown=self.handle_unknown,
+            smoothing_in=self.smoothing,
+            min_samples_leaf=self.min_samples_leaf
         )
         self.mapping = categories
 
@@ -188,7 +190,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         """
         return self.fit(X, y, **fit_params).transform(X, y)
 
-    def target_encode(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute', min_samples_leaf=1, smoothing_in=1):
+    def target_encode(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute', min_samples_leaf=1, smoothing_in=1.0):
         X = X_in.copy(deep=True)
         if cols is None:
             cols = X.columns.values
@@ -227,7 +229,6 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
                 X[str(col) + '_tmp'] = np.nan
                 for val in tmp:
-                    tmp[val]['mean'] = tmp[val]['sum']/tmp[val]['count']
                     if tmp[val]['count'] == 1:
                         X.loc[X[col] == val, str(col) + '_tmp'] = self._mean
                     else:
