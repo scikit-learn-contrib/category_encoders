@@ -168,8 +168,6 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             cols=self.cols,
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown, 
-            min_samples_leaf=self.min_samples_leaf,
-            smoothing_in=self.smoothing
         )
 
         if self.drop_invariant:
