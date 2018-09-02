@@ -105,7 +105,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         # first check the type
         X = convert_input(X)
         y = pd.Series(y, name='target')
-        assert X.shape[0] == y.shape[0]
+        if X.shape[0] != y.shape[0]:
+            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         self._dim = X.shape[1]
 
@@ -158,7 +159,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         # if we are encoding the training data, we have to check the target
         if y is not None:
             y = pd.Series(y, name='target')
-            assert X.shape[0] == y.shape[0]
+            if X.shape[0] != y.shape[0]:
+                raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         if not self.cols:
             return X
@@ -168,6 +170,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             cols=self.cols,
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown, 
+            min_samples_leaf=self.min_samples_leaf,
+            smoothing_in=self.smoothing
         )
 
         if self.drop_invariant:

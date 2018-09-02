@@ -7,7 +7,7 @@ from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
 
-class WoeEncoder(BaseEstimator, TransformerMixin):
+class WOEEncoder(BaseEstimator, TransformerMixin):
     """Weight of Evidence coding for categorical features.
 
     Parameters
@@ -40,7 +40,7 @@ class WoeEncoder(BaseEstimator, TransformerMixin):
     >>> bunch = load_boston()
     >>> y = bunch.target > 22.5
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = WoeEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> enc = WOEEncoder(cols=['CHAS', 'RAD']).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
@@ -116,13 +116,19 @@ class WoeEncoder(BaseEstimator, TransformerMixin):
         y = pd.Series(y, name='target')
 
         # The lengths must be equal
-        assert X.shape[0] == y.shape[0]
+        if X.shape[0] != y.shape[0]:
+            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         # The label must be binary with values {0,1}
         unique = y.unique()
-        assert len(unique) == 2, "The target column must be binary. But the target contains " + str(len(unique)) + " unique values."
-        assert np.max(unique) == 1, "The target column must be binary with values {0, 1}. Value 1 was not found in the target."
-        assert np.min(unique) == 0, "The target column must be binary with values {0, 1}. Value 0 was not found in the target."
+        if len(unique) != 2:
+            raise ValueError("The target column y must be binary. But the target contains " + str(len(unique)) + " unique value(s).")
+        if y.isnull().any():
+            raise ValueError("The target column y must not contain missing values.")
+        if np.max(unique) < 1:
+            raise ValueError("The target column y must be binary with values {0, 1}. Value 1 was not found in the target.")
+        if np.min(unique) > 0:
+            raise ValueError("The target column y must be binary with values {0, 1}. Value 0 was not found in the target.")
 
         self._dim = X.shape[1]
 
@@ -176,7 +182,8 @@ class WoeEncoder(BaseEstimator, TransformerMixin):
         # If we are encoding the training data, we have to check the target
         if y is not None:
             y = pd.Series(y, name='target')
-            assert X.shape[0] == y.shape[0]
+            if X.shape[0] != y.shape[0]:
+                raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         if not self.cols:
             return X

@@ -49,7 +49,7 @@ datasets = ['audiology.arff', 'autos.arff', 'breast.cancer.arff', 'bridges.versi
 #   https://github.com/scikit-learn-contrib/categorical-encoding/issues/91
 encoders = [category_encoders.BaseNEncoder(), category_encoders.OneHotEncoder(), category_encoders.BinaryEncoder(),
             category_encoders.HashingEncoder(), category_encoders.OrdinalEncoder(), category_encoders.TargetEncoder(),
-            category_encoders.LeaveOneOutEncoder(), category_encoders.WoeEncoder()]
+            category_encoders.LeaveOneOutEncoder(), category_encoders.WOEEncoder()]
 
 # Initialization
 if os.path.isfile('./output/result.csv'):

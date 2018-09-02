@@ -17,7 +17,7 @@ from category_encoders.polynomial import PolynomialEncoder
 from category_encoders.basen import BaseNEncoder
 from category_encoders.leave_one_out import LeaveOneOutEncoder
 from category_encoders.target_encoder import TargetEncoder
-from category_encoders.woe import WoeEncoder
+from category_encoders.woe import WOEEncoder
 
 __author__ = 'willmcginnis'
 
@@ -33,5 +33,5 @@ __all__ = [
     'BaseNEncoder',
     'LeaveOneOutEncoder',
     'TargetEncoder',
-    'WoeEncoder'
+    'WOEEncoder'
 ]
