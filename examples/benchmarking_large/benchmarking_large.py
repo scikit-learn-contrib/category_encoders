@@ -67,16 +67,17 @@ for dataset_name in datasets:
         folds, fit_encoder_time, score_encoder_time = train_encoder(X, y, fold_count, encoder)
         for model in models:
             print('Evaluating:', dataset_name, encoder.__class__.__name__, model.__class__.__name__)
-            scores = train_model(folds, model)
+            scores, fit_model_time, score_model_time = train_model(folds, model)
 
             # Log into csv
             result = pd.DataFrame([dataset_name, y.name, encoder.__class__.__name__, model.__class__.__name__, X.shape[1],
-                                   folds[0][0].shape[1], fit_encoder_time, score_encoder_time] + list(scores)).T
+                                   folds[0][0].shape[1], fit_encoder_time, score_encoder_time, fit_model_time, score_model_time]
+                                  + list(scores)).T
             if not os.path.isfile('./output/result.csv'):
                 result.to_csv('./output/result.csv',
                               header=['dataset', 'target', 'encoder', 'model', 'input_features', 'output_features', 'fit_encoder_time',
-                                      'score_encoder_time', 'test_matthews', 'train_matthews', 'test_auc', 'train_auc', 'test_brier',
-                                      'train_brier'], index=False)
+                                      'score_encoder_time', 'fit_model_time', 'score_model_time', 'test_matthews', 'train_matthews',
+                                      'test_auc', 'train_auc', 'test_brier', 'train_brier'], index=False)
             else:
                 result.to_csv('./output/result.csv', mode='a', header=False, index=False)
 
