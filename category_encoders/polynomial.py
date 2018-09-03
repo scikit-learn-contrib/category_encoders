@@ -5,13 +5,13 @@ import pandas as pd
 from category_encoders.ordinal import OrdinalEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
-from category_encoders.utils import get_obj_cols, convert_input
+from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
 
 __author__ = 'willmcginnis'
 
 
 class PolynomialEncoder(BaseEstimator, TransformerMixin):
-    """Polynomial contrast coding for the encoding of categorical features
+    """Polynomial contrast coding for the encoding of categorical features.
 
     Parameters
     ----------
@@ -19,30 +19,29 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
     verbose: int
         integer indicating verbosity of output. 0 for none.
     cols: list
-        a list of columns to encode, if None, all string columns will be encoded
+        a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
-        boolean for whether or not to drop columns with 0 variance
+        boolean for whether or not to drop columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
-        unexpected changes in dimension in some cases.
+        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        unexpected changes in the dimension in some cases.
 
     Example
     -------
-    >>>from category_encoders import *
-    >>>import pandas as pd
-    >>>from sklearn.datasets import load_boston
-    >>>bunch = load_boston()
-    >>>y = bunch.target
-    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>>enc = PolynomialEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>>numeric_dataset = enc.transform(X)
-    >>>print(numeric_dataset.info())
-
+    >>> from category_encoders import *
+    >>> import pandas as pd
+    >>> from sklearn.datasets import load_boston
+    >>> bunch = load_boston()
+    >>> y = bunch.target
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> enc = PolynomialEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> numeric_dataset = enc.transform(X)
+    >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
     Data columns (total 22 columns):
@@ -136,7 +135,8 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
+            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
 

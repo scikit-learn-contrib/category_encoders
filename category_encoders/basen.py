@@ -5,7 +5,7 @@ import math
 import warnings
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
-from category_encoders.utils import get_obj_cols, convert_input
+from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
 
 __author__ = 'willmcginnis'
 
@@ -21,11 +21,13 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     verbose: int
         integer indicating verbosity of output. 0 for none.
     cols: list
-        a list of columns to encode, if None, all string columns will be encoded
+        a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
-        boolean for whether or not to drop columns with 0 variance
+        boolean for whether or not to drop columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+    base: int
+        when the downstream model copes well with nonlinearities (like decision tree), use higher base.
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
@@ -35,24 +37,25 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
     Example
     -------
-    >>>from category_encoders import *
-    >>>import pandas as pd
-    >>>from sklearn.datasets import load_boston
-    >>>bunch = load_boston()
-    >>>y = bunch.target
-    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>>enc = BaseNEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>>numeric_dataset = enc.transform(X)
-    >>>print(numeric_dataset.info())
-
+    >>> from category_encoders import *
+    >>> import pandas as pd
+    >>> from sklearn.datasets import load_boston
+    >>> bunch = load_boston()
+    >>> y = bunch.target
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> enc = BaseNEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> numeric_dataset = enc.transform(X)
+    >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
-    Data columns (total 16 columns):
+    Data columns (total 18 columns):
     CHAS_0     506 non-null int64
+    CHAS_1     506 non-null int64
     RAD_0      506 non-null int64
     RAD_1      506 non-null int64
     RAD_2      506 non-null int64
     RAD_3      506 non-null int64
+    RAD_4      506 non-null int64
     CRIM       506 non-null float64
     ZN         506 non-null float64
     INDUS      506 non-null float64
@@ -64,8 +67,8 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     PTRATIO    506 non-null float64
     B          506 non-null float64
     LSTAT      506 non-null float64
-    dtypes: float64(11), int64(5)
-    memory usage: 63.3 KB
+    dtypes: float64(11), int64(7)
+    memory usage: 71.2 KB
     None
 
     """
@@ -135,7 +138,8 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
+            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
 
@@ -168,25 +172,23 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X
 
-        original_cols = set(X.columns)
-        X = self.ordinal_encoder.transform(X)
-        X = self.basen_encode(X, cols=self.cols)
+        X_out = self.ordinal_encoder.transform(X)
+        X_out = self.basen_encode(X_out, cols=self.cols)
 
         if self.drop_invariant:
             for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
+                X_out.drop(col, 1, inplace=True)
 
         # impute missing values only in the generated columns
-        current_cols = set(X.columns)
-        fillna_cols = list(current_cols - (original_cols - set(self.cols)))
-        X[fillna_cols] = X[fillna_cols].fillna(value=0.0)
+        generated_cols = get_generated_cols(X, X_out, self.cols)
+        X_out[generated_cols] = X_out[generated_cols].fillna(value=0.0)
 
         if self.return_df or override_return_df:
-            return X
+            return X_out
         else:
-            return X.values
+            return X_out.values
 
-    def inverse_transform(self, Xt):
+    def inverse_transform(self, X_in):
         """
         Perform the inverse transformation to encoded data.
 
@@ -201,7 +203,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         """
 
         warnings.warn('Inverse transform in basen is a currently experimental feature, please be careful')
-        X = Xt.copy(deep=True)
+        X = X_in.copy(deep=True)
 
         # first check the type
         X = convert_input(X)
@@ -209,7 +211,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
-        X = self.basen_to_interger(X, self.cols, self.base)
+        X = self.basen_to_integer(X, self.cols, self.base)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -284,7 +286,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         return X
 
-    def basen_to_interger(self, X, cols, base):
+    def basen_to_integer(self, X, cols, base):
         """
         Convert basen code as integers.
 
@@ -304,7 +306,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         out_cols = X.columns.values
 
         for col in cols:
-            col_list = [col0 for col0 in out_cols if str(col0).startswith(col)]
+            col_list = [col0 for col0 in out_cols if str(col0).startswith(str(col))]
             for col0 in col_list:
                 if any(X[col0].isnull()):
                     raise ValueError("inverse_transform is not supported because transform impute"

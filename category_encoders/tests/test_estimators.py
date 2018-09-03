@@ -21,3 +21,5 @@ class TestEncoders(unittest.TestCase):
         check_transformer_general('one_hot', OneHotEncoder())
         check_transformer_general('basen', BaseNEncoder())
         check_transformer_general('leave_one_out', LeaveOneOutEncoder())
+        check_transformer_general('target_encoder', TargetEncoder())
+        check_transformer_general('weight_of_evidence', WOEEncoder())

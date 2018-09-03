@@ -4,7 +4,7 @@ import pandas as pd
 import copy
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
-from category_encoders.utils import get_obj_cols, convert_input
+from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
 
 __author__ = 'willmcginnis'
 
@@ -18,39 +18,38 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     verbose: int
         integer indicating verbosity of output. 0 for none.
     cols: list
-        a list of columns to encode, if None, all string columns will be encoded
+        a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
-        boolean for whether or not to drop columns with 0 variance
+        boolean for whether or not to drop columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
-        unexpected changes in dimension in some cases.
+        impute is used, an extra column will be added in if the transform matrix has unknown categories. This can cause
+        unexpected changes in the dimension in some cases.
     use_cat_names: bool
-        if True, category values will be included in the encoded column names. otherwise category
+        if True, category values will be included in the encoded column names. Otherwise category
         indices will be used.
 
     Example
     -------
-    >>>from category_encoders import *
-    >>>import pandas as pd
-    >>>from sklearn.datasets import load_boston
-    >>>bunch = load_boston()
-    >>>y = bunch.target
-    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>>enc = OneHotEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>>numeric_dataset = enc.transform(X)
-    >>>print(numeric_dataset.info())
-
+    >>> from category_encoders import *
+    >>> import pandas as pd
+    >>> from sklearn.datasets import load_boston
+    >>> bunch = load_boston()
+    >>> y = bunch.target
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> enc = OneHotEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> numeric_dataset = enc.transform(X)
+    >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
-    Data columns (total 22 columns):
-    CHAS_0     506 non-null int64
+    Data columns (total 24 columns):
     CHAS_1     506 non-null int64
-    RAD_0      506 non-null int64
+    CHAS_2     506 non-null int64
+    CHAS_-1    506 non-null int64
     RAD_1      506 non-null int64
     RAD_2      506 non-null int64
     RAD_3      506 non-null int64
@@ -59,6 +58,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     RAD_6      506 non-null int64
     RAD_7      506 non-null int64
     RAD_8      506 non-null int64
+    RAD_9      506 non-null int64
+    RAD_-1     506 non-null int64
     CRIM       506 non-null float64
     ZN         506 non-null float64
     INDUS      506 non-null float64
@@ -70,8 +71,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     PTRATIO    506 non-null float64
     B          506 non-null float64
     LSTAT      506 non-null float64
-    dtypes: float64(11), int64(11)
-    memory usage: 87.0 KB
+    dtypes: float64(11), int64(13)
+    memory usage: 95.0 KB
     None
 
     References
@@ -141,7 +142,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
+            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
 
@@ -187,7 +189,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def inverse_transform(self, Xt):
+    def inverse_transform(self, X_in):
         """
         Perform the inverse transformation to encoded data.
 
@@ -200,7 +202,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         p: array, the same size of X_in
 
         """
-        X = Xt.copy(deep=True)
+        X = X_in.copy(deep=True)
 
         # first check the type
         X = convert_input(X)
@@ -297,8 +299,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         out_cols = X.columns.values
 
         for col in cols:
-            col_list = [col0 for col0 in out_cols if str(col0).startswith(col)]
-            prefix_length = len(col)+1 # original column name plus underscore
+            col_list = [col0 for col0 in out_cols if str(col0).startswith(str(col))]
+            prefix_length = len(str(col))+1 # original column name plus underscore
             if self.use_cat_names:
                 X[col] = 0
                 for tran_col in col_list:

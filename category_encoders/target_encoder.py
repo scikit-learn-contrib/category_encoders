@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-from category_encoders.utils import get_obj_cols, convert_input
+from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
 from sklearn.utils.random import check_random_state
 
 __author__ = 'chappers'
@@ -10,7 +10,7 @@ __author__ = 'chappers'
 
 class TargetEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', min_samples_leaf=1, smoothing=1):
+                 handle_unknown='impute', min_samples_leaf=1, smoothing=1.0):
         """Target Encode for categorical features. Based on leave one out approach.
 
     Parameters
@@ -19,35 +19,33 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
     verbose: int
         integer indicating verbosity of output. 0 for none.
     cols: list
-        a list of columns to encode, if None, all string columns will be encoded
+        a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
-        boolean for whether or not to drop columns with 0 variance
+        boolean for whether or not to drop columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
-        unexpected changes in dimension in some cases.
-
-    min_samples_leaf : int
-        minimum samples to take category average into account
-    smoothing : int
-        smoothing effect to balance categorical average vs prior
+        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        unexpected changes in the dimension in some cases.
+    min_samples_leaf: int
+        minimum samples to take category average into account.
+    smoothing: float
+        smoothing effect to balance categorical average vs prior.
 
     Example
     -------
-    >>>from category_encoders import *
-    >>>import pandas as pd
-    >>>from sklearn.datasets import load_boston
-    >>>bunch = load_boston()
-    >>>y = bunch.target
-    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>>enc = TargetEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>>numeric_dataset = enc.transform(X)
-    >>>print(numeric_dataset.info())
-
+    >>> from category_encoders import *
+    >>> import pandas as pd
+    >>> from sklearn.datasets import load_boston
+    >>> bunch = load_boston()
+    >>> y = bunch.target
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> enc = TargetEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> numeric_dataset = enc.transform(X)
+    >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
     Data columns (total 13 columns):
@@ -80,8 +78,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.cols = cols
         self.min_samples_leaf = min_samples_leaf
-        # Make smoothing a float so that python 2 does not treat as integer division
-        self.smoothing = float(smoothing)
+        self.smoothing = float(smoothing)  # Make smoothing a float so that python 2 does not treat as integer division
         self._dim = None
         self.mapping = None
         self.impute_missing = impute_missing
@@ -108,7 +105,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         # first check the type
         X = convert_input(X)
         y = pd.Series(y, name='target')
-        assert X.shape[0] == y.shape[0]
+        if X.shape[0] != y.shape[0]:
+            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         self._dim = X.shape[1]
 
@@ -129,7 +127,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
+            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
 
@@ -139,7 +138,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         ----------
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples] when transform by leave one out
-            None, when transform withour target infor(such as transform test set)
+            None, when transform without target info (such as transform test set)
             
         Returns
         -------
@@ -156,7 +155,12 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
-        assert (y is None or X.shape[0] == y.shape[0])
+
+        # if we are encoding the training data, we have to check the target
+        if y is not None:
+            y = pd.Series(y, name='target')
+            if X.shape[0] != y.shape[0]:
+                raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         if not self.cols:
             return X
@@ -166,6 +170,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             cols=self.cols,
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown, 
+            min_samples_leaf=self.min_samples_leaf,
+            smoothing_in=self.smoothing
         )
 
         if self.drop_invariant:
@@ -176,9 +182,17 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
-    
-    def target_encode(self, X_in, y, mapping=None, cols=None, impute_missing=True,
-            handle_unknown='impute', min_samples_leaf=1, smoothing_in=1):
+
+    def fit_transform(self, X, y=None, **fit_params):
+        """
+        Encoders that utilize the target must make sure that the training data are transformed with:
+             transform(X, y)
+        and not with:
+            transform(X)
+        """
+        return self.fit(X, y, **fit_params).transform(X, y)
+
+    def target_encode(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute', min_samples_leaf=1, smoothing_in=1.0):
         X = X_in.copy(deep=True)
         if cols is None:
             cols = X.columns.values
@@ -200,8 +214,9 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
                     if handle_unknown == 'impute':
                         X[switch.get('col')].fillna(self._mean, inplace=True)
                     elif handle_unknown == 'error':
-                        if X[~X[switch.get('col')].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
-                            raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
+                        missing = X[switch.get('col')].isnull()
+                        if any(missing):
+                            raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
 
                 X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
         

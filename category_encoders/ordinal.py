@@ -1,17 +1,15 @@
 """Ordinal or label encoding"""
 
 import pandas as pd
-import copy
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-import random
-from category_encoders.utils import get_obj_cols, convert_input
+from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
 
 __author__ = 'willmcginnis'
 
 
 class OrdinalEncoder(BaseEstimator, TransformerMixin):
-    """Encodes categorical features as ordinal, in one ordered feature
+    """Encodes categorical features as ordinal, in one ordered feature.
 
     Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
     in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
@@ -23,11 +21,11 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     verbose: int
         integer indicating verbosity of output. 0 for none.
     cols: list
-        a list of columns to encode, if None, all string columns will be encoded
+        a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
-        boolean for whether or not to drop columns with 0 variance
+        boolean for whether or not to drop columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array)
+        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
    mapping: list of dict
         a mapping of class to label to use for the encoding, optional.
         the dict contains the keys 'col' and 'mapping'.
@@ -37,36 +35,35 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the unknown category as 0
+        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1.
 
     Example
     -------
-    >>>from category_encoders import *
-    >>>import pandas as pd
-    >>>from sklearn.datasets import load_boston
-    >>>bunch = load_boston()
-    >>>y = bunch.target
-    >>>X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>>enc = OrdinalEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>>numeric_dataset = enc.transform(X)
-    >>>print(numeric_dataset.info())
-
+    >>> from category_encoders import *
+    >>> import pandas as pd
+    >>> from sklearn.datasets import load_boston
+    >>> bunch = load_boston()
+    >>> y = bunch.target
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> enc = OrdinalEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> numeric_dataset = enc.transform(X)
+    >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
     Data columns (total 13 columns):
     CRIM       506 non-null float64
     ZN         506 non-null float64
     INDUS      506 non-null float64
-    CHAS       506 non-null int64
     NOX        506 non-null float64
     RM         506 non-null float64
     AGE        506 non-null float64
     DIS        506 non-null float64
-    RAD        506 non-null int64
     TAX        506 non-null float64
     PTRATIO    506 non-null float64
     B          506 non-null float64
     LSTAT      506 non-null float64
+    CHAS       506 non-null int64
+    RAD        506 non-null int64
     dtypes: float64(11), int64(2)
     memory usage: 51.5 KB
     None
@@ -141,7 +138,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            self.drop_cols = [x for x in X_temp.columns.values if X_temp[x].var() <= 10e-5]
+            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
 
@@ -149,7 +147,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         """Perform the transformation to new categorical data.
 
         Will use the mapping (if available) and the column list (if available, otherwise every column) to encode the
-        data ordinally.
+        data ordinarily.
 
         Parameters
         ----------
@@ -191,7 +189,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
         return X if self.return_df else X.values
 
-    def inverse_transform(self, Xt):
+    def inverse_transform(self, X_in):
         """
         Perform the inverse transformation to encoded data.
 
@@ -204,7 +202,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         p: array, the same size of X_in
 
         """
-        X = Xt.copy(deep=True)
+        X = X_in.copy(deep=True)
 
         # first check the type
         X = convert_input(X)
@@ -260,8 +258,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                     if handle_unknown == 'impute':
                         X[switch.get('col')].fillna(0, inplace=True)
                     elif handle_unknown == 'error':
-                        if X[~X[switch.get('col')].isin([str(x[1]) for x in switch.get('mapping')])].shape[0] > 0:
-                            raise ValueError('Unexpected categories found in %s' % (switch.get('col'),))
+                        missing = X[switch.get('col')].isnull()
+                        if any(missing):
+                            raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
 
                 try:
                     X[switch.get('col')] = X[switch.get('col')].astype(int).values.reshape(-1, )
