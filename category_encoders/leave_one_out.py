@@ -112,7 +112,10 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         # first check the type
         X = convert_input(X)
-        y = pd.Series(y, name='target')
+        if isinstance(y, pd.DataFrame):
+            y = y.iloc[:,0]
+        else:
+            y = pd.Series(y, name='target')
         if X.shape[0] != y.shape[0]:
             raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -171,7 +174,10 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         # if we are encoding the training data, we have to check the target
         if y is not None:
-            y = pd.Series(y, name='target')
+            if isinstance(y, pd.DataFrame):
+                y = y.iloc[:, 0]
+            else:
+                y = pd.Series(y, name='target')
             if X.shape[0] != y.shape[0]:
                 raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
