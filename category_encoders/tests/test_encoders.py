@@ -575,7 +575,7 @@ class TestEncoders(unittest.TestCase):
         self.verify_numeric(enc.transform(X_t))
         self.verify_numeric(enc.transform(X_t, y_t))
 
-    def test_fit_callTwiceOnDifferentData_ExpectRefit(self):
+    def test_fit_CallTwiceOnDifferentData_ExpectRefitMapping(self):
         x_a = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col_a'])
         x_b = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col_b'])  # Different column name
         y_dummy = [True, False, True, False, True, False]
@@ -590,6 +590,24 @@ class TestEncoders(unittest.TestCase):
         self.assertEqual('col_b', col_b_mapping['col'])
         self.assertEqual({'sum': 2.0, 'count': 3, 'mean': 2.0/3.0}, col_b_mapping['mapping']['1'])
         self.assertEqual({'sum': 1.0, 'count': 3, 'mean': 01.0/3.0}, col_b_mapping['mapping']['2'])
+
+    def test_transform_CallTwiceOnDifferentData_ExpecCorrectTransformation(self):
+        x_a = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col_a'])
+        x_b = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col_b'])  # Different column name
+        y_dummy = [True, False, True, False, True, False]
+        encoder = encoders.LeaveOneOutEncoder()
+
+        encoder.fit(x_a, y_dummy)
+        encoder.fit(x_b, y_dummy)
+        result = encoder.transform(x_b)['col_b'].values
+
+        self.assertEqual(6, len(result))
+        self.assertEqual(2.0/3.0, result[0])
+        self.assertEqual(2.0 / 3.0, result[1])
+        self.assertEqual(2.0 / 3.0, result[2])
+        self.assertEqual(1.0 / 3.0, result[3])
+        self.assertEqual(1.0 / 3.0, result[4])
+        self.assertEqual(1.0 / 3.0, result[5])
 
     def test_target_encode_np(self):
         """
