@@ -575,6 +575,22 @@ class TestEncoders(unittest.TestCase):
         self.verify_numeric(enc.transform(X_t))
         self.verify_numeric(enc.transform(X_t, y_t))
 
+    def test_fit_callTwiceOnDifferentData_ExpectRefit(self):
+        x_a = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col_a'])
+        x_b = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col_b'])  # Different column name
+        y_dummy = [True, False, True, False, True, False]
+        encoder = encoders.LeaveOneOutEncoder()
+
+        encoder.fit(x_a, y_dummy)
+        encoder.fit(x_b, y_dummy)
+        mapping = encoder.mapping
+
+        self.assertEqual(1, len(mapping))
+        col_b_mapping = mapping[0]
+        self.assertEqual('col_b', col_b_mapping['col'])
+        self.assertEqual({'sum': 2.0, 'count': 3, 'mean': 2.0/3.0}, col_b_mapping['mapping']['1'])
+        self.assertEqual({'sum': 1.0, 'count': 3, 'mean': 01.0/3.0}, col_b_mapping['mapping']['2'])
+
     def test_target_encode_np(self):
         """
 

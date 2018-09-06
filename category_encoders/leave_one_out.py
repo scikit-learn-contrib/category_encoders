@@ -80,7 +80,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
-        self.cols = cols
+        self.static_cols = cols
+        self.cols = None
         self._dim = None
         self.mapping = None
         self.impute_missing = impute_missing
@@ -122,12 +123,13 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self._dim = X.shape[1]
 
         # if columns aren't passed, just use every string column
-        if self.cols is None:
+        if self.static_cols is None:
             self.cols = get_obj_cols(X)
+        else:
+            self.cols = self.static_cols
 
-        _, categories = self.leave_one_out(
+        categories = self.fit_leave_one_out(
             X, y,
-            mapping=self.mapping,
             cols=self.cols,
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown
@@ -183,10 +185,9 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         if not self.cols:
             return X
-        X, _ = self.leave_one_out(
+        X = self.transform_leave_one_out(
             X, y,
             mapping=self.mapping,
-            cols=self.cols,
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown
         )
@@ -209,74 +210,77 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         """
         return self.fit(X, y, **fit_params).transform(X, y)
 
-    def leave_one_out(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute'):
+    def fit_leave_one_out(self, X_in, y, cols=None, impute_missing=True, handle_unknown='impute'):
+        X = X_in.copy(deep=True)
+
+        if cols is None:
+            cols = X.columns.values
+
+        self._mean = y.mean()
+        mapping_out = []
+
+        for col in cols:
+            tmp = y.groupby(X[col]).agg(['sum', 'count'])
+            tmp['mean'] = tmp['sum'] / tmp['count']
+            tmp = tmp.to_dict(orient='index')
+
+            X[str(col) + '_tmp'] = np.nan
+            for val in tmp:
+                """if the val only appear once ,encoder it as mean of y"""
+                if tmp[val]['count'] == 1:
+                    X.loc[X[col] == val, str(col) + '_tmp'] = self._mean
+                else:
+                    X.loc[X[col] == val, str(col) + '_tmp'] = (tmp[val]['sum'] - y.loc[X[col] == val]) / (
+                            tmp[val]['count'] - 1)
+            del X[col]
+            X.rename(columns={str(col) + '_tmp': col}, inplace=True)
+
+            if impute_missing:
+                if handle_unknown == 'impute':
+                    X[col].fillna(self._mean, inplace=True)
+
+            X[col] = X[col].astype(float).values.reshape(-1, )
+
+            mapping_out.append({'col': col, 'mapping': tmp}, )
+
+        return mapping_out
+
+    def transform_leave_one_out(self, X_in, y, mapping=None, impute_missing=True, handle_unknown='impute'):
         """
         Leave one out encoding uses a single column of floats to represent the means of the target variables.
         """
 
         X = X_in.copy(deep=True)
 
-        if cols is None:
-            cols = X.columns.values
+        random_state_ = check_random_state(self.random_state)
+        for switch in mapping:
+            X[str(switch.get('col')) + '_tmp'] = np.nan
+            for val in switch.get('mapping'):
+                if y is None:
+                    X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = \
+                        switch.get('mapping')[val]['mean']
+                elif switch.get('mapping')[val]['count'] == 1:
+                    X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = self._mean
+                else:
+                    X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = (
+                        (switch.get('mapping')[val]['sum'] - y[(X[switch.get('col')] == val).values]) / (
+                            switch.get('mapping')[val]['count'] - 1)
+                    )
+            del X[switch.get('col')]
+            X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
 
-        if mapping is not None:
-            mapping_out = mapping
-            random_state_ = check_random_state(self.random_state)
-            for switch in mapping:
-                X[str(switch.get('col')) + '_tmp'] = np.nan
-                for val in switch.get('mapping'):
-                    if y is None:
-                        X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = \
-                            switch.get('mapping')[val]['mean']
-                    elif switch.get('mapping')[val]['count'] == 1:
-                        X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = self._mean
-                    else:
-                        X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = (
-                            (switch.get('mapping')[val]['sum'] - y[(X[switch.get('col')] == val).values]) / (
-                                switch.get('mapping')[val]['count'] - 1)
-                        )
-                del X[switch.get('col')]
-                X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
+            if impute_missing:
+                if handle_unknown == 'impute':
+                    X[switch.get('col')].fillna(self._mean, inplace=True)
+                elif handle_unknown == 'error':
+                    missing = X[switch.get('col')].isnull()
+                    if any(missing):
+                        raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
 
-                if impute_missing:
-                    if handle_unknown == 'impute':
-                        X[switch.get('col')].fillna(self._mean, inplace=True)
-                    elif handle_unknown == 'error':
-                        missing = X[switch.get('col')].isnull()
-                        if any(missing):
-                            raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
+            if self.randomized and y is not None:
+                X[switch.get('col')] = (X[switch.get('col')] *
+                                        random_state_.normal(1., self.sigma, X[switch.get('col')].shape[0]))
 
-                if self.randomized and y is not None:
-                    X[switch.get('col')] = (X[switch.get('col')] *
-                                            random_state_.normal(1., self.sigma, X[switch.get('col')].shape[0]))
+            X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
 
-                X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
-        else:
-            self._mean = y.mean()
-            mapping_out = []
-
-            for col in cols:
-                tmp = y.groupby(X[col]).agg(['sum', 'count'])
-                tmp['mean'] = tmp['sum'] / tmp['count']
-                tmp = tmp.to_dict(orient='index')
-
-                X[str(col) + '_tmp'] = np.nan
-                for val in tmp:
-                    """if the val only appear once ,encoder it as mean of y"""
-                    if tmp[val]['count'] == 1:
-                        X.loc[X[col] == val, str(col) + '_tmp'] = self._mean
-                    else:
-                        X.loc[X[col] == val, str(col) + '_tmp'] = (tmp[val]['sum'] - y.loc[X[col] == val]) / (
-                            tmp[val]['count'] - 1)
-                del X[col]
-                X.rename(columns={str(col) + '_tmp': col}, inplace=True)
-
-                if impute_missing:
-                    if handle_unknown == 'impute':
-                        X[col].fillna(self._mean, inplace=True)
-
-                X[col] = X[col].astype(float).values.reshape(-1, )
-
-                mapping_out.append({'col': col, 'mapping': tmp}, )
-
-        return X, mapping_out
+        return X
