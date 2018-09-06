@@ -19,6 +19,8 @@ from category_encoders.leave_one_out import LeaveOneOutEncoder
 from category_encoders.target_encoder import TargetEncoder
 from category_encoders.woe import WOEEncoder
 
+__version__ = '1.3.0'
+
 __author__ = 'willmcginnis'
 
 __all__ = [
