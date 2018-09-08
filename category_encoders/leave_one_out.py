@@ -80,7 +80,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
-        self.use_default_cols = cols is None  # important when we call fit() repeatedly
+        self.use_default_cols = cols is None # if True, even a repeated call of fit() will select string columns from X
         self.cols = cols
         self._dim = None
         self.mapping = None

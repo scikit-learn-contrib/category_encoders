@@ -12,13 +12,13 @@ E.g.: arff_loader.load('car.arff')
 """
 def load(file_name):
     # Load ARFF from web
-    response = requests.get('https://raw.githubusercontent.com/renatopp/arff-datasets/master/classification/' + file_name)
-    html = response.text
-    arff_f = arff.loads(html)
+    # response = requests.get('https://raw.githubusercontent.com/renatopp/arff-datasets/master/classification/' + file_name)
+    # html = response.text
+    # arff_f = arff.loads(html)
 
     # Load ARFF from file
-    # with open('./datasets/arff-datasets-master/classification/' + file_name, 'r') as file:
-    #     arff_f = arff.load(file)
+    with open('./datasets/arff-datasets-master/classification/' + file_name, 'r') as file:
+        arff_f = arff.load(file)
 
     # ARFF to pandas
     attrs = arff_f['attributes']
