@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import seaborn as sb
 import pandas as pd
 
-results_df = pd.read_csv('./output/result_2018-09-02.csv')
+results_df = pd.read_csv('./output/result.csv')
 
 
 # AUC grouped by encoder
