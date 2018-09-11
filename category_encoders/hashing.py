@@ -12,6 +12,10 @@ __author__ = 'willmcginnis'
 class HashingEncoder(BaseEstimator, TransformerMixin):
     """A basic multivariate hashing implementation with configurable dimensionality/precision.
 
+    The advantage of this encoder is that it does not maintain a dictionary of observed categories.
+    Consequently, the encoder does not grow in size and accepts new values during data scoring
+    by design.
+
     Parameters
     ----------
 
