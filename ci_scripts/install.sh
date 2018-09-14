@@ -25,7 +25,13 @@ popd
 # Configure the conda environment and put it in the path using the
 # provided versions
 conda create -n testenv --yes python=$PYTHON_VERSION pip nose unittest2 \
-      numpy=$NUMPY_VERSION scipy=$SCIPY_VERSION cython=$CYTHON_VERSION pandas=$PANDAS_VERSION
+      cython=$CYTHON_VERSION \
+      numpy=$NUMPY_VERSION \
+      pandas=$PANDAS_VERSION \
+      patsy=$PATSY_VERSION \
+      scikit-learn=$SCIKIT_VERSION \
+      scipy=$SCIPY_VERSION \
+      statsmodels=$STATSMODELS_VERSION
 
 source activate testenv
 
