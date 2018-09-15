@@ -1,6 +1,6 @@
 numpy>=1.12.1
-scipy>=0.17.0
+scipy>=0.18.1
 pandas>=0.20.1
-scikit-learn>=0.15.0
-statsmodels>=0.6.0,<=0.8.0
+scikit-learn>=0.18.1
+statsmodels>=0.6.1,<=0.8.0
 patsy>=0.4.1
