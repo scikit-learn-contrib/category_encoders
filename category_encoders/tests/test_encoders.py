@@ -2,6 +2,7 @@ import doctest
 import math
 import os
 import random
+import sklearn
 import pandas as pd
 from datetime import timedelta
 from sklearn.utils.estimator_checks import *
@@ -181,8 +182,15 @@ class TestEncoders(TestCase):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
 
-                check_transformer_general(encoder_name, getattr(encoders, encoder_name)())
-                check_transformers_unfitted(encoder_name, getattr(encoders, encoder_name)())
+                # in sklearn < 0.19.0, these methods require classes,
+                # in sklearn >= 0.19.0, these methods require instances
+                if sklearn.__version__ < '0.19.0':
+                    encoder = getattr(encoders, encoder_name)
+                else:
+                    encoder = getattr(encoders, encoder_name)()
+
+                check_transformer_general(encoder_name, encoder)
+                check_transformers_unfitted(encoder_name, encoder)
 
     def test_inverse_transform(self):
         # we do not allow None in these data (but "none" column without any None is ok)
@@ -389,9 +397,9 @@ class TestEncoders(TestCase):
         encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
         encoder.fit(binary_cat_example, binary_cat_example['target'])
         trend_mapping = encoder.mapping[0]['mapping']
-        self.assertAlmostEquals(0.4125, trend_mapping['DOWN']['smoothing'], delta=1e-4)
+        self.assertAlmostEqual(0.4125, trend_mapping['DOWN']['smoothing'], delta=1e-4)
         self.assertEqual(0.5, trend_mapping['FLAT']['smoothing'])
-        self.assertAlmostEquals(0.5874, trend_mapping['UP']['smoothing'], delta=1e-4)
+        self.assertAlmostEqual(0.5874, trend_mapping['UP']['smoothing'], delta=1e-4)
 
     def test_target_encoder_fit_transform_HaveConstructorSetSmoothingAndMinSamplesLeaf_ExpectCorrectValueInResult(self):
         k = 2
@@ -402,9 +410,9 @@ class TestEncoders(TestCase):
         encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
         result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
         values = result['Trend'].values
-        self.assertAlmostEquals(0.5874, values[0], delta=1e-4)
-        self.assertAlmostEquals(0.5874, values[1], delta=1e-4)
-        self.assertAlmostEquals(0.4125, values[2], delta=1e-4)
+        self.assertAlmostEqual(0.5874, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
+        self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
         self.assertEqual(0.5, values[3])
 
     def test_woe(self):
