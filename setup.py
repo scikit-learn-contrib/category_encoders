@@ -29,12 +29,12 @@ setup(
     include_package_data=True,
     author='Will McGinnis',
     install_requires=[
-      'numpy>=1.8.0',
-      'scipy>=0.9',
-      'pandas>=0.15.0',
-      'scikit-learn>=0.15.0',
-      'statsmodels>=0.6.0,<=0.8.0',
-      'patsy>=0.4.0',
+      'numpy>=1.11.1',
+      'scikit-learn>=0.17.1',
+      'scipy>=0.17.0',
+      'statsmodels>=0.6.1,<=0.8.0',
+      'pandas>=0.20.1',
+      'patsy>=0.4.1',
     ],
     author_email='will@pedalwrencher.com'
 )

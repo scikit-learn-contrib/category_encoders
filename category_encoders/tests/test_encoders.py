@@ -371,7 +371,6 @@ class TestEncoders(TestCase):
         encoder = encoders.OrdinalEncoder(impute_missing=True)
         encoder.fit(data)
         a = encoder.transform(data)
-        print(a)
         self.assertEqual(a.values[0, 1], 0)
         self.assertEqual(a.values[1, 1], 1)
 
