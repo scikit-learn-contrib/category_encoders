@@ -2,11 +2,11 @@ import doctest
 import math
 import os
 import random
-# import sklearn
+import sklearn
 import pandas as pd
 import numpy as np
 from datetime import timedelta
-# from sklearn.utils.estimator_checks import *
+from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted
 from unittest2 import TestSuite, TextTestRunner, TestCase # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
@@ -179,19 +179,19 @@ class TestEncoders(TestCase):
                 with self.assertRaises(ValueError):
                     _ = enc.transform(X_t)
 
-    # def test_sklearn_compliance(self):
-    #     for encoder_name in encoders.__all__:
-    #         with self.subTest(encoder_name=encoder_name):
-    #
-    #             # in sklearn < 0.19.0, these methods require classes,
-    #             # in sklearn >= 0.19.0, these methods require instances
-    #             if sklearn.__version__ < '0.19.0':
-    #                 encoder = getattr(encoders, encoder_name)
-    #             else:
-    #                 encoder = getattr(encoders, encoder_name)()
-    #
-    #             check_transformer_general(encoder_name, encoder)
-    #             check_transformers_unfitted(encoder_name, encoder)
+    def test_sklearn_compliance(self):
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+
+                # in sklearn < 0.19.0, these methods require classes,
+                # in sklearn >= 0.19.0, these methods require instances
+                if sklearn.__version__ < '0.19.0':
+                    encoder = getattr(encoders, encoder_name)
+                else:
+                    encoder = getattr(encoders, encoder_name)()
+
+                check_transformer_general(encoder_name, encoder)
+                check_transformers_unfitted(encoder_name, encoder)
 
     def test_inverse_transform(self):
         # we do not allow None in these data (but "none" column without any None is ok)
