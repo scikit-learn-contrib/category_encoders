@@ -281,8 +281,8 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             else:
                 X[str(column) + '_tmp'] = np.nan
                 for val in switch.get('woe'):
-                    X.loc[(X[column] == val) * (y == 1), str(column) + '_tmp'] = switch.get('woe_positive')[val]   # THIS LINE IS SLOW
-                    X.loc[(X[column] == val) * (y == 0), str(column) + '_tmp'] = switch.get('woe_negative')[val]   # THIS LINE IS SLOW
+                    X.loc[(X[column] == val) & (y == 1), str(column) + '_tmp'] = switch.get('woe_positive')[val]   # THIS LINE IS SLOW
+                    X.loc[(X[column] == val) & (y == 0), str(column) + '_tmp'] = switch.get('woe_negative')[val]   # THIS LINE IS SLOW
                 del X[column]
                 X.rename(columns={str(column) + '_tmp': column}, inplace=True)
 
