@@ -11,7 +11,10 @@ __author__ = 'chappers'
 class TargetEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
                  handle_unknown='impute', min_samples_leaf=1, smoothing=1.0):
-        """Target Encode for categorical features. Based on leave one out approach.
+        """Target Encode for categorical features. Categorical variables are replaced with a blend
+        of the average of the target over all the training data and the average of the
+        target over the training data taking the given categorical value.
+
 
     Parameters
     ----------
