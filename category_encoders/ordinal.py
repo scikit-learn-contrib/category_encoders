@@ -250,9 +250,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping_out = mapping
             for switch in mapping:
                 categories_dict = dict(switch.get('mapping'))
-                X[str(switch.get('col')) + '_tmp'] = X[switch.get('col')].map(lambda x: categories_dict.get(x))
-                del X[switch.get('col')]
-                X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
+                X[switch.get('col')] = X[switch.get('col')].map(lambda x: categories_dict.get(x))
 
                 if impute_missing:
                     if handle_unknown == 'impute':
@@ -271,9 +269,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             for col in cols:
                 categories = [x for x in pd.unique(X[col].values) if x is not None]
                 categories_dict = {x: i + 1 for i, x in enumerate(categories)}
-                X[str(col) + '_tmp'] = X[col].map(lambda x: categories_dict.get(x))
-                del X[col]
-                X.rename(columns={str(col) + '_tmp': col}, inplace=True)
+                X[col] = X[col].map(lambda x: categories_dict.get(x))
 
                 if impute_missing:
                     if handle_unknown == 'impute':

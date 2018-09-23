@@ -379,6 +379,19 @@ class TestEncoders(TestCase):
         self.assertTrue(np.isnan(a.values[0, 1]))
         self.assertEqual(a.values[1, 1], 1)
 
+    def test_fit_transform_HaveOriginalColumnOrder_ExpectColumnOrderPreserved(self):
+        df = pd.DataFrame({
+            'SEX': ['Male', 'Male'],
+            'AGE': [34, 20]
+        })
+        encoder = encoders.OrdinalEncoder(handle_unknown='ignore')
+        result = encoder.fit_transform(df)
+        columns = result.columns.values
+
+        self.assertEquals(2, len(columns))
+        self.assertEqual('SEX', columns[0])
+        self.assertEqual('AGE', columns[1])
+
     def test_target_encoder(self):
 
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2)
