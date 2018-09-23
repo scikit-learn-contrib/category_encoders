@@ -383,7 +383,7 @@ class TestEncoders(TestCase):
         df = pd.DataFrame({
             'SEX': ['Male', 'Male'],
             'AGE': [34, 20]
-        })
+        }, columns=['SEX', 'AGE'])
         encoder = encoders.OrdinalEncoder(handle_unknown='ignore')
         result = encoder.fit_transform(df)
         columns = result.columns.values
