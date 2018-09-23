@@ -238,6 +238,21 @@ class TestEncoders(TestCase):
             encoder = getattr(encoders, encoder_name)()
             encoder.fit_transform(X, y)
 
+    def test_fit_transform_HaveInitialColumnOrder_ExpectColumnOrderMaintained(self):
+        binary_cat_example = pd.DataFrame(
+            {'Trend': ['UP', 'UP', 'DOWN', 'FLAT', 'DOWN', 'UP', 'DOWN', 'FLAT', 'FLAT', 'FLAT'],
+             'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]}, columns=['Trend', 'target'])
+
+        for encoder_name in ['WOEEncoder', 'TargetEncoder', 'OrdinalEncoder']:
+            with self.subTest(encoder_name=encoder_name):
+                encoder = getattr(encoders, encoder_name)(verbose=1, cols=['Trend'])
+                result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
+                columns = result.columns.values
+
+                self.assertEqual(2, len(columns))
+                self.assertEqual('Trend', columns[0])
+                self.assertEqual('target', columns[1])
+
     # encoder specific tests
     def test_binary_bin(self):
         data = np.array(['a', 'ba', 'ba'])
@@ -378,19 +393,6 @@ class TestEncoders(TestCase):
         a = encoder.transform(data)
         self.assertTrue(np.isnan(a.values[0, 1]))
         self.assertEqual(a.values[1, 1], 1)
-
-    def test_fit_transform_HaveOriginalColumnOrder_ExpectColumnOrderPreserved(self):
-        df = pd.DataFrame({
-            'SEX': ['Male', 'Male'],
-            'AGE': [34, 20]
-        }, columns=['SEX', 'AGE'])
-        encoder = encoders.OrdinalEncoder(handle_unknown='ignore')
-        result = encoder.fit_transform(df)
-        columns = result.columns.values
-
-        self.assertEquals(2, len(columns))
-        self.assertEqual('SEX', columns[0])
-        self.assertEqual('AGE', columns[1])
 
     def test_target_encoder(self):
 

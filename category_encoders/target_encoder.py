@@ -209,15 +209,16 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         if mapping is not None:
             mapping_out = mapping
             for switch in mapping:
-                X[str(switch.get('col')) + '_tmp'] = np.nan
+                column_name = switch.get('col')
+                X[str(column_name) + '_tmp'] = np.nan
                 for val in switch.get('mapping'):
                     if switch.get('mapping')[val]['count'] == 1:
-                        X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = self._mean
+                        X.loc[X[column_name] == val, str(column_name) + '_tmp'] = self._mean
                     else:
-                        X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = \
+                        X.loc[X[column_name] == val, str(column_name) + '_tmp'] = \
                             switch.get('mapping')[val]['smoothing']
-                del X[switch.get('col')]
-                X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
+                X[column_name] = X[str(column_name) + '_tmp']
+                del X[str(column_name) + '_tmp']
 
                 if impute_missing:
                     if handle_unknown == 'impute':
@@ -228,7 +229,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
                             raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
 
                 X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
-        
+
         else:
             self._mean = y.mean()
             prior = self._mean
@@ -238,18 +239,15 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
                 tmp['mean'] = tmp['sum'] / tmp['count']
                 tmp = tmp.to_dict(orient='index')
 
-                X[str(col) + '_tmp'] = np.nan
                 for val in tmp:
                     if tmp[val]['count'] == 1:
-                        X.loc[X[col] == val, str(col) + '_tmp'] = self._mean
+                        X.loc[X[col] == val, col] = self._mean
                     else:
                         smoothing = smoothing_in
                         smoothing = 1 / (1 + np.exp(-(tmp[val]["count"] - min_samples_leaf) / smoothing))
                         cust_smoothing = prior * (1 - smoothing) + tmp[val]['mean'] * smoothing
-                        X.loc[X[col] == val, str(col) + '_tmp'] = cust_smoothing
+                        X.loc[X[col] == val, col] = cust_smoothing
                         tmp[val]['smoothing'] = cust_smoothing
-                del X[col]
-                X.rename(columns={str(col) + '_tmp': col}, inplace=True)
                 if impute_missing:
                     if handle_unknown == 'impute':
                         X[col].fillna(self._mean, inplace=True)
