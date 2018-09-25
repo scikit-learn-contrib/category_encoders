@@ -222,16 +222,18 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             tmp['mean'] = tmp['sum'] / tmp['count']
             tmp = tmp.to_dict(orient='index')
 
-            X[str(col) + '_tmp'] = np.nan
+            temp_column = str(col) + '_tmp'
+            X[temp_column] = np.nan
+
             for val in tmp:
                 """if the val only appear once ,encoder it as mean of y"""
                 if tmp[val]['count'] == 1:
-                    X.loc[X[col] == val, str(col) + '_tmp'] = self._mean
+                    X.loc[X[col] == val, temp_column] = self._mean
                 else:
-                    X.loc[X[col] == val, str(col) + '_tmp'] = (tmp[val]['sum'] - y.loc[X[col] == val]) / (
+                    X.loc[X[col] == val, temp_column] = (tmp[val]['sum'] - y.loc[X[col] == val]) / (
                             tmp[val]['count'] - 1)
-            del X[col]
-            X.rename(columns={str(col) + '_tmp': col}, inplace=True)
+            X[col] = X[temp_column]
+            del X[temp_column]
 
             if impute_missing:
                 if handle_unknown == 'impute':
@@ -252,20 +254,22 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         random_state_ = check_random_state(self.random_state)
         for switch in mapping:
-            X[str(switch.get('col')) + '_tmp'] = np.nan
+            column = switch.get('col')
+            temp_column = str(column) + '_tmp'
+            X[temp_column] = np.nan
             for val in switch.get('mapping'):
                 if y is None:
-                    X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = \
+                    X.loc[X[column] == val, temp_column] = \
                         switch.get('mapping')[val]['mean']
                 elif switch.get('mapping')[val]['count'] == 1:
-                    X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = self._mean
+                    X.loc[X[column] == val, temp_column] = self._mean
                 else:
-                    X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = (
-                        (switch.get('mapping')[val]['sum'] - y[(X[switch.get('col')] == val).values]) / (
+                    X.loc[X[column] == val, temp_column] = (
+                        (switch.get('mapping')[val]['sum'] - y[(X[column] == val).values]) / (
                             switch.get('mapping')[val]['count'] - 1)
                     )
-            del X[switch.get('col')]
-            X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
+            X[column] = X[temp_column]
+            del X[temp_column]
 
             if impute_missing:
                 if handle_unknown == 'impute':
