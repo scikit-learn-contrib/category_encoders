@@ -209,26 +209,23 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         if mapping is not None:
             mapping_out = mapping
             for switch in mapping:
-                column_name = switch.get('col')
-                X[str(column_name) + '_tmp'] = np.nan
+                column = switch.get('col')
+                transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
                 for val in switch.get('mapping'):
                     if switch.get('mapping')[val]['count'] == 1:
-                        X.loc[X[column_name] == val, str(column_name) + '_tmp'] = self._mean
+                        transformed_column.loc[X[column] == val] = self._mean
                     else:
-                        X.loc[X[column_name] == val, str(column_name) + '_tmp'] = \
-                            switch.get('mapping')[val]['smoothing']
-                X[column_name] = X[str(column_name) + '_tmp']
-                del X[str(column_name) + '_tmp']
+                        transformed_column.loc[X[column] == val] = switch.get('mapping')[val]['smoothing']
 
                 if impute_missing:
                     if handle_unknown == 'impute':
-                        X[switch.get('col')].fillna(self._mean, inplace=True)
+                        transformed_column.fillna(self._mean, inplace=True)
                     elif handle_unknown == 'error':
-                        missing = X[switch.get('col')].isnull()
+                        missing = transformed_column.isnull()
                         if any(missing):
                             raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
 
-                X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
+                X[column] = transformed_column.astype(float)
 
         else:
             self._mean = y.mean()
