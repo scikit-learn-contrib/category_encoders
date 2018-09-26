@@ -270,34 +270,29 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         for switch in self.mapping:
             # Get column name (can be anything: str, number,...)
             column = switch.get('col')
-
+            transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
             # Scoring or training time?
             if y is None:
-                X[str(column) + '_tmp'] = np.nan
                 for val in switch.get('woe'):
-                    X.loc[X[column] == val, str(column) + '_tmp'] = switch.get('woe')[val] # THIS LINE IS SLOW
-                del X[column]
-                X.rename(columns={str(column) + '_tmp': column}, inplace=True)
+                    transformed_column.loc[X[column] == val] = switch.get('woe')[val] # THIS LINE IS SLOW
             else:
-                X[str(column) + '_tmp'] = np.nan
                 for val in switch.get('woe'):
-                    X.loc[(X[column] == val) & (y == 1), str(column) + '_tmp'] = switch.get('woe_positive')[val]   # THIS LINE IS SLOW
-                    X.loc[(X[column] == val) & (y == 0), str(column) + '_tmp'] = switch.get('woe_negative')[val]   # THIS LINE IS SLOW
-                del X[column]
-                X.rename(columns={str(column) + '_tmp': column}, inplace=True)
+                    transformed_column.loc[(X[column] == val) & (y == 1)] = switch.get('woe_positive')[val]   # THIS LINE IS SLOW
+                    transformed_column.loc[(X[column] == val) & (y == 0)] = switch.get('woe_negative')[val]   # THIS LINE IS SLOW
 
             # Replace missing values only in the computed columns
             if self.impute_missing:
                 if self.handle_unknown == 'impute':
-                    X[column].fillna(0, inplace=True)
+                    transformed_column.fillna(0, inplace=True)
                 elif self.handle_unknown == 'error':
-                    missing = X[switch.get('col')].isnull()
+                    missing = transformed_column.isnull()
                     if any(missing):
                         raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
 
             # Randomization is meaningful only for training data -> we do it only if y is present
             if self.randomized and y is not None:
                 random_state_generator = check_random_state(self.random_state)
-                X[column] = (X[column] * random_state_generator.normal(1., self.sigma, X[column].shape[0]))
+                transformed_column = (transformed_column * random_state_generator.normal(1., self.sigma, transformed_column.shape[0]))
 
+            X[column] = transformed_column.astype(float)
         return X

@@ -250,39 +250,26 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping_out = mapping
             for switch in mapping:
                 categories_dict = dict(switch.get('mapping'))
-                X[str(switch.get('col')) + '_tmp'] = X[switch.get('col')].map(lambda x: categories_dict.get(x))
-                del X[switch.get('col')]
-                X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
+                column = switch.get('col')
+                transformed_column = X[column].map(lambda x: categories_dict.get(x))
 
                 if impute_missing:
                     if handle_unknown == 'impute':
-                        X[switch.get('col')].fillna(0, inplace=True)
+                        transformed_column.fillna(0, inplace=True)
                     elif handle_unknown == 'error':
-                        missing = X[switch.get('col')].isnull()
+                        missing = transformed_column.isnull()
                         if any(missing):
-                            raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
+                            raise ValueError('Unexpected categories found in column %s' % column)
 
                 try:
-                    X[switch.get('col')] = X[switch.get('col')].astype(int).values.reshape(-1, )
+                    X[column] = transformed_column.astype(int)
                 except ValueError as e:
-                    X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
+                    X[column] = transformed_column.astype(float)
         else:
             mapping_out = []
             for col in cols:
                 categories = [x for x in pd.unique(X[col].values) if x is not None]
                 categories_dict = {x: i + 1 for i, x in enumerate(categories)}
-                X[str(col) + '_tmp'] = X[col].map(lambda x: categories_dict.get(x))
-                del X[col]
-                X.rename(columns={str(col) + '_tmp': col}, inplace=True)
-
-                if impute_missing:
-                    if handle_unknown == 'impute':
-                        X[col].fillna(0, inplace=True)
-
-                try:
-                    X[col] = X[col].astype(int).values.reshape(-1, )
-                except ValueError as e:
-                    X[col] = X[col].astype(float).values.reshape(-1, )
 
                 mapping_out.append({'col': col, 'mapping': [(x[1], x[0] + 1) for x in list(enumerate(categories))]}, )
 

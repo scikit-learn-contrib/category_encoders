@@ -128,9 +128,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         categories = self.fit_leave_one_out(
             X, y,
-            cols=self.cols,
-            impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            cols=self.cols
         )
         self.mapping = categories
 
@@ -208,7 +206,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         """
         return self.fit(X, y, **fit_params).transform(X, y)
 
-    def fit_leave_one_out(self, X_in, y, cols=None, impute_missing=True, handle_unknown='impute'):
+    def fit_leave_one_out(self, X_in, y, cols=None):
         X = X_in.copy(deep=True)
 
         if cols is None:
@@ -221,23 +219,6 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             tmp = y.groupby(X[col]).agg(['sum', 'count'])
             tmp['mean'] = tmp['sum'] / tmp['count']
             tmp = tmp.to_dict(orient='index')
-
-            X[str(col) + '_tmp'] = np.nan
-            for val in tmp:
-                """if the val only appear once ,encoder it as mean of y"""
-                if tmp[val]['count'] == 1:
-                    X.loc[X[col] == val, str(col) + '_tmp'] = self._mean
-                else:
-                    X.loc[X[col] == val, str(col) + '_tmp'] = (tmp[val]['sum'] - y.loc[X[col] == val]) / (
-                            tmp[val]['count'] - 1)
-            del X[col]
-            X.rename(columns={str(col) + '_tmp': col}, inplace=True)
-
-            if impute_missing:
-                if handle_unknown == 'impute':
-                    X[col].fillna(self._mean, inplace=True)
-
-            X[col] = X[col].astype(float).values.reshape(-1, )
 
             mapping_out.append({'col': col, 'mapping': tmp}, )
 
@@ -252,33 +233,31 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         random_state_ = check_random_state(self.random_state)
         for switch in mapping:
-            X[str(switch.get('col')) + '_tmp'] = np.nan
+            column = switch.get('col')
+            transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
+
             for val in switch.get('mapping'):
                 if y is None:
-                    X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = \
-                        switch.get('mapping')[val]['mean']
+                    transformed_column.loc[X[column] == val] = switch.get('mapping')[val]['mean']
                 elif switch.get('mapping')[val]['count'] == 1:
-                    X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = self._mean
+                    transformed_column.loc[X[column] == val] = self._mean
                 else:
-                    X.loc[X[switch.get('col')] == val, str(switch.get('col')) + '_tmp'] = (
-                        (switch.get('mapping')[val]['sum'] - y[(X[switch.get('col')] == val).values]) / (
+                    transformed_column.loc[X[column] == val] = (
+                        (switch.get('mapping')[val]['sum'] - y[(X[column] == val).values]) / (
                             switch.get('mapping')[val]['count'] - 1)
                     )
-            del X[switch.get('col')]
-            X.rename(columns={str(switch.get('col')) + '_tmp': switch.get('col')}, inplace=True)
 
             if impute_missing:
                 if handle_unknown == 'impute':
-                    X[switch.get('col')].fillna(self._mean, inplace=True)
+                    transformed_column.fillna(self._mean, inplace=True)
                 elif handle_unknown == 'error':
-                    missing = X[switch.get('col')].isnull()
+                    missing = transformed_column.isnull()
                     if any(missing):
-                        raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
+                        raise ValueError('Unexpected categories found in column %s' % column)
 
             if self.randomized and y is not None:
-                X[switch.get('col')] = (X[switch.get('col')] *
-                                        random_state_.normal(1., self.sigma, X[switch.get('col')].shape[0]))
+                transformed_column = (transformed_column * random_state_.normal(1., self.sigma, transformed_column.shape[0]))
 
-            X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
+            X[column] = transformed_column.astype(float)
 
         return X
