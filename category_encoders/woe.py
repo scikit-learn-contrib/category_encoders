@@ -24,13 +24,15 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'ignore', 'error' and 'impute', defaults to 'impute', which will assume WoE=0.
+        options are 'ignore', 'error' and 'impute', defaults to 'impute', which will assume WOE=0.
+        Values that are observed only once during training are treated as if they were not observed at all.
     randomized: bool,
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float
         standard deviation (spread or "width") of the normal distribution.
     regularization: float
-        Laplace correction. Must be strictly bigger than 1.
+        the purpose of regularization is mostly to prevent division by zero.
+        When regularization is 0, you may encounter division by zero.
 
     Example
     -------
@@ -73,7 +75,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', random_state=None, randomized=False, sigma=0.05, regularization=1.1):
+                 handle_unknown='impute', random_state=None, randomized=False, sigma=0.05, regularization=1.0):
         self.verbose = verbose
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -197,7 +199,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         # Do not modify the input argument
         X = X.copy(deep=True)
 
-        # Loop over columns and replace nominal values with WoE
+        # Loop over columns and replace nominal values with WOE
         X = self._score(X, y)
 
         # Postprocessing
@@ -214,7 +216,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     def fit_transform(self, X, y=None, **fit_params):
         """
         Encoders that utilize the target must make sure that the training data are transformed with:
-             transform(X, y)
+            transform(X, y)
         and not with:
             transform(X)
         """
@@ -235,34 +237,19 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
 
             # Initialization
             woe = {}
-            woe_positive = {}
-            woe_negative = {}
 
-            # Create a new column with the adjusted WoE.
-            # Adjusted WoE is similar to leave_one_out.
-            # Plus it has a regularization (Laplace correction) in order to avoid division by zero.
-            # The regularization must be > 1 in order to make it work even under leave_one_out pre-computation (an implementation restriction).
+            # Create a new column with regularized WOE.
+            # Regularization helps to avoid division by zero.
             for val in stats:
-                # We pre-calculate WoEs because logarithms are slow.
-                # However, in the case of unique of id-like attributes with unique values, we do three-times more work than necessary.
-
-                # The target is positive
-                nominator = (stats[val]['sum'] + self.regularization - 1) / (self._sum + 2*self.regularization)
-                denominator = ((stats[val]['count'] - stats[val]['sum']) + self.regularization - 0) / (self._count - self._sum + 2*self.regularization)
-                woe_positive[val] = np.log(nominator / denominator)
-
-                # The target is negative
-                nominator = (stats[val]['sum'] + self.regularization - 0) / (self._sum + 2*self.regularization)
-                denominator = ((stats[val]['count'] - stats[val]['sum']) + self.regularization - 1) / (self._count - self._sum + 2*self.regularization)
-                woe_negative[val] = np.log(nominator / denominator)
-
-                # The target is unknown (for scoring time)
-                nominator = (stats[val]['sum'] + self.regularization) / (self._sum + 2*self.regularization)
-                denominator = ((stats[val]['count'] - stats[val]['sum']) + self.regularization) / (self._count - self._sum + 2*self.regularization)
-                woe[val] = np.log(nominator / denominator)
+                # Pre-calculate WOEs because logarithms are slow.
+                # Ignore unique values. This helps to prevent overfitting on id-like columns and keep the model small.
+                if stats[val]['count'] > 1:
+                    nominator = (stats[val]['sum'] + self.regularization) / (self._sum + 2*self.regularization)
+                    denominator = ((stats[val]['count'] - stats[val]['sum']) + self.regularization) / (self._count - self._sum + 2*self.regularization)
+                    woe[val] = np.log(nominator / denominator)
 
             # Store the column statistics for transform() function
-            mapping_out.append({'col': col, 'woe':woe, 'woe_positive':woe_positive, 'woe_negative':woe_negative})
+            mapping_out.append({'col': col, 'woe':woe})
 
         return mapping_out
 
@@ -270,15 +257,11 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         for switch in self.mapping:
             # Get column name (can be anything: str, number,...)
             column = switch.get('col')
+
+            # Score the column
             transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
-            # Scoring or training time?
-            if y is None:
-                for val in switch.get('woe'):
-                    transformed_column.loc[X[column] == val] = switch.get('woe')[val] # THIS LINE IS SLOW
-            else:
-                for val in switch.get('woe'):
-                    transformed_column.loc[(X[column] == val) & (y == 1)] = switch.get('woe_positive')[val]   # THIS LINE IS SLOW
-                    transformed_column.loc[(X[column] == val) & (y == 0)] = switch.get('woe_negative')[val]   # THIS LINE IS SLOW
+            for val in switch.get('woe'):
+                transformed_column.loc[X[column] == val] = switch.get('woe')[val] # THIS LINE IS SLOW
 
             # Replace missing values only in the computed columns
             if self.impute_missing:
