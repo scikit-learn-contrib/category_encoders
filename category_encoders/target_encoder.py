@@ -237,19 +237,10 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
                 tmp = tmp.to_dict(orient='index')
 
                 for val in tmp:
-                    if tmp[val]['count'] == 1:
-                        X.loc[X[col] == val, col] = self._mean
-                    else:
-                        smoothing = smoothing_in
-                        smoothing = 1 / (1 + np.exp(-(tmp[val]["count"] - min_samples_leaf) / smoothing))
-                        cust_smoothing = prior * (1 - smoothing) + tmp[val]['mean'] * smoothing
-                        X.loc[X[col] == val, col] = cust_smoothing
-                        tmp[val]['smoothing'] = cust_smoothing
-                if impute_missing:
-                    if handle_unknown == 'impute':
-                        X[col].fillna(self._mean, inplace=True)
-
-                X[col] = X[col].astype(float).values.reshape(-1, )
+                    smoothing = smoothing_in
+                    smoothing = 1 / (1 + np.exp(-(tmp[val]["count"] - min_samples_leaf) / smoothing))
+                    cust_smoothing = prior * (1 - smoothing) + tmp[val]['mean'] * smoothing
+                    tmp[val]['smoothing'] = cust_smoothing
 
                 mapping_out.append({'col': col, 'mapping': tmp}, )
 
