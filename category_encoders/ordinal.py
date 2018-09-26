@@ -270,16 +270,6 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             for col in cols:
                 categories = [x for x in pd.unique(X[col].values) if x is not None]
                 categories_dict = {x: i + 1 for i, x in enumerate(categories)}
-                X[col] = X[col].map(lambda x: categories_dict.get(x))
-
-                if impute_missing:
-                    if handle_unknown == 'impute':
-                        X[col].fillna(0, inplace=True)
-
-                try:
-                    X[col] = X[col].astype(int).values.reshape(-1, )
-                except ValueError as e:
-                    X[col] = X[col].astype(float).values.reshape(-1, )
 
                 mapping_out.append({'col': col, 'mapping': [(x[1], x[0] + 1) for x in list(enumerate(categories))]}, )
 
