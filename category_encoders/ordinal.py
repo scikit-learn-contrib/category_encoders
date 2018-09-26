@@ -250,20 +250,21 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping_out = mapping
             for switch in mapping:
                 categories_dict = dict(switch.get('mapping'))
-                X[switch.get('col')] = X[switch.get('col')].map(lambda x: categories_dict.get(x))
+                column = switch.get('col')
+                transformed_column = X[column].map(lambda x: categories_dict.get(x))
 
                 if impute_missing:
                     if handle_unknown == 'impute':
-                        X[switch.get('col')].fillna(0, inplace=True)
+                        transformed_column.fillna(0, inplace=True)
                     elif handle_unknown == 'error':
-                        missing = X[switch.get('col')].isnull()
+                        missing = transformed_column.isnull()
                         if any(missing):
-                            raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
+                            raise ValueError('Unexpected categories found in column %s' % column)
 
                 try:
-                    X[switch.get('col')] = X[switch.get('col')].astype(int).values.reshape(-1, )
+                    X[column] = transformed_column.astype(int)
                 except ValueError as e:
-                    X[switch.get('col')] = X[switch.get('col')].astype(float).values.reshape(-1, )
+                    X[column] = transformed_column.astype(float)
         else:
             mapping_out = []
             for col in cols:
