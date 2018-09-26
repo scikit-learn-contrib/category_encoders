@@ -252,6 +252,17 @@ class TestEncoders(TestCase):
 
                 self.assertTrue('target' in columns[-1], "Target must be the last column as in the input")
 
+    def test_tmp_column_name(self):
+        binary_cat_example = pd.DataFrame(
+            {'Trend': ['UP', 'UP', 'DOWN', 'FLAT'],
+             'Trend_tmp': ['UP', 'UP', 'DOWN', 'FLAT'],
+             'target': [1, 1, 0, 0]}, columns=['Trend', 'Trend_tmp', 'target'])
+
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder']:
+            with self.subTest(encoder_name=encoder_name):
+                encoder = getattr(encoders, encoder_name)()
+                _ = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
+
     # encoder specific tests
     def test_binary_bin(self):
         data = np.array(['a', 'ba', 'ba'])
