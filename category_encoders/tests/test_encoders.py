@@ -263,6 +263,13 @@ class TestEncoders(TestCase):
                 encoder = getattr(encoders, encoder_name)()
                 _ = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
 
+    def test_unique_column_is_not_predictive(self):
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder']:
+            with self.subTest(encoder_name=encoder_name):
+                encoder = getattr(encoders, encoder_name)()
+                result = encoder.fit_transform(X[['unique_str']], y)
+                self.assertTrue(all(result.var() < 0.001), 'The unique string column must not be predictive of the label')
+
     # encoder specific tests
     def test_binary_bin(self):
         data = np.array(['a', 'ba', 'ba'])
