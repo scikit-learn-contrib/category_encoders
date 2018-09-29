@@ -537,3 +537,57 @@ class TestEncoders(TestCase):
 
         runner = TextTestRunner(verbosity=2)
         runner.run(suite)
+
+    def test_helmert_preserve_dimension_1(self):
+        train = ['A', 'B', 'C']
+        test = ['A', 'D', 'E']
+
+        encoder = encoders.HelmertEncoder()
+        encoder.fit(train)
+        test_t = encoder.transform(test)
+
+        expected = [[1, -1, -1],
+                    [1, 0, 0],
+                    [1, 0, 0]]
+        self.assertEqual(test_t.values.tolist(), expected)
+
+    def test_helmert_preserve_dimension_2(self):
+        train = ['A', 'B', 'C']
+        test = ['B', 'D', 'E']
+
+        encoder = encoders.HelmertEncoder()
+        encoder.fit(train)
+        test_t = encoder.transform(test)
+
+        expected = [[1, 1, -1],
+                    [1, 0, 0],
+                    [1, 0, 0]]
+        self.assertEqual(test_t.values.tolist(), expected)
+
+    def test_helmert_preserve_dimension_3(self):
+        train = ['A', 'B', 'C']
+        test = ['A', 'B', 'C', None]
+
+        encoder = encoders.HelmertEncoder()
+        encoder.fit(train)
+        test_t = encoder.transform(test)
+
+        expected = [[1, -1, -1],
+                    [1, 1, -1],
+                    [1, 0, 2],
+                    [1, 0, 0]]
+        self.assertEqual(test_t.values.tolist(), expected)
+
+    def test_helmert_preserve_dimension_4(self):
+        train = ['A', 'B', 'C']
+        test = ['D', 'B', 'C', None]
+
+        encoder = encoders.HelmertEncoder()
+        encoder.fit(train)
+        test_t = encoder.transform(test)
+
+        expected = [[1, 0, 0],
+                    [1, 1, -1],
+                    [1, 0, 2],
+                    [1, 0, 0]]
+        self.assertEqual(test_t.values.tolist(), expected)

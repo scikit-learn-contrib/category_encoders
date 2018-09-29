@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.highlevel import dmatrix
+from patsy import balanced
 from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
 
@@ -83,11 +84,12 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
+    def __init__(self, verbose=0, cols=None, mapping = None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
+        self.mapping = mapping
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self.cols = cols
@@ -131,6 +133,17 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
+        ordinal_mapping = self.ordinal_encoder.category_mapping
+
+        mappings_out = []
+        for switch in ordinal_mapping:
+
+            values = [x[1] for x in switch.get('mapping')]
+            column_mapping = self.fit_helmert_coding(values)
+            mappings_out.append({'col': switch.get('col'), 'mapping': column_mapping, })
+
+        self.mapping = mappings_out
+
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
@@ -170,7 +183,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
         X = self.ordinal_encoder.transform(X)
 
-        X = self.helmert_coding(X, cols=self.cols)
+        X = self.helmert_coding(X, mapping=self.mapping)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -182,27 +195,36 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
             return X.values
 
     @staticmethod
-    def helmert_coding(X_in, cols=None):
+    def fit_helmert_coding(values):
+        if len(values) == 0:
+            return pd.DataFrame()
+
+        df = dmatrix("C(a, Helmert)", balanced(a=len(values)), return_type='dataframe')
+        df.index += 1
+        df.loc[0] = np.concatenate(([1], np.zeros(len(values) - 1)))
+        return df
+
+    @staticmethod
+    def helmert_coding(X_in, mapping):
         """
         """
 
         X = X_in.copy(deep=True)
 
         X.columns = ['col_' + str(x) for x in X.columns.values]
-        cols = ['col_' + str(x) for x in cols]
+        cols = ['col_' + str(x['col']) for x in mapping]
 
-        if cols is None:
-            cols = X.columns.values
-            pass_thru = []
-        else:
-            pass_thru = [col for col in X.columns.values if col not in cols]
+        pass_thru = [col for col in X.columns.values if col not in cols]
 
         bin_cols = []
-        for col in cols:
-            mod = dmatrix("C(Q(\"%s\"), Helmert)" % (col, ), X)
-            for dig in range(len(mod[0])):
-                X[str(col) + '_%d' % (dig, )] = mod[:, dig]
-                bin_cols.append(str(col) + '_%d' % (dig, ))
+        for switch in mapping:
+            col = 'col_' + str(switch.get('col'))
+            mod = switch.get('mapping')
+            for i in range(len(mod.columns)):
+                c = mod.columns[i]
+                new_col = str(col) + '_%d' % (i, )
+                X[new_col] = mod[c].loc[X[col]].values
+                bin_cols.append(new_col)
 
         X = X.reindex(columns=bin_cols + pass_thru)
 
