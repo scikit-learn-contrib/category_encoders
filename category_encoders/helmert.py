@@ -4,8 +4,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from patsy.highlevel import dmatrix
-from patsy import balanced
+from patsy.contrasts import Helmert
 from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
 
@@ -196,12 +195,13 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
     @staticmethod
     def fit_helmert_coding(values):
-        if len(values) == 0:
+        if len(values) < 2:
             return pd.DataFrame()
 
-        df = dmatrix("C(a, Helmert)", balanced(a=len(values)), return_type='dataframe')
+        helmert_contrast_matrix = Helmert().code_without_intercept(values)
+        df = pd.DataFrame(data=helmert_contrast_matrix.matrix, columns=helmert_contrast_matrix.column_suffixes)
         df.index += 1
-        df.loc[0] = np.concatenate(([1], np.zeros(len(values) - 1)))
+        df.loc[0] = np.zeros(len(values) - 1)
         return df
 
     @staticmethod
@@ -217,6 +217,9 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         pass_thru = [col for col in X.columns.values if col not in cols]
 
         bin_cols = []
+        if len(mapping) > 0:
+            X['intercept'] = 1
+            bin_cols.append('intercept')
         for switch in mapping:
             col = 'col_' + str(switch.get('col'))
             mod = switch.get('mapping')

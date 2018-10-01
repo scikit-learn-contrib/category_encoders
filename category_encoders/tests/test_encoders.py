@@ -591,3 +591,15 @@ class TestEncoders(TestCase):
                     [1, 0, 2],
                     [1, 0, 0]]
         self.assertEqual(test_t.values.tolist(), expected)
+
+    def test_helmert_2cols(self):
+        train = [['A', 'A'], ['B', 'B'], ['C', 'C']]
+
+        encoder = encoders.HelmertEncoder()
+        encoder.fit(train)
+        obtained = encoder.transform(train)
+
+        expected = [[1, -1, -1, -1, -1],
+                    [1,  1, -1,  1, -1],
+                    [1,  0,  2,  0,  2]]
+        self.assertEqual(obtained.values.tolist(), expected)
