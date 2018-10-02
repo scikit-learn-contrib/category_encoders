@@ -211,24 +211,23 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
         X = X_in.copy(deep=True)
 
-        X.columns = ['col_' + str(x) for x in X.columns.values]
-        cols = ['col_' + str(x['col']) for x in mapping]
+        cols = X.columns.values.tolist()
 
-        pass_thru = [col for col in X.columns.values if col not in cols]
-
-        bin_cols = []
         if len(mapping) > 0:
             X['intercept'] = 1
-            bin_cols.append('intercept')
         for switch in mapping:
-            col = 'col_' + str(switch.get('col'))
+            col = switch.get('col')
             mod = switch.get('mapping')
+            new_columns = []
             for i in range(len(mod.columns)):
                 c = mod.columns[i]
                 new_col = str(col) + '_%d' % (i, )
                 X[new_col] = mod[c].loc[X[col]].values
-                bin_cols.append(new_col)
+                new_columns.append(new_col)
+            old_column_index = cols.index(col)
+            cols[old_column_index: old_column_index + 1] = new_columns
 
-        X = X.reindex(columns=bin_cols + pass_thru)
+        cols = ['intercept'] + cols
+        X = X.reindex(columns=cols)
 
         return X

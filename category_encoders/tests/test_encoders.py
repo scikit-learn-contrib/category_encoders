@@ -603,3 +603,18 @@ class TestEncoders(TestCase):
                     [1,  1, -1,  1, -1],
                     [1,  0,  2,  0,  2]]
         self.assertEqual(obtained.values.tolist(), expected)
+
+    def test_helmert_2StringCols_ExpectCorrectOrder(self):
+        train = pd.DataFrame({'col1': [1, 2, 3, 4],
+                              'col2': ['A', 'B', 'C', 'D'],
+                              'col3': [1, 2, 3, 4],
+                              'col4': ['A', 'B', 'C', 'A']
+                              },
+                             columns=['col1', 'col2', 'col3', 'col4'])
+        expected_columns = ['intercept', 'col1', 'col2_0', 'col2_1', 'col2_2', 'col3', 'col4_0', 'col4_1']
+        encoder = encoders.HelmertEncoder()
+
+        encoder.fit(train)
+        columns = encoder.transform(train).columns.values
+
+        self.assertItemsEqual(expected_columns, columns)
