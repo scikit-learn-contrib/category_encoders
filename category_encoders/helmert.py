@@ -213,8 +213,8 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
         cols = X.columns.values.tolist()
 
-        if len(mapping) > 0:
-            X['intercept'] = 1
+        X['intercept'] = pd.Series([1] * X.shape[0])
+
         for switch in mapping:
             col = switch.get('col')
             mod = switch.get('mapping')
