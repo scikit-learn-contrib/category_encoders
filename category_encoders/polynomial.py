@@ -2,9 +2,9 @@
 
 import numpy as np
 import pandas as pd
+from patsy.contrasts import Poly
 from category_encoders.ordinal import OrdinalEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
-from patsy.highlevel import dmatrix
 from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
 
 __author__ = 'willmcginnis'
@@ -82,14 +82,16 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
+    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
+        self.mapping = mapping
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self.cols = cols
+        self.ordinal_encoder = None
         self._dim = None
 
     def fit(self, X, y=None, **kwargs):
@@ -131,6 +133,16 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
+        ordinal_mapping = self.ordinal_encoder.category_mapping
+
+        mappings_out = []
+        for switch in ordinal_mapping:
+            values = [x[1] for x in switch.get('mapping')]
+            column_mapping = self.fit_polynomial_coding(values)
+            mappings_out.append({'col': switch.get('col'), 'mapping': column_mapping, })
+
+        self.mapping = mappings_out
+
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
@@ -171,7 +183,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
 
         X = self.ordinal_encoder.transform(X)
 
-        X = self.polynomial_coding(X, cols=self.cols)
+        X = self.polynomial_coding(X, self.mapping)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -183,30 +195,40 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
             return X.values
 
     @staticmethod
-    def polynomial_coding(X_in, cols=None):
+    def fit_polynomial_coding(values):
+        if len(values) < 2:
+            return pd.DataFrame()
+
+        polynomial_contrast_matrix = Poly().code_without_intercept(values)
+        df = pd.DataFrame(data=polynomial_contrast_matrix.matrix, columns=polynomial_contrast_matrix.column_suffixes)
+        df.index += 1
+        df.loc[0] = np.zeros(len(values) - 1)
+        return df
+
+    @staticmethod
+    def polynomial_coding(X_in, mapping):
         """
         """
 
         X = X_in.copy(deep=True)
 
-        X.columns = ['col_' + str(x) for x in X.columns.values]
-        cols = ['col_' + str(x) for x in cols]
+        cols = X.columns.values.tolist()
 
-        if cols is None:
-            cols = X.columns.values
-            pass_thru = []
-        else:
-            pass_thru = [col for col in X.columns.values if col not in cols]
+        X['intercept'] = pd.Series([1] * X.shape[0])
 
-        X.fillna(-1, inplace=True)
+        for switch in mapping:
+            col = switch.get('col')
+            mod = switch.get('mapping')
+            new_columns = []
+            for i in range(len(mod.columns)):
+                c = mod.columns[i]
+                new_col = str(col) + '_%d' % (i, )
+                X[new_col] = mod[c].loc[X[col]].values
+                new_columns.append(new_col)
+            old_column_index = cols.index(col)
+            cols[old_column_index: old_column_index + 1] = new_columns
 
-        bin_cols = []
-        for col in cols:
-            mod = dmatrix("C(Q(\"%s\"), Poly)" % (col, ), X)
-            for dig in range(len(mod[0])):
-                X[str(col) + '_%d' % (dig, )] = mod[:, dig]
-                bin_cols.append(str(col) + '_%d' % (dig, ))
-
-        X = X.reindex(columns=bin_cols + pass_thru)
+        cols = ['intercept'] + cols
+        X = X.reindex(columns=cols)
 
         return X

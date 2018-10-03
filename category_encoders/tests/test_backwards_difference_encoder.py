@@ -4,7 +4,7 @@ from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4
 import category_encoders as encoders
 
 
-class TestBackwardsEncoders(TestCase):
+class TestBackwardsEncoder(TestCase):
 
     def test_backwards_difference_encoder_preserve_dimension_1(self):
         train = ['A', 'B', 'C']
