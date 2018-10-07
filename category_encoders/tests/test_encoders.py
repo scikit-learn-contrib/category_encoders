@@ -226,29 +226,6 @@ class TestEncoders(TestCase):
                 result = encoder.fit_transform(X[['unique_str']], y)
                 self.assertTrue(all(result.var() < 0.001), 'The unique string column must not be predictive of the label')
 
-    # encoder specific tests
-    def test_binary_bin(self):
-        data = np.array(['a', 'ba', 'ba'])
-        out = encoders.BinaryEncoder().fit_transform(data)
-        self.assertTrue(pd.DataFrame([[0, 1], [1, 0], [1, 0]], columns=['0_0', '0_1']).equals(out))
-
-    def test_binary_dist(self):
-        data = np.array(['apple', 'orange', 'peach', 'lemon'])
-        encoder = encoders.BinaryEncoder()
-        encoder.fit(data)
-
-        # split dataframe into two transforms and recombine
-        a = encoder.transform(data[:1])
-        b = encoder.transform(data[1:])
-        split = pd.concat([a, b])
-        split = split.reset_index(drop=True)
-
-        # run all at once
-        c = encoder.transform(data)
-
-        # make sure they are the same
-        self.assertTrue(split.equals(c))
-
     def test_leave_one_out(self):
         enc = encoders.LeaveOneOutEncoder(verbose=1, randomized=True, sigma=0.1)
         enc.fit(X, y)
