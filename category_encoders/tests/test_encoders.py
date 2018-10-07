@@ -271,47 +271,6 @@ class TestEncoders(TestCase):
         obtained[321] = obtained[321].astype('int64')   # numeric columns are incorrectly typed as object...
         verify_inverse_transform(X_i_t, obtained)
 
-    def test_ordinal(self):
-
-        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, impute_missing=True)
-        enc.fit(X)
-        out = enc.transform(X_t)
-        self.assertEqual(len(set(out['extra'].values)), 4)
-        self.assertIn(0, set(out['extra'].values))
-        self.assertFalse(enc.mapping is None)
-        self.assertTrue(len(enc.mapping) > 0)
-
-        enc = encoders.OrdinalEncoder(verbose=1, mapping=enc.mapping, return_df=True, impute_missing=True)
-        enc.fit(X)
-        out = enc.transform(X_t)
-        self.assertEqual(len(set(out['extra'].values)), 4)
-        self.assertIn(0, set(out['extra'].values))
-        self.assertTrue(len(enc.mapping) > 0)
-
-        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
-        enc.fit(X)
-        out = enc.transform(X_t)
-        out_cats = [x for x in set(out['extra'].values) if np.isfinite(x)]
-        self.assertEqual(len(out_cats), 3)
-        self.assertFalse(enc.mapping is None)
-
-    def test_ordinal_dist(self):
-        data = np.array([
-            ['apple', None],
-            ['peach', 'lemon']
-        ])
-        encoder = encoders.OrdinalEncoder(impute_missing=True)
-        encoder.fit(data)
-        a = encoder.transform(data)
-        self.assertEqual(a.values[0, 1], 0)
-        self.assertEqual(a.values[1, 1], 1)
-
-        encoder = encoders.OrdinalEncoder(impute_missing=False)
-        encoder.fit(data)
-        a = encoder.transform(data)
-        self.assertTrue(np.isnan(a.values[0, 1]))
-        self.assertEqual(a.values[1, 1], 1)
-
     # beware: for some reason doctest does not raise exceptions - you have to read the text output
     def test_doc(self):
         suite = TestSuite()
