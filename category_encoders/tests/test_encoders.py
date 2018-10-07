@@ -1,62 +1,18 @@
 import doctest
-import math
 import os
-import random
-import sklearn
-import pandas as pd
-import numpy as np
 from datetime import timedelta
+
+import numpy as np
+import pandas as pd
+import sklearn
+import category_encoders.tests.test_utils as tu
 from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted
-from unittest2 import TestSuite, TextTestRunner, TestCase # or `from unittest import ...` if on Python 3.4+
+from unittest2 import TestSuite, TextTestRunner, TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
 
 __author__ = 'willmcginnis'
 
-# subroutines
-def create_array(n_rows=1000, extras=False, has_none=True):
-    """
-    Creates a numpy dataset with some categorical variables
-    :return:
-    """
-
-    ds = [[
-        random.random(),
-        random.random(),
-        random.choice(['A', 'B', 'C']),
-        random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),
-        random.choice(['A', 'B', 'C', None, np.nan]) if has_none else random.choice(['A', 'B', 'C']),
-        random.choice(['A'])
-    ] for _ in range(n_rows)]
-
-    return np.array(ds)
-
-def create_dataset(n_rows=1000, extras=False, has_none=True):
-    """
-    Creates a dataset with some categorical variables
-    """
-
-    ds = [[
-        random.random(),                                                                        # Floats
-        random.choice([float('nan'), float('inf'), float('-inf'), -0, 0, 1, -1, math.pi]),      # Floats with edge scenarios
-        row,                                                                                    # Unique integers
-        str(row),                                                                               # Unique strings
-        random.choice(['A']),                                                                   # Invariant
-        random.choice(['A', 'B_b', 'C_c_c']),                                                   # Strings with underscores to test reverse_dummies()
-        random.choice(['A', 'B', 'C', None]) if has_none else random.choice(['A', 'B', 'C']),   # None
-        random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),      # With a new string value
-        random.choice([12, 43, -32])                                                            # Number in the column name
-    ] for row in range(n_rows)]
-
-    df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321])
-    return df
-
-def verify_numeric(X_test):
-    for dt in X_test.dtypes:
-        numeric = False
-        if np.issubdtype(dt, np.dtype(int)) or np.issubdtype(dt, np.dtype(float)):
-            numeric = True
-        assert numeric
 
 def verify_inverse_transform(x, x_inv):
     """
@@ -66,12 +22,12 @@ def verify_inverse_transform(x, x_inv):
     assert x.equals(x_inv)
 
 # data definitions
-np_X = create_array(n_rows=100)
-np_X_t = create_array(n_rows=50, extras=True)
+np_X = tu.create_array(n_rows=100)
+np_X_t = tu.create_array(n_rows=50, extras=True)
 np_y = np.random.randn(np_X.shape[0]) > 0.5
 np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
-X = create_dataset(n_rows=100)
-X_t = create_dataset(n_rows=50, extras=True)
+X = tu.create_dataset(n_rows=100)
+X_t = tu.create_dataset(n_rows=50, extras=True)
 y = pd.DataFrame(np_y)
 y_t = pd.DataFrame(np_y_t)
 
@@ -86,7 +42,7 @@ class TestEncoders(TestCase):
                 # Encode a numpy array
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(np_X, np_y)
-                verify_numeric(enc.transform(np_X_t))
+                tu.verify_numeric(enc.transform(np_X_t))
 
     def test_classification(self):
         for encoder_name in encoders.__all__:
@@ -95,15 +51,15 @@ class TestEncoders(TestCase):
 
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit(X, np_y)
-                verify_numeric(enc.transform(X_t))
+                tu.verify_numeric(enc.transform(X_t))
 
                 enc = getattr(encoders, encoder_name)(verbose=1)
                 enc.fit(X, np_y)
-                verify_numeric(enc.transform(X_t))
+                tu.verify_numeric(enc.transform(X_t))
 
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
                 enc.fit(X, np_y)
-                verify_numeric(enc.transform(X_t))
+                tu.verify_numeric(enc.transform(X_t))
 
                 enc = getattr(encoders, encoder_name)(return_df=False)
                 enc.fit(X, np_y)
@@ -127,12 +83,12 @@ class TestEncoders(TestCase):
                 # encode a numpy array and transform with the help of the target
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(np_X, np_y)
-                verify_numeric(enc.transform(np_X_t, np_y_t))
+                tu.verify_numeric(enc.transform(np_X_t, np_y_t))
 
                 # target is a DataFrame
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(X, y)
-                verify_numeric(enc.transform(X_t, y_t))
+                tu.verify_numeric(enc.transform(X_t, y_t))
 
                 # when we run transform(X, y) and there is a new value in X, something is wrong and we raise an error
                 enc = getattr(encoders, encoder_name)(impute_missing=True, handle_unknown='error', cols=['extra'])
@@ -144,9 +100,9 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
 
                 # we exclude some columns
-                X = create_dataset(n_rows=100)
+                X = tu.create_dataset(n_rows=100)
                 X = X.drop(['unique_str', 'none'], axis=1)
-                X_t = create_dataset(n_rows=50, extras=True)
+                X_t = tu.create_dataset(n_rows=50, extras=True)
                 X_t = X_t.drop(['unique_str', 'none'], axis=1)
 
                 # illegal state, we have to first train the encoder...
@@ -167,8 +123,8 @@ class TestEncoders(TestCase):
 
     def test_handle_unknown_error(self):
         # BaseN has problems with None -> ignore None
-        X = create_dataset(n_rows=100, has_none=False)
-        X_t = create_dataset(n_rows=50, extras=True, has_none=False)
+        X = tu.create_dataset(n_rows=100, has_none=False)
+        X_t = tu.create_dataset(n_rows=50, extras=True, has_none=False)
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
@@ -195,9 +151,9 @@ class TestEncoders(TestCase):
 
     def test_inverse_transform(self):
         # we do not allow None in these data (but "none" column without any None is ok)
-        X = create_dataset(n_rows=100, has_none=False)
-        X_t = create_dataset(n_rows=50, has_none=False)
-        X_t_extra = create_dataset(n_rows=50, extras=True, has_none=False)
+        X = tu.create_dataset(n_rows=100, has_none=False)
+        X_t = tu.create_dataset(n_rows=50, has_none=False)
+        X_t_extra = tu.create_dataset(n_rows=50, extras=True, has_none=False)
         cols = ['underscore', 'none', 'extra', 321]
 
         for encoder_name in ['BaseNEncoder', 'BinaryEncoder', 'OneHotEncoder', 'OrdinalEncoder']:
@@ -296,8 +252,8 @@ class TestEncoders(TestCase):
     def test_leave_one_out(self):
         enc = encoders.LeaveOneOutEncoder(verbose=1, randomized=True, sigma=0.1)
         enc.fit(X, y)
-        verify_numeric(enc.transform(X_t))
-        verify_numeric(enc.transform(X_t, y_t))
+        tu.verify_numeric(enc.transform(X_t))
+        tu.verify_numeric(enc.transform(X_t, y_t))
 
     def test_leave_one_out_values(self):
         df = pd.DataFrame({
@@ -359,9 +315,9 @@ class TestEncoders(TestCase):
         self.assertIn('extra_-1', out.columns.values)
 
         # test inverse_transform
-        X_i = create_dataset(n_rows=100, has_none=False)
-        X_i_t = create_dataset(n_rows=50, has_none=False)
-        X_i_t_extra = create_dataset(n_rows=50, extras=True, has_none=False)
+        X_i = tu.create_dataset(n_rows=100, has_none=False)
+        X_i_t = tu.create_dataset(n_rows=50, has_none=False)
+        X_i_t_extra = tu.create_dataset(n_rows=50, extras=True, has_none=False)
         cols = ['underscore', 'none', 'extra', 321]
 
         enc = encoders.OneHotEncoder(verbose=1, use_cat_names=True, cols=cols)
@@ -415,8 +371,8 @@ class TestEncoders(TestCase):
 
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2)
         enc.fit(X, y)
-        verify_numeric(enc.transform(X_t))
-        verify_numeric(enc.transform(X_t, y_t))
+        tu.verify_numeric(enc.transform(X_t))
+        tu.verify_numeric(enc.transform(X_t, y_t))
 
     def test_target_encoder_fit_HaveConstructorSetSmoothingAndMinSamplesLeaf_ExpectUsedInFit(self):
         k = 2
@@ -444,94 +400,6 @@ class TestEncoders(TestCase):
         self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
         self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
         self.assertEqual(0.5, values[3])
-
-    def test_woe(self):
-        cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321]
-
-        # balanced label with balanced features
-        X_balanced = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col1'])
-        y_balanced = [True, False, True, False, True, False]
-        enc = encoders.WOEEncoder()
-        enc.fit(X_balanced, y_balanced)
-        X1 = enc.transform(X_balanced)
-        self.assertTrue(all(X1.sum() < 0.001), "When the class label is balanced, WoE should sum to 0 in each transformed column")
-
-        enc = encoders.WOEEncoder(cols=cols)
-        enc.fit(X, np_y)
-        X1 = enc.transform(X_t)
-        verify_numeric(X1[cols])
-        self.assertTrue(np.isfinite(X1[cols].values).all(), 'There must not be any NaN, inf or -inf in the transformed columns')
-        self.assertEqual(len(list(X_t)), len(list(X1)), 'The count of attributes must not change')
-        self.assertEqual(len(X_t), len(X1), 'The count of rows must not change')
-        X2 = enc.transform(X_t, np_y_t)
-        verify_numeric(X2)
-        self.assertTrue(np.isfinite(X2[cols].values).all(), 'There must not be any NaN, inf or -inf in the transformed columns')
-        self.assertEqual(len(list(X_t)), len(list(X2)), 'The count of attributes must not change')
-        self.assertEqual(len(X_t), len(X2), 'The count of rows must not change')
-        X3 = enc.transform(X, np_y)
-        verify_numeric(X3)
-        self.assertTrue(np.isfinite(X3[cols].values).all(), 'There must not be any NaN, inf or -inf in the transformed columns')
-        self.assertEqual(len(list(X)), len(list(X3)), 'The count of attributes must not change')
-        self.assertEqual(len(X), len(X3), 'The count of rows must not change')
-        self.assertTrue(X3['unique_str'].var() < 0.001, 'The unique string column must not be predictive of the label')
-        X4 = enc.fit_transform(X, np_y)
-        verify_numeric(X4)
-        self.assertTrue(np.isfinite(X4[cols].values).all(), 'There must not be any NaN, inf or -inf in the transformed columns')
-        self.assertEqual(len(list(X)), len(list(X4)), 'The count of attributes must not change')
-        self.assertEqual(len(X), len(X4), 'The count of rows must not change')
-        self.assertTrue(X4['unique_str'].var() < 0.001, 'The unique string column must not be predictive of the label')
-
-        enc = encoders.WOEEncoder()
-        enc.fit(X, np_y)
-        X1 = enc.transform(X_t)
-        self.assertEqual(len(list(X_t)), len(list(X1)), 'The count of attributes must not change')
-        self.assertEqual(len(X_t), len(X1), 'The count of rows must not change')
-        verify_numeric(X1)
-        X2 = enc.transform(X_t, np_y_t)
-        verify_numeric(X2)
-        self.assertEqual(len(list(X_t)), len(list(X2)), 'The count of attributes must not change')
-        self.assertEqual(len(X_t), len(X2), 'The count of rows must not change')
-
-        # seed
-        enc = encoders.WOEEncoder(cols=cols, random_state=2001, randomized=True)
-        enc.fit(X, np_y)
-        X1 = enc.transform(X_t, np_y_t)
-        X2 = enc.transform(X_t, np_y_t)
-        self.assertTrue(X1.equals(X2), "When the seed is given, the results must be identical")
-        verify_numeric(X1)
-        verify_numeric(X2)
-
-        # invariant target
-        y_invariant = [True, True, True, True, True, True]
-        enc = encoders.WOEEncoder()
-        with self.assertRaises(ValueError):
-            enc.fit(X_balanced, y_invariant)
-
-        # branch coverage unit tests - no cols
-        enc = encoders.WOEEncoder(cols=[])
-        enc.fit(X, np_y)
-        self.assertTrue(enc.transform(X_t).equals(X_t))
-
-        # missing values in the target
-        y_missing = [True, True, None, True, True, True]
-        enc = encoders.WOEEncoder()
-        with self.assertRaises(ValueError):
-            enc.fit(X_balanced, y_missing)
-
-        # impute missing
-        enc = encoders.WOEEncoder(impute_missing=False)
-        enc.fit(X, np_y)
-        X1 = enc.transform(X_t)
-        verify_numeric(X1)
-        self.assertTrue(X1.isnull().values.any())
-        self.assertEqual(len(list(X_t)), len(list(X1)), 'The count of attributes must not change')
-        self.assertEqual(len(X_t), len(X1), 'The count of rows must not change')
-
-        X2 = enc.transform(X_t, np_y_t)
-        verify_numeric(X2)
-        self.assertTrue(X1.isnull().values.any())
-        self.assertEqual(len(list(X_t)), len(list(X2)), 'The count of attributes must not change')
-        self.assertEqual(len(X_t), len(X2), 'The count of rows must not change')
 
 
     # beware: for some reason doctest does not raise exceptions - you have to read the text output
