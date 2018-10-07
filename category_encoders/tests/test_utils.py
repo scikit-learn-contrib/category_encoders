@@ -50,3 +50,11 @@ def create_dataset(n_rows=1000, extras=False, has_none=True):
 
     df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321])
     return df
+
+
+def verify_inverse_transform(x, x_inv):
+    """
+    Verify x is equal to x_inv. The test returns true for NaN.equals(NaN) as it should.
+
+    """
+    assert x.equals(x_inv)
