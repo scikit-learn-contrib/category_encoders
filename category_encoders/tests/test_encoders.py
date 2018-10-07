@@ -344,41 +344,6 @@ class TestEncoders(TestCase):
         self.assertTrue(np.isnan(a.values[0, 1]))
         self.assertEqual(a.values[1, 1], 1)
 
-    def test_target_encoder(self):
-
-        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2)
-        enc.fit(X, y)
-        tu.verify_numeric(enc.transform(X_t))
-        tu.verify_numeric(enc.transform(X_t, y_t))
-
-    def test_target_encoder_fit_HaveConstructorSetSmoothingAndMinSamplesLeaf_ExpectUsedInFit(self):
-        k = 2
-        f = 10
-        binary_cat_example = pd.DataFrame(
-            {'Trend': ['UP', 'UP', 'DOWN', 'FLAT', 'DOWN', 'UP', 'DOWN', 'FLAT', 'FLAT', 'FLAT'],
-             'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
-        encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
-        encoder.fit(binary_cat_example, binary_cat_example['target'])
-        trend_mapping = encoder.mapping[0]['mapping']
-        self.assertAlmostEqual(0.4125, trend_mapping['DOWN']['smoothing'], delta=1e-4)
-        self.assertEqual(0.5, trend_mapping['FLAT']['smoothing'])
-        self.assertAlmostEqual(0.5874, trend_mapping['UP']['smoothing'], delta=1e-4)
-
-    def test_target_encoder_fit_transform_HaveConstructorSetSmoothingAndMinSamplesLeaf_ExpectCorrectValueInResult(self):
-        k = 2
-        f = 10
-        binary_cat_example = pd.DataFrame(
-            {'Trend': ['UP', 'UP', 'DOWN', 'FLAT', 'DOWN', 'UP', 'DOWN', 'FLAT', 'FLAT', 'FLAT'],
-             'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
-        encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
-        result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
-        values = result['Trend'].values
-        self.assertAlmostEqual(0.5874, values[0], delta=1e-4)
-        self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
-        self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
-        self.assertEqual(0.5, values[3])
-
-
     # beware: for some reason doctest does not raise exceptions - you have to read the text output
     def test_doc(self):
         suite = TestSuite()
