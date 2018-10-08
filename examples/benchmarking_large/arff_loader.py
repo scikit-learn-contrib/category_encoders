@@ -12,13 +12,13 @@ E.g.: arff_loader.load('car.arff')
 """
 def load(file_name):
     # Load ARFF from web
-    response = requests.get('https://raw.githubusercontent.com/renatopp/arff-datasets/master/classification/' + file_name)
-    html = response.text
-    arff_f = arff.loads(html)
+    # response = requests.get('https://raw.githubusercontent.com/renatopp/arff-datasets/master/classification/' + file_name)
+    # html = response.text
+    # arff_f = arff.loads(html)
 
     # Load ARFF from file
-    # with open('./datasets/arff-datasets-master/classification/' + file_name, 'r') as file:
-    #     arff_f = arff.load(file)
+    with open('./datasets/arff-datasets-master/classification/' + file_name, 'r') as file:
+        arff_f = arff.load(file)
 
     # ARFF to pandas
     attrs = arff_f['attributes']
@@ -26,6 +26,8 @@ def load(file_name):
     for attr in attrs:
         attrs_t.append(attr[0])
     df = pd.DataFrame(data=arff_f['data'], columns=attrs_t)
+
+    # df = pd.read_csv('./datasets/article/' + file_name)
 
     # Target column estimation
     if 'class' in list(df):
@@ -60,6 +62,8 @@ def load(file_name):
         target = 'surgical lesion'
     elif 'decision' in list(df):
         target = 'decision'
+    elif 'ACTION' in list(df):
+        target = 'ACTION'
     else:
         print('Using the last column...', list(df)[-1])
         target = list(df)[-1]
@@ -80,7 +84,7 @@ def load(file_name):
 
     # Determine the count of folds that is not going to cause issues.
     # We identify the least common class label and then return min(10, minority_class_count).
-    # Justification: If we have only 5 positive samples and 5 negative samples, with stratified cross-validation we can use at best 5 folds.
+    # Justification: If we have only 5 positive samples and 5 negative samples, we can use at best 5 folds with stratified cross-validation.
     y_unique, y_inversed = np.unique(df[target], return_inverse=True)
     y_counts = np.bincount(y_inversed)
     fold_count = min(np.min(y_counts), 10)

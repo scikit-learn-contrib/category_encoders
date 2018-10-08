@@ -35,7 +35,7 @@ class TestLeaveOneOutEncoder(TestCase):
         ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], randomized=False)
         obtained = ce_leave.fit_transform(X, y['outcome'])
 
-        self.assertEquals([0.0, 0.5, 0.5, 0.5, 1.0, 0.5], list(obtained['color']))
+        self.assertEqual([0.0, 0.5, 0.5, 0.5, 1.0, 0.5], list(obtained['color']))
 
     def test_leave_one_out_fit_callTwiceOnDifferentData_ExpectRefit(self):
         x_a = pd.DataFrame(data=['1', '2', '2', '2', '2', '2'], columns=['col_a'])

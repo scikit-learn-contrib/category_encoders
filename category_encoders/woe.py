@@ -51,16 +51,16 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     CRIM       506 non-null float64
     ZN         506 non-null float64
     INDUS      506 non-null float64
+    CHAS       506 non-null float64
     NOX        506 non-null float64
     RM         506 non-null float64
     AGE        506 non-null float64
     DIS        506 non-null float64
+    RAD        506 non-null float64
     TAX        506 non-null float64
     PTRATIO    506 non-null float64
     B          506 non-null float64
     LSTAT      506 non-null float64
-    CHAS       506 non-null float64
-    RAD        506 non-null float64
     dtypes: float64(13)
     memory usage: 51.5 KB
     None

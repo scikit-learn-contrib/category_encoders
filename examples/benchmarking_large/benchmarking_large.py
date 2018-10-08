@@ -2,6 +2,8 @@
 Run a large scale benchmark.
 
 We measure: {dataset, encoder, model, train and test accuracy measures, train and test runtimes, feature count}.
+
+Note: A reasonably recent version of sklearn is required to run GradientBoostingClassifier and MLPClassifier.
 """
 import os
 import warnings
@@ -19,11 +21,14 @@ from sklearn.tree import DecisionTreeClassifier
 
 import category_encoders
 from examples.benchmarking_large import arff_loader
+from examples.benchmarking_large.util import train_model, train_encoder
 
 # The settings are taken from:
 #   Data-driven advice for applying machine learning to bioinformatics problems, Olson et al.
-from examples.benchmarking_large.util import train_model, train_encoder
-
+# Following models have high variance of results: SGD, SVC and DecisionTree. That is not a big deal.
+# Just be careful during result interpretation.
+# Also, following models are slow because of their configuration: GradientBoosting and RandomForest.
+# SGD and DecisionTree benefit from stronger regularization.
 models = [SGDClassifier(loss='modified_huber', max_iter=50, tol=1e-3),
           LogisticRegression(C=1.5, penalty='l1', fit_intercept=True),
           SVC(kernel='poly', probability=True, C=0.01, gamma=0.1, degree=3, coef0=10.0),
@@ -39,17 +44,43 @@ models = [SGDClassifier(loss='modified_huber', max_iter=50, tol=1e-3),
 # the plan is to move on OpenML.
 # We ignore datasets without any polynomial feature.
 # We also ignore 'splice.arff', 'anneal.arff', 'anneal.orig.arff' due to high runtime.
-datasets = ['audiology.arff', 'autos.arff', 'breast.cancer.arff', 'bridges.version1.arff', 'bridges.version2.arff', 'car.arff',
-            'colic.arff', 'credit.a.arff', 'credit.g.arff', 'cylinder.bands.arff', 'flags.arff', 'heart.c.arff', 'heart.h.arff',
+# Datasets sensitive to amount of regularization are:
+#     breast.cancer.arff                Medium impact
+#     bridges.version1.arff
+#     bridges.version2.arff
+#     car.arff
+#     colic.arff
+#     cylinder.bands.arff               Medium impact
+#     flags.arff                        Large impact
+#     heart.c.arff
+#     hepatitis.arff
+#     hypothyroid.arff
+#     kr.vs.kp.arff
+#     labor.arff                        Large impact
+#     lymph.arff
+#     nursery.arff
+#     postoperative.patient.data.arff   Large impact
+#     primary.tumor.arff
+#     solar.flare1.arff                 Medium impact
+#     solar.flare2.arff                 Medium impact
+#     soybean.arff                      Large impact
+#     sick.arff
+#     spectrometer.arff                 Large impact
+#     sponge.arff                       Large impact
+#     tic-tac-toe.arff
+#     trains.arff                       Medium impact (note that this is a tiny dataset -> with high variance)
+datasets = [#'audiology.arff', 'autos.arff', 'breast.cancer.arff', 'bridges.version1.arff', 'bridges.version2.arff', 'car.arff',
+            # 'colic.arff',
+    'credit.a.arff', 'credit.g.arff', 'cylinder.bands.arff', 'flags.arff', 'heart.c.arff', 'heart.h.arff',
             'hepatitis.arff', 'hypothyroid.arff', 'kr.vs.kp.arff', 'labor.arff', 'lymph.arff', 'mushroom.arff', 'nursery.arff',
             'postoperative.patient.data.arff', 'primary.tumor.arff', 'sick.arff', 'solar.flare1.arff', 'solar.flare2.arff',
             'soybean.arff', 'spectrometer.arff', 'sponge.arff', 'tic-tac-toe.arff', 'trains.arff', 'vote.arff', 'vowel.arff']
+# datasets = ['postoperative.patient.data.arff']
+# datasets = ['amazon.csv', 'carvana.csv', 'erasmus.csv', 'internetusage.csv', 'ipumsla97small.csv', 'kobe.csv', 'pbcseq.csv', 'phpvcoG8S.csv', 'westnile.csv']
 
 # We ignore encoders {BackwardDifferenceEncoder, HelmertEncoder, PolynomialEncoder and SumEncoder} because of:
 #   https://github.com/scikit-learn-contrib/categorical-encoding/issues/91
-encoders = [category_encoders.BaseNEncoder(), category_encoders.OneHotEncoder(), category_encoders.BinaryEncoder(),
-            category_encoders.HashingEncoder(), category_encoders.OrdinalEncoder(), category_encoders.TargetEncoder(),
-            category_encoders.LeaveOneOutEncoder(), category_encoders.WOEEncoder()]
+encoders = [ category_encoders.TargetEncoderV2()]
 
 # Initialization
 if os.path.isfile('./output/result.csv'):

@@ -44,31 +44,30 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
-    Data columns (total 22 columns):
-    col_CHAS_0     506 non-null float64
-    col_CHAS_1     506 non-null float64
-    col_RAD_0      506 non-null float64
-    col_RAD_1      506 non-null float64
-    col_RAD_2      506 non-null float64
-    col_RAD_3      506 non-null float64
-    col_RAD_4      506 non-null float64
-    col_RAD_5      506 non-null float64
-    col_RAD_6      506 non-null float64
-    col_RAD_7      506 non-null float64
-    col_RAD_8      506 non-null float64
-    col_CRIM       506 non-null float64
-    col_ZN         506 non-null float64
-    col_INDUS      506 non-null float64
-    col_NOX        506 non-null float64
-    col_RM         506 non-null float64
-    col_AGE        506 non-null float64
-    col_DIS        506 non-null float64
-    col_TAX        506 non-null float64
-    col_PTRATIO    506 non-null float64
-    col_B          506 non-null float64
-    col_LSTAT      506 non-null float64
-    dtypes: float64(22)
-    memory usage: 87.0 KB
+    Data columns (total 21 columns):
+    intercept    506 non-null int64
+    CRIM         506 non-null float64
+    ZN           506 non-null float64
+    INDUS        506 non-null float64
+    CHAS_0       506 non-null float64
+    NOX          506 non-null float64
+    RM           506 non-null float64
+    AGE          506 non-null float64
+    DIS          506 non-null float64
+    RAD_0        506 non-null float64
+    RAD_1        506 non-null float64
+    RAD_2        506 non-null float64
+    RAD_3        506 non-null float64
+    RAD_4        506 non-null float64
+    RAD_5        506 non-null float64
+    RAD_6        506 non-null float64
+    RAD_7        506 non-null float64
+    TAX          506 non-null float64
+    PTRATIO      506 non-null float64
+    B            506 non-null float64
+    LSTAT        506 non-null float64
+    dtypes: float64(20), int64(1)
+    memory usage: 83.1 KB
     None
 
     References

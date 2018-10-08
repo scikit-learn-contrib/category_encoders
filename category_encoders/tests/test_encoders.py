@@ -26,7 +26,6 @@ y_t = pd.DataFrame(np_y_t)
 
 
 # this class utilises parametrised tests where we loop over different encoders
-# tests that are applicable to only one encoder are the end of the class
 class TestEncoders(TestCase):
 
     def test_np(self):
@@ -164,7 +163,6 @@ class TestEncoders(TestCase):
                 _ = enc.inverse_transform(enc.transform(X_t_extra))
 
     def test_types(self):
-
         X = pd.DataFrame({
             'Int': [1, 2, 1, 2],
             'Float': [1.1, 2.2, 3.3, 4.4],
@@ -212,6 +210,20 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 encoder = getattr(encoders, encoder_name)()
                 _ = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
+
+    def test_preserve_names(self):
+        binary_cat_example = pd.DataFrame(
+            {'ignore': ['UP', 'UP', 'DOWN', 'FLAT'],
+             'feature': ['UP', 'UP', 'DOWN', 'FLAT'],
+             'target': [1, 1, 0, 0]}, columns=['ignore', 'feature', 'target'])
+
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                encoder = getattr(encoders, encoder_name)(cols=['feature'])
+                result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
+                columns = result.columns.values
+
+                self.assertTrue('ignore' in columns, "Column 'ignore' is missing in: " + str(columns))
 
     def test_unique_column_is_not_predictive(self):
         for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder']:

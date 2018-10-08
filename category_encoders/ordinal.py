@@ -54,16 +54,16 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     CRIM       506 non-null float64
     ZN         506 non-null float64
     INDUS      506 non-null float64
+    CHAS       506 non-null int64
     NOX        506 non-null float64
     RM         506 non-null float64
     AGE        506 non-null float64
     DIS        506 non-null float64
+    RAD        506 non-null int64
     TAX        506 non-null float64
     PTRATIO    506 non-null float64
     B          506 non-null float64
     LSTAT      506 non-null float64
-    CHAS       506 non-null int64
-    RAD        506 non-null int64
     dtypes: float64(11), int64(2)
     memory usage: 51.5 KB
     None
