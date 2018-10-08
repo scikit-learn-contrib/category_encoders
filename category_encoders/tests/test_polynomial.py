@@ -1,8 +1,10 @@
+import math
+import numpy as np
 import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
-
+from test_utils import deep_round
 
 a_encoding = [1, -0.7071067811865476, 0.40824829046386313]
 b_encoding = [1, -5.551115123125783e-17, -0.8164965809277261]
@@ -23,7 +25,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [a_encoding,
                     [1, 0, 0],
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(deep_round(test_t.values.tolist()), deep_round(expected))
 
     def test_polynomial_encoder_preserve_dimension_2(self):
         train = ['A', 'B', 'C']
@@ -36,7 +38,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [b_encoding,
                     [1, 0, 0],
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(deep_round(test_t.values.tolist()), deep_round(expected))
 
     def test_polynomial_encoder_preserve_dimension_3(self):
         train = ['A', 'B', 'C']
@@ -50,7 +52,7 @@ class TestPolynomialEncoder(TestCase):
                     b_encoding,
                     c_encoding,
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(deep_round(test_t.values.tolist()), deep_round(expected))
 
     def test_polynomial_encoder_preserve_dimension_4(self):
         train = ['A', 'B', 'C']
@@ -64,7 +66,7 @@ class TestPolynomialEncoder(TestCase):
                     b_encoding,
                     c_encoding,
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(deep_round(test_t.values.tolist()), deep_round(expected))
 
     def test_polynomial_encoder_2cols(self):
         train = [['A', 'A'], ['B', 'B'], ['C', 'C']]
@@ -76,7 +78,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [[1, a_encoding[1], a_encoding[2], a_encoding[1], a_encoding[2]],
                     [1, b_encoding[1], b_encoding[2], b_encoding[1], b_encoding[2]],
                     [1, c_encoding[1], c_encoding[2], c_encoding[1], c_encoding[2]]]
-        self.assertEqual(obtained.values.tolist(), expected)
+        self.assertEqual(deep_round(obtained.values.tolist()), deep_round(expected))
 
     def test_polynomial_encoder_2StringCols_ExpectCorrectOrder(self):
         train = pd.DataFrame({'col1': [1, 2, 3, 4],

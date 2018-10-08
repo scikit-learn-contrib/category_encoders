@@ -58,3 +58,10 @@ def verify_inverse_transform(x, x_inv):
 
     """
     assert x.equals(x_inv)
+
+
+def deep_round(A, ndigits=5):
+    """
+    Rounds numbers in a list of lists. Useful for approximate equality testing.
+    """
+    return [[round(val, ndigits) for val in sublst] for sublst in A]
