@@ -37,7 +37,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
     min_samples_leaf: int
         minimum samples to take category average into account.
     smoothing: float
-        smoothing effect to balance categorical average vs prior.
+        smoothing effect to balance categorical average vs prior. Higher value means stronger regularization.
+        The value must be strictly bigger than 0.
 
     Example
     -------
