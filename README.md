@@ -17,17 +17,18 @@ Documentation: [http://contrib.scikit-learn.org/categorical-encoding/](http://co
 Encoding Methods
 ----------------
 
+ * Backward Difference Contrast [2][3]
+ * BaseN [6]
+ * Binary [5]
+ * Hashing [1]
+ * Helmert Contrast [2][3]
+ * LeaveOneOut [4]
  * Ordinal [2][3]
  * One-Hot [2][3]
- * Binary [5]
- * Helmert Contrast [2][3]
- * Sum Contrast [2][3]
  * Polynomial Contrast [2][3]
- * Backward Difference Contrast [2][3]
- * Hashing [1]
- * BaseN [6]
- * LeaveOneOut [4]
+ * Sum Contrast [2][3]
  * Target Encoding [7]
+ * Weight of Evidence [8]
 
 Usage
 -----
@@ -58,16 +59,17 @@ To use:
     import category_encoders as ce
     
     encoder = ce.BackwardDifferenceEncoder(cols=[...])
+    encoder = ce.BaseNEncoder(cols=[...])
     encoder = ce.BinaryEncoder(cols=[...])
     encoder = ce.HashingEncoder(cols=[...])
     encoder = ce.HelmertEncoder(cols=[...])
+    encoder = ce.LeaveOneOutEncoder(cols=[...])
     encoder = ce.OneHotEncoder(cols=[...])
     encoder = ce.OrdinalEncoder(cols=[...])
-    encoder = ce.SumEncoder(cols=[...])
     encoder = ce.PolynomialEncoder(cols=[...])
-    encoder = ce.BaseNEncoder(cols=[...])
+    encoder = ce.SumEncoder(cols=[...])
     encoder = ce.TargetEncoder(cols=[...])
-    encoder = ce.LeaveOneOutEncoder(cols=[...])
+    encoder = ce.WOEEncoder(cols=[...])
 
 All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. If 
 the cols parameter isn't passed, every non-numeric column will be encoded. Please see the 
@@ -120,3 +122,4 @@ References:
  5. Beyond One-Hot: an exploration of categorical variables. from http://www.willmcginnis.com/2015/11/29/beyond-one-hot-an-exploration-of-categorical-variables/
  6. BaseN Encoding and Grid Search in categorical variables. from http://www.willmcginnis.com/2016/12/18/basen-encoding-grid-search-category_encoders/
  7. A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. from https://kaggle2.blob.core.windows.net/forum-message-attachments/225952/7441/high%20cardinality%20categoricals.pdf
+ 8. Weight of Evidence (WOE) and Information Value Explained. from https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html
