@@ -212,7 +212,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             mapping_out = mapping
             for switch in mapping:
                 column = switch.get('col')
-                transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
+                transformed_column = pd.Series(np.nan, index=X.index, name=column)
                 for val in switch.get('mapping'):
                     if switch.get('mapping')[val]['count'] == 1:
                         transformed_column.loc[X[column] == val] = self._mean
