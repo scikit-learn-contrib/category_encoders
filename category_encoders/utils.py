@@ -13,7 +13,7 @@ def get_obj_cols(df):
     """
     obj_cols = []
     for idx, dt in enumerate(df.dtypes):
-        if dt == 'object':
+        if dt == 'object' or pd.api.types.is_categorical_dtype(dt):
             obj_cols.append(df.columns.values[idx])
 
     return obj_cols
