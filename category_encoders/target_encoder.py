@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
-from sklearn.utils.random import check_random_state
 
 __author__ = 'chappers'
 
@@ -89,9 +88,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self._mean = None
-        
-        
-    
+
     def fit(self, X, y, **kwargs):
         """Fit encoder according to X and y.
         Parameters
@@ -110,7 +107,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         # first check the type
         X = convert_input(X)
         if isinstance(y, pd.DataFrame):
-            y = y.iloc[:,0]
+            y = y.iloc[:, 0]
         else:
             y = pd.Series(y, name='target')
         if X.shape[0] != y.shape[0]:
@@ -121,16 +118,15 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         # if columns aren't passed, just use every string column
         if self.cols is None:
             self.cols = get_obj_cols(X)
-        _, categories = self.target_encode(
+        _, self.mapping = self.target_encode(
             X, y,
-            mapping=self.mapping,
+            mapping=None,
             cols=self.cols,
             impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown,
             smoothing_in=self.smoothing,
             min_samples_leaf=self.min_samples_leaf
         )
-        self.mapping = categories
 
         if self.drop_invariant:
             self.drop_cols = []
@@ -207,43 +203,24 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         X = X_in.copy(deep=True)
         if cols is None:
             cols = X.columns.values
-        
-        if mapping is not None:
-            mapping_out = mapping
-            for switch in mapping:
-                column = switch.get('col')
-                transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
-                for val in switch.get('mapping'):
-                    if switch.get('mapping')[val]['count'] == 1:
-                        transformed_column.loc[X[column] == val] = self._mean
-                    else:
-                        transformed_column.loc[X[column] == val] = switch.get('mapping')[val]['smoothing']
 
+        if mapping is not None:
+            for col in cols:
+                X[col] = X[col].map(mapping[col])
                 if impute_missing:
                     if handle_unknown == 'impute':
-                        transformed_column.fillna(self._mean, inplace=True)
+                        X[col].fillna(self._mean, inplace=True)
                     elif handle_unknown == 'error':
-                        missing = transformed_column.isnull()
-                        if any(missing):
-                            raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
-
-                X[column] = transformed_column.astype(float)
-
+                        if X[col].isnull().any():
+                            raise ValueError('Unexpected categories found in column %s' % col)
         else:
-            self._mean = y.mean()
-            prior = self._mean
-            mapping_out = []
+            mapping = {}
+            prior = self._mean = y.mean()
             for col in cols:
-                tmp = y.groupby(X[col]).agg(['sum', 'count'])
-                tmp['mean'] = tmp['sum'] / tmp['count']
-                tmp = tmp.to_dict(orient='index')
+                stats = y.groupby(X[col]).agg(['count', 'mean'])
+                smoove = 1 / (1 + np.exp(-(stats['count'] - min_samples_leaf) / smoothing_in))
+                smoothing = prior * (1 - smoove) + stats['mean'] * smoove
+                smoothing[stats['count'] == 1] = prior
+                mapping[col] = smoothing
 
-                for val in tmp:
-                    smoothing = smoothing_in
-                    smoothing = 1 / (1 + np.exp(-(tmp[val]["count"] - min_samples_leaf) / smoothing))
-                    cust_smoothing = prior * (1 - smoothing) + tmp[val]['mean'] * smoothing
-                    tmp[val]['smoothing'] = cust_smoothing
-
-                mapping_out.append({'col': col, 'mapping': tmp}, )
-
-        return X, mapping_out
+        return X, mapping

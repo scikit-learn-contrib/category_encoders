@@ -33,10 +33,10 @@ class TestTargetEncoder(TestCase):
              'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
         encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
         encoder.fit(binary_cat_example, binary_cat_example['target'])
-        trend_mapping = encoder.mapping[0]['mapping']
-        self.assertAlmostEqual(0.4125, trend_mapping['DOWN']['smoothing'], delta=1e-4)
-        self.assertEqual(0.5, trend_mapping['FLAT']['smoothing'])
-        self.assertAlmostEqual(0.5874, trend_mapping['UP']['smoothing'], delta=1e-4)
+        trend_mapping = encoder.mapping['Trend']
+        self.assertAlmostEqual(0.4125, trend_mapping['DOWN'], delta=1e-4)
+        self.assertEqual(0.5, trend_mapping['FLAT'])
+        self.assertAlmostEqual(0.5874, trend_mapping['UP'], delta=1e-4)
 
     def test_target_encoder_fit_transform_HaveConstructorSetSmoothingAndMinSamplesLeaf_ExpectCorrectValueInResult(self):
         k = 2
@@ -51,3 +51,9 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
         self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
         self.assertEqual(0.5, values[3])
+
+    def test_target_encoder_noncontiguous_index(self):
+        data = pd.DataFrame({'x': ['a', 'b', np.nan, 'd', 'e'], 'y': range(5)}).dropna()
+        result = encoders.TargetEncoder(cols=['x']).fit_transform(data[['x']], data['y'])
+        self.assertTrue(np.allclose(result, 2.0))
+
