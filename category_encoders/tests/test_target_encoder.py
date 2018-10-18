@@ -52,6 +52,21 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
         self.assertEqual(0.5, values[3])
 
+    def test_target_encoder_fit_transform_HaveCategoricalCOlumn_ExpectCorrectValueInResult(self):
+        k = 2
+        f = 10
+        binary_cat_example = pd.DataFrame(
+            {'Trend': pd.Categorical(['UP', 'UP', 'DOWN', 'FLAT', 'DOWN', 'UP', 'DOWN', 'FLAT', 'FLAT', 'FLAT'],
+                                     categories=['UP', 'FLAT', 'DOWN']),
+             'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
+        encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
+        result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
+        values = result['Trend'].values
+        self.assertAlmostEqual(0.5874, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
+        self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
+        self.assertEqual(0.5, values[3])
+
     def test_target_encoder_noncontiguous_index(self):
         data = pd.DataFrame({'x': ['a', 'b', np.nan, 'd', 'e'], 'y': range(5)}).dropna()
         result = encoders.TargetEncoder(cols=['x']).fit_transform(data[['x']], data['y'])
