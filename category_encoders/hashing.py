@@ -73,6 +73,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     Large Scale Multitask Learning. Proc. ICML.
 
     """
+
     def __init__(self, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -82,6 +83,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self.hash_method = hash_method
         self._dim = None
+        self.feature_names = list()
+        self.is_fitted = False
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -117,7 +120,14 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             self.drop_cols = []
             X_temp = self.transform(X)
             generated_cols = get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            self.drop_cols = [
+                x for x in generated_cols if X_temp[x].var() <= 10e-5]
+
+        cols = list(set(self.cols) - set(self.drop_cols))
+        for c in cols:
+            self.feature_names.extend([c+"_"+str(i)
+                                       for i in self.n_components])
+        self.is_fitted = True
 
         return self
 
@@ -138,19 +148,22 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         """
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
+            raise ValueError(
+                'Must train encoder before it can be used to transform data.')
 
         # first check the type
         X = convert_input(X)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+            raise ValueError('Unexpected input dimension %d, expected %d' % (
+                X.shape[1], self._dim, ))
 
         if not self.cols:
             return X
 
-        X = self.hashing_trick(X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
+        X = self.hashing_trick(
+            X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -160,6 +173,23 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns:
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+
+        if not self.is_fitted:
+            raise ValueError(
+                'Must transform data first. Affected feature names are not known before.')
+        else:
+            return self.feature_names
 
     @staticmethod
     def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
@@ -233,7 +263,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         new_cols = ['col_%d' % d for d in range(N)]
 
         X_cat = X.reindex(columns=cols)
-        X_num = X.reindex(columns=[x for x in X.columns.values if x not in cols])
+        X_num = X.reindex(
+            columns=[x for x in X.columns.values if x not in cols])
 
         X_cat = X_cat.apply(hash_fn, axis=1)
         X_cat.columns = new_cols

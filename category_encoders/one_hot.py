@@ -86,6 +86,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
 
     """
+
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute', use_cat_names=False):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -97,6 +98,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self.use_cat_names = use_cat_names
+        self.is_fitted = False
 
     @property
     def category_mapping(self):
@@ -131,6 +133,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if self.cols is None:
             self.cols = get_obj_cols(X)
 
+        # Indicate no transformation has been applied yet
+
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
@@ -143,8 +147,11 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             self.drop_cols = []
             X_temp = self.transform(X)
             generated_cols = get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            self.drop_cols = [
+                x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
+        self.feature_names = list(set(generated_cols)-set(self.drop_cols))
+        self.is_fitted = True
         return self
 
     def transform(self, X):
@@ -164,14 +171,16 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         """
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
+            raise ValueError(
+                'Must train encoder before it can be used to transform data.')
 
         # first check the type
         X = convert_input(X)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+            raise ValueError('Unexpected input dimension %d, expected %d' % (
+                X.shape[1], self._dim, ))
 
         if not self.cols:
             return X if self.return_df else X.values
@@ -183,6 +192,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
+
+        # Now we can build the list of of new / transformed columns
+        self.feature_names = X.columns
+        self.is_transformed = True
 
         if self.return_df:
             return X
@@ -208,7 +221,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         X = convert_input(X)
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to inverse_transform data')
+            raise ValueError(
+                'Must train encoder before it can be used to inverse_transform data')
 
         X = self.reverse_dummies(X, self.cols)
 
@@ -216,9 +230,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if X.shape[1] != self._dim:
             if self.drop_invariant:
                 raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "set as False when transform data"%(X.shape[1],))
+                                 "set as False when transform data" % (X.shape[1],))
             else:
-                raise ValueError('Unexpected input dimension %d, expected %d'% (X.shape[1], self._dim, ))
+                raise ValueError('Unexpected input dimension %d, expected %d' % (
+                    X.shape[1], self._dim, ))
 
         if not self.cols:
             return X if self.return_df else X.values
@@ -227,11 +242,13 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             for col in self.cols:
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "
-                                     "the unknown category -1 when encode %s"%(col,))
+                                     "the unknown category -1 when encode %s" % (col,))
         if not self.use_cat_names:
             for switch in self.ordinal_encoder.mapping:
-                col_dict = {col_pair[1] : col_pair[0] for col_pair in switch.get('mapping')}
-                X[switch.get('col')] = X[switch.get('col')].apply(lambda x:col_dict.get(x))
+                col_dict = {col_pair[1]: col_pair[0]
+                            for col_pair in switch.get('mapping')}
+                X[switch.get('col')] = X[switch.get('col')].apply(
+                    lambda x: col_dict.get(x))
 
         return X if self.return_df else X.values
 
@@ -259,7 +276,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         bin_cols = []
         for col in cols:
-            col_tuples = copy.deepcopy([class_map['mapping'] for class_map in self.ordinal_encoder.mapping if class_map['col'] == col][0])
+            col_tuples = copy.deepcopy(
+                [class_map['mapping'] for class_map in self.ordinal_encoder.mapping if class_map['col'] == col][0])
             if self.handle_unknown == 'impute':
                 col_tuples.append(('-1', -1))
             for col_tuple in col_tuples:
@@ -299,18 +317,38 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         out_cols = X.columns.values
 
         for col in cols:
-            col_list = [col0 for col0 in out_cols if str(col0).startswith(str(col))]
-            prefix_length = len(str(col))+1 # original column name plus underscore
+            col_list = [col0 for col0 in out_cols if str(
+                col0).startswith(str(col))]
+            # original column name plus underscore
+            prefix_length = len(str(col))+1
             if self.use_cat_names:
                 X[col] = 0
                 for tran_col in col_list:
                     val = tran_col[prefix_length:]
                     X.loc[X[tran_col] == 1, col] = val
             else:
-                value_array = np.array([int(col0[prefix_length:]) for col0 in col_list])
+                value_array = np.array(
+                    [int(col0[prefix_length:]) for col0 in col_list])
                 X[col] = np.dot(X[col_list].values, value_array.T)
             out_cols = [col0 for col0 in out_cols if col0 not in col_list]
 
         X = X.reindex(columns=out_cols + cols)
 
         return X
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns:
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+
+        if not self.is_fitted:
+            raise ValueError(
+                'Must transform data first. Affected feature names are not known before.')
+        else:
+            return self.feature_names
