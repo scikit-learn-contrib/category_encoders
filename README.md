@@ -72,7 +72,7 @@ To use:
     encoder = ce.WOEEncoder(cols=[...])
 
 All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. If 
-the cols parameter isn't passed, every non-numeric column will be encoded. Please see the 
+the cols parameter isn't passed, all pandas columns with the object and categorical data type will be encoded. Please see the 
 docs for transformer-specific configuration options.
 
 Examples
