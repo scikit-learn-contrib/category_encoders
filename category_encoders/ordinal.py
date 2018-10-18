@@ -3,7 +3,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
+from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols, is_category
 
 __author__ = 'willmcginnis'
 
@@ -270,7 +270,12 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         else:
             mapping_out = []
             for col in cols:
-                categories = [x for x in pd.unique(X[col].values) if x is not None]
+
+                if is_category(X[col].dtype):
+                    categories = X[col].cat.categories
+                else:
+                    categories = [x for x in pd.unique(X[col].values) if x is not None]
+
                 categories_dict = {x: i + 1 for i, x in enumerate(categories)}
 
                 mapping_out.append({'col': col, 'mapping': [(x[1], x[0] + 1) for x in list(enumerate(categories))],
