@@ -218,7 +218,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         for switch in self.ordinal_encoder.mapping:
             col_dict = {col_pair[1]: col_pair[0] for col_pair in switch.get('mapping')}
-            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x))
+            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x)).astype(switch.get('data_type'))
 
         return X if self.return_df else X.values
 

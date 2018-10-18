@@ -229,7 +229,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
         for switch in self.mapping:
             col_dict = {col_pair[1]: col_pair[0] for col_pair in switch.get('mapping')}
-            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x))
+            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x)).astype(switch.get('data_type'))
 
         return X if self.return_df else X.values
 
@@ -251,7 +251,12 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             for switch in mapping:
                 categories_dict = dict(switch.get('mapping'))
                 column = switch.get('col')
-                transformed_column = X[column].map(lambda x: categories_dict.get(x))
+                transformed_column = X[column].map(lambda x: categories_dict.get(x, np.nan))
+
+                try:
+                    transformed_column = transformed_column.astype(int)
+                except ValueError as e:
+                    transformed_column = transformed_column.astype(float)
 
                 if impute_missing:
                     if handle_unknown == 'impute':
@@ -260,17 +265,15 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                         missing = transformed_column.isnull()
                         if any(missing):
                             raise ValueError('Unexpected categories found in column %s' % column)
+                X[column] = transformed_column
 
-                try:
-                    X[column] = transformed_column.astype(int)
-                except ValueError as e:
-                    X[column] = transformed_column.astype(float)
         else:
             mapping_out = []
             for col in cols:
                 categories = [x for x in pd.unique(X[col].values) if x is not None]
                 categories_dict = {x: i + 1 for i, x in enumerate(categories)}
 
-                mapping_out.append({'col': col, 'mapping': [(x[1], x[0] + 1) for x in list(enumerate(categories))]}, )
+                mapping_out.append({'col': col, 'mapping': [(x[1], x[0] + 1) for x in list(enumerate(categories))],
+                                    'data_type': X[col].dtype}, )
 
         return X, mapping_out

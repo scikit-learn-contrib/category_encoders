@@ -40,7 +40,7 @@ class TestEncoders(TestCase):
     def test_classification(self):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321]
+                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical']
 
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit(X, np_y)
@@ -147,7 +147,7 @@ class TestEncoders(TestCase):
         X = tu.create_dataset(n_rows=100, has_none=False)
         X_t = tu.create_dataset(n_rows=50, has_none=False)
         X_t_extra = tu.create_dataset(n_rows=50, extras=True, has_none=False)
-        cols = ['underscore', 'none', 'extra', 321]
+        cols = ['underscore', 'none', 'extra', 321, 'categorical']
 
         for encoder_name in ['BaseNEncoder', 'BinaryEncoder', 'OneHotEncoder', 'OrdinalEncoder']:
             with self.subTest(encoder_name=encoder_name):
@@ -174,7 +174,7 @@ class TestEncoders(TestCase):
             'TimeDelta': [timedelta(-9999), timedelta(-9), timedelta(-1), timedelta(999)],
             'Bool': [False, True, True, False],
             'Tuple': [('a', 'tuple'), ('a', 'tuple'), ('a', 'tuple'), ('b', 'tuple')],
-            # 'Categorical': pd.Categorical(list('bbea'), categories=['e', 'a', 'b'], ordered=True),
+            'Categorical': pd.Categorical(list('bbea'), categories=['e', 'a', 'b'], ordered=True),
             # 'List': [[1,2], [2,3], [3,4], [4,5]],
             # 'Dictionary': [{1: "a", 2: "b"}, {1: "a", 2: "b"}, {1: "a", 2: "b"}, {1: "a", 2: "b"}],
             # 'Set': [{'John', 'Jane'}, {'John', 'Jane'}, {'John', 'Jane'}, {'John', 'Jane'}],
