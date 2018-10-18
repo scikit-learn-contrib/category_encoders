@@ -278,7 +278,6 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
                 categories_dict = {x: i + 1 for i, x in enumerate(categories)}
 
-                mapping_out.append({'col': col, 'mapping': [(x[1], x[0] + 1) for x in list(enumerate(categories))],
-                                    'data_type': X[col].dtype}, )
+                mapping_out.append({'col': col, 'mapping': list(categories_dict.items()), 'data_type': X[col].dtype}, )
 
         return X, mapping_out
