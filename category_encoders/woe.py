@@ -25,7 +25,6 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'ignore', 'error' and 'impute', defaults to 'impute', which will assume WOE=0.
-        Values that are observed only once during training are treated as if they were not observed at all.
     randomized: bool,
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float
@@ -164,7 +163,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         y : array-like, shape = [n_samples] when transform by leave one out
             None, when transform without target information (such as transform test set)
 
-            
+
 
         Returns
         -------
@@ -224,7 +223,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
 
     def _train(self, X, y, cols=None):
         # Initialize the output
-        mapping_out = []
+        mapping = {}
 
         # Calculate global statistics
         self._sum  = y.sum()
@@ -233,49 +232,38 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         for col in cols:
             # Calculate sum and count of the target for each unique value in the feature col
             stats = y.groupby(X[col]).agg(['sum', 'count']) # Count of x_{i,+} and x_i
-            stats = stats.to_dict(orient='index')
-
-            # Initialization
-            woe = {}
 
             # Create a new column with regularized WOE.
             # Regularization helps to avoid division by zero.
-            for val in stats:
-                # Pre-calculate WOEs because logarithms are slow.
-                # Ignore unique values. This helps to prevent overfitting on id-like columns and keep the model small.
-                if stats[val]['count'] > 1:
-                    nominator = (stats[val]['sum'] + self.regularization) / (self._sum + 2*self.regularization)
-                    denominator = ((stats[val]['count'] - stats[val]['sum']) + self.regularization) / (self._count - self._sum + 2*self.regularization)
-                    woe[val] = np.log(nominator / denominator)
+            # Pre-calculate WOEs because logarithms are slow.
+            nominator = (stats['sum'] + self.regularization) / (self._sum + 2*self.regularization)
+            denominator = ((stats['count'] - stats['sum']) + self.regularization) / (self._count - self._sum + 2*self.regularization)
+            woe = np.log(nominator / denominator)
 
-            # Store the column statistics for transform() function
-            mapping_out.append({'col': col, 'woe':woe})
+            # Ignore unique values. This helps to prevent overfitting on id-like columns.
+            woe[stats['count'] == 1] = 0
 
-        return mapping_out
+            # Store WOE for transform() function
+            mapping[col] = woe
+
+        return mapping
 
     def _score(self, X, y):
-        for switch in self.mapping:
-            # Get column name (can be anything: str, number,...)
-            column = switch.get('col')
-
+        for col in self.cols:
             # Score the column
-            transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
-            for val in switch.get('woe'):
-                transformed_column.loc[X[column] == val] = switch.get('woe')[val] # THIS LINE IS SLOW
+            X[col] = X[col].map(self.mapping[col])
 
             # Replace missing values only in the computed columns
             if self.impute_missing:
                 if self.handle_unknown == 'impute':
-                    transformed_column.fillna(0, inplace=True)
+                    X[col].fillna(0, inplace=True)
                 elif self.handle_unknown == 'error':
-                    missing = transformed_column.isnull()
-                    if any(missing):
-                        raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
+                    if X[col].isnull().any():
+                        raise ValueError('Unexpected categories found in column %s' % col)
 
             # Randomization is meaningful only for training data -> we do it only if y is present
             if self.randomized and y is not None:
                 random_state_generator = check_random_state(self.random_state)
-                transformed_column = (transformed_column * random_state_generator.normal(1., self.sigma, transformed_column.shape[0]))
+                X[col] = (X[col] * random_state_generator.normal(1., self.sigma, X[col].shape[0]))
 
-            X[column] = transformed_column.astype(float)
         return X
