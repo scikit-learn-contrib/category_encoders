@@ -123,10 +123,10 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             self.drop_cols = [
                 x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
-        cols = list(set(self.cols) - set(self.drop_cols))
-        for c in cols:
+        # Build list of feature names
+        for c in list(set(self.cols) - set(self.drop_cols)):
             self.feature_names.extend([c+"_"+str(i)
-                                       for i in self.n_components])
+                                       for i in range(0, self.n_components)])
         self.is_fitted = True
 
         return self
@@ -187,7 +187,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         if not self.is_fitted:
             raise ValueError(
-                'Must transform data first. Affected feature names are not known before.')
+                'Must fit data first. Affected feature names are not known before.')
         else:
             return self.feature_names
 

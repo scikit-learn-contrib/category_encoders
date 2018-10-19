@@ -7,6 +7,7 @@ from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
 
+
 class WOEEncoder(BaseEstimator, TransformerMixin):
     """Weight of Evidence coding for categorical features.
 
@@ -116,24 +117,29 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         # Unite parameters into pandas types
         X = convert_input(X)
         if isinstance(y, pd.DataFrame):
-            y = y.iloc[:,0]
+            y = y.iloc[:, 0]
         else:
             y = pd.Series(y, name='target')
 
         # The lengths must be equal
         if X.shape[0] != y.shape[0]:
-            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
+            raise ValueError(
+                "The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         # The label must be binary with values {0,1}
         unique = y.unique()
         if len(unique) != 2:
-            raise ValueError("The target column y must be binary. But the target contains " + str(len(unique)) + " unique value(s).")
+            raise ValueError("The target column y must be binary. But the target contains " +
+                             str(len(unique)) + " unique value(s).")
         if y.isnull().any():
-            raise ValueError("The target column y must not contain missing values.")
+            raise ValueError(
+                "The target column y must not contain missing values.")
         if np.max(unique) < 1:
-            raise ValueError("The target column y must be binary with values {0, 1}. Value 1 was not found in the target.")
+            raise ValueError(
+                "The target column y must be binary with values {0, 1}. Value 1 was not found in the target.")
         if np.min(unique) > 0:
-            raise ValueError("The target column y must be binary with values {0, 1}. Value 0 was not found in the target.")
+            raise ValueError(
+                "The target column y must be binary with values {0, 1}. Value 0 was not found in the target.")
 
         self._dim = X.shape[1]
 
@@ -149,7 +155,8 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             self.drop_cols = []
             X_temp = self.transform(X)
             generated_cols = get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            self.drop_cols = [
+                x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
 
@@ -164,7 +171,6 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         y : array-like, shape = [n_samples] when transform by leave one out
             None, when transform without target information (such as transform test set)
 
-            
 
         Returns
         -------
@@ -175,14 +181,16 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         """
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
+            raise ValueError(
+                'Must train encoder before it can be used to transform data.')
 
         # Unite the input into pandas DataFrame
         X = convert_input(X)
 
         # Then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
+            raise ValueError('Unexpected input dimension %d, expected %d' % (
+                X.shape[1], self._dim,))
 
         # If we are encoding the training data, we have to check the target
         if y is not None:
@@ -191,7 +199,8 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             else:
                 y = pd.Series(y, name='target')
             if X.shape[0] != y.shape[0]:
-                raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
+                raise ValueError(
+                    "The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         if not self.cols:
             return X
@@ -227,12 +236,13 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         mapping_out = []
 
         # Calculate global statistics
-        self._sum  = y.sum()
+        self._sum = y.sum()
         self._count = y.count()
 
         for col in cols:
             # Calculate sum and count of the target for each unique value in the feature col
-            stats = y.groupby(X[col]).agg(['sum', 'count']) # Count of x_{i,+} and x_i
+            stats = y.groupby(X[col]).agg(
+                ['sum', 'count'])  # Count of x_{i,+} and x_i
             stats = stats.to_dict(orient='index')
 
             # Initialization
@@ -244,12 +254,14 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
                 # Pre-calculate WOEs because logarithms are slow.
                 # Ignore unique values. This helps to prevent overfitting on id-like columns and keep the model small.
                 if stats[val]['count'] > 1:
-                    nominator = (stats[val]['sum'] + self.regularization) / (self._sum + 2*self.regularization)
-                    denominator = ((stats[val]['count'] - stats[val]['sum']) + self.regularization) / (self._count - self._sum + 2*self.regularization)
+                    nominator = (
+                        stats[val]['sum'] + self.regularization) / (self._sum + 2*self.regularization)
+                    denominator = ((stats[val]['count'] - stats[val]['sum']) + self.regularization) / (
+                        self._count - self._sum + 2*self.regularization)
                     woe[val] = np.log(nominator / denominator)
 
             # Store the column statistics for transform() function
-            mapping_out.append({'col': col, 'woe':woe})
+            mapping_out.append({'col': col, 'woe': woe})
 
         return mapping_out
 
@@ -261,7 +273,8 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             # Score the column
             transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
             for val in switch.get('woe'):
-                transformed_column.loc[X[column] == val] = switch.get('woe')[val] # THIS LINE IS SLOW
+                transformed_column.loc[X[column] == val] = switch.get(
+                    'woe')[val]  # THIS LINE IS SLOW
 
             # Replace missing values only in the computed columns
             if self.impute_missing:
@@ -270,12 +283,14 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
                 elif self.handle_unknown == 'error':
                     missing = transformed_column.isnull()
                     if any(missing):
-                        raise ValueError('Unexpected categories found in column %s' % switch.get('col'))
+                        raise ValueError(
+                            'Unexpected categories found in column %s' % switch.get('col'))
 
             # Randomization is meaningful only for training data -> we do it only if y is present
             if self.randomized and y is not None:
                 random_state_generator = check_random_state(self.random_state)
-                transformed_column = (transformed_column * random_state_generator.normal(1., self.sigma, transformed_column.shape[0]))
+                transformed_column = (transformed_column * random_state_generator.normal(
+                    1., self.sigma, transformed_column.shape[0]))
 
             X[column] = transformed_column.astype(float)
         return X

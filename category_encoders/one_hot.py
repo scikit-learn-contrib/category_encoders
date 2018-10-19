@@ -150,8 +150,6 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             self.drop_cols = [
                 x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
-        self.feature_names = list(set(generated_cols)-set(self.drop_cols))
-        self.is_fitted = True
         return self
 
     def transform(self, X):
@@ -347,7 +345,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             Note: potentially dropped features are not included!
         """
 
-        if not self.is_fitted:
+        if not self.is_transformed:
             raise ValueError(
                 'Must transform data first. Affected feature names are not known before.')
         else:

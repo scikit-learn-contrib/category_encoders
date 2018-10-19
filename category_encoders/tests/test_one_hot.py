@@ -25,30 +25,43 @@ class TestOneHotEncoderTestCase(TestCase):
                          enc.transform(X_t[X_t['extra'] != 'A']).shape[1],
                          'We have to get the same count of columns')
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True)
+        enc = encoders.OneHotEncoder(
+            verbose=1, return_df=True, impute_missing=True)
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertIn('extra_-1', out.columns.values)
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
+        enc = encoders.OneHotEncoder(
+            verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertEqual(len([x for x in out.columns.values if str(x).startswith('extra_')]), 3)
+        self.assertEqual(
+            len([x for x in out.columns.values if str(x).startswith('extra_')]), 3)
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='error')
+        enc = encoders.OneHotEncoder(
+            verbose=1, return_df=True, impute_missing=True, handle_unknown='error')
         enc.fit(X)
         with self.assertRaises(ValueError):
             out = enc.transform(X_t)
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='ignore', use_cat_names=True)
+        enc = encoders.OneHotEncoder(
+            verbose=1, return_df=True, handle_unknown='ignore', use_cat_names=True)
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertIn('extra_A', out.columns.values)
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, use_cat_names=True)
+        enc = encoders.OneHotEncoder(
+            verbose=1, return_df=True, use_cat_names=True)
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertIn('extra_-1', out.columns.values)
+
+        # test get_feature_names
+        enc = encoders.OneHotEncoder(
+            verbose=1, return_df=True, use_cat_names=True)
+        enc.fit(X)
+        out = enc.transform(X_t)
+        self.assertEqual(set(enc.get_feature_names()), set(out.columns))
 
         # test inverse_transform
         X_i = tu.create_dataset(n_rows=100, has_none=False)
@@ -59,5 +72,6 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(verbose=1, use_cat_names=True, cols=cols)
         enc.fit(X_i)
         obtained = enc.inverse_transform(enc.transform(X_i_t))
-        obtained[321] = obtained[321].astype('int64')   # numeric columns are incorrectly typed as object...
+        # numeric columns are incorrectly typed as object...
+        obtained[321] = obtained[321].astype('int64')
         tu.verify_inverse_transform(X_i_t, obtained)
