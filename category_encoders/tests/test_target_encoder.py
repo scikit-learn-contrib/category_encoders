@@ -52,7 +52,7 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
         self.assertEqual(0.5, values[3])
 
-    def test_target_encoder_fit_transform_HaveCategoricalCOlumn_ExpectCorrectValueInResult(self):
+    def test_target_encoder_fit_transform_HaveCategoricalColumn_ExpectCorrectValueInResult(self):
         k = 2
         f = 10
         binary_cat_example = pd.DataFrame(
