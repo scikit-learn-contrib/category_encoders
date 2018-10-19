@@ -242,3 +242,16 @@ class TestEncoders(TestCase):
 
         runner = TextTestRunner(verbosity=2)
         runner.run(suite)
+
+    def test_cols(self):
+        # Test cols argument with different data types, which are array-like or scalars
+        cols_list = ['extra', 'invariant']
+        cols_types = [cols_list, pd.Series(cols_list), np.array(cols_list), 'extra', 321, set(cols_list),
+                      ('extra', 'invariant'), pd.Categorical(cols_list, categories=cols_list)]
+
+        for encoder_name in encoders.__all__:
+            for cols in cols_types:
+                with self.subTest(encoder_name=encoder_name, cols=cols):
+                    enc = getattr(encoders, encoder_name)(cols=cols)
+                    enc.fit(X, y)
+                    enc.transform(X_t)

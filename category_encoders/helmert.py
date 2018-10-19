@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.contrasts import Helmert
 from category_encoders.ordinal import OrdinalEncoder
-from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
+import category_encoders.utils as util
 
 __author__ = 'willmcginnis'
 
@@ -115,13 +115,15 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        X = convert_input(X)
+        X = util.convert_input(X)
 
         self._dim = X.shape[1]
 
         # if columns aren't passed, just use every string column
         if self.cols is None:
-            self.cols = get_obj_cols(X)
+            self.cols = util.get_obj_cols(X)
+        else:
+            self.cols = util.convert_cols_to_list(self.cols)
 
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
@@ -145,7 +147,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
@@ -170,7 +172,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = convert_input(X)
+        X = util.convert_input(X)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

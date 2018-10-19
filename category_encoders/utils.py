@@ -7,6 +7,23 @@ from scipy.sparse.csr import csr_matrix
 __author__ = 'willmcginnis'
 
 
+def convert_cols_to_list(cols):
+    if isinstance(cols, pd.Series):
+        return cols.tolist()
+    elif isinstance(cols, np.ndarray):
+        return cols.tolist()
+    elif np.isscalar(cols):
+        return [cols]
+    elif isinstance(cols, set):
+        return list(cols)
+    elif isinstance(cols, tuple):
+        return list(cols)
+    elif is_category(type(cols)):
+        return cols.tolist()
+
+    return cols
+
+
 def get_obj_cols(df):
     """
     Returns names of 'object' columns in the DataFrame.
