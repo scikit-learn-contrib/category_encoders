@@ -58,3 +58,18 @@ class TestOrdinalEncoder(TestCase):
         a = encoder.transform(data)
         self.assertTrue(np.isnan(a.values[0, 1]))
         self.assertEqual(a.values[1, 1], 1)
+
+    def test_pandas_categorical(self):
+        X = pd.DataFrame({
+            'Str': ['a', 'c', 'c', 'd'],
+            'Categorical': pd.Categorical(list('bbea'), categories=['e', 'a', 'b'], ordered=True)
+        })
+
+        enc = encoders.OrdinalEncoder()
+        out = enc.fit_transform(X)
+
+        tu.verify_numeric(out)
+        self.assertEqual(3, out['Categorical'][0])
+        self.assertEqual(3, out['Categorical'][1])
+        self.assertEqual(1, out['Categorical'][2])
+        self.assertEqual(2, out['Categorical'][3])

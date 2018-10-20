@@ -1,0 +1,15 @@
+{
+    "python.linting.pylintEnabled": false,
+    "python.linting.pep8Enabled": false,
+    "python.linting.enabled": false,
+    "python.unitTest.unittestArgs": [
+        "-v",
+        "-s",
+        "category_encoders/tests",
+        "-p",
+        "test_*.py"
+    ],
+    "python.unitTest.pyTestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.unittestEnabled": true
+}

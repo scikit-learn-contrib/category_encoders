@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
+import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
 __author__ = 'hbghhy'
@@ -112,7 +112,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        X = convert_input(X)
+        X = util.convert_input(X)
         if isinstance(y, pd.DataFrame):
             y = y.iloc[:,0]
         else:
@@ -124,7 +124,9 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         # if columns aren't passed, just use every string column
         if self.use_default_cols:
-            self.cols = get_obj_cols(X)
+            self.cols = util.get_obj_cols(X)
+        else:
+            self.cols = util.convert_cols_to_list(self.cols)
 
         categories = self.fit_leave_one_out(
             X, y,
@@ -135,7 +137,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
@@ -164,7 +166,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = convert_input(X)
+        X = util.convert_input(X)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

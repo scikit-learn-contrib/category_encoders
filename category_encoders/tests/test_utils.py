@@ -45,10 +45,12 @@ def create_dataset(n_rows=1000, extras=False, has_none=True):
         random.choice(['A', 'B_b', 'C_c_c']),                                                   # Strings with underscores to test reverse_dummies()
         random.choice(['A', 'B', 'C', None]) if has_none else random.choice(['A', 'B', 'C']),   # None
         random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),      # With a new string value
-        random.choice([12, 43, -32])                                                            # Number in the column name
+        random.choice([12, 43, -32]),                                                           # Number in the column name
+        random.choice(['A', 'B', 'C']),                                                         # What is going to become the categorical column
     ] for row in range(n_rows)]
 
-    df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321])
+    df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321, 'categorical'])
+    df['categorical'] = pd.Categorical(df['categorical'], categories=['A', 'B', 'C'])
     return df
 
 

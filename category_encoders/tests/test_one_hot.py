@@ -67,11 +67,9 @@ class TestOneHotEncoderTestCase(TestCase):
         X_i = tu.create_dataset(n_rows=100, has_none=False)
         X_i_t = tu.create_dataset(n_rows=50, has_none=False)
         X_i_t_extra = tu.create_dataset(n_rows=50, extras=True, has_none=False)
-        cols = ['underscore', 'none', 'extra', 321]
+        cols = ['underscore', 'none', 'extra', 321, 'categorical']
 
         enc = encoders.OneHotEncoder(verbose=1, use_cat_names=True, cols=cols)
         enc.fit(X_i)
         obtained = enc.inverse_transform(enc.transform(X_i_t))
-        # numeric columns are incorrectly typed as object...
-        obtained[321] = obtained[321].astype('int64')
         tu.verify_inverse_transform(X_i_t, obtained)

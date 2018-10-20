@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
-from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols
+import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
@@ -26,7 +26,6 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'ignore', 'error' and 'impute', defaults to 'impute', which will assume WOE=0.
-        Values that are observed only once during training are treated as if they were not observed at all.
     randomized: bool,
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float
@@ -115,7 +114,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         """
 
         # Unite parameters into pandas types
-        X = convert_input(X)
+        X = util.convert_input(X)
         if isinstance(y, pd.DataFrame):
             y = y.iloc[:, 0]
         else:
@@ -145,7 +144,9 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
 
         # If columns aren't passed, just use every string column
         if self.cols is None:
-            self.cols = get_obj_cols(X)
+            self.cols = util.get_obj_cols(X)
+        else:
+            self.cols = util.convert_cols_to_list(self.cols)
 
         # Training
         self.mapping = self._train(X, y, cols=self.cols)
@@ -154,7 +155,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [
                 x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
@@ -185,7 +186,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
                 'Must train encoder before it can be used to transform data.')
 
         # Unite the input into pandas DataFrame
-        X = convert_input(X)
+        X = util.convert_input(X)
 
         # Then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -233,7 +234,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
 
     def _train(self, X, y, cols=None):
         # Initialize the output
-        mapping_out = []
+        mapping = {}
 
         # Calculate global statistics
         self._sum = y.sum()
@@ -243,54 +244,42 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             # Calculate sum and count of the target for each unique value in the feature col
             stats = y.groupby(X[col]).agg(
                 ['sum', 'count'])  # Count of x_{i,+} and x_i
-            stats = stats.to_dict(orient='index')
-
-            # Initialization
-            woe = {}
 
             # Create a new column with regularized WOE.
             # Regularization helps to avoid division by zero.
-            for val in stats:
-                # Pre-calculate WOEs because logarithms are slow.
-                # Ignore unique values. This helps to prevent overfitting on id-like columns and keep the model small.
-                if stats[val]['count'] > 1:
-                    nominator = (
-                        stats[val]['sum'] + self.regularization) / (self._sum + 2*self.regularization)
-                    denominator = ((stats[val]['count'] - stats[val]['sum']) + self.regularization) / (
-                        self._count - self._sum + 2*self.regularization)
-                    woe[val] = np.log(nominator / denominator)
+            # Pre-calculate WOEs because logarithms are slow.
+            nominator = (stats['sum'] + self.regularization) / \
+                (self._sum + 2*self.regularization)
+            denominator = ((stats['count'] - stats['sum']) + self.regularization) / (
+                self._count - self._sum + 2*self.regularization)
+            woe = np.log(nominator / denominator)
 
-            # Store the column statistics for transform() function
-            mapping_out.append({'col': col, 'woe': woe})
+            # Ignore unique values. This helps to prevent overfitting on id-like columns.
+            woe[stats['count'] == 1] = 0
 
-        return mapping_out
+            # Store WOE for transform() function
+            mapping[col] = woe
+
+        return mapping
 
     def _score(self, X, y):
-        for switch in self.mapping:
-            # Get column name (can be anything: str, number,...)
-            column = switch.get('col')
-
+        for col in self.cols:
             # Score the column
-            transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
-            for val in switch.get('woe'):
-                transformed_column.loc[X[column] == val] = switch.get(
-                    'woe')[val]  # THIS LINE IS SLOW
+            X[col] = X[col].map(self.mapping[col])
 
             # Replace missing values only in the computed columns
             if self.impute_missing:
                 if self.handle_unknown == 'impute':
-                    transformed_column.fillna(0, inplace=True)
+                    X[col].fillna(0, inplace=True)
                 elif self.handle_unknown == 'error':
-                    missing = transformed_column.isnull()
-                    if any(missing):
+                    if X[col].isnull().any():
                         raise ValueError(
-                            'Unexpected categories found in column %s' % switch.get('col'))
+                            'Unexpected categories found in column %s' % col)
 
             # Randomization is meaningful only for training data -> we do it only if y is present
             if self.randomized and y is not None:
                 random_state_generator = check_random_state(self.random_state)
-                transformed_column = (transformed_column * random_state_generator.normal(
-                    1., self.sigma, transformed_column.shape[0]))
+                X[col] = (X[col] * random_state_generator.normal(1.,
+                                                                 self.sigma, X[col].shape[0]))
 
-            X[column] = transformed_column.astype(float)
         return X
