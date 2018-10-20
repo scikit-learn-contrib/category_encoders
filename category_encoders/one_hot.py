@@ -98,7 +98,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self.use_cat_names = use_cat_names
-        self.is_fitted = False
+        self.is_transformed = False
+        self.feature_names = []
 
     @property
     def category_mapping(self):
@@ -192,7 +193,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        # Now we can build the list of of new / transformed columns
+        # Now we can build the list of new / transformed columns
         self.feature_names = X.columns
         self.is_transformed = True
 
