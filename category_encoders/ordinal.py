@@ -3,7 +3,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from category_encoders.utils import get_obj_cols, convert_input, get_generated_cols, is_category
+import category_encoders.utils as util
 
 __author__ = 'willmcginnis'
 
@@ -117,13 +117,15 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        X = convert_input(X)
+        X = util.convert_input(X)
 
         self._dim = X.shape[1]
 
         # if columns aren't passed, just use every string column
         if self.cols is None:
-            self.cols = get_obj_cols(X)
+            self.cols = util.get_obj_cols(X)
+        else:
+            self.cols = util.convert_cols_to_list(self.cols)
 
         _, categories = self.ordinal_encoding(
             X,
@@ -138,7 +140,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
-            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
@@ -166,7 +168,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = convert_input(X)
+        X = util.convert_input(X)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -205,7 +207,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         X = X_in.copy(deep=True)
 
         # first check the type
-        X = convert_input(X)
+        X = util.convert_input(X)
 
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
@@ -271,7 +273,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping_out = []
             for col in cols:
 
-                if is_category(X[col].dtype):
+                if util.is_category(X[col].dtype):
                     categories = X[col].cat.categories
                 else:
                     categories = [x for x in pd.unique(X[col].values) if x is not None]
