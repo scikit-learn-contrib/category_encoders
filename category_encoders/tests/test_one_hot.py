@@ -69,8 +69,8 @@ class TestOneHotEncoderTestCase(TestCase):
         self.assertListEqual([[1, 0]], result.get_values().tolist())
 
     def test_inverse_transform_HaveDedupedColumns_ExpectCorrectInverseTransform(self):
-        encoder = encoders.OneHotEncoder(cols='search', use_cat_names=True)
-        value = pd.DataFrame({'search': pd.Series(-1)})
+        encoder = encoders.OneHotEncoder(cols=['match', 'match_box'], use_cat_names=True)
+        value = pd.DataFrame({'match': pd.Series('box_-1'), 'match_box': pd.Series(-1)})
 
         transformed = encoder.fit_transform(value)
         inverse_transformed = encoder.inverse_transform(transformed)

@@ -30,8 +30,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         impute is used, an extra column will be added in if the transform matrix has unknown categories. This can cause
         unexpected changes in the dimension in some cases.
     use_cat_names: bool
-        if True, category values will be included in the encoded column names. Otherwise category
-        indices will be used.
+        if True, category values will be included in the encoded column names. Since this can result into duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
+        If False, category indices will be used instead of the category values.
 
     Example
     -------
@@ -90,6 +90,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
+        self.mapping = None
         self.verbose = verbose
         self.cols = cols
         self.ordinal_encoder = None
@@ -140,6 +141,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             handle_unknown=self.handle_unknown
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
+        self.mapping = self.generate_mapping()
 
         if self.drop_invariant:
             self.drop_cols = []
@@ -148,6 +150,31 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
+
+    def generate_mapping(self):
+        mapping = []
+        found_column_counts = {}
+        for col in self.cols:
+            col_tuples = copy.deepcopy(
+                [class_map['mapping'] for class_map in self.ordinal_encoder.mapping if class_map['col'] == col][0])
+            if self.handle_unknown == 'impute':
+                col_tuples.append(('-1', -1))
+
+            col_mappings = []
+            for col_tuple in col_tuples:
+                class_ = col_tuple[1]
+                cat_name = col_tuple[0]
+                if self.use_cat_names:
+                    n_col_name = str(col) + '_%s' % (cat_name,)
+                    found_count = found_column_counts.get(n_col_name, 0)
+                    found_column_counts[n_col_name] = found_count + 1
+                    n_col_name += '#' * found_count
+                else:
+                    n_col_name = str(col) + '_%s' % (class_,)
+                col_mappings.append({'new_col_name': n_col_name, 'val': class_})
+
+            mapping.append({'col': col, 'mapping': col_mappings})
+        return mapping
 
     def transform(self, X):
         """Perform the transformation to new categorical data.
@@ -180,7 +207,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         X = self.ordinal_encoder.transform(X)
 
-        X = self.get_dummies(X, cols=self.cols)
+        X = self.get_dummies(X, mapping=self.mapping)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -212,7 +239,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
-        X = self.reverse_dummies(X, self.cols)
+        X = self.reverse_dummies(X, self.mapping)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -230,25 +257,26 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "
                                      "the unknown category -1 when encode %s"%(col,))
-        if not self.use_cat_names:
-            for switch in self.ordinal_encoder.mapping:
-                col_dict = {col_pair[1] : col_pair[0] for col_pair in switch.get('mapping')}
-                X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x))
+        # if not self.use_cat_names:
+        for switch in self.ordinal_encoder.mapping:
+            col_dict = {col_pair[1] : col_pair[0] for col_pair in switch.get('mapping')}
+            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x))
 
         for switch in self.ordinal_encoder.mapping:
             X[switch.get('col')] = X[switch.get('col')].astype(switch.get('data_type'))
 
         return X if self.return_df else X.values
 
-    def get_dummies(self, X_in, cols=None):
+    def get_dummies(self, X_in, mapping):
         """
         Convert numerical variable into dummy variables
 
         Parameters
         ----------
         X_in: DataFrame
-        cols: list-like, default None
-              Column names in the DataFrame to be encoded
+        mapping: list-like
+              Contains mappings of column to be transformed to it's new columns and value represented
+
         Returns
         -------
         dummies : DataFrame
@@ -256,49 +284,31 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         X = X_in.copy(deep=True)
 
-        if cols is None:
-            cols = X.columns.values
-            pass_thru = []
-        else:
-            pass_thru = [col for col in X.columns.values if col not in cols]
+        cols = X.columns.values.tolist()
 
-        bin_cols = []
-        found_column_counts = {}
-        for col in cols:
-            col_tuples = copy.deepcopy([class_map['mapping'] for class_map in self.ordinal_encoder.mapping if class_map['col'] == col][0])
-            if self.handle_unknown == 'impute':
-                col_tuples.append(('-1', -1))
-            for col_tuple in col_tuples:
-                class_ = col_tuple[1]
-                cat_name = col_tuple[0]
-                if self.use_cat_names:
-                    n_col_name = str(col) + '_%s' % (cat_name, )
-                    found_count = found_column_counts.get(n_col_name, 0)
-                    found_column_counts[n_col_name] = found_count + 1
-                    n_col_name += '#' * found_count
-                else:
-                    n_col_name = str(col) + '_%s' % (class_, )
+        for switch in mapping:
+            col = switch.get('col')
+            mod = switch.get('mapping')
+            new_columns = []
+            for column_mapping in mod:
+                new_col_name = column_mapping['new_col_name']
+                val = column_mapping['val']
+                X[new_col_name] = (X[col] == val).astype(int)
+                new_columns.append(new_col_name)
+            old_column_index = cols.index(col)
+            cols[old_column_index: old_column_index + 1] = new_columns
 
-                X[n_col_name] = X[col] == class_
-                bin_cols.append(n_col_name)
+        return X.reindex(columns=cols)
 
-        X = X.reindex(columns=bin_cols + pass_thru)
-
-        # convert all of the bools into integers.
-        for col in bin_cols:
-            X[col] = X[col].astype(int)
-
-        return X
-
-    def reverse_dummies(self, X, cols):
+    def reverse_dummies(self, X, mapping):
         """
         Convert dummy variable into numerical variables
 
         Parameters
         ----------
         X : DataFrame
-        cols: list-like
-              Column names in the DataFrame that be encoded
+        mapping: list-like
+              Contains mappings of column to be transformed to it's new columns and value represented
 
         Returns
         -------
@@ -306,20 +316,20 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         """
         out_cols = X.columns.values
+        cols = []
+        mapped_columns = []
+        for switch in mapping:
+            col = switch.get('col')
+            mod = switch.get('mapping')
+            cols.append(col)
 
-        for col in cols:
-            col_list = [col0 for col0 in out_cols if str(col0).startswith(str(col))]
-            prefix_length = len(str(col))+1 # original column name plus underscore
-            if self.use_cat_names:
-                X[col] = 0
-                for tran_col in col_list:
-                    val = tran_col[prefix_length:]
-                    X.loc[X[tran_col] == 1, col] = val
-            else:
-                value_array = np.array([int(col0[prefix_length:]) for col0 in col_list])
-                X[col] = np.dot(X[col_list].values, value_array.T)
-            out_cols = [col0 for col0 in out_cols if col0 not in col_list]
+            X[col] = 0
+            for column_mapping in mod:
+                existing_col = column_mapping.get('new_col_name')
+                val = column_mapping.get('val')
+                X.loc[X[existing_col] == 1, col] = val
+                mapped_columns.append(existing_col)
 
-        X = X.reindex(columns=out_cols + cols)
+        out_cols = [col0 for col0 in out_cols if col0 not in mapped_columns]
 
-        return X
+        return X.reindex(columns=out_cols + cols)
