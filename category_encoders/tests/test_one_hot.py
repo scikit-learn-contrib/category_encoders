@@ -77,6 +77,15 @@ class TestOneHotEncoderTestCase(TestCase):
 
         assert value.equals(inverse_transformed)
 
+    def test_inverse_transform_HaveNoCatNames_ExpectCorrectInverseTransform(self):
+        encoder = encoders.OneHotEncoder(cols=['match', 'match_box'], use_cat_names=False)
+        value = pd.DataFrame({'match': pd.Series('box_-1'), 'match_box': pd.Series(-1)})
+
+        transformed = encoder.fit_transform(value)
+        inverse_transformed = encoder.inverse_transform(transformed)
+
+        assert value.equals(inverse_transformed)
+
     def test_fit_transform_HaveColumnAppearTwice_ExpectColumnsDeduped(self):
         encoder = encoders.OneHotEncoder(cols=['match', 'match_box'], use_cat_names=True)
         value = pd.DataFrame({'match': pd.Series('box_-1'), 'match_box': pd.Series(-1)})
