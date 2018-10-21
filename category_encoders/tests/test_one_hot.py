@@ -28,7 +28,7 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True)
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertIn('extra_-1', out.columns.values)
+        self.assertIn('extra#-1', out.columns.values)
 
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
         enc.fit(X)
@@ -48,7 +48,7 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, use_cat_names=True)
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertIn('extra_-1', out.columns.values)
+        self.assertIn('extra#-1', out.columns.values)
 
         # test inverse_transform
         X_i = tu.create_dataset(n_rows=100, has_none=False)
@@ -60,3 +60,20 @@ class TestOneHotEncoderTestCase(TestCase):
         enc.fit(X_i)
         obtained = enc.inverse_transform(enc.transform(X_i_t))
         tu.verify_inverse_transform(X_i_t, obtained)
+
+    def test_fit_transform_HaveMissingValuesAndUseCatNames_ExpectCorrectValue(self):
+        encoder = encoders.OneHotEncoder(cols=[0], use_cat_names=True)
+
+        result = encoder.fit_transform([[-1]])
+
+        self.assertListEqual([[1, 0]], result.get_values().tolist())
+
+    def test_fit_transform_HaveColumnWithMissingAsValue_ExpectCorrectColumns(self):
+        search_values = pd.Series(['missing', 'found', 'searching'])
+        value = pd.DataFrame({'search': search_values})
+        encoder = encoders.OneHotEncoder(use_cat_names=True)
+
+        result = encoder.fit_transform(value)
+        columns = result.columns.tolist()
+
+        self.assertListEqual(['search_missing', 'search_found', 'search_searching', 'search#-1'], columns)
