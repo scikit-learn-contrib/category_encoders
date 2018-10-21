@@ -274,8 +274,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 if self.use_cat_names:
                     n_col_name = str(col) + '_%s' % (cat_name, )
                     found_count = found_column_counts.get(n_col_name, 0)
-                    if found_count == 0:
-                        found_column_counts[n_col_name] = 1
+                    found_column_counts[n_col_name] = found_count + 1
                     n_col_name += '#' * found_count
                 else:
                     n_col_name = str(col) + '_%s' % (class_, )
