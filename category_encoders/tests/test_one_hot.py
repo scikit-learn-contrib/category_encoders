@@ -28,7 +28,7 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True)
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertIn('extra#-1', out.columns.values)
+        self.assertIn('extra_-1', out.columns.values)
 
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
         enc.fit(X)
@@ -48,7 +48,7 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, use_cat_names=True)
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertIn('extra#-1', out.columns.values)
+        self.assertIn('extra_-1', out.columns.values)
 
         # test inverse_transform
         X_i = tu.create_dataset(n_rows=100, has_none=False)
@@ -69,11 +69,29 @@ class TestOneHotEncoderTestCase(TestCase):
         self.assertListEqual([[1, 0]], result.get_values().tolist())
 
     def test_fit_transform_HaveColumnWithMissingAsValue_ExpectCorrectColumns(self):
-        search_values = pd.Series(['missing', 'found', 'searching'])
-        value = pd.DataFrame({'search': search_values})
-        encoder = encoders.OneHotEncoder(use_cat_names=True)
+        encoder = encoders.OneHotEncoder(cols='search', use_cat_names=True)
+        value = pd.DataFrame({'search': pd.Series(-1)})
 
         result = encoder.fit_transform(value)
         columns = result.columns.tolist()
 
-        self.assertSetEqual({'search_searching', 'search_missing', 'search_found', 'search#-1'}, set(columns))
+        self.assertSetEqual({'search_-1', 'search_-1#'}, set(columns))
+
+    def test_one_hot_duplicate_names(self):
+        X = pd.DataFrame({'sea_rch': ['dummy', 'found'],
+                          'sea': ['rch#-1', 'found']})
+        encoder = encoders.OneHotEncoder(use_cat_names=True)
+
+        result = encoder.fit_transform(X)
+        columns = result.columns.tolist()
+
+        self.assertEqual(len(set(columns)), len(columns))
+
+    def test_inverse_transform_HaveDedupedColumns_ExpectCorrectInverseTransform(self):
+        encoder = encoders.OneHotEncoder(cols='search', use_cat_names=True)
+        value = pd.DataFrame({'search': pd.Series(-1)})
+
+        transformed = encoder.fit_transform(value)
+        inverse_transformed = encoder.inverse_transform(transformed)
+
+        assert value.equals(inverse_transformed)

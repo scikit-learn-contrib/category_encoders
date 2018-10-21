@@ -263,23 +263,25 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             pass_thru = [col for col in X.columns.values if col not in cols]
 
         bin_cols = []
+        found_column_counts = {}
         for col in cols:
             col_tuples = copy.deepcopy([class_map['mapping'] for class_map in self.ordinal_encoder.mapping if class_map['col'] == col][0])
+            if self.handle_unknown == 'impute':
+                col_tuples.append(('-1', -1))
             for col_tuple in col_tuples:
                 class_ = col_tuple[1]
                 cat_name = col_tuple[0]
                 if self.use_cat_names:
                     n_col_name = str(col) + '_%s' % (cat_name, )
+                    found_count = found_column_counts.get(n_col_name, 0)
+                    if found_count == 0:
+                        found_column_counts[n_col_name] = 1
+                    n_col_name += '#' * found_count
                 else:
                     n_col_name = str(col) + '_%s' % (class_, )
 
                 X[n_col_name] = X[col] == class_
                 bin_cols.append(n_col_name)
-
-            if self.handle_unknown == 'impute':
-                col_name = str(col) + '#-1'
-                X[col_name] = X[col] == -1
-                bin_cols.append(col_name)
 
         X = X.reindex(columns=bin_cols + pass_thru)
 
