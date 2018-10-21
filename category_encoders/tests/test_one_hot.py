@@ -76,4 +76,4 @@ class TestOneHotEncoderTestCase(TestCase):
         result = encoder.fit_transform(value)
         columns = result.columns.tolist()
 
-        self.assertListEqual(['search_searching', 'search_missing', 'search_found', 'search#-1'], columns)
+        self.assertSetEqual({'search_searching', 'search_missing', 'search_found', 'search#-1'}, set(columns))
