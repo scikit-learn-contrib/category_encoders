@@ -11,6 +11,10 @@ __author__ = 'hbghhy'
 class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     """Leave one out coding for categorical features.
 
+    This is very similar to target encoding, but excludes the current row's
+    target when calculating the mean target for a level to reduce the effect
+    of outliers.
+
     Parameters
     ----------
 
@@ -69,9 +73,6 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
     .. [1] Strategies to encode categorical variables with many categories. from
     https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
-
-
-
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
@@ -114,9 +115,9 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         # first check the type
         X = util.convert_input(X)
         if isinstance(y, pd.DataFrame):
-            y = y.iloc[:,0]
+            y = y.iloc[:, 0].astype(float)
         else:
-            y = pd.Series(y, name='target')
+            y = pd.Series(y, name='target', dtype=float)
         if X.shape[0] != y.shape[0]:
             raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -175,9 +176,9 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         # if we are encoding the training data, we have to check the target
         if y is not None:
             if isinstance(y, pd.DataFrame):
-                y = y.iloc[:, 0]
+                y = y.iloc[:, 0].astype(float)
             else:
-                y = pd.Series(y, name='target')
+                y = pd.Series(y, name='target', dtype=float)
             if X.shape[0] != y.shape[0]:
                 raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -215,16 +216,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             cols = X.columns.values
 
         self._mean = y.mean()
-        mapping_out = []
-
-        for col in cols:
-            tmp = y.groupby(X[col]).agg(['sum', 'count'])
-            tmp['mean'] = tmp['sum'] / tmp['count']
-            tmp = tmp.to_dict(orient='index')
-
-            mapping_out.append({'col': col, 'mapping': tmp}, )
-
-        return mapping_out
+        return {col: y.groupby(X[col]).agg(['sum', 'count']) for col in cols}
 
     def transform_leave_one_out(self, X_in, y, mapping=None, impute_missing=True, handle_unknown='impute'):
         """
@@ -232,34 +224,28 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         """
 
         X = X_in.copy(deep=True)
-
         random_state_ = check_random_state(self.random_state)
-        for switch in mapping:
-            column = switch.get('col')
-            transformed_column = pd.Series([np.nan] * X.shape[0], name=column)
 
-            for val in switch.get('mapping'):
-                if y is None:
-                    transformed_column.loc[X[column] == val] = switch.get('mapping')[val]['mean']
-                elif switch.get('mapping')[val]['count'] == 1:
-                    transformed_column.loc[X[column] == val] = self._mean
-                else:
-                    transformed_column.loc[X[column] == val] = (
-                        (switch.get('mapping')[val]['sum'] - y[(X[column] == val).values]) / (
-                            switch.get('mapping')[val]['count'] - 1)
-                    )
+        for col, colmap in mapping.items():
+            level_notunique = colmap['count'] > 1
+            if y is None:    # Replace level with its mean target; if level occurs only once, use global mean
+                level_means = (colmap['sum'] / colmap['count']).where(level_notunique, self._mean)
+                X[col] = X[col].map(level_means)
+            else:            # Replace level with its mean target, calculated excluding this row's target
+                # The y (target) mean for this level is normally just the sum/count;
+                # excluding this row's y, it's (sum - y) / (count - 1)
+                level_means = (X[col].map(colmap['sum']) - y) / (X[col].map(colmap['count']) - 1)
+                # The 'where' fills in singleton levels (count = 1 -> div by 0) with the global mean
+                X[col] = level_means.where(X[col].map(colmap['count'][level_notunique]).notnull(), self._mean)
 
             if impute_missing:
                 if handle_unknown == 'impute':
-                    transformed_column.fillna(self._mean, inplace=True)
+                    X[col].fillna(self._mean, inplace=True)
                 elif handle_unknown == 'error':
-                    missing = transformed_column.isnull()
-                    if any(missing):
-                        raise ValueError('Unexpected categories found in column %s' % column)
+                    if X[col].isnull().any():
+                        raise ValueError('Unexpected categories found in column %s' % col)
 
             if self.randomized and y is not None:
-                transformed_column = (transformed_column * random_state_.normal(1., self.sigma, transformed_column.shape[0]))
-
-            X[column] = transformed_column.astype(float)
+                X[col] = X[col] * random_state_.normal(1., self.sigma, X[col].shape[0])
 
         return X

@@ -46,7 +46,17 @@ class TestLeaveOneOutEncoder(TestCase):
         encoder.fit(x_b, y_dummy)
         mapping = encoder.mapping
         self.assertEqual(1, len(mapping))
-        col_b_mapping = mapping[0]
-        self.assertEqual('col_b', col_b_mapping['col']) # the model must get updated
-        self.assertEqual({'sum': 2.0, 'count': 3, 'mean': 2.0/3.0}, col_b_mapping['mapping']['1'])
-        self.assertEqual({'sum': 1.0, 'count': 3, 'mean': 01.0/3.0}, col_b_mapping['mapping']['2'])
+        self.assertIn('col_b', mapping)     # the model should have the updated mapping
+        expected = pd.DataFrame({'sum': [2.0, 1.0], 'count': [3, 3]}, index=['1', '2'])
+        pd.testing.assert_frame_equal(expected, mapping['col_b'], check_like=True)
+
+    def test_leave_one_out_unique(self):
+        X = pd.DataFrame(data=['1', '2', '2', '2', '3'], columns=['col'])
+        y = np.array([1, 0, 1, 0, 1])
+
+        encoder = encoders.LeaveOneOutEncoder(impute_missing=False)
+        result = encoder.fit(X, y).transform(X, y)
+
+        self.assertFalse(result.isnull().any().any(), 'There should not be any missing value')
+        expected = pd.DataFrame(data=[y.mean(), 0.5, 0, 0.5, y.mean()], columns=['col'])
+        pd.testing.assert_frame_equal(expected, result)
