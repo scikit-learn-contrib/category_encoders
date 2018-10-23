@@ -19,7 +19,7 @@ y_t = pd.DataFrame(np_y_t)
 class TestLeaveOneOutEncoder(TestCase):
 
     def test_leave_one_out(self):
-        enc = encoders.LeaveOneOutEncoder(verbose=1, randomized=True, sigma=0.1)
+        enc = encoders.LeaveOneOutEncoder(verbose=1, sigma=0.1)
         enc.fit(X, y)
         tu.verify_numeric(enc.transform(X_t))
         tu.verify_numeric(enc.transform(X_t, y_t))
@@ -32,7 +32,7 @@ class TestLeaveOneOutEncoder(TestCase):
         X = df.drop('outcome', axis=1)
         y = df.drop('color', axis=1)
 
-        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], randomized=False)
+        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'])
         obtained = ce_leave.fit_transform(X, y['outcome'])
 
         self.assertEqual([0.0, 0.5, 0.5, 0.5, 1.0, 0.5], list(obtained['color']))

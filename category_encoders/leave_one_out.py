@@ -32,10 +32,9 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
         impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
         unexpected changes in dimension in some cases.
-    randomized: bool
-        adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float
-        standard deviation (spread or "width") of the normal distribution.
+        adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
+        sigma gives the standard deviation (spread or "width") of the normal distribution.
 
     Example
     -------
@@ -76,7 +75,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', random_state=None, randomized=False, sigma=0.05):
+                 handle_unknown='impute', random_state=None, sigma=None):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -89,7 +88,6 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self.handle_unknown = handle_unknown
         self._mean = None
         self.random_state = random_state
-        self.randomized = randomized
         self.sigma = sigma
 
     def fit(self, X, y, **kwargs):
@@ -245,7 +243,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                     if X[col].isnull().any():
                         raise ValueError('Unexpected categories found in column %s' % col)
 
-            if self.randomized and y is not None:
+            if self.sigma is not None and y is not None:
                 X[col] = X[col] * random_state_.normal(1., self.sigma, X[col].shape[0])
 
         return X
