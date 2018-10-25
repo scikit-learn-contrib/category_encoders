@@ -51,6 +51,8 @@ def convert_input(X):
             X = pd.DataFrame(X)
         elif isinstance(X, csr_matrix):
             X = pd.DataFrame(X.todense())
+        elif isinstance(X, pd.Series):
+            X = pd.DataFrame(X)
         else:
             raise ValueError('Unexpected input type: %s' % (str(type(X))))
 
