@@ -255,3 +255,11 @@ class TestEncoders(TestCase):
                     enc = getattr(encoders, encoder_name)(cols=cols)
                     enc.fit(X, y)
                     enc.transform(X_t)
+
+    def test_noncontiguous_index(self):
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+
+                enc = getattr(encoders, encoder_name)(cols=['x'])
+                data = pd.DataFrame({'x': ['a', 'b', np.nan, 'd', 'e'], 'y': [1, 0, 1, 0, 1]}).dropna()
+                _ = enc.fit_transform(data[['x']], data['y'])
