@@ -140,7 +140,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
 
         mappings_out = []
         for switch in ordinal_mapping:
-            values = [x[1] for x in switch.get('mapping')]
+            values = switch.get('mapping').get_values()
             column_mapping = self.fit_backward_difference_coding(values)
             mappings_out.append({'col': switch.get('col'), 'mapping': column_mapping, })
 

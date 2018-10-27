@@ -138,7 +138,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         mappings_out = []
         for switch in ordinal_mapping:
-            values = [x[1] for x in switch.get('mapping')]
+            values = switch.get('mapping').tolist()
             column_mapping = self.fit_sum_coding(values)
             mappings_out.append({'col': switch.get('col'), 'mapping': column_mapping, })
 
