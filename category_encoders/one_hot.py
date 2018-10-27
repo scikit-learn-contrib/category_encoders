@@ -154,16 +154,16 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     def generate_mapping(self):
         mapping = []
         found_column_counts = {}
-        for col in self.cols:
-            col_tuples = copy.deepcopy(
-                [class_map['mapping'] for class_map in self.ordinal_encoder.mapping if class_map['col'] == col][0])
+
+        for switch in self.ordinal_encoder.mapping:
+            col = switch.get('col')
+            column_mapping = switch.get('mapping').copy(deep=True)
+
             if self.handle_unknown == 'impute':
-                col_tuples.append(('-1', -1))
+                column_mapping = column_mapping.append(pd.Series(data=[-1], index=['-1']))
 
             col_mappings = []
-            for col_tuple in col_tuples:
-                class_ = col_tuple[1]
-                cat_name = col_tuple[0]
+            for cat_name, class_ in column_mapping.iteritems():
                 if self.use_cat_names:
                     n_col_name = str(col) + '_%s' % (cat_name,)
                     found_count = found_column_counts.get(n_col_name, 0)
@@ -259,8 +259,9 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                                      "the unknown category -1 when encode %s"%(col,))
 
         for switch in self.ordinal_encoder.mapping:
-            col_dict = {col_pair[1] : col_pair[0] for col_pair in switch.get('mapping')}
-            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x)).astype(switch.get('data_type'))
+            column_mapping = switch.get('mapping')
+            inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
+            X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
 
         return X if self.return_df else X.values
 

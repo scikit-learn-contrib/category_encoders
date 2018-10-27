@@ -230,8 +230,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                                      "the unknown category -1 when encode %s" % (col,))
 
         for switch in self.mapping:
-            col_dict = {col_pair[1]: col_pair[0] for col_pair in switch.get('mapping')}
-            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x)).astype(switch.get('data_type'))
+            column_mapping = switch.get('mapping')
+            inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
+            X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
 
         return X if self.return_df else X.values
 
