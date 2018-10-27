@@ -230,8 +230,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                                      "the unknown category -1 when encode %s" % (col,))
 
         for switch in self.mapping:
-            col_dict = {col_pair[1]: col_pair[0] for col_pair in switch.get('mapping')}
-            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x)).astype(switch.get('data_type'))
+            column_mapping = switch.get('mapping')
+            inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
+            X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
 
         return X if self.return_df else X.values
 
@@ -251,23 +252,21 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if mapping is not None:
             mapping_out = mapping
             for switch in mapping:
-                categories_dict = dict(switch.get('mapping'))
                 column = switch.get('col')
-                transformed_column = X[column].map(lambda x: categories_dict.get(x, np.nan))
+                X[column] = X[column].map(switch['mapping'])
 
                 try:
-                    transformed_column = transformed_column.astype(int)
+                    X[column] = X[column].astype(int)
                 except ValueError as e:
-                    transformed_column = transformed_column.astype(float)
+                    X[column] = X[column].astype(float)
 
                 if impute_missing:
                     if handle_unknown == 'impute':
-                        transformed_column.fillna(0, inplace=True)
+                        X[column].fillna(0, inplace=True)
                     elif handle_unknown == 'error':
-                        missing = transformed_column.isnull()
+                        missing = X[column].isnull()
                         if any(missing):
                             raise ValueError('Unexpected categories found in column %s' % column)
-                X[column] = transformed_column
 
         else:
             mapping_out = []
@@ -278,8 +277,15 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 else:
                     categories = [x for x in pd.unique(X[col].values) if x is not None]
 
-                categories_dict = {x: i + 1 for i, x in enumerate(categories)}
+                index = []
+                values = []
 
-                mapping_out.append({'col': col, 'mapping': list(categories_dict.items()), 'data_type': X[col].dtype}, )
+                for i in range(len(categories)):
+                    index.append(categories[i])
+                    values.append(i + 1)
+
+                mapping = pd.Series(data=values, index=index)
+
+                mapping_out.append({'col': col, 'mapping': mapping, 'data_type': X[col].dtype}, )
 
         return X, mapping_out
