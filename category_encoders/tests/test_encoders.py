@@ -263,3 +263,12 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(cols=['x'])
                 data = pd.DataFrame({'x': ['a', 'b', np.nan, 'd', 'e'], 'y': [1, 0, 1, 0, 1]}).dropna()
                 _ = enc.fit_transform(data[['x']], data['y'])
+
+    def test_duplicate_index_value(self):
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(cols=['x'])
+                data = pd.DataFrame({'x': ['a', 'b', 'c', 'd', 'e'], 'y': [1, 0, 1, 0, 1]}, index=[1, 2, 2, 3, 4])
+                result = enc.fit_transform(data[['x']], data['y'])
+                self.assertEqual(5, len(result))
+
