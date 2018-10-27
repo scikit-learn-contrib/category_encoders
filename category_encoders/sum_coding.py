@@ -215,7 +215,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         cols = X.columns.values.tolist()
 
-        X['intercept'] = pd.Series([1] * X.shape[0])
+        X['intercept'] = pd.Series([1] * X.shape[0], index=X.index)
 
         for switch in mapping:
             col = switch.get('col')
