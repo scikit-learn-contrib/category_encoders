@@ -234,12 +234,12 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         new_cols = ['col_%d' % d for d in range(N)]
 
-        X_cat = X.reindex(columns=cols)
-        X_num = X.reindex(columns=[x for x in X.columns.values if x not in cols])
+        X_cat = X.loc[:, cols]
+        X_num = X.loc[:, [x for x in X.columns.values if x not in cols]]
 
         X_cat = X_cat.apply(hash_fn, axis=1)
         X_cat.columns = new_cols
 
-        X = pd.merge(X_cat, X_num, left_index=True, right_index=True)
+        X = pd.concat([X_cat, X_num], axis=1)
 
         return X
