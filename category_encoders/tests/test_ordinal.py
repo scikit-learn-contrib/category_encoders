@@ -52,7 +52,7 @@ class TestOrdinalEncoder(TestCase):
         a = encoder.transform(data)
         self.assertEqual(a.values[0, 1], 0)
         self.assertEqual(a.values[1, 1], 1)
-        pd.factorize
+
         encoder = encoders.OrdinalEncoder(impute_missing=False)
         encoder.fit(data)
         a = encoder.transform(data)
