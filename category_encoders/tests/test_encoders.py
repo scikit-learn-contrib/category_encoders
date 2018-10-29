@@ -128,6 +128,34 @@ class TestEncoders(TestCase):
                 with self.assertRaises(ValueError):
                     _ = enc.transform(X_t)
 
+    def test_handle_unknown_return_nan(self):
+        train = pd.DataFrame({'city': ['chicago', 'los angeles']})
+        test = pd.DataFrame({'city': ['chicago', 'denver']})
+        y = pd.Series([1, 0])
+
+        # TODO - implement for all encoders
+        for encoder_name in ['OrdinalEncoder']:
+            with self.subTest(encoder_name=encoder_name):
+
+                enc = getattr(encoders, encoder_name)(handle_unknown='return_nan')
+                enc.fit(train, y)
+                result = enc.transform(test)
+                self.assertTrue(result.iloc[1, :].isnull().all())
+
+    def test_inverse_transform_handle_unknown_return_nan_expect_value_error(self):
+        train = pd.DataFrame({'city': ['chicago', 'los angeles']})
+        test = pd.DataFrame({'city': ['chicago', 'denver']})
+        y = pd.Series([1, 0])
+
+        # TODO - implement for all encoders supporting inverse transform
+        for encoder_name in ['OrdinalEncoder']:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(handle_unknown='return_nan')
+                enc.fit(train, y)
+                result = enc.transform(test)
+                with self.assertRaises(ValueError):
+                    _ = enc.inverse_transform(result)
+
     def test_sklearn_compliance(self):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
@@ -285,4 +313,3 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(cols=['CHAS', 'RAD'])
                 result = enc.fit_transform(X, y)
                 self.assertFalse(result.isnull().values.any(), 'There should not be any missing value!')
-

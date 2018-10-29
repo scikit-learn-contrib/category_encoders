@@ -1,7 +1,6 @@
 """Ordinal or label encoding"""
 
 import pandas as pd
-import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
 
@@ -228,6 +227,12 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "
                                      "the unknown category -1 when encode %s" % (col,))
+
+        if self.handle_unknown == 'return_nan':
+            for col in self.cols:
+                if X[col].isnull().any():
+                    raise ValueError("inverse_transform is not supported because transform impute "
+                                     "the unknown category nan when encode %s" % (col,))
 
         for switch in self.mapping:
             column_mapping = switch.get('mapping')
