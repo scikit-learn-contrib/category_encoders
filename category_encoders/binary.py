@@ -27,8 +27,8 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        options are 'error', 'ignore' and 'value', defaults to 'value'. Warning: if value is used,
+        an extra column will be added in if the transform matrix has unknown categories.  This can causes
         unexpected changes in dimension in some cases.
 
     Example
@@ -70,7 +70,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute'):
+                 handle_unknown='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -212,7 +212,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        if self.impute_missing and self.handle_unknown == 'impute':
+        if self.impute_missing and self.handle_unknown == 'value':
             for col in self.cols:
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "

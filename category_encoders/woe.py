@@ -24,7 +24,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'ignore', 'error' and 'impute', defaults to 'impute', which will assume WOE=0.
+        options are 'ignore', 'error' and 'value', defaults to 'value', which will assume WOE=0.
     randomized: bool,
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float
@@ -74,7 +74,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', random_state=None, randomized=False, sigma=0.05, regularization=1.0):
+                 handle_unknown='value', random_state=None, randomized=False, sigma=0.05, regularization=1.0):
         self.verbose = verbose
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -257,7 +257,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
 
             # Replace missing values only in the computed columns
             if self.impute_missing:
-                if self.handle_unknown == 'impute':
+                if self.handle_unknown == 'value':
                     X[col].fillna(0, inplace=True)
                 elif self.handle_unknown == 'error':
                     if X[col].isnull().any():

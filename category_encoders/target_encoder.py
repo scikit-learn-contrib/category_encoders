@@ -9,7 +9,7 @@ __author__ = 'chappers'
 
 class TargetEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', min_samples_leaf=1, smoothing=1.0):
+                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
         """Target encoding for categorical features.
          For the case of categorical target: features are replaced with a blend of posterior probability of the target
           given particular categorical value and prior probability of the target over all the training data.
@@ -30,9 +30,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can cause
-        unexpected changes in the dimension in some cases.
+        options are 'error', 'ignore' and 'value', defaults to 'valie', which will impute the target mean.
     min_samples_leaf: int
         minimum samples to take category average into account.
     smoothing: float
@@ -202,7 +200,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         """
         return self.fit(X, y, **fit_params).transform(X, y)
 
-    def target_encode(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute', min_samples_leaf=1, smoothing_in=1.0):
+    def target_encode(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='value', min_samples_leaf=1, smoothing_in=1.0):
         X = X_in.copy(deep=True)
         if cols is None:
             cols = X.columns.values
@@ -211,7 +209,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             for col in cols:
                 X[col] = X[col].map(mapping[col])
                 if impute_missing:
-                    if handle_unknown == 'impute':
+                    if handle_unknown == 'value':
                         X[col].fillna(self._mean, inplace=True)
                     elif handle_unknown == 'error':
                         if X[col].isnull().any():

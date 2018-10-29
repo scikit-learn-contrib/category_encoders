@@ -34,7 +34,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1.
+        options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the category -1.
 
     Example
     -------
@@ -80,7 +80,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute'):
+                 handle_unknown='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -222,7 +222,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        if self.impute_missing and self.handle_unknown == 'impute':
+        if self.impute_missing and self.handle_unknown == 'value':
             for col in self.cols:
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "
@@ -242,7 +242,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         return X if self.return_df else X.values
 
     @staticmethod
-    def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='impute'):
+    def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='value'):
         """
         Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
         in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
@@ -266,7 +266,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                     X[column] = X[column].astype(float)
 
                 if impute_missing:
-                    if handle_unknown == 'impute':
+                    if handle_unknown == 'value':
                         X[column].fillna(0, inplace=True)
                     elif handle_unknown == 'error':
                         missing = X[column].isnull()

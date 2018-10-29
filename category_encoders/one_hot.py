@@ -26,8 +26,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories. This can cause
+        options are 'error', 'ignore' and 'value', defaults to 'value'. Warning: if value is used,
+        an extra column will be added in if the transform matrix has unknown categories. This can cause
         unexpected changes in the dimension in some cases.
     use_cat_names: bool
         if True, category values will be included in the encoded column names. Since this can result into duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
@@ -86,7 +86,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute', use_cat_names=False):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='value', use_cat_names=False):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -159,7 +159,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             column_mapping = switch.get('mapping').copy(deep=True)
 
-            if self.handle_unknown == 'impute':
+            if self.handle_unknown == 'value':
                 column_mapping = column_mapping.append(pd.Series(data=[-1], index=['-1']))
 
             col_mappings = []
@@ -252,7 +252,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        if self.impute_missing and self.handle_unknown == 'impute':
+        if self.impute_missing and self.handle_unknown == 'value':
             for col in self.cols:
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "

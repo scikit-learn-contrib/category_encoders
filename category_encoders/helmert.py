@@ -28,8 +28,8 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        options are 'error', 'ignore' and 'value', defaults to 'value'. Warning: if value is used,
+        an extra column will be added in if the transform matrix has unknown categories.  This can causes
         unexpected changes in dimension in some cases.
 
     Example
@@ -82,7 +82,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
+    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -223,6 +223,8 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
             for i in range(len(mod.columns)):
                 c = mod.columns[i]
                 new_col = str(col) + '_%d' % (i, )
+                # TODO Use https://pandas.pydata.org/pandas-docs/stable/indexing.html#deprecate-loc-reindex-listlike to
+                # set new values
                 X[new_col] = mod[c].loc[X[col]].values
                 new_columns.append(new_col)
             old_column_index = cols.index(col)

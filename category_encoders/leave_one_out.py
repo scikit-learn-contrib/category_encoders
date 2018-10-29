@@ -29,9 +29,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     impute_missing: bool
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
-        unexpected changes in dimension in some cases.
+        options are 'error', 'ignore' and 'value', defaults to 'value', which will impute the target mean.
     sigma: float
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
         sigma gives the standard deviation (spread or "width") of the normal distribution.
@@ -75,7 +73,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', random_state=None, sigma=None):
+                 handle_unknown='value', random_state=None, sigma=None):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -216,7 +214,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self._mean = y.mean()
         return {col: y.groupby(X[col]).agg(['sum', 'count']) for col in cols}
 
-    def transform_leave_one_out(self, X_in, y, mapping=None, impute_missing=True, handle_unknown='impute'):
+    def transform_leave_one_out(self, X_in, y, mapping=None, impute_missing=True, handle_unknown='value'):
         """
         Leave one out encoding uses a single column of floats to represent the means of the target variables.
         """
@@ -237,7 +235,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                 X[col] = level_means.where(X[col].map(colmap['count'][level_notunique]).notnull(), self._mean)
 
             if impute_missing:
-                if handle_unknown == 'impute':
+                if handle_unknown == 'value':
                     X[col].fillna(self._mean, inplace=True)
                 elif handle_unknown == 'error':
                     if X[col].isnull().any():
