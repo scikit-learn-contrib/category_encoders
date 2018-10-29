@@ -35,6 +35,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the category -1.
+    handle_missing: str
+        options are 'error', 'return_nan', and 'value, default to 'value', which will impute the category -2.
 
     Example
     -------
@@ -80,7 +82,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='value'):
+                 handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -89,6 +91,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.mapping = mapping
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
         self._dim = None
 
     @property
@@ -126,6 +129,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         _, categories = self.ordinal_encoding(
             X,
             mapping=self.mapping,
@@ -162,6 +169,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             Transformed values with encoding applied.
 
         """
+
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')

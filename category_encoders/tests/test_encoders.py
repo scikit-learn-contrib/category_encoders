@@ -128,6 +128,23 @@ class TestEncoders(TestCase):
                 with self.assertRaises(ValueError):
                     _ = enc.transform(X_t)
 
+    def test_handle_missing_error(self):
+        non_null = pd.DataFrame({'city': ['chicago', 'los angeles']})
+        has_null = pd.DataFrame({'city': ['chicago', np.nan]})
+        y = pd.Series([1, 0])
+
+        # TODO - implement for all encoders
+        for encoder_name in ['OrdinalEncoder']:
+            with self.subTest(encoder_name=encoder_name):
+
+                enc = getattr(encoders, encoder_name)(handle_missing='error')
+                with self.assertRaises(ValueError):
+                    enc.fit(has_null)
+
+                enc.fit(non_null)
+                with self.assertRaises(ValueError):
+                    enc.transform(has_null)
+
     def test_handle_unknown_return_nan(self):
         train = pd.DataFrame({'city': ['chicago', 'los angeles']})
         test = pd.DataFrame({'city': ['chicago', 'denver']})
