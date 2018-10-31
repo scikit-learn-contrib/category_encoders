@@ -138,7 +138,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         mappings_out = []
         for switch in ordinal_mapping:
-            values = [x[1] for x in switch.get('mapping')]
+            values = switch.get('mapping').tolist()
             column_mapping = self.fit_sum_coding(values)
             mappings_out.append({'col': switch.get('col'), 'mapping': column_mapping, })
 
@@ -215,7 +215,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         cols = X.columns.values.tolist()
 
-        X['intercept'] = pd.Series([1] * X.shape[0])
+        X['intercept'] = pd.Series([1] * X.shape[0], index=X.index)
 
         for switch in mapping:
             col = switch.get('col')

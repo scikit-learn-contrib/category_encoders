@@ -255,3 +255,34 @@ class TestEncoders(TestCase):
                     enc = getattr(encoders, encoder_name)(cols=cols)
                     enc.fit(X, y)
                     enc.transform(X_t)
+
+    def test_noncontiguous_index(self):
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+
+                enc = getattr(encoders, encoder_name)(cols=['x'])
+                data = pd.DataFrame({'x': ['a', 'b', np.nan, 'd', 'e'], 'y': [1, 0, 1, 0, 1]}).dropna()
+                _ = enc.fit_transform(data[['x']], data['y'])
+
+    def test_duplicate_index_value(self):
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(cols=['x'])
+                data = pd.DataFrame({'x': ['a', 'b', 'c', 'd', 'e'], 'y': [1, 0, 1, 0, 1]}, index=[1, 2, 2, 3, 4])
+                result = enc.fit_transform(data[['x']], data['y'])
+                self.assertEqual(5, len(result))
+
+    def test_string_index(self):
+        # https://github.com/scikit-learn-contrib/categorical-encoding/issues/131
+
+        bunch = sklearn.datasets.load_boston()
+        y = (bunch.target > 20)
+        X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+        X.index = X.index.values.astype(str)
+
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(cols=['CHAS', 'RAD'])
+                result = enc.fit_transform(X, y)
+                self.assertFalse(result.isnull().values.any(), 'There should not be any missing value!')
+

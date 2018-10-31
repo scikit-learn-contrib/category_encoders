@@ -138,7 +138,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         mappings_out = []
         for switch in ordinal_mapping:
 
-            values = [x[1] for x in switch.get('mapping')]
+            values = switch.get('mapping').get_values()
             column_mapping = self.fit_helmert_coding(values)
             mappings_out.append({'col': switch.get('col'), 'mapping': column_mapping, })
 
@@ -214,7 +214,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
 
         cols = X.columns.values.tolist()
 
-        X['intercept'] = pd.Series([1] * X.shape[0])
+        X['intercept'] = pd.Series([1] * X.shape[0], index=X.index)
 
         for switch in mapping:
             col = switch.get('col')
