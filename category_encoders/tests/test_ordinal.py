@@ -50,14 +50,14 @@ class TestOrdinalEncoder(TestCase):
         encoder = encoders.OrdinalEncoder()
         encoder.fit(data)
         a = encoder.transform(data)
-        self.assertEqual(a.values[0, 1], 0)
-        self.assertEqual(a.values[1, 1], 1)
+        self.assertEqual(a.values[0, 1], 1)
+        self.assertEqual(a.values[1, 1], 2)
 
         encoder = encoders.OrdinalEncoder(handle_missing='return_nan')
         encoder.fit(data)
         a = encoder.transform(data)
         self.assertTrue(np.isnan(a.values[0, 1]))
-        self.assertEqual(a.values[1, 1], 1)
+        self.assertEqual(a.values[1, 1], 2.0)
 
     def test_pandas_categorical(self):
         X = pd.DataFrame({
@@ -82,7 +82,7 @@ class TestOrdinalEncoder(TestCase):
 
         self.assertListEqual([1, 2], out['city'].tolist())
 
-    def test_handle_missing_have_nan_transform_time_expect_zero(self):
+    def test_handle_missing_have_nan_transform_time_expect_negative_2(self):
         train = pd.DataFrame({'city': ['chicago', 'st louis']})
         test = pd.DataFrame({'city': ['chicago', np.nan]})
 
@@ -90,7 +90,7 @@ class TestOrdinalEncoder(TestCase):
         enc.fit(train)
         out = enc.transform(test)
 
-        self.assertListEqual([1, 0], out['city'].tolist())
+        self.assertListEqual([1, -2], out['city'].tolist())
 
     def test_handle_unknown_have_nan_fit_time_return_nan(self):
         train = pd.DataFrame({'city': ['chicago', np.nan]})

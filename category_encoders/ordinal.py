@@ -36,7 +36,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the category -1.
     handle_missing: str
         options are 'error', 'return_nan', and 'value, default to 'value', which treat nan as a category at fit time,
-        or 0 at transform time if nan is not a category during fit.
+        or -2 at transform time if nan is not a category during fit.
 
     Example
     -------
@@ -294,20 +294,20 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 if util.is_category(X[col].dtype):
                     categories = X[col].cat.categories
                 else:
-                    categories = [x for x in pd.unique(X[col].values) if x is not None]
+                    categories = [x if x is not None else np.nan for x in pd.unique(X[col].values)]
 
-                index = []
-                values = []
+                data = {}
+
+                if handle_missing == 'value':
+                    data[np.nan] = -2
 
                 for i in range(len(categories)):
-                    index.append(categories[i])
-                    values.append(i + 1)
-
-                mapping = pd.Series(data=values, index=index)
+                    data[categories[i]] = i + 1
 
                 if handle_missing == 'return_nan':
-                    mapping[np.nan] = -2
+                    data[np.nan] = -2
 
+                mapping = pd.Series(data)
                 mapping_out.append({'col': col, 'mapping': mapping, 'data_type': X[col].dtype}, )
 
         return X, mapping_out
