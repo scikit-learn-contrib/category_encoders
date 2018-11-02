@@ -20,7 +20,7 @@ class TestOrdinalEncoder(TestCase):
 
     def test_ordinal(self):
 
-        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, impute_missing=True)
+        enc = encoders.OrdinalEncoder(verbose=1, return_df=True)
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertEqual(len(set(out['extra'].values)), 4)
@@ -28,14 +28,14 @@ class TestOrdinalEncoder(TestCase):
         self.assertFalse(enc.mapping is None)
         self.assertTrue(len(enc.mapping) > 0)
 
-        enc = encoders.OrdinalEncoder(verbose=1, mapping=enc.mapping, return_df=True, impute_missing=True)
+        enc = encoders.OrdinalEncoder(verbose=1, mapping=enc.mapping, return_df=True)
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertEqual(len(set(out['extra'].values)), 4)
         self.assertIn(0, set(out['extra'].values))
         self.assertTrue(len(enc.mapping) > 0)
 
-        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
+        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, handle_unknown='ignore')
         enc.fit(X)
         out = enc.transform(X_t)
         out_cats = [x for x in set(out['extra'].values) if np.isfinite(x)]
@@ -47,13 +47,13 @@ class TestOrdinalEncoder(TestCase):
             ['apple', None],
             ['peach', 'lemon']
         ])
-        encoder = encoders.OrdinalEncoder(impute_missing=True)
+        encoder = encoders.OrdinalEncoder()
         encoder.fit(data)
         a = encoder.transform(data)
         self.assertEqual(a.values[0, 1], 0)
         self.assertEqual(a.values[1, 1], 1)
 
-        encoder = encoders.OrdinalEncoder(impute_missing=False)
+        encoder = encoders.OrdinalEncoder(handle_missing='return_nan')
         encoder.fit(data)
         a = encoder.transform(data)
         self.assertTrue(np.isnan(a.values[0, 1]))

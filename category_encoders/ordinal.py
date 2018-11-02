@@ -32,12 +32,11 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         the value of 'col' should be the feature name.
         the value of 'mapping' should be a list of tuples of format (original_label, encoded_label).
         example mapping: [{'col': 'col1', 'mapping': [(None, 0), ('a', 1), ('b', 2)]}]
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the category -1.
     handle_missing: str
-        options are 'error', 'return_nan', and 'value, default to 'value', which treat nan as a category.
+        options are 'error', 'return_nan', and 'value, default to 'value', which treat nan as a category at fit time,
+        or 0 at transform time if nan is not a category during fit.
 
     Example
     -------
@@ -82,7 +81,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
+    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -90,7 +89,6 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.cols = cols
         self.mapping = mapping
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
         self._dim = None
@@ -138,7 +136,6 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             X,
             mapping=self.mapping,
             cols=self.cols,
-            impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown,
             handle_missing=self.handle_missing
         )
@@ -193,7 +190,6 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             X,
             mapping=self.mapping,
             cols=self.cols,
-            impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown,
             handle_missing=self.handle_missing
         )
@@ -236,7 +232,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        if self.impute_missing and self.handle_unknown == 'value':
+        if self.handle_unknown == 'value':
             for col in self.cols:
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "
@@ -256,7 +252,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         return X if self.return_df else X.values
 
     @staticmethod
-    def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='value', handle_missing='valie'):
+    def ordinal_encoding(X_in, mapping=None, cols=None, handle_unknown='value', handle_missing='valie'):
         """
         Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
         in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
@@ -281,13 +277,12 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 except ValueError as e:
                     X[column] = X[column].astype(float)
 
-                if impute_missing:
-                    if handle_unknown == 'value':
-                        X[column].fillna(0, inplace=True)
-                    elif handle_unknown == 'error':
-                        missing = X[column].isnull()
-                        if any(missing):
-                            raise ValueError('Unexpected categories found in column %s' % column)
+                if handle_unknown == 'value':
+                    X[column].fillna(0, inplace=True)
+                elif handle_unknown == 'error':
+                    missing = X[column].isnull()
+                    if any(missing):
+                        raise ValueError('Unexpected categories found in column %s' % column)
 
                 if handle_missing == 'return_nan':
                     X[column] = X[column].map(return_nan_series).where(X[column] == -2, X[column])

@@ -118,7 +118,6 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
-            impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown
         )
         X = X.drop_duplicates(subset=self.cols) if self.cols else X

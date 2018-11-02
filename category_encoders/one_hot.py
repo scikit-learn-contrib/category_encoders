@@ -137,7 +137,6 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
-            impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
