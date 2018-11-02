@@ -44,20 +44,19 @@ class TestOrdinalEncoder(TestCase):
 
     def test_ordinal_dist(self):
         data = np.array([
-            ['apple', None],
-            ['peach', 'lemon']
+            ['apple', 'lemon'],
+            ['peach', None]
         ])
         encoder = encoders.OrdinalEncoder()
-        encoder.fit(data)
-        a = encoder.transform(data)
-        self.assertEqual(a.values[0, 1], 1)
-        self.assertEqual(a.values[1, 1], 2)
+        result = encoder.fit_transform(data)
+        self.assertEqual(2, len(result[0].unique()), "We expect two unique values in the column")
+        self.assertEqual(2, len(result[1].unique()), "We expect two unique values in the column")
+        self.assertFalse(np.isnan(result.values[1, 1]))
 
         encoder = encoders.OrdinalEncoder(handle_missing='return_nan')
-        encoder.fit(data)
-        a = encoder.transform(data)
-        self.assertTrue(np.isnan(a.values[0, 1]))
-        self.assertEqual(a.values[1, 1], 2.0)
+        result = encoder.fit_transform(data)
+        self.assertEqual(2, len(result[0].unique()), "We expect two unique values in the column")
+        self.assertEqual(2, len(result[1].unique()), "We expect two unique values in the column")
 
     def test_pandas_categorical(self):
         X = pd.DataFrame({
