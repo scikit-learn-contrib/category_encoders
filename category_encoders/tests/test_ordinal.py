@@ -73,3 +73,43 @@ class TestOrdinalEncoder(TestCase):
         self.assertEqual(3, out['Categorical'][1])
         self.assertEqual(1, out['Categorical'][2])
         self.assertEqual(2, out['Categorical'][3])
+
+    def test_handle_missing_have_nan_fit_time_expect_as_category(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+
+        enc = encoders.OrdinalEncoder(handle_missing='value')
+        out = enc.fit_transform(train)
+
+        self.assertListEqual([1, 2], out['city'].tolist())
+
+    def test_handle_missing_have_nan_transform_time_expect_zero(self):
+        train = pd.DataFrame({'city': ['chicago', 'st louis']})
+        test = pd.DataFrame({'city': ['chicago', np.nan]})
+
+        enc = encoders.OrdinalEncoder(handle_missing='value')
+        enc.fit(train)
+        out = enc.transform(test)
+
+        self.assertListEqual([1, 0], out['city'].tolist())
+
+    def test_handle_unknown_have_nan_fit_time_return_nan(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+
+        enc = encoders.OrdinalEncoder(handle_missing='return_nan')
+        out = enc.fit_transform(train)['city'].tolist()
+
+        self.assertEqual(2, len(out))
+        self.assertEqual(1.0, out[0])
+        self.assertTrue(np.isnan(out[1]))
+
+    def test_handle_unknown_have_nan_transform_time_return_nan(self):
+        train = pd.DataFrame({'city': ['chicago', 'st louis']})
+        test = pd.DataFrame({'city': ['chicago', np.nan]})
+
+        enc = encoders.OrdinalEncoder(handle_missing='return_nan')
+        enc.fit(train)
+        out = enc.transform(test)['city'].tolist()
+
+        self.assertEqual(2, len(out))
+        self.assertEqual(1.0, out[0])
+        self.assertTrue(np.isnan(out[1]))

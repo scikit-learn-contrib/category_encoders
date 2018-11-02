@@ -1,5 +1,6 @@
 """Ordinal or label encoding"""
 
+import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
@@ -36,7 +37,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     handle_unknown: str
         options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the category -1.
     handle_missing: str
-        options are 'error', 'return_nan', and 'value, default to 'value', which will impute the category -2.
+        options are 'error', 'return_nan', and 'value, default to 'value', which treat nan as a category.
 
     Example
     -------
@@ -138,7 +139,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping=self.mapping,
             cols=self.cols,
             impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown=self.handle_unknown,
+            handle_missing=self.handle_missing
         )
         self.mapping = categories
 
@@ -192,7 +194,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping=self.mapping,
             cols=self.cols,
             impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown=self.handle_unknown,
+            handle_missing=self.handle_missing
         )
 
         if self.drop_invariant:
@@ -253,12 +256,14 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         return X if self.return_df else X.values
 
     @staticmethod
-    def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='value'):
+    def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='value', handle_missing='valie'):
         """
         Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
         in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
         are assumed to have no true order and integers are selected at random.
         """
+
+        return_nan_series = pd.Series(data=[np.nan], index=[-2])
 
         X = X_in.copy(deep=True)
 
@@ -284,6 +289,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                         if any(missing):
                             raise ValueError('Unexpected categories found in column %s' % column)
 
+                if handle_missing == 'return_nan':
+                    X[column] = X[column].map(return_nan_series).where(X[column] == -2, X[column])
+
         else:
             mapping_out = []
             for col in cols:
@@ -301,6 +309,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                     values.append(i + 1)
 
                 mapping = pd.Series(data=values, index=index)
+
+                if handle_missing == 'return_nan':
+                    mapping[np.nan] = -2
 
                 mapping_out.append({'col': col, 'mapping': mapping, 'data_type': X[col].dtype}, )
 
