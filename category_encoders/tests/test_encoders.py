@@ -129,19 +129,19 @@ class TestEncoders(TestCase):
                     _ = enc.transform(X_t)
 
     def test_handle_missing_error(self):
-        non_null = pd.DataFrame({'city': ['chicago', 'los angeles']})
-        has_null = pd.DataFrame({'city': ['chicago', np.nan]})
+        non_null = pd.DataFrame({'city': ['chicago', 'los angeles'], 'color': ['red', np.nan]})  # only 'city' column is going to be transformed
+        has_null = pd.DataFrame({'city': ['chicago', np.nan], 'color': ['red', np.nan]})
         y = pd.Series([1, 0])
 
         # TODO - implement for all encoders
         for encoder_name in ['OrdinalEncoder']:
             with self.subTest(encoder_name=encoder_name):
 
-                enc = getattr(encoders, encoder_name)(handle_missing='error')
+                enc = getattr(encoders, encoder_name)(handle_missing='error', cols='city')
                 with self.assertRaises(ValueError):
-                    enc.fit(has_null)
+                    enc.fit(has_null, y)
 
-                enc.fit(non_null)
+                enc.fit(non_null, y)    # we raise an error only if a missing value is in one of the transformed columns
                 with self.assertRaises(ValueError):
                     enc.transform(has_null)
 
