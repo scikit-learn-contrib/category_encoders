@@ -278,7 +278,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                     X[column] = X[column].astype(float)
 
                 if handle_unknown == 'value':
-                    X[column].fillna(0, inplace=True)
+                    X[column].fillna(-1, inplace=True)
                 elif handle_unknown == 'error':
                     missing = X[column].isnull()
                     if any(missing):

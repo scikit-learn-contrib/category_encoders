@@ -10,7 +10,7 @@ class TestHelmertEncoder(TestCase):
         train = ['A', 'B', 'C']
         test = ['A', 'D', 'E']
 
-        encoder = encoders.HelmertEncoder()
+        encoder = encoders.HelmertEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
         test_t = encoder.transform(test)
 
@@ -23,7 +23,7 @@ class TestHelmertEncoder(TestCase):
         train = ['A', 'B', 'C']
         test = ['B', 'D', 'E']
 
-        encoder = encoders.HelmertEncoder()
+        encoder = encoders.HelmertEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
         test_t = encoder.transform(test)
 
@@ -36,7 +36,7 @@ class TestHelmertEncoder(TestCase):
         train = ['A', 'B', 'C']
         test = ['A', 'B', 'C', None]
 
-        encoder = encoders.HelmertEncoder()
+        encoder = encoders.HelmertEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
         test_t = encoder.transform(test)
 
@@ -50,7 +50,7 @@ class TestHelmertEncoder(TestCase):
         train = ['A', 'B', 'C']
         test = ['D', 'B', 'C', None]
 
-        encoder = encoders.HelmertEncoder()
+        encoder = encoders.HelmertEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
         test_t = encoder.transform(test)
 
@@ -63,7 +63,7 @@ class TestHelmertEncoder(TestCase):
     def test_helmert_2cols(self):
         train = [['A', 'A'], ['B', 'B'], ['C', 'C']]
 
-        encoder = encoders.HelmertEncoder()
+        encoder = encoders.HelmertEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
         obtained = encoder.transform(train)
 
@@ -80,7 +80,7 @@ class TestHelmertEncoder(TestCase):
                               },
                              columns=['col1', 'col2', 'col3', 'col4'])
         expected_columns = ['intercept', 'col1', 'col2_0', 'col2_1', 'col2_2', 'col3', 'col4_0', 'col4_1']
-        encoder = encoders.HelmertEncoder()
+        encoder = encoders.HelmertEncoder(handle_unknown='value', handle_missing='value')
 
         encoder.fit(train)
         columns = encoder.transform(train).columns.values

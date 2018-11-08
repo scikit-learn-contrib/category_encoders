@@ -24,7 +24,7 @@ class TestOrdinalEncoder(TestCase):
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertEqual(len(set(out['extra'].values)), 4)
-        self.assertIn(0, set(out['extra'].values))
+        self.assertIn(-1, set(out['extra'].values))
         self.assertFalse(enc.mapping is None)
         self.assertTrue(len(enc.mapping) > 0)
 
@@ -32,7 +32,7 @@ class TestOrdinalEncoder(TestCase):
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertEqual(len(set(out['extra'].values)), 4)
-        self.assertIn(0, set(out['extra'].values))
+        self.assertIn(-1, set(out['extra'].values))
         self.assertTrue(len(enc.mapping) > 0)
 
         enc = encoders.OrdinalEncoder(verbose=1, return_df=True, handle_unknown='ignore')
@@ -91,7 +91,7 @@ class TestOrdinalEncoder(TestCase):
 
         self.assertListEqual([1, -2], out['city'].tolist())
 
-    def test_handle_unknown_have_nan_fit_time_return_nan(self):
+    def test_handle_missing_have_nan_fit_time_return_nan(self):
         train = pd.DataFrame({'city': ['chicago', np.nan]})
 
         enc = encoders.OrdinalEncoder(handle_missing='return_nan')
@@ -101,7 +101,7 @@ class TestOrdinalEncoder(TestCase):
         self.assertEqual(1.0, out[0])
         self.assertTrue(np.isnan(out[1]))
 
-    def test_handle_unknown_have_nan_transform_time_return_nan(self):
+    def test_handle_missing_have_nan_transform_time_return_nan(self):
         train = pd.DataFrame({'city': ['chicago', 'st louis']})
         test = pd.DataFrame({'city': ['chicago', np.nan]})
 
@@ -112,3 +112,14 @@ class TestOrdinalEncoder(TestCase):
         self.assertEqual(2, len(out))
         self.assertEqual(1.0, out[0])
         self.assertTrue(np.isnan(out[1]))
+
+    def test_handle_unknown_have_new_value_expect_negative_1(self):
+        train = pd.DataFrame({'city': ['chicago', 'st louis']})
+        test = pd.DataFrame({'city': ['chicago', 'los angeles']})
+        expected = [1.0, -1.0]
+
+        enc = encoders.OrdinalEncoder(handle_missing='return_nan')
+        enc.fit(train)
+        result = enc.transform(test)['city'].tolist()
+
+        self.assertEqual(expected, result)

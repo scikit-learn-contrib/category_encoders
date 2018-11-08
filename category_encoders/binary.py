@@ -24,10 +24,12 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'error', 'ignore' and 'value', defaults to 'value'. Warning: if value is used,
+        an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        unexpected changes in dimension in some cases.
+    handle_missing: str
+        options are 'error', 'ignore', 'value', and 'indicator', defaults to 'indicator'. Warning: if indicator is used,
         an extra column will be added in if the transform matrix has unknown categories.  This can causes
         unexpected changes in dimension in some cases.
 
@@ -69,14 +71,14 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='value'):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
+                 handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
@@ -118,9 +120,8 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
-            handle_unknown=self.handle_unknown,
-            # TODO Properly set handle missing when it's implemented here
-            handle_missing='ignore'
+            handle_unknown='value',
+            handle_missing='value'
         )
         X = X.drop_duplicates(subset=self.cols) if self.cols else X
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
@@ -168,6 +169,10 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         X = self.ordinal_encoder.transform(X)
 
+        if self.handle_unknown == 'error':
+            if X[self.cols].isin([-1]).any().any():
+                raise ValueError('Columns to be encoded can not contain new values')
+
         X = self.binary(X, cols=self.cols)
 
         if self.drop_invariant:
@@ -213,7 +218,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        if self.impute_missing and self.handle_unknown == 'value':
+        if self.handle_unknown == 'value':
             for col in self.cols:
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "

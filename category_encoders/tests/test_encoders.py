@@ -134,7 +134,7 @@ class TestEncoders(TestCase):
         y = pd.Series([1, 0])
 
         # TODO - implement for all encoders
-        for encoder_name in ['OrdinalEncoder']:
+        for encoder_name in ['OrdinalEncoder', 'HelmertEncoder', 'BackwardDifferenceEncoder', 'PolynomialEncoder', 'SumEncoder']:
             with self.subTest(encoder_name=encoder_name):
 
                 enc = getattr(encoders, encoder_name)(handle_missing='error', cols='city')
@@ -151,13 +151,17 @@ class TestEncoders(TestCase):
         y = pd.Series([1, 0])
 
         # TODO - implement for all encoders
-        for encoder_name in ['OrdinalEncoder']:
+        for encoder_name in ['OrdinalEncoder', 'HelmertEncoder', 'BackwardDifferenceEncoder', 'PolynomialEncoder', 'SumEncoder']:
             with self.subTest(encoder_name=encoder_name):
 
                 enc = getattr(encoders, encoder_name)(handle_unknown='return_nan')
                 enc.fit(train, y)
-                result = enc.transform(test)
-                self.assertTrue(result.iloc[1, :].isnull().all())
+                result = enc.transform(test).iloc[1, :]
+
+                if len(result) == 1:
+                    self.assertTrue(result.isnull().all())
+                else:
+                    self.assertTrue(result[1:].isnull().all())
 
     def test_handle_unknown_value(self):
         train = pd.DataFrame({'city': ['chicago', 'los angeles']})
@@ -165,7 +169,7 @@ class TestEncoders(TestCase):
         y = pd.Series([1, 0])
 
         # TODO - implement for all encoders
-        for encoder_name in ['OrdinalEncoder']:
+        for encoder_name in ['OrdinalEncoder', 'HelmertEncoder', 'BackwardDifferenceEncoder', 'PolynomialEncoder', 'SumEncoder']:
             with self.subTest(encoder_name=encoder_name):
 
                 enc = getattr(encoders, encoder_name)(handle_unknown='value')
@@ -215,11 +219,6 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(verbose=1, cols=cols)
                 enc.fit(X)
                 tu.verify_inverse_transform(X_t, enc.inverse_transform(enc.transform(X_t)))
-
-                # when a new value is encountered, do not raise an exception
-                enc = getattr(encoders, encoder_name)(verbose=1, cols=cols)
-                enc.fit(X, y)
-                _ = enc.inverse_transform(enc.transform(X_t_extra))
 
     def test_types(self):
         X = pd.DataFrame({
