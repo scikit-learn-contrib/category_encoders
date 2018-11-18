@@ -97,7 +97,9 @@ class TestOneHotEncoderTestCase(TestCase):
     def test_fit_transform_HaveHandleUnknownValueAndUnseenValues_ExpectAllZeroes(self):
         train = pd.DataFrame({'city': ['Chicago', 'Seattle']})
         test = pd.DataFrame({'city': ['Chicago', 'Detroit']})
-        expected_result = pd.DataFrame({'city_1': [1.0, 0.0], 'city_2': [0.0, 0.0]})
+        expected_result = pd.DataFrame({'city_1': [1.0, 0.0],
+                                        'city_2': [0.0, 0.0]},
+                                       columns=['city_1', 'city_2'])
 
         enc = encoders.OneHotEncoder(handle_unknown='value')
         result = enc.fit(train).transform(test)
@@ -106,7 +108,9 @@ class TestOneHotEncoderTestCase(TestCase):
 
     def test_fit_transform_HaveHandleUnknownValueAndSeenValues_ExpectMappingUsed(self):
         train = pd.DataFrame({'city': ['Chicago', 'Seattle']})
-        expected_result = pd.DataFrame({'city_1': [1.0, 0.0], 'city_2': [0.0, 1.0]})
+        expected_result = pd.DataFrame({'city_1': [1.0, 0.0],
+                                        'city_2': [0.0, 1.0]},
+                                       columns=['city_1', 'city_2'])
 
         enc = encoders.OneHotEncoder(handle_unknown='value')
         result = enc.fit(train).transform(train)
@@ -117,7 +121,8 @@ class TestOneHotEncoderTestCase(TestCase):
         train = pd.DataFrame({'city': ['Chicago', 'Seattle']})
         expected_result = pd.DataFrame({'city_1': [1, 0],
                                         'city_2': [0, 1],
-                                        'city_-1': [0, 0]})
+                                        'city_-1': [0, 0]},
+                                       columns=['city_1', 'city_2', 'city_-1'])
 
         enc = encoders.OneHotEncoder(handle_unknown='indicator')
         result = enc.fit(train).transform(train)
@@ -129,7 +134,8 @@ class TestOneHotEncoderTestCase(TestCase):
         test = pd.DataFrame({'city': ['Chicago', 'Detroit']})
         expected_result = pd.DataFrame({'city_1': [1, 0],
                                         'city_2': [0, 0],
-                                        'city_-1': [0, 1]})
+                                        'city_-1': [0, 1]},
+                                       columns=['city_1', 'city_2', 'city_-1'])
 
         enc = encoders.OneHotEncoder(handle_unknown='indicator')
         result = enc.fit(train).transform(test)
