@@ -25,17 +25,17 @@ class TestOneHotEncoderTestCase(TestCase):
                          enc.transform(X_t[X_t['extra'] != 'A']).shape[1],
                          'We have to get the same count of columns')
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True)
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='indicator')
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertIn('extra_-1', out.columns.values)
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='ignore')
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertEqual(len([x for x in out.columns.values if str(x).startswith('extra_')]), 3)
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='error')
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='error')
         enc.fit(X)
         with self.assertRaises(ValueError):
             out = enc.transform(X_t)
@@ -45,7 +45,7 @@ class TestOneHotEncoderTestCase(TestCase):
         out = enc.transform(X_t)
         self.assertIn('extra_A', out.columns.values)
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, use_cat_names=True)
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, use_cat_names=True, handle_unknown='indicator')
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertIn('extra_-1', out.columns.values)
@@ -53,7 +53,6 @@ class TestOneHotEncoderTestCase(TestCase):
         # test inverse_transform
         X_i = tu.create_dataset(n_rows=100, has_none=False)
         X_i_t = tu.create_dataset(n_rows=50, has_none=False)
-        X_i_t_extra = tu.create_dataset(n_rows=50, extras=True, has_none=False)
         cols = ['underscore', 'none', 'extra', 321, 'categorical']
 
         enc = encoders.OneHotEncoder(verbose=1, use_cat_names=True, cols=cols)
@@ -62,7 +61,7 @@ class TestOneHotEncoderTestCase(TestCase):
         tu.verify_inverse_transform(X_i_t, obtained)
 
     def test_fit_transform_HaveMissingValuesAndUseCatNames_ExpectCorrectValue(self):
-        encoder = encoders.OneHotEncoder(cols=[0], use_cat_names=True)
+        encoder = encoders.OneHotEncoder(cols=[0], use_cat_names=True, handle_unknown='indicator')
 
         result = encoder.fit_transform([[-1]])
 
@@ -87,10 +86,52 @@ class TestOneHotEncoderTestCase(TestCase):
         assert value.equals(inverse_transformed)
 
     def test_fit_transform_HaveColumnAppearTwice_ExpectColumnsDeduped(self):
-        encoder = encoders.OneHotEncoder(cols=['match', 'match_box'], use_cat_names=True)
-        value = pd.DataFrame({'match': pd.Series('box_-1'), 'match_box': pd.Series(-1)})
+        encoder = encoders.OneHotEncoder(cols=['match', 'match_box'], use_cat_names=True, handle_unknown='indicator')
+        value = pd.DataFrame({'match': pd.Series('box_-1'), 'match_box': pd.Series('-1')})
 
         result = encoder.fit_transform(value)
         columns = result.columns.tolist()
 
         self.assertSetEqual({'match_box_-1', 'match_-1', 'match_box_-1#', 'match_box_-1##'}, set(columns))
+
+    def test_fit_transform_HaveHandleUnknownValueAndUnseenValues_ExpectAllZeroes(self):
+        train = pd.DataFrame({'city': ['Chicago', 'Seattle']})
+        test = pd.DataFrame({'city': ['Chicago', 'Detroit']})
+        expected_result = pd.DataFrame({'city_1': [1.0, 0.0], 'city_2': [0.0, 0.0]})
+
+        enc = encoders.OneHotEncoder(handle_unknown='value')
+        result = enc.fit(train).transform(test)
+
+        pd.testing.assert_frame_equal(expected_result, result)
+
+    def test_fit_transform_HaveHandleUnknownValueAndSeenValues_ExpectMappingUsed(self):
+        train = pd.DataFrame({'city': ['Chicago', 'Seattle']})
+        expected_result = pd.DataFrame({'city_1': [1.0, 0.0], 'city_2': [0.0, 1.0]})
+
+        enc = encoders.OneHotEncoder(handle_unknown='value')
+        result = enc.fit(train).transform(train)
+
+        pd.testing.assert_frame_equal(expected_result, result)
+
+    def test_fit_transform_HaveHandleUnknownIndicatorAndNoMissingValue_ExpectExtraColumn(self):
+        train = pd.DataFrame({'city': ['Chicago', 'Seattle']})
+        expected_result = pd.DataFrame({'city_1': [1, 0],
+                                        'city_2': [0, 1],
+                                        'city_-1': [0, 0]})
+
+        enc = encoders.OneHotEncoder(handle_unknown='indicator')
+        result = enc.fit(train).transform(train)
+
+        pd.testing.assert_frame_equal(expected_result, result)
+
+    def test_fit_transform_HaveHandleUnknownIndicatorAndMissingValue_ExpectValueSet(self):
+        train = pd.DataFrame({'city': ['Chicago', 'Seattle']})
+        test = pd.DataFrame({'city': ['Chicago', 'Detroit']})
+        expected_result = pd.DataFrame({'city_1': [1, 0],
+                                        'city_2': [0, 0],
+                                        'city_-1': [0, 1]})
+
+        enc = encoders.OneHotEncoder(handle_unknown='indicator')
+        result = enc.fit(train).transform(test)
+
+        pd.testing.assert_frame_equal(expected_result, result)

@@ -8,7 +8,7 @@ __author__ = 'chappers'
 
 
 class TargetEncoder(BaseEstimator, TransformerMixin):
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
                  handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
         """Target encoding for categorical features.
          For the case of categorical target: features are replaced with a blend of posterior probability of the target
@@ -27,8 +27,6 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'error', 'ignore' and 'value', defaults to 'valie', which will impute the target mean.
     min_samples_leaf: int
@@ -83,8 +81,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self.smoothing = float(smoothing)  # Make smoothing a float so that python 2 does not treat as integer division
         self._dim = None
         self.mapping = None
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing=handle_missing
         self._mean = None
 
     def fit(self, X, y, **kwargs):
@@ -119,11 +117,14 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         _, self.mapping = self.target_encode(
             X, y,
             mapping=None,
             cols=self.cols,
-            impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown,
             smoothing_in=self.smoothing,
             min_samples_leaf=self.min_samples_leaf
@@ -151,6 +152,10 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             Transformed values with encoding applied.
         """
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
@@ -176,8 +181,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             X, y,
             mapping=self.mapping,
             cols=self.cols,
-            impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown, 
+            handle_unknown=self.handle_unknown,
             min_samples_leaf=self.min_samples_leaf,
             smoothing_in=self.smoothing
         )
@@ -200,7 +204,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         """
         return self.fit(X, y, **fit_params).transform(X, y)
 
-    def target_encode(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='value', min_samples_leaf=1, smoothing_in=1.0):
+    def target_encode(self, X_in, y, mapping=None, cols=None, handle_unknown='value', min_samples_leaf=1, smoothing_in=1.0):
         X = X_in.copy(deep=True)
         if cols is None:
             cols = X.columns.values
@@ -208,12 +212,11 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         if mapping is not None:
             for col in cols:
                 X[col] = X[col].map(mapping[col])
-                if impute_missing:
-                    if handle_unknown == 'value':
-                        X[col].fillna(self._mean, inplace=True)
-                    elif handle_unknown == 'error':
-                        if X[col].isnull().any():
-                            raise ValueError('Unexpected categories found in column %s' % col)
+                if handle_unknown == 'value':
+                    X[col].fillna(self._mean, inplace=True)
+                elif handle_unknown == 'error':
+                    if X[col].isnull().any():
+                        raise ValueError('Unexpected categories found in column %s' % col)
         else:
             mapping = {}
             prior = self._mean = y.mean()

@@ -123,3 +123,12 @@ class TestOrdinalEncoder(TestCase):
         result = enc.transform(test)['city'].tolist()
 
         self.assertEqual(expected, result)
+
+    def test_HaveNegativeOneInTrain_ExpectCodedAsOne(self):
+        train = pd.DataFrame({'city': [-1]})
+        expected = [1]
+
+        enc = encoders.OrdinalEncoder(cols=['city'])
+        result = enc.fit_transform(train)['city'].tolist()
+
+        self.assertEqual(expected, result)

@@ -54,7 +54,7 @@ class TestLeaveOneOutEncoder(TestCase):
         X = pd.DataFrame(data=['1', '2', '2', '2', '3'], columns=['col'])
         y = np.array([1, 0, 1, 0, 1])
 
-        encoder = encoders.LeaveOneOutEncoder(impute_missing=False)
+        encoder = encoders.LeaveOneOutEncoder(handle_unknown='value')
         result = encoder.fit(X, y).transform(X, y)
 
         self.assertFalse(result.isnull().any().any(), 'There should not be any missing value')

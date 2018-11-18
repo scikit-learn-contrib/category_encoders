@@ -84,7 +84,7 @@ class TestEncoders(TestCase):
                 tu.verify_numeric(enc.transform(X_t, y_t))
 
                 # when we run transform(X, y) and there is a new value in X, something is wrong and we raise an error
-                enc = getattr(encoders, encoder_name)(impute_missing=True, handle_unknown='error', cols=['extra'])
+                enc = getattr(encoders, encoder_name)(handle_unknown='error', cols=['extra'])
                 enc.fit(X, y)
                 self.assertRaises(ValueError, enc.transform, (X_t, y_t))
 
@@ -133,8 +133,7 @@ class TestEncoders(TestCase):
         has_null = pd.DataFrame({'city': ['chicago', np.nan], 'color': ['red', np.nan]})
         y = pd.Series([1, 0])
 
-        # TODO - implement for all encoders
-        for encoder_name in ['OrdinalEncoder', 'HelmertEncoder', 'BackwardDifferenceEncoder', 'PolynomialEncoder', 'SumEncoder']:
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
 
                 enc = getattr(encoders, encoder_name)(handle_missing='error', cols='city')
@@ -150,8 +149,7 @@ class TestEncoders(TestCase):
         test = pd.DataFrame({'city': ['chicago', 'denver']})
         y = pd.Series([1, 0])
 
-        # TODO - implement for all encoders
-        for encoder_name in ['OrdinalEncoder', 'HelmertEncoder', 'BackwardDifferenceEncoder', 'PolynomialEncoder', 'SumEncoder']:
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
 
                 enc = getattr(encoders, encoder_name)(handle_unknown='return_nan')
@@ -168,8 +166,7 @@ class TestEncoders(TestCase):
         test = pd.DataFrame({'city': ['chicago', 'denver']})
         y = pd.Series([1, 0])
 
-        # TODO - implement for all encoders
-        for encoder_name in ['OrdinalEncoder', 'HelmertEncoder', 'BackwardDifferenceEncoder', 'PolynomialEncoder', 'SumEncoder']:
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
 
                 enc = getattr(encoders, encoder_name)(handle_unknown='value')
@@ -251,7 +248,7 @@ class TestEncoders(TestCase):
 
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                print(encoder_name)
+
                 encoder = getattr(encoders, encoder_name)()
                 result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
                 columns = result.columns.values

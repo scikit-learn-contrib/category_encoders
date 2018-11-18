@@ -26,8 +26,6 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'error', 'ignore' and 'value', defaults to 'value', which will impute the target mean.
     sigma: float
@@ -72,8 +70,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='value', random_state=None, sigma=None):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
+                 handle_unknown='value', handle_missing='value', random_state=None, sigma=None):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -82,8 +80,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self._dim = None
         self.mapping = None
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
         self._mean = None
         self.random_state = random_state
         self.sigma = sigma
@@ -125,6 +123,10 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         categories = self.fit_leave_one_out(
             X, y,
             cols=self.cols
@@ -159,6 +161,10 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         """
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
@@ -183,7 +189,6 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         X = self.transform_leave_one_out(
             X, y,
             mapping=self.mapping,
-            impute_missing=self.impute_missing,
             handle_unknown=self.handle_unknown
         )
 
@@ -214,7 +219,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self._mean = y.mean()
         return {col: y.groupby(X[col]).agg(['sum', 'count']) for col in cols}
 
-    def transform_leave_one_out(self, X_in, y, mapping=None, impute_missing=True, handle_unknown='value'):
+    def transform_leave_one_out(self, X_in, y, mapping=None, handle_unknown='value'):
         """
         Leave one out encoding uses a single column of floats to represent the means of the target variables.
         """
@@ -234,12 +239,11 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                 # The 'where' fills in singleton levels (count = 1 -> div by 0) with the global mean
                 X[col] = level_means.where(X[col].map(colmap['count'][level_notunique]).notnull(), self._mean)
 
-            if impute_missing:
-                if handle_unknown == 'value':
-                    X[col].fillna(self._mean, inplace=True)
-                elif handle_unknown == 'error':
-                    if X[col].isnull().any():
-                        raise ValueError('Unexpected categories found in column %s' % col)
+            if handle_unknown == 'value':
+                X[col].fillna(self._mean, inplace=True)
+            elif handle_unknown == 'error':
+                if X[col].isnull().any():
+                    raise ValueError('Unexpected categories found in column %s' % col)
 
             if self.sigma is not None and y is not None:
                 X[col] = X[col] * random_state_.normal(1., self.sigma, X[col].shape[0])

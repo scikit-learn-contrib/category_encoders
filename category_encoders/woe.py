@@ -21,8 +21,6 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'ignore', 'error' and 'value', defaults to 'value', which will assume WOE=0.
     randomized: bool,
@@ -73,8 +71,8 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='value', random_state=None, randomized=False, sigma=0.05, regularization=1.0):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
+                 handle_unknown='value', handle_missing='value', random_state=None, randomized=False, sigma=0.05, regularization=1.0):
         self.verbose = verbose
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -82,8 +80,8 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self._dim = None
         self.mapping = None
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
         self._sum = None
         self._count = None
         self.random_state = random_state
@@ -142,6 +140,10 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         # Training
         self.mapping = self._train(X, y, cols=self.cols)
 
@@ -174,6 +176,10 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             Transformed values with encoding applied.
 
         """
+
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
@@ -228,7 +234,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         mapping = {}
 
         # Calculate global statistics
-        self._sum  = y.sum()
+        self._sum = y.sum()
         self._count = y.count()
 
         for col in cols:
@@ -256,12 +262,11 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             X[col] = X[col].map(self.mapping[col])
 
             # Replace missing values only in the computed columns
-            if self.impute_missing:
-                if self.handle_unknown == 'value':
-                    X[col].fillna(0, inplace=True)
-                elif self.handle_unknown == 'error':
-                    if X[col].isnull().any():
-                        raise ValueError('Unexpected categories found in column %s' % col)
+            if self.handle_unknown == 'value':
+                X[col].fillna(0, inplace=True)
+            elif self.handle_unknown == 'error':
+                if X[col].isnull().any():
+                    raise ValueError('Unexpected categories found in column %s' % col)
 
             # Randomization is meaningful only for training data -> we do it only if y is present
             if self.randomized and y is not None:

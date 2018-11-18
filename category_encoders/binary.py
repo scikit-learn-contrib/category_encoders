@@ -71,7 +71,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
+    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -80,9 +80,9 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
         self.cols = cols
+        self.mapping = mapping
         self.ordinal_encoder = None
         self._dim = None
-        self.digits_per_col = {}
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -116,6 +116,10 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         # train an ordinal pre-encoder
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
@@ -126,8 +130,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         X = X.drop_duplicates(subset=self.cols) if self.cols else X
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
-        for col in self.cols:
-            self.digits_per_col[col] = self.calc_required_digits(X, col)
+        self.mapping = self.fit_binary_encoding(X)
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
@@ -137,6 +140,37 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
 
         return self
+
+    def fit_binary_encoding(self, X):
+        mappings_out = []
+
+        for switch in self.ordinal_encoder.category_mapping:
+            col = switch.get('col')
+            values = switch.get('mapping')
+
+            if self.handle_missing == 'value':
+                del values[np.nan]
+
+            if len(values) < 2:
+                return pd.DataFrame()
+
+            digits = self.calc_required_digits(X, col)
+            X_unique = pd.DataFrame(index=values)
+
+            X_unique_to_cols = X_unique.index.map(lambda x: self.col_transform(x, digits))
+
+            for dig in range(digits):
+                X_unique[str(col) + '_%d' % (dig,)] = X_unique_to_cols.map(
+                    lambda r: int(r[dig]) if r is not None else None)
+
+            if self.handle_unknown == 'return_nan':
+                X_unique.loc[-1] = np.nan
+            elif self. handle_unknown == 'value':
+                X_unique.loc[-1] = 0
+
+            mappings_out.append({'col': col, 'mapping': X_unique})
+
+        return mappings_out
 
     def transform(self, X):
         """Perform the transformation to new categorical data.
@@ -153,6 +187,10 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             Transformed values with encoding applied.
 
         """
+
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
@@ -173,7 +211,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             if X[self.cols].isin([-1]).any().any():
                 raise ValueError('Columns to be encoded can not contain new values')
 
-        X = self.binary(X, cols=self.cols)
+        X = self.binary(X)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -231,7 +269,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         return X if self.return_df else X.values
 
-    def binary(self, X_in, cols=None):
+    def binary(self, X_in):
         """
         Binary encoding encodes the integers as binary code with one column per digit.
 
@@ -247,33 +285,20 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         X = X_in.copy(deep=True)
 
-        if cols is None:
-            cols = X.columns.values
-            pass_thru = []
-        else:
-            pass_thru = [col for col in X.columns.values if col not in cols]
+        cols = X.columns.values.tolist()
 
-        output = []
-        bin_cols = []
-        for col in cols:
-            # get how many digits we need to represent the classes present
-            digits = self.digits_per_col[col]
+        for switch in self.mapping:
+            col = switch.get('col')
+            mod = switch.get('mapping')
 
-            X_unique = pd.DataFrame(index=X[col].unique())
-            # map the ordinal column into a list of these digits, of length digits
-            X_unique_to_cols = X_unique.index.map(lambda x: self.col_transform(x, digits))
+            base_df = mod.loc[X[col]]
+            base_df.set_index(X.index, inplace=True)
+            X = pd.concat([base_df, X], axis=1)
 
-            for dig in range(digits):
-                X_unique[str(col) + '_%d' % (dig, )] = X_unique_to_cols.map(
-                    lambda r: int(r[dig]) if r is not None else None)
-                bin_cols.append(str(col) + '_%d' % (dig,))
+            old_column_index = cols.index(col)
+            cols[old_column_index: old_column_index + 1] = mod.columns
 
-            output.append(X[[col]].merge(
-                X_unique, how='left', left_on=col, right_index=True).drop(labels=col, axis=1))
-
-        if pass_thru:
-            output.append(X[pass_thru])
-        X = pd.concat(output, axis=1).reindex(columns=bin_cols + pass_thru)
+        X = X.reindex(columns=cols)
 
         return X
 

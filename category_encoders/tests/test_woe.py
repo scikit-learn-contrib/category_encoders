@@ -95,7 +95,7 @@ class TestWeightOfEvidenceEncoder(TestCase):
             enc.fit(X_balanced, y_missing)
 
         # impute missing
-        enc = encoders.WOEEncoder(impute_missing=False)
+        enc = encoders.WOEEncoder(handle_missing='return_nan')
         enc.fit(X, np_y)
         X1 = enc.transform(X_t)
         tu.verify_numeric(X1)

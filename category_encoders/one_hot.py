@@ -23,8 +23,6 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
         options are 'error', 'ignore' and 'value', defaults to 'value'. Warning: if value is used,
         an extra column will be added in if the transform matrix has unknown categories. This can cause
@@ -41,15 +39,22 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = OneHotEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> enc = OneHotEncoder(cols=['CHAS', 'RAD'], handle_unknown='indicator').fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
     Data columns (total 24 columns):
+    CRIM       506 non-null float64
+    ZN         506 non-null float64
+    INDUS      506 non-null float64
     CHAS_1     506 non-null int64
     CHAS_2     506 non-null int64
     CHAS_-1    506 non-null int64
+    NOX        506 non-null float64
+    RM         506 non-null float64
+    AGE        506 non-null float64
+    DIS        506 non-null float64
     RAD_1      506 non-null int64
     RAD_2      506 non-null int64
     RAD_3      506 non-null int64
@@ -60,13 +65,6 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     RAD_8      506 non-null int64
     RAD_9      506 non-null int64
     RAD_-1     506 non-null int64
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
     TAX        506 non-null float64
     PTRATIO    506 non-null float64
     B          506 non-null float64
@@ -86,7 +84,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='value', use_cat_names=False):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
+                 handle_missing='value', handle_unknown='value', use_cat_names=False):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -95,8 +94,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
         self.use_cat_names = use_cat_names
 
     @property
@@ -134,12 +133,15 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
-            handle_unknown=self.handle_unknown,
-            # TODO Properly set handle missing when it's implemented here
-            handle_missing='ignore'
+            handle_unknown='value',
+            handle_missing='value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         self.mapping = self.generate_mapping()
@@ -160,8 +162,9 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             column_mapping = switch.get('mapping').copy(deep=True)
 
-            if self.handle_unknown == 'value':
-                column_mapping = column_mapping.append(pd.Series(data=[-1], index=['-1']))
+            #  TODO test with nan in dataset
+            if self.handle_missing == 'value':
+                del column_mapping[np.nan]
 
             col_mappings = []
             for cat_name, class_ in column_mapping.iteritems():
@@ -174,6 +177,14 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                     n_col_name = str(col) + '_%s' % (class_,)
                 col_mappings.append({'new_col_name': n_col_name, 'val': class_})
 
+            if self.handle_unknown == 'indicator':
+                n_col_name = str(col) + '_%s' % (-1,)
+                if self.use_cat_names:
+                    found_count = found_column_counts.get(n_col_name, 0)
+                    found_column_counts[n_col_name] = found_count + 1
+                    n_col_name += '#' * found_count
+
+                col_mappings.append({'new_col_name': n_col_name, 'val': -1})
             mapping.append({'col': col, 'mapping': col_mappings})
         return mapping
 
@@ -193,6 +204,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         """
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
@@ -207,6 +222,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             return X if self.return_df else X.values
 
         X = self.ordinal_encoder.transform(X)
+
+        if self.handle_unknown == 'error':
+            if X[self.cols].isin([-1]).any().any():
+                raise ValueError('Columns to be encoded can not contain new values')
 
         X = self.get_dummies(X, mapping=self.mapping)
 
@@ -253,7 +272,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        if self.impute_missing and self.handle_unknown == 'value':
+        if self.handle_unknown == 'value':
             for col in self.cols:
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "
@@ -288,12 +307,29 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         for switch in mapping:
             col = switch.get('col')
             mod = switch.get('mapping')
+
+            if len(mod) == 0:
+                continue
+
+            base_matrix = np.eye(N=len(mod), dtype=np.int)
+
+            index = []
             new_columns = []
+
             for column_mapping in mod:
                 new_col_name = column_mapping['new_col_name']
                 val = column_mapping['val']
-                X[new_col_name] = (X[col] == val).astype(int)
+                index.append(val)
                 new_columns.append(new_col_name)
+
+            base_df = pd.DataFrame(data=base_matrix, columns=new_columns, index=index)
+
+            if self.handle_unknown == 'value':
+                base_df.loc[-1] = np.zeros(len(mod))
+
+            base_df = base_df.loc[X[col]]
+            base_df.set_index(X.index, inplace=True)
+            X = pd.concat([base_df, X], axis=1)
             old_column_index = cols.index(col)
             cols[old_column_index: old_column_index + 1] = new_columns
 
