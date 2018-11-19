@@ -76,8 +76,13 @@ def get_generated_cols(X_original, X_transformed, to_transform):
     Output:
         a list of columns that were transformed (as in the current DataFrame).
     """
-    original_cols = set(X_original.columns)
-    current_cols = set(X_transformed.columns)
-    generated_cols = list(current_cols - (original_cols - set(to_transform)))
+    original_cols = list(X_original.columns)
 
-    return generated_cols
+    if len(to_transform) > 0:
+        [original_cols.remove(c) for c in to_transform]
+
+    current_cols = list(X_transformed.columns)
+    if len(original_cols) > 0:
+        [current_cols.remove(c) for c in original_cols]
+
+    return current_cols

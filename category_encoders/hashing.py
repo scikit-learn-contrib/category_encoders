@@ -83,8 +83,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self.hash_method = hash_method
         self._dim = None
-        self.feature_names = list()
-        self.is_fitted = False
+        self.feature_names = None
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -117,17 +116,21 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        X_temp = self.transform(X)
+        generated_cols = util.get_generated_cols(X, X_temp, self.cols)
+        self.feature_names = generated_cols
+
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                          "Not found in generated cols.\n{}".format(e))
 
-        # Build list of feature names
-        for c in list(set(self.cols) - set(self.drop_cols)):
-            self.feature_names.extend([str(c)+"_"+str(i) for i in range(0, self.n_components)])
-        self.is_fitted = True
         return self
 
     def transform(self, X):
@@ -169,22 +172,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns:
-        --------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-        """
-
-        if not self.is_fitted:
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names
 
     @staticmethod
     def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
@@ -266,3 +253,19 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         X = pd.concat([X_cat, X_num], axis=1)
 
         return X
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns:
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+
+        if not isinstance(self.feature_names, list):
+            raise ValueError('Must fit data first. Affected feature names are not known before.')
+        else:
+            return self.feature_names

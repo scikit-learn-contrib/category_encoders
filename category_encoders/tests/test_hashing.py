@@ -1,17 +1,21 @@
 import pandas as pd
-from unittest import TestCase  # or `from unittest2 import ...` if on Python < 3.4
+from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
+import category_encoders.tests.test_utils as tu
+import numpy as np
 
 import category_encoders as encoders
 
-class TestHashingEncoder(TestCase):
+X = tu.create_dataset(n_rows=100)
+
+class TestHasingEncoder(TestCase):
 
     def test_get_feature_names(self):
-        X = pd.DataFrame([['A','B','C']], columns=['col1', 'col2', 'col3'])
-        enc = encoders.HashingEncoder(cols=['col2', 'col3'])
-        result = enc.fit_transform(X)
+        enc = encoders.HashingEncoder()
+        enc.fit(X)
         obtained = enc.get_feature_names()
-        print(obtained)
-        expected = set(result.columns) - set('col1')
-        print(expected)
+        expected = 8 # length of feature name list
+        self.assertEquals(len(obtained), expected)
 
-        self.assertEqual(len(expected), len(obtained))
+    def test_get_feature_names_names_not_set(self):
+        enc = encoders.HashingEncoder()
+        self.assertRaises(ValueError, enc.get_feature_names)

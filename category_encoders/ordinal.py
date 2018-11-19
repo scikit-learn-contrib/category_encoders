@@ -91,8 +91,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self._dim = None
-        self.feature_names = []
-        self.is_fitted = False
+        self.feature_names = None
 
     @property
     def category_mapping(self):
@@ -138,10 +137,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         )
         self.mapping = categories
 
+        self.feature_names = []
         for switch in self.mapping:
-            for cat in switch.get('mapping'):
-                self.feature_names.extend(
-                    [str(switch.get('col'))+"_"+str(cat[0])])
+            self.feature_names.append(switch.get('col'))
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
@@ -150,11 +148,13 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [
                 x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            for col in self.drop_cols:
-                d = X_temp.columns.get_loc(col)
-                self.feature_names.remove(d)
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                    "Not found in generated cols.\n{}".format(e))
 
-        self.is_fitted = True
         return self
 
     def transform(self, X):
@@ -317,8 +317,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
         """
-
-        if not self.is_fitted:
-            raise ValueError("Estimator has to be fitted first.")
+        if not isinstance(self.feature_names, list):
+            raise ValueError("Estimator has to be fitted to return feature names.")
         else:
             return self.feature_names

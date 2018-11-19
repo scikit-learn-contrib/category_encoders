@@ -99,8 +99,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self.use_cat_names = use_cat_names
-        self.is_transformed = False
-        self.feature_names = []
+        self.feature_names = None
 
     @property
     def category_mapping(self):
@@ -148,11 +147,19 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         self.mapping = self.generate_mapping()
 
+        X_temp = self.transform(X)
+        generated_cols = util.get_generated_cols(X, X_temp, self.cols)
+        self.feature_names = list(X_temp.columns)
+
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                    "Not found in generated cols.\n{}".format(e))
 
         return self
 
@@ -222,7 +229,6 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         # Now we can build the list of new / transformed columns
         self.feature_names = X.columns
-        self.is_transformed = True
 
         if self.return_df:
             return X
@@ -356,7 +362,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             Note: potentially dropped features are not included!
         """
 
-        if not self.is_transformed:
+        if not isinstance(self.feature_names, list):
             raise ValueError(
                 'Must transform data first. Affected feature names are not known before.')
         else:
