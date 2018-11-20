@@ -297,7 +297,7 @@ class TestEncoders(TestCase):
                 else:
                     obtained = enc.fit(X, y).get_feature_names()
                     expected = enc.transform(X, y).columns.tolist()
-                self.assertEquals(obtained, expected)
+                self.assertEqual(obtained, expected)
 
     def test_get_feature_names_drop_invariant(self):
         # TODO: What could a DF look like that results in constant
@@ -312,7 +312,7 @@ class TestEncoders(TestCase):
                 else:
                     obtained = enc.fit(X, y).get_feature_names()
                     expected = enc.transform(X, y).columns.tolist()
-                self.assertEquals(obtained, expected)
+                self.assertEqual(obtained, expected)
 
     def test_get_feature_names_not_set(self):
         for encoder_name in encoders.__all__:
