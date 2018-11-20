@@ -1,5 +1,5 @@
 import pandas as pd
-from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
 
 import category_encoders as encoders
@@ -35,9 +35,10 @@ class TestOneHotEncoderTestCase(TestCase):
         self.assertEqual(len([x for x in out.columns.values if str(x).startswith('extra_')]), 3)
 
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='error')
-        enc.fit(X)
+        # The exception is already raised in fit() because transform() is called there to get
+        # feature_names right.
         with self.assertRaises(ValueError):
-            out = enc.transform(X_t)
+            enc.fit(X_t)
 
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='ignore', use_cat_names=True)
         enc.fit(X)
