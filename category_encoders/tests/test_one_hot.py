@@ -1,7 +1,6 @@
 import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
 import category_encoders.tests.test_utils as tu
-import category_encoders.utils as ut
 import numpy as np
 
 import category_encoders as encoders
@@ -26,43 +25,30 @@ class TestOneHotEncoderTestCase(TestCase):
                          enc.transform(X_t[X_t['extra'] != 'A']).shape[1],
                          'We have to get the same count of columns')
 
-        enc = encoders.OneHotEncoder(
-            verbose=1, return_df=True, impute_missing=True)
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True)
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertIn('extra_-1', out.columns.values)
 
-        enc = encoders.OneHotEncoder(
-            verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='ignore')
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertEqual(
-            len([x for x in out.columns.values if str(x).startswith('extra_')]), 3)
+        self.assertEqual(len([x for x in out.columns.values if str(x).startswith('extra_')]), 3)
 
-        enc = encoders.OneHotEncoder(
-            verbose=1, return_df=True, impute_missing=True, handle_unknown='error')
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True, handle_unknown='error')
         enc.fit(X)
         with self.assertRaises(ValueError):
             out = enc.transform(X_t)
 
-        enc = encoders.OneHotEncoder(
-            verbose=1, return_df=True, handle_unknown='ignore', use_cat_names=True)
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='ignore', use_cat_names=True)
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertIn('extra_A', out.columns.values)
 
-        enc = encoders.OneHotEncoder(
-            verbose=1, return_df=True, use_cat_names=True)
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, use_cat_names=True)
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertIn('extra_-1', out.columns.values)
-
-        # test get_feature_names
-        enc = encoders.OneHotEncoder(
-            verbose=1, return_df=True, use_cat_names=True)
-        enc.fit(X)
-        out = enc.transform(X_t)
-        self.assertEqual(set(enc.get_feature_names()), set(out.columns))
 
         # test inverse_transform
         X_i = tu.create_dataset(n_rows=100, has_none=False)
@@ -91,7 +77,6 @@ class TestOneHotEncoderTestCase(TestCase):
 
         assert value.equals(inverse_transformed)
 
-
     def test_inverse_transform_HaveNoCatNames_ExpectCorrectInverseTransform(self):
         encoder = encoders.OneHotEncoder(cols=['match', 'match_box'], use_cat_names=False)
         value = pd.DataFrame({'match': pd.Series('box_-1'), 'match_box': pd.Series(-1)})
@@ -100,7 +85,6 @@ class TestOneHotEncoderTestCase(TestCase):
         inverse_transformed = encoder.inverse_transform(transformed)
 
         assert value.equals(inverse_transformed)
-
 
     def test_fit_transform_HaveColumnAppearTwice_ExpectColumnsDeduped(self):
         encoder = encoders.OneHotEncoder(cols=['match', 'match_box'], use_cat_names=True)
