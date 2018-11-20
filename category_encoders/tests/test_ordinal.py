@@ -73,28 +73,3 @@ class TestOrdinalEncoder(TestCase):
         self.assertEqual(3, out['Categorical'][1])
         self.assertEqual(1, out['Categorical'][2])
         self.assertEqual(2, out['Categorical'][3])
-
-
-    def test_get_feature_names(self):
-        enc = encoders.OrdinalEncoder()
-        enc.fit(X)
-        obtained = enc.get_feature_names()
-        expected = list(X.select_dtypes(include=['object', 'category']).columns)
-        self.assertEquals(obtained, expected)
-
-
-    def test_get_feature_names_drop_invariant(self):
-        X = pd.DataFrame({
-            'A': ['a','a','a','a'],
-            'B': ['b','d','e','f'],
-        })
-        enc = encoders.OrdinalEncoder(return_df=True, drop_invariant=True)
-        enc.fit(X)
-        obtained = enc.get_feature_names()
-        expected = ['B']
-        self.assertEquals(obtained, expected)
-
-
-    def test_get_feature_names_names_not_set(self):
-        od = encoders.OrdinalEncoder()
-        self.assertRaises(ValueError, od.get_feature_names)

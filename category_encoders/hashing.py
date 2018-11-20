@@ -116,13 +116,13 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
-        X_temp = self.transform(X)
-        generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-        self.feature_names = generated_cols
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = X_temp.columns.tolist()
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
+            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
             try:
                 [self.feature_names.remove(x) for x in self.drop_cols]
@@ -133,7 +133,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X):
+    def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -168,7 +168,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        if self.return_df:
+        if self.return_df or override_return_df:
             return X
         else:
             return X.values

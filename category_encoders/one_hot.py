@@ -147,12 +147,12 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         self.mapping = self.generate_mapping()
 
-        X_temp = self.transform(X)
-        generated_cols = util.get_generated_cols(X, X_temp, self.cols)
+        X_temp = self.transform(X, override_return_df=True)
         self.feature_names = list(X_temp.columns)
 
         if self.drop_invariant:
             self.drop_cols = []
+            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
             try:
                 [self.feature_names.remove(x) for x in self.drop_cols]
@@ -188,7 +188,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             mapping.append({'col': col, 'mapping': col_mappings})
         return mapping
 
-    def transform(self, X):
+    def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -230,7 +230,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         # Now we can build the list of new / transformed columns
         self.feature_names = X.columns
 
-        if self.return_df:
+        if self.return_df or override_return_df:
             return X
         else:
             return X.values

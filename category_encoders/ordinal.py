@@ -137,14 +137,13 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         )
         self.mapping = categories
 
-        self.feature_names = []
-        for switch in self.mapping:
-            self.feature_names.append(switch.get('col'))
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = X_temp.columns.tolist()
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
+
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [
                 x for x in generated_cols if X_temp[x].var() <= 10e-5]
@@ -157,7 +156,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X):
+    def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Will use the mapping (if available) and the column list (if available, otherwise every column) to encode the
@@ -203,7 +202,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        return X if self.return_df else X.values
+        if self.return_df or override_return_df:
+            return X
+        else:
+            return X.values
 
     def inverse_transform(self, X_in):
         """

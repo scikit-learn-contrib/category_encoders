@@ -110,29 +110,3 @@ class TestOneHotEncoderTestCase(TestCase):
         columns = result.columns.tolist()
 
         self.assertSetEqual({'match_box_-1', 'match_-1', 'match_box_-1#', 'match_box_-1##'}, set(columns))
-
-
-    def test_get_feature_names(self):
-        enc = encoders.OneHotEncoder()
-        enc.fit(X)
-        obtained = enc.get_feature_names()
-        result = enc.transform(X)
-        expected = list(result.columns)
-        self.assertEquals(obtained, expected)
-
-
-    def test_get_feature_names_drop_invariant(self):
-        enc = encoders.OneHotEncoder(return_df=True, drop_invariant=True)
-        X = pd.DataFrame({
-            'A': ['a','a','a','a'],
-            'B': ['b','d','e','f'],
-        })
-        enc.fit(X)
-        obtained = enc.get_feature_names()
-        expected = 4
-        self.assertEquals(len(obtained), expected)
-
-
-    def test_get_feature_names_names_not_set(self):
-        enc = encoders.OneHotEncoder()
-        self.assertRaises(ValueError, enc.get_feature_names)

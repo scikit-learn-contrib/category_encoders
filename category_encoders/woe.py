@@ -90,6 +90,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         self.randomized = randomized
         self.sigma = sigma
         self.regularization = regularization
+        self.feature_names = None
 
     # noinspection PyUnusedLocal
     def fit(self, X, y, **kwargs):
@@ -145,16 +146,23 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         # Training
         self.mapping = self._train(X, y, cols=self.cols)
 
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = X_temp.columns.tolist()
+
         # Store column names with approximately constant variance on the training data
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                    "Not found in generated cols.\n{}".format(e))
         return self
 
-    def transform(self, X, y=None):
+    def transform(self, X, y=None, override_return_df=False):
         """Perform the transformation to new categorical data. When the data are used for model training,
         it is important to also pass the target in order to apply leave one out.
 
@@ -209,7 +217,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        if self.return_df:
+        if self.return_df or override_return_df:
             return X
         else:
             return X.values
@@ -269,3 +277,18 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
                 X[col] = (X[col] * random_state_generator.normal(1., self.sigma, X[col].shape[0]))
 
         return X
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns:
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+        if not isinstance(self.feature_names, list):
+            raise ValueError("Estimator has to be fitted to return feature names.")
+        else:
+            return self.feature_names
