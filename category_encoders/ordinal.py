@@ -1,7 +1,7 @@
 """Ordinal or label encoding"""
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
 
@@ -32,10 +32,11 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         the value of 'col' should be the feature name.
         the value of 'mapping' should be a list of tuples of format (original_label, encoded_label).
         example mapping: [{'col': 'col1', 'mapping': [(None, 0), ('a', 1), ('b', 2)]}]
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1.
+        options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the category -1.
+    handle_missing: str
+        options are 'error', 'return_nan', and 'value, default to 'value', which treat nan as a category at fit time,
+        or -2 at transform time if nan is not a category during fit.
 
     Example
     -------
@@ -145,8 +146,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             self.drop_cols = []
 
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [
-                x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
             try:
                 [self.feature_names.remove(x) for x in self.drop_cols]
             except KeyError as e:
@@ -184,8 +184,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (
-                X.shape[1], self._dim,))
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
         if not self.cols:
             return X if self.return_df else X.values
@@ -235,8 +234,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
                                  "set as False when transform data" % (X.shape[1],))
             else:
-                raise ValueError('Unexpected input dimension %d, expected %d' % (
-                    X.shape[1], self._dim,))
+                raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
         if not self.cols:
             return X if self.return_df else X.values
