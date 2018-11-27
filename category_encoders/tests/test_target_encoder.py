@@ -34,9 +34,11 @@ class TestTargetEncoder(TestCase):
         encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
         encoder.fit(binary_cat_example, binary_cat_example['target'])
         trend_mapping = encoder.mapping['Trend']
-        self.assertAlmostEqual(0.4125, trend_mapping['DOWN'], delta=1e-4)
-        self.assertEqual(0.5, trend_mapping['FLAT'])
-        self.assertAlmostEqual(0.5874, trend_mapping['UP'], delta=1e-4)
+        ordinal_mapping = encoder.ordinal_encoder.category_mapping[0]['mapping']
+
+        self.assertAlmostEqual(0.4125, trend_mapping[ordinal_mapping.loc['DOWN']], delta=1e-4)
+        self.assertEqual(0.5, trend_mapping[ordinal_mapping.loc['FLAT']])
+        self.assertAlmostEqual(0.5874, trend_mapping[ordinal_mapping.loc['UP']], delta=1e-4)
 
     def test_target_encoder_fit_transform_HaveConstructorSetSmoothingAndMinSamplesLeaf_ExpectCorrectValueInResult(self):
         k = 2
@@ -58,6 +60,20 @@ class TestTargetEncoder(TestCase):
         binary_cat_example = pd.DataFrame(
             {'Trend': pd.Categorical(['UP', 'UP', 'DOWN', 'FLAT', 'DOWN', 'UP', 'DOWN', 'FLAT', 'FLAT', 'FLAT'],
                                      categories=['UP', 'FLAT', 'DOWN']),
+             'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
+        encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
+        result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
+        values = result['Trend'].values
+        self.assertAlmostEqual(0.5874, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
+        self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
+        self.assertEqual(0.5, values[3])
+
+    def test_target_encoder_fit_transform_HaveNanValue_ExpectCorrectValueInResult(self):
+        k = 2
+        f = 10
+        binary_cat_example = pd.DataFrame(
+            {'Trend': pd.Series([np.nan, np.nan, 'DOWN', 'FLAT', 'DOWN', np.nan, 'DOWN', 'FLAT', 'FLAT', 'FLAT']),
              'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
         encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
         result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])

@@ -213,7 +213,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
     @staticmethod
     def fit_polynomial_coding(values, handle_missing, handle_unknown):
         if handle_missing == 'value':
-            del values[np.nan]
+            values = values[values > 0]
 
         if len(values) < 2:
             return pd.DataFrame()
@@ -226,6 +226,11 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
             df.loc[-1] = np.nan
         elif handle_unknown == 'value':
             df.loc[-1] = np.zeros(len(values) - 1)
+
+        if handle_missing == 'return_nan':
+            df.loc[values.loc[np.nan]] = np.nan
+        elif handle_missing == 'value':
+            df.loc[-2] = np.zeros(len(values) - 1)
 
         return df
 

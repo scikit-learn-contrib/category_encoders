@@ -153,10 +153,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             values = switch.get('mapping')
 
             if self.handle_missing == 'value':
-                del values[np.nan]
-
-            if len(values) < 2:
-                return pd.DataFrame()
+                values = values[values > 0]
 
             digits = self.calc_required_digits(X, col)
             X_unique = pd.DataFrame(index=values)
@@ -171,6 +168,11 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
                 X_unique.loc[-1] = np.nan
             elif self.handle_unknown == 'value':
                 X_unique.loc[-1] = 0
+
+            if self.handle_missing == 'return_nan':
+                X_unique.loc[values.loc[np.nan]] = np.nan
+            elif self.handle_missing == 'value':
+                X_unique.loc[-2] = 0
 
             mappings_out.append({'col': col, 'mapping': X_unique})
 

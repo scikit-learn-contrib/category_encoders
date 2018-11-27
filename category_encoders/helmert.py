@@ -212,19 +212,25 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     @staticmethod
     def fit_helmert_coding(values, handle_missing, handle_unknown):
         if handle_missing == 'value':
-            del values[np.nan]
+            values = values[values > 0]
 
-        if len(values) < 2:
+        if len(values) == 0:
             return pd.DataFrame()
 
         helmert_contrast_matrix = Helmert().code_without_intercept(values.get_values())
-        df = pd.DataFrame(data=helmert_contrast_matrix.matrix, columns=helmert_contrast_matrix.column_suffixes)
-        df.index += 1
+        df = pd.DataFrame(data=helmert_contrast_matrix.matrix,
+                          columns=helmert_contrast_matrix.column_suffixes,
+                          index=values.get_values())
 
         if handle_unknown == 'return_nan':
             df.loc[-1] = np.nan
         elif handle_unknown == 'value':
             df.loc[-1] = np.zeros(len(values) - 1)
+
+        if handle_missing == 'return_nan':
+            df.loc[values.loc[np.nan]] = np.nan
+        elif handle_missing == 'value':
+            df.loc[-2] = np.zeros(len(values) - 1)
 
         return df
 

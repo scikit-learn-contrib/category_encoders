@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
+from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
@@ -78,6 +79,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.cols = cols
+        self.ordinal_encoder = None
         self._dim = None
         self.mapping = None
         self.handle_unknown = handle_unknown
@@ -115,7 +117,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         if isinstance(y, pd.DataFrame):
             y = y.iloc[:,0]
         else:
-            y = pd.Series(y, name='target')
+            y = pd.Series(y, name='target', index=X.index)
 
         # The lengths must be equal
         if X.shape[0] != y.shape[0]:
@@ -144,8 +146,17 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             if X[self.cols].isnull().any().bool():
                 raise ValueError('Columns to be encoded can not contain null')
 
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            handle_unknown='value',
+            handle_missing='value'
+        )
+        self.ordinal_encoder = self.ordinal_encoder.fit(X)
+        X = self.ordinal_encoder.transform(X)
+
         # Training
-        self.mapping = self._train(X, y, cols=self.cols)
+        self.mapping = self._train(X, y)
 
         # Store column names with approximately constant variance on the training data
         if self.drop_invariant:
@@ -196,7 +207,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             if isinstance(y, pd.DataFrame):
                 y = y.iloc[:, 0]
             else:
-                y = pd.Series(y, name='target')
+                y = pd.Series(y, name='target', index=X.index)
             if X.shape[0] != y.shape[0]:
                 raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -205,6 +216,12 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
 
         # Do not modify the input argument
         X = X.copy(deep=True)
+
+        X = self.ordinal_encoder.transform(X)
+
+        if self.handle_unknown == 'error':
+            if X[self.cols].isnull().any():
+                raise ValueError('Unexpected categories found in dataframe')
 
         # Loop over columns and replace nominal values with WOE
         X = self._score(X, y)
@@ -229,7 +246,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         """
         return self.fit(X, y, **fit_params).transform(X, y)
 
-    def _train(self, X, y, cols=None):
+    def _train(self, X, y):
         # Initialize the output
         mapping = {}
 
@@ -237,7 +254,9 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         self._sum = y.sum()
         self._count = y.count()
 
-        for col in cols:
+        for switch in self.ordinal_encoder.category_mapping:
+            col = switch.get('col')
+            values = switch.get('mapping')
             # Calculate sum and count of the target for each unique value in the feature col
             stats = y.groupby(X[col]).agg(['sum', 'count']) # Count of x_{i,+} and x_i
 
@@ -251,6 +270,16 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             # Ignore unique values. This helps to prevent overfitting on id-like columns.
             woe[stats['count'] == 1] = 0
 
+            if self.handle_unknown == 'return_nan':
+                woe.loc[-1] = np.nan
+            elif self.handle_unknown == 'value':
+                woe.loc[-1] = 0
+
+            if self.handle_missing == 'return_nan':
+                woe.loc[values.loc[np.nan]] = np.nan
+            elif self.handle_missing == 'value':
+                woe.loc[-2] = 0
+
             # Store WOE for transform() function
             mapping[col] = woe
 
@@ -260,13 +289,6 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         for col in self.cols:
             # Score the column
             X[col] = X[col].map(self.mapping[col])
-
-            # Replace missing values only in the computed columns
-            if self.handle_unknown == 'value':
-                X[col].fillna(0, inplace=True)
-            elif self.handle_unknown == 'error':
-                if X[col].isnull().any():
-                    raise ValueError('Unexpected categories found in column %s' % col)
 
             # Randomization is meaningful only for training data -> we do it only if y is present
             if self.randomized and y is not None:

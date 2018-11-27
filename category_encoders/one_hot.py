@@ -160,14 +160,19 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         for switch in self.ordinal_encoder.mapping:
             col = switch.get('col')
-            column_mapping = switch.get('mapping').copy(deep=True)
+            values = switch.get('mapping').copy(deep=True)
 
             #  TODO test with nan in dataset
             if self.handle_missing == 'value':
-                del column_mapping[np.nan]
+                values = values[values > 0]
 
-            col_mappings = []
-            for cat_name, class_ in column_mapping.iteritems():
+            if len(values) == 0:
+                continue
+
+            index = []
+            new_columns = []
+
+            for cat_name, class_ in values.iteritems():
                 if self.use_cat_names:
                     n_col_name = str(col) + '_%s' % (cat_name,)
                     found_count = found_column_counts.get(n_col_name, 0)
@@ -175,7 +180,9 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                     n_col_name += '#' * found_count
                 else:
                     n_col_name = str(col) + '_%s' % (class_,)
-                col_mappings.append({'new_col_name': n_col_name, 'val': class_})
+
+                index.append(class_)
+                new_columns.append(n_col_name)
 
             if self.handle_unknown == 'indicator':
                 n_col_name = str(col) + '_%s' % (-1,)
@@ -183,9 +190,22 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                     found_count = found_column_counts.get(n_col_name, 0)
                     found_column_counts[n_col_name] = found_count + 1
                     n_col_name += '#' * found_count
+                new_columns.append(n_col_name)
+                index.append(-1)
 
-                col_mappings.append({'new_col_name': n_col_name, 'val': -1})
-            mapping.append({'col': col, 'mapping': col_mappings})
+            base_matrix = np.eye(N=len(index), dtype=np.int)
+            base_df = pd.DataFrame(data=base_matrix, columns=new_columns, index=index)
+
+            if self.handle_unknown == 'value':
+                base_df.loc[-1] = 0
+
+            if self.handle_missing == 'return_nan':
+                base_df.loc[values.loc[np.nan]] = np.nan
+            elif self.handle_missing == 'value':
+                base_df.loc[-2] = 0
+
+            mapping.append({'col': col, 'mapping': base_df})
+
         return mapping
 
     def transform(self, X):
@@ -304,36 +324,20 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         cols = X.columns.values.tolist()
 
-        for switch in mapping:
+        for switch in self.mapping:
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            if len(mod) == 0:
-                continue
-
-            base_matrix = np.eye(N=len(mod), dtype=np.int)
-
-            index = []
-            new_columns = []
-
-            for column_mapping in mod:
-                new_col_name = column_mapping['new_col_name']
-                val = column_mapping['val']
-                index.append(val)
-                new_columns.append(new_col_name)
-
-            base_df = pd.DataFrame(data=base_matrix, columns=new_columns, index=index)
-
-            if self.handle_unknown == 'value':
-                base_df.loc[-1] = np.zeros(len(mod))
-
-            base_df = base_df.loc[X[col]]
-            base_df.set_index(X.index, inplace=True)
+            base_df = mod.loc[X[col]]
+            base_df = base_df.set_index(X.index)
             X = pd.concat([base_df, X], axis=1)
-            old_column_index = cols.index(col)
-            cols[old_column_index: old_column_index + 1] = new_columns
 
-        return X.reindex(columns=cols)
+            old_column_index = cols.index(col)
+            cols[old_column_index: old_column_index + 1] = mod.columns
+
+        X = X.reindex(columns=cols)
+
+        return X
 
     def reverse_dummies(self, X, mapping):
         """
@@ -359,9 +363,11 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             cols.append(col)
 
             X[col] = 0
-            for column_mapping in mod:
-                existing_col = column_mapping.get('new_col_name')
-                val = column_mapping.get('val')
+            positive_indexes = mod.index[mod.index > 0]
+            for i in range(positive_indexes.shape[0]):
+                existing_col = mod.columns[i]
+                val = positive_indexes[i]
+
                 X.loc[X[existing_col] == 1, col] = val
                 mapped_columns.append(existing_col)
 

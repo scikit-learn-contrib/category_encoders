@@ -291,23 +291,22 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping_out = []
             for col in cols:
 
+                nan_identity = np.nan
+
                 if util.is_category(X[col].dtype):
                     categories = X[col].cat.categories
                 else:
-                    categories = [x if x is not None else np.nan for x in pd.unique(X[col].values)]
+                    categories = X[col].unique()
 
-                data = {}
+                index = pd.Series(categories).fillna(nan_identity).unique()
 
-                if handle_missing == 'value':
-                    data[np.nan] = -2
+                data = pd.Series(index=index, data=range(1, len(index) + 1))
 
-                for i in range(len(categories)):
-                    data[categories[i]] = i + 1
+                if handle_missing == 'value' and ~data.index.isnull().any():
+                    data.loc[nan_identity] = -2
+                elif handle_missing == 'return_nan':
+                    data.loc[nan_identity] = -2
 
-                if handle_missing == 'return_nan':
-                    data[np.nan] = -2
-
-                mapping = pd.Series(data)
-                mapping_out.append({'col': col, 'mapping': mapping, 'data_type': X[col].dtype}, )
+                mapping_out.append({'col': col, 'mapping': data, 'data_type': X[col].dtype}, )
 
         return X, mapping_out

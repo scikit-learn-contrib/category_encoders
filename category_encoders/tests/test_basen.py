@@ -16,3 +16,12 @@ class TestBaseNEncoder(TestCase):
         self.assertListEqual([0, 1, 0], result.iloc[1, :].tolist())
         self.assertListEqual([0, 1, 1], result.iloc[2, :].tolist())
         self.assertListEqual([1, 0, 0], result.iloc[3, :].tolist())
+
+    def test_inverse_transform_HaveData_ExpectResultReturned(self):
+        train = pd.Series(list('abcd')).to_frame('letter')
+
+        enc = encoders.BaseNEncoder(base=2)
+        result = enc.fit_transform(train)
+        inversed_result = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(train, inversed_result)

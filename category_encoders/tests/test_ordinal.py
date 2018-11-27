@@ -132,3 +132,21 @@ class TestOrdinalEncoder(TestCase):
         result = enc.fit_transform(train)['city'].tolist()
 
         self.assertEqual(expected, result)
+
+    def test_HaveNaNInTrain_ExpectCodedAsOne(self):
+        train = pd.DataFrame({'city': [np.nan]})
+        expected = [1]
+
+        enc = encoders.OrdinalEncoder(cols=['city'])
+        result = enc.fit_transform(train)['city'].tolist()
+
+        self.assertEqual(expected, result)
+
+    def test_HaveNoneAndNan_ExpectCodesAsOne(self):
+        train = pd.DataFrame({'city': [np.nan, None]})
+        expected = [1, 1]
+
+        enc = encoders.OrdinalEncoder(cols=['city'])
+        result = enc.fit_transform(train)['city'].tolist()
+
+        self.assertEqual(expected, result)

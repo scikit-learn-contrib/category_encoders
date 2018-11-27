@@ -149,7 +149,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
             values = switch.get('mapping')
 
             if self.handle_missing == 'value':
-                del values[np.nan]
+                values = values[values > 0]
 
             if len(values) < 2:
                 return pd.DataFrame()
@@ -167,6 +167,11 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
                 X_unique.loc[-1] = np.nan
             elif self. handle_unknown == 'value':
                 X_unique.loc[-1] = 0
+
+            if self.handle_missing == 'return_nan':
+                X_unique.loc[values.loc[np.nan]] = np.nan
+            elif self.handle_missing == 'value':
+                X_unique.loc[-2] = 0
 
             mappings_out.append({'col': col, 'mapping': X_unique})
 
