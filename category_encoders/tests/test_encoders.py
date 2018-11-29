@@ -319,3 +319,11 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 self.assertRaises(ValueError, enc.get_feature_names)
+
+    def test_get_feature_names_after_transform(self):
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                enc.fit(X, y)
+                out = enc.transform(X_t)
+                self.assertEqual(set(enc.get_feature_names()), set(out.columns))

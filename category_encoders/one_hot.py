@@ -227,9 +227,6 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        # Now we can build the list of new / transformed columns
-        self.feature_names = X.columns
-
         if self.return_df or override_return_df:
             return X
         else:
