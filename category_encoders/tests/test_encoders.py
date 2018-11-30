@@ -286,3 +286,44 @@ class TestEncoders(TestCase):
                 result = enc.fit_transform(X, y)
                 self.assertFalse(result.isnull().values.any(), 'There should not be any missing value!')
 
+    def test_get_feature_names(self):
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                # These 3 need y also
+                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder']:
+                    obtained = enc.fit(X).get_feature_names()
+                    expected = enc.transform(X).columns.tolist()
+                else:
+                    obtained = enc.fit(X, y).get_feature_names()
+                    expected = enc.transform(X, y).columns.tolist()
+                self.assertEqual(obtained, expected)
+
+    def test_get_feature_names_drop_invariant(self):
+        # TODO: What could a DF look like that results in constant
+        # columns for all encoders?
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(drop_invariant=True)
+                # These 3 need y also
+                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder']:
+                    obtained = enc.fit(X).get_feature_names()
+                    expected = enc.transform(X).columns.tolist()
+                else:
+                    obtained = enc.fit(X, y).get_feature_names()
+                    expected = enc.transform(X, y).columns.tolist()
+                self.assertEqual(obtained, expected)
+
+    def test_get_feature_names_not_set(self):
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                self.assertRaises(ValueError, enc.get_feature_names)
+
+    def test_get_feature_names_after_transform(self):
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                enc.fit(X, y)
+                out = enc.transform(X_t)
+                self.assertEqual(set(enc.get_feature_names()), set(out.columns))

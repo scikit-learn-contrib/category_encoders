@@ -1,7 +1,7 @@
 """Ordinal or label encoding"""
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
 
@@ -32,10 +32,11 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         the value of 'col' should be the feature name.
         the value of 'mapping' should be a list of tuples of format (original_label, encoded_label).
         example mapping: [{'col': 'col1', 'mapping': [(None, 0), ('a', 1), ('b', 2)]}]
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1.
+        options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the category -1.
+    handle_missing: str
+        options are 'error', 'return_nan', and 'value, default to 'value', which treat nan as a category at fit time,
+        or -2 at transform time if nan is not a category during fit.
 
     Example
     -------
@@ -91,6 +92,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
         self._dim = None
+        self.feature_names = None
 
     @property
     def category_mapping(self):
@@ -136,16 +138,25 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         )
         self.mapping = categories
 
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = X_temp.columns.tolist()
+
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
+
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                    "Not found in generated cols.\n{}".format(e))
 
         return self
 
-    def transform(self, X):
+    def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Will use the mapping (if available) and the column list (if available, otherwise every column) to encode the
@@ -165,7 +176,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         """
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
+            raise ValueError(
+                'Must train encoder before it can be used to transform data.')
 
         # first check the type
         X = util.convert_input(X)
@@ -189,7 +201,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        return X if self.return_df else X.values
+        if self.return_df or override_return_df:
+            return X
+        else:
+            return X.values
 
     def inverse_transform(self, X_in):
         """
@@ -210,7 +225,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         X = util.convert_input(X)
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to inverse_transform data')
+            raise ValueError(
+                'Must train encoder before it can be used to inverse_transform data')
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -275,7 +291,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 if util.is_category(X[col].dtype):
                     categories = X[col].cat.categories
                 else:
-                    categories = [x for x in pd.unique(X[col].values) if x is not None]
+                    categories = [x for x in pd.unique(
+                        X[col].values) if x is not None]
 
                 index = []
                 values = []
@@ -289,3 +306,18 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 mapping_out.append({'col': col, 'mapping': mapping, 'data_type': X[col].dtype}, )
 
         return X, mapping_out
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns:
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+        if not isinstance(self.feature_names, list):
+            raise ValueError("Estimator has to be fitted to return feature names.")
+        else:
+            return self.feature_names
