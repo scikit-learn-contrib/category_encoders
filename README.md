@@ -119,5 +119,5 @@ References:
  4. Strategies to encode categorical variables with many categories. from https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
  5. Beyond One-Hot: an exploration of categorical variables. from http://www.willmcginnis.com/2015/11/29/beyond-one-hot-an-exploration-of-categorical-variables/
  6. BaseN Encoding and Grid Search in categorical variables. from http://www.willmcginnis.com/2016/12/18/basen-encoding-grid-search-category_encoders/
- 7. A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. from https://kaggle2.blob.core.windows.net/forum-message-attachments/225952/7441/high%20cardinality%20categoricals.pdf
+ 7. Daniele Miccii-Barreca (2001). A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. SIGKDD Explor. Newsl. 3, 1. from http://dx.doi.org/10.1145/507533.507538
  8. Weight of Evidence (WOE) and Information Value Explained. from https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html
