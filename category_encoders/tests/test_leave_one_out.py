@@ -48,7 +48,7 @@ class TestLeaveOneOutEncoder(TestCase):
         self.assertEqual(1, len(mapping))
         self.assertIn('col_b', mapping)     # the model should have the updated mapping
         expected = pd.DataFrame({'sum': [2.0, 1.0], 'count': [3, 3]}, index=['1', '2'])
-        pd.testing.assert_frame_equal(expected, mapping['col_b'], check_like=True)
+        np.testing.assert_equal(expected.values, mapping['col_b'].values)
 
     def test_leave_one_out_unique(self):
         X = pd.DataFrame(data=['1', '2', '2', '2', '3'], columns=['col'])
@@ -60,3 +60,59 @@ class TestLeaveOneOutEncoder(TestCase):
         self.assertFalse(result.isnull().any().any(), 'There should not be any missing value')
         expected = pd.DataFrame(data=[y.mean(), 0.5, 0, 0.5, y.mean()], columns=['col'])
         pd.testing.assert_frame_equal(expected, result)
+
+    def test_HandleMissingIsValueAndNanInTrain_ExpectAtValueSet(self):
+        df = pd.DataFrame({
+            'color': [np.nan, np.nan, np.nan, "b", "b", "b"],
+            'outcome': [2, 2, 0, 1, 0, 1]})
+
+        X = df.drop('outcome', axis=1)
+        y = df.drop('color', axis=1)
+
+        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], handle_missing='value')
+        obtained = ce_leave.fit_transform(X, y['outcome'])
+
+        self.assertEqual([1, 1, 2, 0.5, 1.0, 0.5], list(obtained['color']))
+
+    def test_HandleMissingIsValueAndNanInTest_ExpectMean(self):
+        df = pd.DataFrame({
+            'color': ["a", "a", "a", "b", "b", "b"],
+            'outcome': [1.6, 0, 0, 1, 0, 1]})
+
+        train = df.drop('outcome', axis=1)
+        target = df.drop('color', axis=1)
+        test = pd.Series([np.nan, 'b'], name='color')
+        test_target = pd.Series([0, 0])
+
+        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], handle_missing='value')
+        ce_leave.fit(train, target['outcome'])
+        obtained = ce_leave.transform(test, test_target)
+
+        self.assertEqual([.6, 1.0], list(obtained['color']))
+
+    def test_HandleMissingIsValueAndNanInTestAndNoTestTarget_ExpectMean(self):
+        df = pd.DataFrame({
+            'color': ["a", "a", "a", "b", "b", "b"],
+            'outcome': [1, 0, 0, 1, 0, 1]})
+
+        train = df.drop('outcome', axis=1)
+        target = df.drop('color', axis=1)
+        test = pd.Series([np.nan, 'b'], name='color')
+
+        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], handle_missing='value')
+        ce_leave.fit(train, target['outcome'])
+        obtained = ce_leave.transform(test)
+
+        self.assertEqual([.5, 2/3], list(obtained['color']))
+
+    def test_HandleUnknownValue_HaveUnknownInTest_ExpectMean(self):
+        train = pd.Series(["a", "a", "a", "b", "b", "b"], name='color')
+        target = pd.Series([1.6, 0, 0, 1, 0, 1], name='target')
+        test = pd.Series(['b', 'c'], name='color')
+        test_target = pd.Series([0, 0])
+
+        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], handle_unknown='value')
+        ce_leave.fit(train, target)
+        obtained = ce_leave.transform(test, test_target)
+
+        self.assertEqual([1.0, .6], list(obtained['color']))

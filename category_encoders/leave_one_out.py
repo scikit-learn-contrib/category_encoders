@@ -216,7 +216,22 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             cols = X.columns.values
 
         self._mean = y.mean()
-        return {col: y.groupby(X[col]).agg(['sum', 'count']) for col in cols}
+
+        return {col: self.fit_column_map(X[col], y) for col in cols}
+
+    def fit_column_map(self, series, y):
+        category = pd.Categorical(series)
+
+        categories = category.categories
+        codes = category.codes.copy()
+
+        codes[codes == -1] = len(categories)
+        categories = np.append(categories, np.nan)
+
+        return_map = pd.Series(dict([(code, category) for code, category in enumerate(categories)]))
+
+        result = y.groupby(codes).agg(['sum', 'count'])
+        return result.rename(return_map)
 
     def transform_leave_one_out(self, X_in, y, mapping=None):
         """
@@ -228,10 +243,14 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         for col, colmap in mapping.items():
             level_notunique = colmap['count'] > 1
-            is_null = X[col].isnull()
-            is_unknown = ~X[col].isin(colmap.index)
 
-            if self.handle_unknown == 'error' and is_unknown.any():
+            unique_train = colmap.index
+            unseen_values = pd.Series([x for x in X[col].unique() if x not in unique_train])
+
+            is_nan = X[col].isnull()
+            is_unknown_value = X[col].isin(unseen_values.dropna())
+
+            if self.handle_unknown == 'error' and is_unknown_value.any():
                 raise ValueError('Columns to be encoded can not contain new values')
 
             if y is None:    # Replace level with its mean target; if level occurs only once, use global mean
@@ -245,14 +264,14 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                 X[col] = level_means.where(X[col].map(colmap['count'][level_notunique]).notnull(), self._mean)
 
             if self.handle_unknown == 'value':
-                X[col][is_unknown] = self._mean
+                X[col][is_unknown_value] = self._mean
             elif self.handle_unknown == 'return_nan':
-                X[col][is_unknown] = np.nan
+                X[col][is_unknown_value] = np.nan
 
             if self.handle_missing == 'value':
-                X[col][is_null] = self._mean
+                X[col][is_nan & unseen_values.isnull().any()] = self._mean
             elif self.handle_missing == 'return_nan':
-                X[col][is_null] = np.nan
+                X[col][is_nan] = np.nan
 
             if self.sigma is not None and y is not None:
                 X[col] = X[col] * random_state_.normal(1., self.sigma, X[col].shape[0])
