@@ -155,14 +155,10 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             if self.handle_missing == 'value':
                 values = values[values > 0]
 
-            digits = self.calc_required_digits(X, col)
-            X_unique = pd.DataFrame(index=values)
-
-            X_unique_to_cols = X_unique.index.map(lambda x: self.col_transform(x, digits))
-
-            for dig in range(digits):
-                X_unique[str(col) + '_%d' % (dig,)] = X_unique_to_cols.map(
-                    lambda r: int(r[dig]) if r is not None else None)
+            digits = self.calc_required_digits(values)
+            X_unique = pd.DataFrame(index=values,
+                                    columns=[str(col) + '_%d' % x for x in range(digits)],
+                                    data=np.array([self.col_transform(x, digits) for x in range(1, len(values) + 1)]))
 
             if self.handle_unknown == 'return_nan':
                 X_unique.loc[-1] = np.nan
@@ -281,12 +277,12 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         return X if self.return_df else X.values
 
-    def calc_required_digits(self, X, col):
+    def calc_required_digits(self, values):
         # figure out how many digits we need to represent the classes present
         if self.base == 1:
-            digits = len(X[col].unique()) + 1
+            digits = len(values) + 1
         else:
-            digits = int(np.ceil(math.log(len(X[col].unique()), self.base))) + 1
+            digits = int(np.ceil(math.log(len(values), self.base))) + 1
 
         return digits
 
@@ -319,9 +315,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             old_column_index = cols.index(col)
             cols[old_column_index: old_column_index + 1] = mod.columns
 
-        X = X.reindex(columns=cols)
-
-        return X
+        return X.reindex(columns=cols)
 
     def basen_to_integer(self, X, cols, base):
         """

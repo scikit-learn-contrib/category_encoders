@@ -1,6 +1,6 @@
 import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
-
+import numpy as np
 import category_encoders as encoders
 
 
@@ -86,3 +86,60 @@ class TestBackwardsEncoder(TestCase):
         columns = encoder.transform(train).columns.values
 
         self.assertItemsEqual(expected_columns, columns)
+
+    def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
+        train = ['A', 'B', np.nan]
+
+        encoder = encoders.BackwardDifferenceEncoder(handle_missing='indicator')
+        result = encoder.fit_transform(train)
+
+        expected = [[1, -2 / 3.0, -1 / 3.0],
+                    [1, 1 / 3.0, -1 / 3.0],
+                    [1, 1 / 3.0, 2 / 3.0]]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
+        train = ['A', 'B']
+
+        encoder = encoders.BackwardDifferenceEncoder(handle_missing='indicator')
+        result = encoder.fit_transform(train)
+
+        expected = [[1, -2 / 3.0, -1 / 3.0],
+                    [1, 1 / 3.0, -1 / 3.0]]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
+        train = ['A', 'B']
+        test = ['A', 'B', np.nan]
+
+        encoder = encoders.BackwardDifferenceEncoder(handle_missing='indicator')
+        encoder.fit(train)
+        result = encoder.transform(test)
+
+        expected = [[1, -2 / 3.0, -1 / 3.0],
+                    [1, 1 / 3.0, -1 / 3.0],
+                    [1, 1 / 3.0, 2 / 3.0]]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
+        train = ['A', 'B']
+        test = ['A', 'B', 'C']
+
+        encoder = encoders.BackwardDifferenceEncoder(handle_unknown='indicator')
+        encoder.fit(train)
+        result = encoder.transform(test)
+
+        expected = [[1, -2 / 3.0, -1 / 3.0],
+                    [1, 1 / 3.0, -1 / 3.0],
+                    [1, 1 / 3.0, 2 / 3.0]]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
+        train = ['A', 'B']
+
+        encoder = encoders.BackwardDifferenceEncoder(handle_unknown='indicator')
+        result = encoder.fit_transform(train)
+
+        expected = [[1, -2 / 3.0, -1 / 3.0],
+                    [1, 1 / 3.0, -1 / 3.0]]
+        self.assertEqual(result.values.tolist(), expected)

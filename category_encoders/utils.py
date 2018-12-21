@@ -46,7 +46,7 @@ def convert_input(X):
     """
     if not isinstance(X, pd.DataFrame):
         if isinstance(X, list):
-            X = pd.DataFrame(np.array(X))
+            X = pd.DataFrame(X)
         elif isinstance(X, (np.generic, np.ndarray)):
             X = pd.DataFrame(X)
         elif isinstance(X, csr_matrix):

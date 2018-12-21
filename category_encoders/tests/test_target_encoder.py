@@ -88,3 +88,30 @@ class TestTargetEncoder(TestCase):
         result = encoders.TargetEncoder(cols=['x']).fit_transform(data[['x']], data['y'])
         self.assertTrue(np.allclose(result, 2.0))
 
+    def test_HandleMissingIsValueAndNanInTest_ExpectMean(self):
+        df = pd.DataFrame({
+            'color': ["a", "a", "a", "b", "b", "b"],
+            'outcome': [1.6, 0, 0, 1, 0, 1]})
+
+        train = df.drop('outcome', axis=1)
+        target = df.drop('color', axis=1)
+        test = pd.Series([np.nan, 'b'], name='color')
+        test_target = pd.Series([0, 0])
+
+        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], handle_missing='value')
+        ce_leave.fit(train, target['outcome'])
+        obtained = ce_leave.transform(test, test_target)
+
+        self.assertEqual(.6, list(obtained['color'])[0])
+
+    def test_HandleUnknownValue_HaveUnknownInTest_ExpectMean(self):
+        train = pd.Series(["a", "a", "a", "b", "b", "b"], name='color')
+        target = pd.Series([1.6, 0, 0, 1, 0, 1], name='target')
+        test = pd.Series(['c', 'b'], name='color')
+        test_target = pd.Series([0, 0])
+
+        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], handle_unknown='value')
+        ce_leave.fit(train, target)
+        obtained = ce_leave.transform(test, test_target)
+
+        self.assertEqual(.6, list(obtained['color'])[0])
