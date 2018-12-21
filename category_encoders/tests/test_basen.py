@@ -61,25 +61,26 @@ class TestBaseNEncoder(TestCase):
         self.assertListEqual([0, 1, 1], result.iloc[2, :].tolist())
         self.assertListEqual([1, 0, 0], result.iloc[3, :].tolist())
 
-    # def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
-    #     train = ['A', 'B']
-    #     test = ['A', 'B', 'C']
-    #
-    #     encoder = encoders.BaseNEncoder(handle_unknown='indicator')
-    #     encoder.fit(train)
-    #     result = encoder.transform(test)
-    #
-    #     expected = [[1, -2 / 3.0, -1 / 3.0],
-    #                 [1, 1 / 3.0, -1 / 3.0],
-    #                 [1, 1 / 3.0, 2 / 3.0]]
-    #     self.assertEqual(result.values.tolist(), expected)
-    #
-    # def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
-    #     train = ['A', 'B']
-    #
-    #     encoder = encoders.BaseNEncoder(handle_unknown='indicator')
-    #     result = encoder.fit_transform(train)
-    #
-    #     expected = [[1, -2 / 3.0, -1 / 3.0],
-    #                 [1, 1 / 3.0, -1 / 3.0]]
-    #     self.assertEqual(result.values.tolist(), expected)
+    def test_HandleUnknown_HaveUnknown_ExpectIndicatorInTest(self):
+        train = ['A', 'B', 'C']
+        test = ['A', 'B', 'C', 'D']
+
+        encoder = encoders.BaseNEncoder(handle_unknown='indicator')
+        encoder.fit(train)
+        result = encoder.transform(test)
+
+        self.assertEqual(4, result.shape[0])
+        self.assertListEqual([0, 0, 1], result.iloc[0, :].tolist())
+        self.assertListEqual([0, 1, 0], result.iloc[1, :].tolist())
+        self.assertListEqual([0, 1, 1], result.iloc[2, :].tolist())
+        self.assertListEqual([1, 0, 0], result.iloc[3, :].tolist())
+
+    def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
+        train = ['A', 'B']
+
+        encoder = encoders.BaseNEncoder(handle_unknown='indicator')
+        result = encoder.fit_transform(train)
+
+        self.assertEqual(2, result.shape[0])
+        self.assertListEqual([0, 0, 1], result.iloc[0, :].tolist())
+        self.assertListEqual([0, 1, 0], result.iloc[1, :].tolist())

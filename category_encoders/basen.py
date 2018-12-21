@@ -155,6 +155,9 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             if self.handle_missing == 'value':
                 values = values[values > 0]
 
+            if self.handle_unknown == 'indicator':
+                values = np.append(values, -1)
+
             digits = self.calc_required_digits(values)
             X_unique = pd.DataFrame(index=values,
                                     columns=[str(col) + '_%d' % x for x in range(digits)],
