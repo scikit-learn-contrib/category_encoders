@@ -98,9 +98,9 @@ class TestTargetEncoder(TestCase):
         test = pd.Series([np.nan, 'b'], name='color')
         test_target = pd.Series([0, 0])
 
-        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], handle_missing='value')
-        ce_leave.fit(train, target['outcome'])
-        obtained = ce_leave.transform(test, test_target)
+        enc = encoders.TargetEncoder(cols=['color'], handle_missing='value')
+        enc.fit(train, target['outcome'])
+        obtained = enc.transform(test, test_target)
 
         self.assertEqual(.6, list(obtained['color'])[0])
 
@@ -110,8 +110,8 @@ class TestTargetEncoder(TestCase):
         test = pd.Series(['c', 'b'], name='color')
         test_target = pd.Series([0, 0])
 
-        ce_leave = encoders.LeaveOneOutEncoder(cols=['color'], handle_unknown='value')
-        ce_leave.fit(train, target)
-        obtained = ce_leave.transform(test, test_target)
+        enc = encoders.TargetEncoder(cols=['color'], handle_unknown='value')
+        enc.fit(train, target)
+        obtained = enc.transform(test, test_target)
 
         self.assertEqual(.6, list(obtained['color'])[0])
