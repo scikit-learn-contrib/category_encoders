@@ -340,7 +340,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            base_df = mod.loc[X[col]]
+            base_df = mod.reindex(X[col])
             base_df = base_df.set_index(X.index)
             X = pd.concat([base_df, X], axis=1)
 
