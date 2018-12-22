@@ -27,7 +27,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     handle_unknown: str
-        options are 'error', 'ignore' and 'value', defaults to 'value', which will impute the target mean.
+        options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the target mean.
     sigma: float
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
         sigma gives the standard deviation (spread or "width") of the normal distribution.

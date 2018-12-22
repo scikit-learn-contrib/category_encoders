@@ -35,7 +35,7 @@ class TestOrdinalEncoder(TestCase):
         self.assertIn(-1, set(out['extra'].values))
         self.assertTrue(len(enc.mapping) > 0)
 
-        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, handle_unknown='ignore')
+        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, handle_unknown='return _nan')
         enc.fit(X)
         out = enc.transform(X_t)
         out_cats = [x for x in set(out['extra'].values) if np.isfinite(x)]

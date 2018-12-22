@@ -23,7 +23,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     handle_unknown: str
-        options are 'ignore', 'error' and 'value', defaults to 'value', which will assume WOE=0.
+        options are 'return_nan', 'error' and 'value', defaults to 'value', which will assume WOE=0.
     randomized: bool,
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float

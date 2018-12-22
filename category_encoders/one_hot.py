@@ -24,7 +24,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     handle_unknown: str
-        options are 'error', 'ignore' and 'value', defaults to 'value'. Warning: if value is used,
+        options are 'error', 'return_nan' and 'value', defaults to 'value'. Warning: if value is used,
         an extra column will be added in if the transform matrix has unknown categories. This can cause
         unexpected changes in the dimension in some cases.
     use_cat_names: bool
@@ -206,6 +206,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
             if self.handle_unknown == 'value':
                 base_df.loc[-1] = 0
+            elif self.handle_unknown == 'return_nan':
+                base_df.loc[-1] = np.nan
 
             if self.handle_missing == 'return_nan':
                 base_df.loc[values.loc[np.nan]] = np.nan
@@ -257,7 +259,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             if X[self.cols].isin([-1]).any().any():
                 raise ValueError('Columns to be encoded can not contain new values')
 
-        X = self.get_dummies(X, mapping=self.mapping)
+        X = self.get_dummies(X)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -310,6 +312,12 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                     raise ValueError("inverse_transform is not supported because transform impute "
                                      "the unknown category -1 when encode %s"%(col,))
 
+        if self.handle_unknown == 'return_nan':
+            for col in self.cols:
+                if X[col].isnull().any():
+                    raise ValueError("inverse_transform is not supported because transform impute "
+                                     "the unknown category nan when encode %s" % (col,))
+
         for switch in self.ordinal_encoder.mapping:
             column_mapping = switch.get('mapping')
             inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
@@ -317,7 +325,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         return X if self.return_df else X.values
 
-    def get_dummies(self, X_in, mapping):
+    def get_dummies(self, X_in):
         """
         Convert numerical variable into dummy variables
 

@@ -31,7 +31,7 @@ class TestOneHotEncoderTestCase(TestCase):
         out = enc.transform(X_t)
         self.assertIn('extra_-1', out.columns.values)
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='ignore')
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='return_nan')
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertEqual(len([x for x in out.columns.values if str(x).startswith('extra_')]), 3)
@@ -43,7 +43,7 @@ class TestOneHotEncoderTestCase(TestCase):
         with self.assertRaises(ValueError):
             enc.transform(X_t)
 
-        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='ignore', use_cat_names=True)
+        enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='return_nan', use_cat_names=True)
         enc.fit(X)
         out = enc.transform(X_t)
         self.assertIn('extra_A', out.columns.values)

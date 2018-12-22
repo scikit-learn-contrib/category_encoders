@@ -30,7 +30,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     base: int
         when the downstream model copes well with nonlinearities (like decision tree), use higher base.
     handle_unknown: str
-        options are 'error', 'ignore' and 'value', defaults to 'value'. Warning: if value is used,
+        options are 'error', 'return_nan' and 'value', defaults to 'value'. Warning: if value is used,
         an extra column will be added in if the transform matrix has unknown categories.  This can cause
         unexpected changes in dimension in some cases.
 
@@ -281,6 +281,12 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
                 if any(X[col] == -1):
                     raise ValueError("inverse_transform is not supported because transform impute "
                                      "the unknown category -1 when encode %s" % (col,))
+
+        if self.handle_unknown == 'return_nan':
+            for col in self.cols:
+                if X[col].isnull().any():
+                    raise ValueError("inverse_transform is not supported because transform impute "
+                                     "the unknown category nan when encode %s" % (col,))
 
         for switch in self.ordinal_encoder.mapping:
             column_mapping = switch.get('mapping')
