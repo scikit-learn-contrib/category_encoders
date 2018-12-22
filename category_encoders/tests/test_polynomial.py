@@ -96,7 +96,7 @@ class TestPolynomialEncoder(TestCase):
     def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
         train = ['A', 'B', np.nan]
 
-        encoder = encoders.PolynomialEncoder(handle_missing='indicator', handle_unknown='valie')
+        encoder = encoders.PolynomialEncoder(handle_missing='indicator', handle_unknown='value')
         result = encoder.fit_transform(train)
 
         expected = [a_encoding,

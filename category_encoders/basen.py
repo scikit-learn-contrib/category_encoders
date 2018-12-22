@@ -31,7 +31,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         when the downstream model copes well with nonlinearities (like decision tree), use higher base.
     handle_unknown: str
         options are 'error', 'ignore' and 'value', defaults to 'value'. Warning: if value is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        an extra column will be added in if the transform matrix has unknown categories.  This can cause
         unexpected changes in dimension in some cases.
 
     Example

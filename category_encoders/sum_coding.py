@@ -30,7 +30,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         unexpected changes in the dimension in some cases.
     handle_missing: str
         options are 'error', 'ignore', 'value', and 'indicator', defaults to 'indicator'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        an extra column will be added in if the transform matrix has unknown categories.  This can cause
         unexpected changes in dimension in some cases.
 
     Example

@@ -27,11 +27,11 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     handle_unknown: str
         options are 'error', 'ignore', 'value', and 'indicator', defaults to 'indicator'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        an extra column will be added in if the transform matrix has unknown categories.  This can cause
         unexpected changes in dimension in some cases.
     handle_missing: str
         options are 'error', 'ignore', 'value', and 'indicator', defaults to 'indicator'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        an extra column will be added in if the transform matrix has unknown categories.  This can cause
         unexpected changes in dimension in some cases.
 
     Example
