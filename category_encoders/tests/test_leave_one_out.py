@@ -47,7 +47,7 @@ class TestLeaveOneOutEncoder(TestCase):
         mapping = encoder.mapping
         self.assertEqual(1, len(mapping))
         self.assertIn('col_b', mapping)     # the model should have the updated mapping
-        expected = pd.DataFrame({'sum': [2.0, 1.0], 'count': [3, 3]}, index=['1', '2'])
+        expected = pd.DataFrame({'sum': [2.0, 1.0], 'count': [3, 3]}, index=['1', '2'],  columns=['sum', 'count'])
         np.testing.assert_equal(expected.values, mapping['col_b'].values)
 
     def test_leave_one_out_unique(self):
