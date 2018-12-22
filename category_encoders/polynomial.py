@@ -146,7 +146,8 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         mappings_out = []
         for switch in ordinal_mapping:
             values = switch.get('mapping')
-            column_mapping = self.fit_polynomial_coding(values, self.handle_missing, self.handle_unknown)
+            col = switch.get('col')
+            column_mapping = self.fit_polynomial_coding(col, values, self.handle_missing, self.handle_unknown)
             mappings_out.append({'col': switch.get('col'), 'mapping': column_mapping, })
 
         self.mapping = mappings_out
@@ -211,26 +212,31 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
             return X.values
 
     @staticmethod
-    def fit_polynomial_coding(values, handle_missing, handle_unknown):
+    def fit_polynomial_coding(col, values, handle_missing, handle_unknown):
         if handle_missing == 'value':
             values = values[values > 0]
 
-        if len(values) < 2:
-            return pd.DataFrame()
+        values_to_encode = values.get_values()
 
-        polynomial_contrast_matrix = Poly().code_without_intercept(values.get_values())
-        df = pd.DataFrame(data=polynomial_contrast_matrix.matrix, columns=polynomial_contrast_matrix.column_suffixes)
-        df.index += 1
+        if len(values) < 2:
+            return pd.DataFrame(index=values_to_encode)
+
+        if handle_unknown == 'indicator':
+            values_to_encode = np.append(values_to_encode, -1)
+
+        polynomial_contrast_matrix = Poly().code_without_intercept(values_to_encode)
+        df = pd.DataFrame(data=polynomial_contrast_matrix.matrix, index=values_to_encode,
+                          columns=[str(col) + '_%d' % (i, ) for i in range(len(polynomial_contrast_matrix.column_suffixes))])
 
         if handle_unknown == 'return_nan':
             df.loc[-1] = np.nan
         elif handle_unknown == 'value':
-            df.loc[-1] = np.zeros(len(values) - 1)
+            df.loc[-1] = np.zeros(len(values_to_encode) - 1)
 
         if handle_missing == 'return_nan':
             df.loc[values.loc[np.nan]] = np.nan
         elif handle_missing == 'value':
-            df.loc[-2] = np.zeros(len(values) - 1)
+            df.loc[-2] = np.zeros(len(values_to_encode) - 1)
 
         return df
 
@@ -248,16 +254,14 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
         for switch in mapping:
             col = switch.get('col')
             mod = switch.get('mapping')
-            new_columns = []
-            for i in range(len(mod.columns)):
-                c = mod.columns[i]
-                new_col = str(col) + '_%d' % (i, )
-                X.loc[:, new_col] = mod[c].loc[X[col]].values
-                new_columns.append(new_col)
+
+            base_df = mod.loc[X[col]]
+            base_df.set_index(X.index, inplace=True)
+            X = pd.concat([base_df, X], axis=1)
+
             old_column_index = cols.index(col)
-            cols[old_column_index: old_column_index + 1] = new_columns
+            cols[old_column_index: old_column_index + 1] = mod.columns
 
         cols = ['intercept'] + cols
-        X = X.reindex(columns=cols)
 
-        return X
+        return X.reindex(columns=cols)
