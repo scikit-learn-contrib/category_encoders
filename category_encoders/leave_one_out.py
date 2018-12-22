@@ -257,7 +257,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             unseen_values = pd.Series([x for x in X[col].unique() if x not in unique_train])
 
             is_nan = X[col].isnull()
-            is_unknown_value = X[col].isin(unseen_values.dropna().values)
+            is_unknown_value = X[col].isin(unseen_values.dropna())
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
                 raise ValueError('Columns to be encoded can not contain new values')
