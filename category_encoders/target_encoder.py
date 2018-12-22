@@ -180,7 +180,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
         return mapping
 
-    def transform(self, X, y=None):
+    def transform(self, X, y=None, override_return_df=False):
         """Perform the transformation to new categorical data.
         Parameters
         ----------
@@ -232,7 +232,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        if self.return_df:
+        if self.return_df or override_return_df:
             return X
         else:
             return X.values
