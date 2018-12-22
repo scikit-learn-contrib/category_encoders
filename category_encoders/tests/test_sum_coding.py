@@ -1,6 +1,6 @@
 import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
-
+import numpy as np
 import category_encoders as encoders
 
 a_encoding = [1, 1, 0]
@@ -90,3 +90,61 @@ class TestSumEncoder(TestCase):
         columns = encoder.transform(train).columns.values
 
         self.assertItemsEqual(expected_columns, columns)
+
+    def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
+        train = ['A', 'B', np.nan]
+
+        encoder = encoders.SumEncoder(handle_missing='indicator', handle_unknown='value')
+        result = encoder.fit_transform(train)
+
+        expected = [a_encoding,
+                    b_encoding,
+                    c_encoding]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
+        train = ['A', 'B']
+
+        encoder = encoders.SumEncoder(handle_missing='indicator', handle_unknown='value')
+        result = encoder.fit_transform(train)
+
+        expected = [a_encoding,
+                    b_encoding]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
+        train = ['A', 'B']
+        test = ['A', 'B', np.nan]
+
+        encoder = encoders.SumEncoder(handle_missing='indicator', handle_unknown='value')
+        encoder.fit(train)
+        result = encoder.transform(test)
+
+        expected = [a_encoding,
+                    b_encoding,
+                    c_encoding]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
+        train = ['A', 'B']
+        test = ['A', 'B', 'C']
+
+        encoder = encoders.SumEncoder(handle_unknown='indicator', handle_missing='value')
+        encoder.fit(train)
+        result = encoder.transform(test)
+
+        expected = [a_encoding,
+                    b_encoding,
+                    c_encoding]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
+        train = ['A', 'B']
+
+        encoder = encoders.SumEncoder(handle_unknown='indicator', handle_missing='value')
+        result = encoder.fit_transform(train)
+
+        expected = [a_encoding,
+                    b_encoding]
+        self.assertEqual(result.values.tolist(), expected)
+
