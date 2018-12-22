@@ -273,14 +273,14 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                 X[col] = level_means.where(X[col].map(colmap['count'][level_notunique]).notnull(), self._mean)
 
             if self.handle_unknown == 'value':
-                X[col][is_unknown_value] = self._mean
+                X.loc[is_unknown_value, col] = self._mean
             elif self.handle_unknown == 'return_nan':
-                X[col][is_unknown_value] = np.nan
+                X.loc[is_unknown_value, col] = np.nan
 
             if self.handle_missing == 'value':
-                X[col][is_nan & unseen_values.isnull().any()] = self._mean
+                X.loc[is_nan & unseen_values.isnull().any(), col] = self._mean
             elif self.handle_missing == 'return_nan':
-                X[col][is_nan] = np.nan
+                X.loc[is_nan, col] = np.nan
 
             if self.sigma is not None and y is not None:
                 X[col] = X[col] * random_state_.normal(1., self.sigma, X[col].shape[0])
