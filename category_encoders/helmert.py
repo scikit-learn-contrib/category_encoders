@@ -42,7 +42,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = HelmertEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> enc = HelmertEncoder(cols=['CHAS', 'RAD'], handle_unknown='value', handle_missing='value').fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
