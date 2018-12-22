@@ -86,6 +86,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self.handle_unknown = handle_unknown
         self.handle_missing=handle_missing
         self._mean = None
+        self.feature_names = None
 
     def fit(self, X, y, **kwargs):
         """Fit encoder according to X and y.
@@ -132,12 +133,21 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X = self.ordinal_encoder.transform(X)
         self.mapping = self.fit_target_encoding(X, y)
+        
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = list(X_temp.columns)
 
         if self.drop_invariant:
             self.drop_cols = []
             X_temp = self.transform(X)
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                    "Not found in generated cols.\n{}".format(e))
 
         return self
 
@@ -243,3 +253,19 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             X[col] = X[col].map(self.mapping[col])
 
         return X
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns:
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+
+        if not isinstance(self.feature_names, list):
+            raise ValueError('Must fit data first. Affected feature names are not known before.')
+        else:
+            return self.feature_names

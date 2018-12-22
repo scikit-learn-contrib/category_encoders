@@ -97,6 +97,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
         self.use_cat_names = use_cat_names
+        self.feature_names = None
 
     @property
     def category_mapping(self):
@@ -146,11 +147,19 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         self.mapping = self.generate_mapping()
 
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = list(X_temp.columns)
+
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                    "Not found in generated cols.\n{}".format(e))
 
         return self
 
@@ -207,7 +216,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         return mapping
 
-    def transform(self, X):
+    def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -228,14 +237,16 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
+            raise ValueError(
+                'Must train encoder before it can be used to transform data.')
 
         # first check the type
         X = util.convert_input(X)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+            raise ValueError('Unexpected input dimension %d, expected %d' % (
+                X.shape[1], self._dim, ))
 
         if not self.cols:
             return X if self.return_df else X.values
@@ -252,7 +263,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        if self.return_df:
+        if self.return_df or override_return_df:
             return X
         else:
             return X.values
@@ -276,7 +287,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         X = util.convert_input(X)
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to inverse_transform data')
+            raise ValueError(
+                'Must train encoder before it can be used to inverse_transform data')
 
         X = self.reverse_dummies(X, self.mapping)
 
@@ -284,9 +296,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if X.shape[1] != self._dim:
             if self.drop_invariant:
                 raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "set as False when transform data"%(X.shape[1],))
+                                 "set as False when transform data" % (X.shape[1],))
             else:
-                raise ValueError('Unexpected input dimension %d, expected %d'% (X.shape[1], self._dim, ))
+                raise ValueError('Unexpected input dimension %d, expected %d' % (
+                    X.shape[1], self._dim, ))
 
         if not self.cols:
             return X if self.return_df else X.values
@@ -373,3 +386,20 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         out_cols = [col0 for col0 in out_cols if col0 not in mapped_columns]
 
         return X.reindex(columns=out_cols + cols)
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+
+        if not isinstance(self.feature_names, list):
+            raise ValueError(
+                'Must transform data first. Affected feature names are not known before.')
+        else:
+            return self.feature_names

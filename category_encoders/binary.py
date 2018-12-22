@@ -99,7 +99,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def transform(self, X):
+    def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -132,3 +132,16 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         """
 
         return self.base_n_encoder.inverse_transform(X_in)
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns:
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+
+        return self.base_n_encoder.get_feature_names()

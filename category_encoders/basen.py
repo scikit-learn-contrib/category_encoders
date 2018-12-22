@@ -85,6 +85,8 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = None
         self._dim = None
         self.base = base
+        self._encoded_columns = None
+        self.feature_names = None
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -134,14 +136,21 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         self.mapping = self.fit_base_n_encoding(X)
 
         # do a transform on the training data to get a column list
-        X_t = self.transform(X, override_return_df=True)
+        X_temp = self.transform(X, override_return_df=True)
+        self._encoded_columns = X_temp.columns.values
+        self.feature_names = list(X_temp.columns)
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                          "Not found in generated cols.\n{}".format(e))
 
         return self
 
@@ -386,3 +395,19 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             n, _ = divmod(n, b)
 
         return digits[::-1]
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns:
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+
+        if not isinstance(self.feature_names, list):
+            raise ValueError('Must fit data first. Affected feature names are not known before.')
+        else:
+            return self.feature_names
