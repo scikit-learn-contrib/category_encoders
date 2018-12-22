@@ -141,3 +141,60 @@ class TestOneHotEncoderTestCase(TestCase):
         result = enc.fit(train).transform(test)
 
         pd.testing.assert_frame_equal(expected_result, result)
+
+    def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
+        train = ['A', 'B', np.nan]
+
+        encoder = encoders.OneHotEncoder(handle_missing='indicator', handle_unknown='value')
+        result = encoder.fit_transform(train)
+
+        expected = [[1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1]]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
+        train = ['A', 'B']
+
+        encoder = encoders.OneHotEncoder(handle_missing='indicator', handle_unknown='value')
+        result = encoder.fit_transform(train)
+
+        expected = [[1, 0, 0],
+                    [0, 1, 0]]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
+        train = ['A', 'B']
+        test = ['A', 'B', np.nan]
+
+        encoder = encoders.OneHotEncoder(handle_missing='indicator', handle_unknown='value')
+        encoder.fit(train)
+        result = encoder.transform(test)
+
+        expected = [[1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1]]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
+        train = ['A', 'B']
+        test = ['A', 'B', 'C']
+
+        encoder = encoders.OneHotEncoder(handle_unknown='indicator', handle_missing='value')
+        encoder.fit(train)
+        result = encoder.transform(test)
+
+        expected = [[1, 0, 0],
+                    [0, 1, 0],
+                    [0, 0, 1]]
+        self.assertEqual(result.values.tolist(), expected)
+
+    def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
+        train = ['A', 'B']
+
+        encoder = encoders.OneHotEncoder(handle_unknown='indicator', handle_missing='value')
+        result = encoder.fit_transform(train)
+
+        expected = [[1, 0, 0],
+                    [0, 1, 0]]
+        self.assertEqual(result.values.tolist(), expected)

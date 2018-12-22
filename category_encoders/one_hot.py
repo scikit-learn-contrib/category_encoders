@@ -162,7 +162,6 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             values = switch.get('mapping').copy(deep=True)
 
-            #  TODO test with nan in dataset
             if self.handle_missing == 'value':
                 values = values[values > 0]
 
