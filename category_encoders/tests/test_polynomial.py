@@ -102,7 +102,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding,
                     c_encoding]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(deep_round(result.values.tolist()), deep_round(expected))
 
     def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -112,7 +112,7 @@ class TestPolynomialEncoder(TestCase):
 
         expected = [a_encoding,
                     b_encoding]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(deep_round(result.values.tolist()), deep_round(expected))
 
     def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
         train = ['A', 'B']
@@ -125,7 +125,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding,
                     c_encoding]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(deep_round(result.values.tolist()), deep_round(expected))
 
     def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
         train = ['A', 'B']
@@ -138,7 +138,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding,
                     c_encoding]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(deep_round(result.values.tolist()), deep_round(expected))
 
     def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -148,4 +148,4 @@ class TestPolynomialEncoder(TestCase):
 
         expected = [a_encoding,
                     b_encoding]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(deep_round(result.values.tolist()), deep_round(expected))
