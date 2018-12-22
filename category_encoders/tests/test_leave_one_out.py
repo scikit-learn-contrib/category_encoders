@@ -103,7 +103,7 @@ class TestLeaveOneOutEncoder(TestCase):
         ce_leave.fit(train, target['outcome'])
         obtained = ce_leave.transform(test)
 
-        self.assertEqual([.5, 2/3], list(obtained['color']))
+        self.assertEqual([.5, 2/3.0], list(obtained['color']))
 
     def test_HandleUnknownValue_HaveUnknownInTest_ExpectMean(self):
         train = pd.Series(["a", "a", "a", "b", "b", "b"], name='color')
