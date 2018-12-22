@@ -154,10 +154,10 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             handle_missing='value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
-        X = self.ordinal_encoder.transform(X)
+        X_ordinal = self.ordinal_encoder.transform(X)
 
         # Training
-        self.mapping = self._train(X, y)
+        self.mapping = self._train(X_ordinal, y)
 
         X_temp = self.transform(X, override_return_df=True)
         self.feature_names = X_temp.columns.tolist()
@@ -228,7 +228,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isnull().any():
+            if X[self.cols].isin([-1]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
         # Loop over columns and replace nominal values with WOE

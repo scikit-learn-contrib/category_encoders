@@ -131,8 +131,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             handle_missing='value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
-        X = self.ordinal_encoder.transform(X)
-        self.mapping = self.fit_target_encoding(X, y)
+        X_ordinal = self.ordinal_encoder.transform(X)
+        self.mapping = self.fit_target_encoding(X_ordinal, y)
         
         X_temp = self.transform(X, override_return_df=True)
         self.feature_names = list(X_temp.columns)
@@ -223,7 +223,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isnull().any():
+            if X[self.cols].isin([-1]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
         X = self.target_encode(X)

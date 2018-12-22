@@ -39,8 +39,9 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='error')
         # The exception is already raised in fit() because transform() is called there to get
         # feature_names right.
+        enc.fit(X)
         with self.assertRaises(ValueError):
-            enc.fit(X_t)
+            enc.transform(X_t)
 
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='ignore', use_cat_names=True)
         enc.fit(X)
