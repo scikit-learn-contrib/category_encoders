@@ -45,20 +45,20 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
     Data columns (total 18 columns):
+    CRIM       506 non-null float64
+    ZN         506 non-null float64
+    INDUS      506 non-null float64
     CHAS_0     506 non-null int64
     CHAS_1     506 non-null int64
+    NOX        506 non-null float64
+    RM         506 non-null float64
+    AGE        506 non-null float64
+    DIS        506 non-null float64
     RAD_0      506 non-null int64
     RAD_1      506 non-null int64
     RAD_2      506 non-null int64
     RAD_3      506 non-null int64
     RAD_4      506 non-null int64
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
     TAX        506 non-null float64
     PTRATIO    506 non-null float64
     B          506 non-null float64
