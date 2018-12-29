@@ -217,7 +217,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
     def inverse_transform(self, X_in):
         """
-        Perform the inverse transformation to encoded data.
+        Perform the inverse transformation to encoded data. Will attempt best case reconstruction, which means
+        it will return nan for handle_missing and handle_unknown settings that break the bijection. We issue
+        warnings when some of those cases occur.
 
         Parameters
         ----------
