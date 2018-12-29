@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
+import warnings
 
 __author__ = 'willmcginnis'
 
@@ -250,14 +251,14 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if self.handle_unknown == 'value':
             for col in self.cols:
                 if any(X[col] == -1):
-                    raise ValueError("inverse_transform is not supported because transform impute "
-                                     "the unknown category -1 when encode %s" % (col,))
+                    warnings.warn("inverse_transform is not supported because transform impute "
+                                  "the unknown category -1 when encode %s" % (col,))
 
-        if self.handle_unknown == 'return_nan':
+        if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
             for col in self.cols:
                 if X[col].isnull().any():
-                    raise ValueError("inverse_transform is not supported because transform impute "
-                                     "the unknown category nan when encode %s" % (col,))
+                    warnings.warn("inverse_transform is not supported because transform impute "
+                                  "the unknown category nan when encode %s" % (col,))
 
         for switch in self.mapping:
             column_mapping = switch.get('mapping')
