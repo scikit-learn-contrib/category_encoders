@@ -10,7 +10,7 @@ __author__ = 'fullflu'
 
 
 class MultiHotEncoder(BaseEstimator, TransformerMixin):
-    """Onehot (or dummy) coding for categorical features, produces one feature per category, each binary.
+    """Multihot coding for categorical features, produces one feature per category, each non-negative.
 
     Parameters
     ----------
@@ -123,7 +123,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        X = util.convert_input(X)
+        X = util.convert_input(X).fillna(np.nan)
 
         self._dim = X.shape[1]
 
@@ -173,7 +173,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             # append index mapping
             col_index_mapping[col] = i
             candidate_of_col = set()
-            tmp = (X[col].map(lambda x: [candidate_of_col.add(y) for y in x.split(multiple_split_string)]
+            tmp = (X[col].map(lambda x: candidate_of_col.update(x.split(multiple_split_string))
                 if type(x) == str
                 else candidate_of_col.add(str(int(x)))
                 if (type(x) == float or type(x) == int) and x == x
@@ -183,7 +183,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             # val to new_colname mapping
             val_newcolname_mappings = {}
             for i, class_ in enumerate(candidate_of_col):
-                n_col_name = str(col) + '_%s' % (i,)
+                n_col_name = str(col) + '_%s' % (i + 1,)
                 col_mappings.append({'new_col_name': n_col_name, 'val': class_})
                 val_newcolname_mappings[class_] = n_col_name
 
@@ -212,7 +212,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
                 'Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = util.convert_input(X)
+        X = util.convert_input(X).fillna(np.nan)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -267,7 +267,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
                 X[new_col_name] = (X[col].map(lambda x: 1
                     if (type(x) == str and val in x.split(self.multiple_split_string))
                     or (val != val and x != x)
-                    or (float(val) == x and (type(x) == int or type(x) == float))
+                    or ((type(x) == int or type(x) == float) and x == x and val == str(int(x)))
                     else 0))
                 new_columns.append(new_col_name)
             old_column_index = cols.index(col)
