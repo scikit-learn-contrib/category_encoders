@@ -1,4 +1,4 @@
-"""Multi-hot or dummy coding"""
+"""Multi-hot encoding"""
 import numpy as np
 import pandas as pd
 import copy
@@ -32,6 +32,8 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
     use_cat_names: bool
         if True, category values will be included in the encoded column names. Since this can result into duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
         If False, category indices will be used instead of the category values.
+    multiple_split_string: str
+        Represents which string we should split input
 
     Example
     -------
@@ -39,40 +41,39 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
     >>> import pandas as pd
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
-    >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = OneHotEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>> numeric_dataset = enc.transform(X)
+    >>> enc = MultiHotEncoder(cols=['RAD_mask'])
+    >>> X_mask = enc.create_boston_RAD(X)
+    >>> numeric_dataset = enc.transform(X_mask)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
-    Data columns (total 24 columns):
-    CHAS_1     506 non-null int64
-    CHAS_2     506 non-null int64
-    CHAS_-1    506 non-null int64
-    RAD_1      506 non-null int64
-    RAD_2      506 non-null int64
-    RAD_3      506 non-null int64
-    RAD_4      506 non-null int64
-    RAD_5      506 non-null int64
-    RAD_6      506 non-null int64
-    RAD_7      506 non-null int64
-    RAD_8      506 non-null int64
-    RAD_9      506 non-null int64
-    RAD_-1     506 non-null int64
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
-    TAX        506 non-null float64
-    PTRATIO    506 non-null float64
-    B          506 non-null float64
-    LSTAT      506 non-null float64
-    dtypes: float64(11), int64(13)
-    memory usage: 95.0 KB
+    Data columns (total 23 columns):
+    CRIM                506 non-null float64
+    ZN                  506 non-null float64
+    INDUS               506 non-null float64
+    CHAS                506 non-null float64
+    NOX                 506 non-null float64
+    RM                  506 non-null float64
+    AGE                 506 non-null float64
+    DIS                 506 non-null float64
+    RAD                 506 non-null float64
+    TAX                 506 non-null float64
+    PTRATIO             506 non-null float64
+    B                   506 non-null float64
+    LSTAT               506 non-null float64
+    RAD_mask_4          506 non-null int64
+    RAD_mask_6          506 non-null int64
+    RAD_mask_5          506 non-null int64
+    RAD_mask_2          506 non-null int64
+    RAD_mask_8          506 non-null int64
+    RAD_mask_9          506 non-null int64
+    RAD_mask_3          506 non-null int64
+    RAD_mask_7          506 non-null int64
+    RAD_mask_1          506 non-null int64
+    RAD_mask_withnan    449 non-null object
+    dtypes: float64(13), int64(9), object(1)
+    memory usage: 91.0+ KB
     None
 
     References
@@ -157,9 +158,22 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
     @staticmethod
     def generate_mapping(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='impute', multiple_split_string="|"):
         """
-        Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
-        in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
-        are assumed to have no true order and integers are selected at random.
+        Parameters
+        ----------
+
+        X_in : array-like, shape = [n_samples, n_features]
+        mapping: list-like
+        cols: list
+            Represents categorical feature names
+        multiple_string_split: str
+            Represents which string we should split input
+        Returns
+        -------
+
+        mapping_out : list-like
+            mapping used for multi-hot encoding
+        col_index_mapping: dict
+            dictionary which transforms col name into index of mapping_out
         """
         X = X_in.copy(deep=True)
         # dictionary which maps col name to index of ordinal mapping
@@ -241,8 +255,8 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         X_in: DataFrame
         mapping: list-like
               Contains mappings of column to be transformed to it's new columns and value represented
-        multiple: Boolean
-              Represents to user multi-hot encoder or not
+        multiple_split_string: str
+              Represents which string we should split input
         Returns
         -------
         dummies : DataFrame
@@ -274,3 +288,22 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             cols[old_column_index: old_column_index + 1] = list(set(new_columns))
 
         return X.reindex(columns=cols)
+
+    @staticmethod
+    def create_boston_RAD(df, col="RAD"):
+        """
+        Create ambiguous feature of the RAD column in boston dataset, used to check Example.
+        
+        Returns
+        -------
+        df: DataFrame
+        """
+        mapping = {1: "1|2|3", 2: "1|2|3", 3: "1|2|3", 4: 4, 5: 5, 6: 6, 7: "7|8", 8: "7|8", 24: 24}
+        df = df.copy()
+        shuffle_idx = np.arange(df.shape[0]) % 2 == 0
+        df[col + "_mask"] = df[col]
+        df.loc[shuffle_idx, col + "_mask"] = df.loc[shuffle_idx, col + "_mask"].map(mapping)
+        nan_idx = np.arange(df.shape[0]) % 9 == 0
+        df[col + "_mask_withnan"] = df[col + "_mask"]
+        df.loc[nan_idx, col + "_mask_withnan"] = np.nan
+        return df
