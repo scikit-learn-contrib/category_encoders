@@ -44,7 +44,13 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
     >>> enc = MultiHotEncoder(cols=['RAD_mask'])
     >>> X_mask = enc.create_boston_RAD(X)
-    >>> numeric_dataset = enc.transform(X_mask)
+    >>> numeric_dataset = enc.transform(X_mask, normilize=False)
+
+    or
+    >>> from category_encoders import *
+    >>> numetic_dataset = MultiHotEncoder().run_example(normalize=False)
+    >>> numetic_normalized_dataset = MultiHotEncoder().run_example(normalize=True)
+
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
@@ -205,13 +211,15 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
 
         return mapping_out, col_index_mapping
 
-    def transform(self, X, override_return_df=False):
+    def transform(self, X, override_return_df=False, normalize=True):
         """Perform the transformation to new categorical data.
 
         Parameters
         ----------
 
         X : array-like, shape = [n_samples, n_features]
+        normalize: bool
+            If true, the summation of transformed output is 1 for each categorical column
 
         Returns
         -------
@@ -236,7 +244,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        X = self.get_dummies(X, mapping=self.mapping, multiple_split_string=self.multiple_split_string)
+        X = self.get_dummies(X, mapping=self.mapping, multiple_split_string=self.multiple_split_string, normalize=normalize)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -247,7 +255,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def get_dummies(self, X_in, mapping, multiple_split_string="|"):
+    def get_dummies(self, X_in, mapping, multiple_split_string="|", normalize=True):
         """
         Convert numerical variable into dummy variables
         Parameters
@@ -257,6 +265,9 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
               Contains mappings of column to be transformed to it's new columns and value represented
         multiple_split_string: str
               Represents which string we should split input
+        normalize: bool
+            If true, the summation of transformed output is 1 for each categorical column
+
         Returns
         -------
         dummies : DataFrame
@@ -284,6 +295,9 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
                     or ((type(x) == int or type(x) == float) and x == x and val == str(int(x)))
                     else 0))
                 new_columns.append(new_col_name)
+            if normalize:
+                zero_index = X[new_columns].sum(axis=1) == 0
+                X.loc[~zero_index, new_columns] = X.loc[~zero_index, new_columns].div(X.loc[~zero_index, new_columns].sum(axis=1), axis=0)
             old_column_index = cols.index(col)
             cols[old_column_index: old_column_index + 1] = list(set(new_columns))
 
@@ -307,3 +321,22 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         df[col + "_mask_withnan"] = df[col + "_mask"]
         df.loc[nan_idx, col + "_mask_withnan"] = np.nan
         return df
+
+    @staticmethod
+    def run_example(normalize=True):
+        """
+        Run Example
+        
+        Returns
+        -------
+        df: DataFrame
+        """
+        from category_encoders import MultiHotEncoder
+        from sklearn.datasets import load_boston
+        bunch = load_boston()
+        X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+        enc = MultiHotEncoder(cols=['RAD_mask'])
+        X_mask = enc.create_boston_RAD(X)
+        enc.fit(X_mask)
+        numeric_dataset = enc.transform(X_mask, normalize=normalize)
+        return numeric_dataset
