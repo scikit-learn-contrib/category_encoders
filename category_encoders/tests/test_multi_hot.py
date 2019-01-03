@@ -32,6 +32,12 @@ X_mask = X.pipe(mask_X_extra, mapping)
 X_t_mask = X_t.pipe(mask_X_extra, mapping)
 
 
+def get_first_extract_column(df):
+    first_extract_column = df.columns.str.extract("(.*)_[1-9]+").dropna()
+    first_extract_column = set(first_extract_column.values.reshape(first_extract_column.shape[0])).pop()
+    return first_extract_column
+
+
 class TestMultiHotEncoderTestCase(TestCase):
 
     def test_multi_hot_fit(self):
@@ -49,7 +55,7 @@ class TestMultiHotEncoderTestCase(TestCase):
         enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["categorical"])
         enc.fit(X)
         out = enc.transform(X_t)
-        first_extract_column = out.columns.str.extract("(.*)_[1-9]+").dropna()[0].unique()[0]
+        first_extract_column = get_first_extract_column(out)
         self.assertEqual(first_extract_column, "categorical", "We have to transform only categorical column")
 
     def test_multi_hot_AmbiguousCase(self):
@@ -77,7 +83,7 @@ class TestMultiHotEncoderTestCase(TestCase):
         enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask"])
         enc.fit(X_mask)
         out = enc.transform(X_t_mask)
-        first_extract_column = out.columns.str.extract("(.*)_[1-9]+").dropna()[0].unique()[0]
+        first_extract_column = get_first_extract_column(out)
         self.assertEqual(first_extract_column, "extra_mask", "We have to transform only extra_mask column")
 
     def test_multi_hot_OutputAnalysis(self):
@@ -100,7 +106,7 @@ class TestMultiHotEncoderTestCase(TestCase):
     def test_multi_hot_fit_transform(self):
         enc = encoders.MultiHotEncoder(cols=["extra"])
         out = enc.fit_transform(X_mask)
-        first_extract_column = out.columns.str.extract("(.*)_[1-9]+").dropna()[0].unique()[0]
+        first_extract_column = get_first_extract_column(out)
         self.assertEqual(first_extract_column, "extra", "We have to transform only categorical column")
 
         self.assertEqual(enc.transform(X_t_mask).shape[1],
