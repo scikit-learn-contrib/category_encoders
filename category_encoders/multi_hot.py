@@ -143,8 +143,6 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         # Indicate no transformation has been applied yet
         self.mapping, self.col_index_mapping = self.generate_mapping(X, cols=self.cols, multiple_split_string=self.multiple_split_string)
 
-        return self
-
         X_temp = self.transform(X, override_return_df=True)
         self.feature_names = list(X_temp.columns)
 
@@ -340,3 +338,20 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         enc.fit(X_mask)
         numeric_dataset = enc.transform(X_mask, normalize=normalize)
         return numeric_dataset
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns
+        --------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+
+        if not isinstance(self.feature_names, list):
+            raise ValueError(
+                'Must transform data first. Affected feature names are not known before.')
+        else:
+            return self.feature_names
