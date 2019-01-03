@@ -3,7 +3,6 @@
 import pandas as pd
 import numpy as np
 import math
-import warnings
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
@@ -212,7 +211,6 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         """
 
-        warnings.warn('Inverse transform in basen is a currently experimental feature, please be careful')
         X = X_in.copy(deep=True)
 
         # first check the type
