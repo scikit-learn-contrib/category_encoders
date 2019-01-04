@@ -95,7 +95,7 @@ class TestWeightOfEvidenceEncoder(TestCase):
             enc.fit(X_balanced, y_missing)
 
         # impute missing
-        enc = encoders.WOEEncoder(impute_missing=False)
+        enc = encoders.WOEEncoder(handle_missing='return_nan')
         enc.fit(X, np_y)
         X1 = enc.transform(X_t)
         tu.verify_numeric(X1)
@@ -108,3 +108,47 @@ class TestWeightOfEvidenceEncoder(TestCase):
         self.assertTrue(X1.isnull().values.any())
         self.assertEqual(len(list(X_t)), len(list(X2)), 'The count of attributes must not change')
         self.assertEqual(len(X_t), len(X2), 'The count of rows must not change')
+
+    def test_HaveArrays_ExpectCalculatedProperly(self):
+        X = ['a', 'a', 'b', 'b']
+        y = [1, 0, 0, 0]
+        enc = encoders.WOEEncoder()
+
+        result = enc.fit_transform(X, y)
+
+        expected = pd.Series([0.5108256237659906, .5108256237659906, -0.587786664902119, -0.587786664902119], name=0)
+        pd.testing.assert_series_equal(expected, result[0])
+
+    def test_HandleMissingValue_HaveMissingInTrain_ExpectEncoded(self):
+        X = ['a', 'a', np.nan, np.nan]
+        y = [1, 0, 0, 0]
+        enc = encoders.WOEEncoder(handle_missing='value')
+
+        result = enc.fit_transform(X, y)
+
+        expected = pd.Series([0.5108256237659906, .5108256237659906, -0.587786664902119, -0.587786664902119], name=0)
+        pd.testing.assert_series_equal(expected, result[0])
+
+    def test_HandleMissingValue_HaveMissingInTest_ExpectEncodedWithZero(self):
+        X = ['a', 'a', 'b', 'b']
+        y = [1, 0, 0, 0]
+        test = ['a', np.nan]
+        enc = encoders.WOEEncoder(handle_missing='value')
+
+        enc.fit(X, y)
+        result = enc.transform(test)
+
+        expected = pd.Series([0.5108256237659906, 0], name=0)
+        pd.testing.assert_series_equal(expected, result[0])
+
+    def test_HandleUnknownValue_HaveUnknown_ExpectEncodedWithZero(self):
+        X = ['a', 'a', 'b', 'b']
+        y = [1, 0, 0, 0]
+        test = ['a', 'c']
+        enc = encoders.WOEEncoder(handle_unknown='value')
+
+        enc.fit(X, y)
+        result = enc.transform(test)
+
+        expected = pd.Series([0.5108256237659906, 0], name=0)
+        pd.testing.assert_series_equal(expected, result[0])
