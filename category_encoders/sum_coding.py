@@ -24,12 +24,14 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        options are 'error', 'return_nan' and 'value', defaults to 'value'. Warning: if value is used,
+        an extra column will be added in if the transform matrix has unknown categories.  This can cause
         unexpected changes in the dimension in some cases.
+    handle_missing: str
+        options are 'error', 'return_nan', 'value', and 'indicator', defaults to 'indicator'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        unexpected changes in dimension in some cases.
 
     Example
     -------
@@ -81,14 +83,15 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
 
     """
-    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute'):
+    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
+                 handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
         self.mapping = mapping
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing=handle_missing
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
@@ -126,12 +129,16 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         # train an ordinal pre-encoder
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
-            impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown='value',
+            handle_missing='value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
@@ -139,8 +146,9 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         mappings_out = []
         for switch in ordinal_mapping:
-            values = switch.get('mapping').tolist()
-            column_mapping = self.fit_sum_coding(values)
+            values = switch.get('mapping')
+            col = switch.get('col')
+            column_mapping = self.fit_sum_coding(col, values, self.handle_missing, self.handle_unknown)
             mappings_out.append({'col': switch.get('col'), 'mapping': column_mapping, })
 
         self.mapping = mappings_out
@@ -179,6 +187,10 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         """
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
@@ -194,6 +206,10 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         X = self.ordinal_encoder.transform(X)
 
+        if self.handle_unknown == 'error':
+            if X[self.cols].isin([-1]).any().any():
+                raise ValueError('Columns to be encoded can not contain new values')
+
         X = self.sum_coding(X, mapping=self.mapping)
 
         if self.drop_invariant:
@@ -206,14 +222,32 @@ class SumEncoder(BaseEstimator, TransformerMixin):
             return X.values
 
     @staticmethod
-    def fit_sum_coding(values):
-        if len(values) < 2:
-            return pd.DataFrame()
+    def fit_sum_coding(col, values, handle_missing, handle_unknown):
+        if handle_missing == 'value':
+            values = values[values > 0]
 
-        sum_contrast_matrix = Sum().code_without_intercept(values)
-        df = pd.DataFrame(data=sum_contrast_matrix.matrix, columns=sum_contrast_matrix.column_suffixes)
-        df.index += 1
-        df.loc[0] = np.zeros(len(values) - 1)
+        values_to_encode = values.get_values()
+
+        if len(values) < 2:
+            return pd.DataFrame(index=values_to_encode)
+
+        if handle_unknown == 'indicator':
+            values_to_encode = np.append(values_to_encode, -1)
+
+        sum_contrast_matrix = Sum().code_without_intercept(values_to_encode.tolist())
+        df = pd.DataFrame(data=sum_contrast_matrix.matrix, index=values_to_encode,
+                          columns=[str(col) + '_%d' % (i, ) for i in range(len(sum_contrast_matrix.column_suffixes))])
+
+        if handle_unknown == 'return_nan':
+            df.loc[-1] = np.nan
+        elif handle_unknown == 'value':
+            df.loc[-1] = np.zeros(len(values_to_encode) - 1)
+
+        if handle_missing == 'return_nan':
+            df.loc[values.loc[np.nan]] = np.nan
+        elif handle_missing == 'value':
+            df.loc[-2] = np.zeros(len(values_to_encode) - 1)
+
         return df
 
     @staticmethod
@@ -230,19 +264,17 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         for switch in mapping:
             col = switch.get('col')
             mod = switch.get('mapping')
-            new_columns = []
-            for i in range(len(mod.columns)):
-                c = mod.columns[i]
-                new_col = str(col) + '_%d' % (i, )
-                X[new_col] = mod[c].loc[X[col]].values
-                new_columns.append(new_col)
+
+            base_df = mod.loc[X[col]]
+            base_df.set_index(X.index, inplace=True)
+            X = pd.concat([base_df, X], axis=1)
+
             old_column_index = cols.index(col)
-            cols[old_column_index: old_column_index + 1] = new_columns
+            cols[old_column_index: old_column_index + 1] = mod.columns
 
         cols = ['intercept'] + cols
-        X = X.reindex(columns=cols)
 
-        return X
+        return X.reindex(columns=cols)
 
     def get_feature_names(self):
         """

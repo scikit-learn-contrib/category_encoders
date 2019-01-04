@@ -84,7 +84,7 @@ class TestEncoders(TestCase):
                 tu.verify_numeric(enc.transform(X_t, y_t))
 
                 # when we run transform(X, y) and there is a new value in X, something is wrong and we raise an error
-                enc = getattr(encoders, encoder_name)(impute_missing=True, handle_unknown='error', cols=['extra'])
+                enc = getattr(encoders, encoder_name)(handle_unknown='error', cols=['extra'])
                 enc.fit(X, y)
                 self.assertRaises(ValueError, enc.transform, (X_t, y_t))
 
@@ -128,6 +128,81 @@ class TestEncoders(TestCase):
                 with self.assertRaises(ValueError):
                     _ = enc.transform(X_t)
 
+    def test_handle_missing_error(self):
+        non_null = pd.DataFrame({'city': ['chicago', 'los angeles'], 'color': ['red', np.nan]})  # only 'city' column is going to be transformed
+        has_null = pd.DataFrame({'city': ['chicago', np.nan], 'color': ['red', np.nan]})
+        y = pd.Series([1, 0])
+
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
+            with self.subTest(encoder_name=encoder_name):
+
+                enc = getattr(encoders, encoder_name)(handle_missing='error', cols='city')
+                with self.assertRaises(ValueError):
+                    enc.fit(has_null, y)
+
+                enc.fit(non_null, y)    # we raise an error only if a missing value is in one of the transformed columns
+                with self.assertRaises(ValueError):
+                    enc.transform(has_null)
+
+    def test_handle_unknown_return_nan(self):
+        train = pd.DataFrame({'city': ['chicago', 'los angeles']})
+        test = pd.DataFrame({'city': ['chicago', 'denver']})
+        y = pd.Series([1, 0])
+
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
+            with self.subTest(encoder_name=encoder_name):
+
+                enc = getattr(encoders, encoder_name)(handle_unknown='return_nan')
+                enc.fit(train, y)
+                result = enc.transform(test).iloc[1, :]
+
+                if len(result) == 1:
+                    self.assertTrue(result.isnull().all())
+                else:
+                    self.assertTrue(result[1:].isnull().all())
+
+    def test_handle_missing_return_nan_train(self):
+        X = pd.DataFrame({'city': ['chicago', 'los angeles', None]})
+        y = pd.Series([1, 0, 1])
+
+        for encoder_name in ( set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(handle_missing='return_nan')
+                result = enc.fit_transform(X, y).iloc[2, :]
+
+                if len(result) == 1:
+                    self.assertTrue(result.isnull().all())
+                else:
+                    self.assertTrue(result[1:].isnull().all())
+
+    def test_handle_missing_return_nan_test(self):
+        X = pd.DataFrame({'city': ['chicago', 'los angeles', 'chicago']})
+        X_t = pd.DataFrame({'city': ['chicago', 'los angeles', None]})
+        y = pd.Series([1, 0, 1])
+
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(handle_missing='return_nan')
+                result = enc.fit(X, y).transform(X_t).iloc[2, :]
+
+                if len(result) == 1:
+                    self.assertTrue(result.isnull().all())
+                else:
+                    self.assertTrue(result[1:].isnull().all())
+
+    def test_handle_unknown_value(self):
+        train = pd.DataFrame({'city': ['chicago', 'los angeles']})
+        test = pd.DataFrame({'city': ['chicago', 'denver']})
+        y = pd.Series([1, 0])
+
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
+            with self.subTest(encoder_name=encoder_name):
+
+                enc = getattr(encoders, encoder_name)(handle_unknown='value')
+                enc.fit(train, y)
+                result = enc.transform(test)
+                self.assertFalse(result.iloc[1, :].isnull().all())
+
     def test_sklearn_compliance(self):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
@@ -156,11 +231,6 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(verbose=1, cols=cols)
                 enc.fit(X)
                 tu.verify_inverse_transform(X_t, enc.inverse_transform(enc.transform(X_t)))
-
-                # when a new value is encountered, do not raise an exception
-                enc = getattr(encoders, encoder_name)(verbose=1, cols=cols)
-                enc.fit(X, y)
-                _ = enc.inverse_transform(enc.transform(X_t_extra))
 
     def test_types(self):
         X = pd.DataFrame({
@@ -193,7 +263,7 @@ class TestEncoders(TestCase):
 
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                print(encoder_name)
+
                 encoder = getattr(encoders, encoder_name)()
                 result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
                 columns = result.columns.values

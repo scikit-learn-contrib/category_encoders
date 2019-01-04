@@ -31,7 +31,7 @@ The preferred workflow to contribute to git-pandas is:
 Guidelines
 ==========
 
-Git-pandas is still a very young project, but we do have a few guiding principles:
+This is still a very young project, but we do have a few guiding principles:
 
  1. Maintain semantics of the scikit-learn API
  2. Write detailed docstrings in numpy format
@@ -46,7 +46,9 @@ To run the tests, use:
     $ nosetests --with-coverage
     $ coverage html
     
+Run the tests with both, Python3 and Python2.   
+    
 Easy Issues / Getting Started
 =============================
 
-There are usually some issues in the project github page looking for contributors, if not you're welcome to propose some ideas there, or a great first step is often to just use the library, and add to the examples directory.  This helps us with documentation, and often helps to find things that would make the library better to use.
+There are usually some issues in the project github page looking for contributors, if not you're welcome to propose some ideas there, or a great first step is often to just use the library, and add to the examples directory. This helps us with documentation, and often helps to find things that would make the library better to use.

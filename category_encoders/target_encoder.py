@@ -2,14 +2,15 @@
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
+from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 
 __author__ = 'chappers'
 
 
 class TargetEncoder(BaseEstimator, TransformerMixin):
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', min_samples_leaf=1, smoothing=1.0):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
+                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
         """Target encoding for categorical features.
          For the case of categorical target: features are replaced with a blend of posterior probability of the target
           given particular categorical value and prior probability of the target over all the training data.
@@ -27,12 +28,8 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can cause
-        unexpected changes in the dimension in some cases.
+        options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the target mean.
     min_samples_leaf: int
         minimum samples to take category average into account.
     smoothing: float
@@ -81,12 +78,13 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self.drop_cols = []
         self.verbose = verbose
         self.cols = cols
+        self.ordinal_encoder = None
         self.min_samples_leaf = min_samples_leaf
         self.smoothing = float(smoothing)  # Make smoothing a float so that python 2 does not treat as integer division
         self._dim = None
         self.mapping = None
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing=handle_missing
         self._mean = None
         self.feature_names = None
 
@@ -110,7 +108,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         if isinstance(y, pd.DataFrame):
             y = y.iloc[:, 0]
         else:
-            y = pd.Series(y, name='target')
+            y = pd.Series(y, name='target', index=X.index)
         if X.shape[0] != y.shape[0]:
             raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -122,21 +120,26 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
-        _, self.mapping = self.target_encode(
-            X, y,
-            mapping=None,
-            cols=self.cols,
-            impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown,
-            smoothing_in=self.smoothing,
-            min_samples_leaf=self.min_samples_leaf
-        )
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
 
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            handle_unknown='value',
+            handle_missing='value'
+        )
+        self.ordinal_encoder = self.ordinal_encoder.fit(X)
+        X_ordinal = self.ordinal_encoder.transform(X)
+        self.mapping = self.fit_target_encoding(X_ordinal, y)
+        
         X_temp = self.transform(X, override_return_df=True)
         self.feature_names = list(X_temp.columns)
 
         if self.drop_invariant:
             self.drop_cols = []
+            X_temp = self.transform(X)
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
             try:
@@ -148,6 +151,35 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
+    def fit_target_encoding(self, X, y):
+        mapping = {}
+
+        for switch in self.ordinal_encoder.category_mapping:
+            col = switch.get('col')
+            values = switch.get('mapping')
+
+            prior = self._mean = y.mean()
+
+            stats = y.groupby(X[col]).agg(['count', 'mean'])
+
+            smoove = 1 / (1 + np.exp(-(stats['count'] - self.min_samples_leaf) / self.smoothing))
+            smoothing = prior * (1 - smoove) + stats['mean'] * smoove
+            smoothing[stats['count'] == 1] = prior
+
+            if self.handle_unknown == 'return_nan':
+                smoothing.loc[-1] = np.nan
+            elif self.handle_unknown == 'value':
+                smoothing.loc[-1] = prior
+
+            if self.handle_missing == 'return_nan':
+                smoothing.loc[values.loc[np.nan]] = np.nan
+            elif self.handle_missing == 'value':
+                smoothing.loc[-2] = prior
+
+            mapping[col] = smoothing
+
+        return mapping
+
     def transform(self, X, y=None, override_return_df=False):
         """Perform the transformation to new categorical data.
         Parameters
@@ -155,12 +187,16 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples] when transform by leave one out
             None, when transform without target info (such as transform test set)
-
+            
         Returns
         -------
         p : array, shape = [n_samples, n_numeric + N]
             Transformed values with encoding applied.
         """
+
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
@@ -183,15 +219,14 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
         if not self.cols:
             return X
-        X, _ = self.target_encode(
-            X, y,
-            mapping=self.mapping,
-            cols=self.cols,
-            impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown,
-            min_samples_leaf=self.min_samples_leaf,
-            smoothing_in=self.smoothing
-        )
+
+        X = self.ordinal_encoder.transform(X)
+
+        if self.handle_unknown == 'error':
+            if X[self.cols].isin([-1]).any().any():
+                raise ValueError('Unexpected categories found in dataframe')
+
+        X = self.target_encode(X)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -211,31 +246,13 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         """
         return self.fit(X, y, **fit_params).transform(X, y)
 
-    def target_encode(self, X_in, y, mapping=None, cols=None, impute_missing=True, handle_unknown='impute', min_samples_leaf=1, smoothing_in=1.0):
+    def target_encode(self, X_in):
         X = X_in.copy(deep=True)
-        if cols is None:
-            cols = X.columns.values
 
-        if mapping is not None:
-            for col in cols:
-                X[col] = X[col].map(mapping[col])
-                if impute_missing:
-                    if handle_unknown == 'impute':
-                        X[col].fillna(self._mean, inplace=True)
-                    elif handle_unknown == 'error':
-                        if X[col].isnull().any():
-                            raise ValueError('Unexpected categories found in column %s' % col)
-        else:
-            mapping = {}
-            prior = self._mean = y.mean()
-            for col in cols:
-                stats = y.groupby(X[col]).agg(['count', 'mean'])
-                smoove = 1 / (1 + np.exp(-(stats['count'] - min_samples_leaf) / smoothing_in))
-                smoothing = prior * (1 - smoove) + stats['mean'] * smoove
-                smoothing[stats['count'] == 1] = prior
-                mapping[col] = smoothing
+        for col in self.cols:
+            X[col] = X[col].map(self.mapping[col])
 
-        return X, mapping
+        return X
 
     def get_feature_names(self):
         """

@@ -26,12 +26,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
-        unexpected changes in dimension in some cases.
+        options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the target mean.
     sigma: float
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
         sigma gives the standard deviation (spread or "width") of the normal distribution.
@@ -74,8 +70,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute', random_state=None, sigma=None):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
+                 handle_unknown='value', handle_missing='value', random_state=None, sigma=None):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -84,8 +80,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self._dim = None
         self.mapping = None
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
         self._mean = None
         self.random_state = random_state
         self.sigma = sigma
@@ -116,7 +112,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         if isinstance(y, pd.DataFrame):
             y = y.iloc[:, 0].astype(float)
         else:
-            y = pd.Series(y, name='target', dtype=float)
+            y = pd.Series(y, name='target', index=X.index)
         if X.shape[0] != y.shape[0]:
             raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -127,6 +123,10 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             self.cols = util.get_obj_cols(X)
         else:
             self.cols = util.convert_cols_to_list(self.cols)
+
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
 
         categories = self.fit_leave_one_out(
             X, y,
@@ -170,6 +170,10 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         """
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
@@ -185,7 +189,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             if isinstance(y, pd.DataFrame):
                 y = y.iloc[:, 0].astype(float)
             else:
-                y = pd.Series(y, name='target', dtype=float)
+                y = pd.Series(y, name='target', index=X.index)
             if X.shape[0] != y.shape[0]:
                 raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -193,9 +197,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             return X
         X = self.transform_leave_one_out(
             X, y,
-            mapping=self.mapping,
-            impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            mapping=self.mapping
         )
 
         if self.drop_invariant:
@@ -223,9 +225,24 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             cols = X.columns.values
 
         self._mean = y.mean()
-        return {col: y.groupby(X[col]).agg(['sum', 'count']) for col in cols}
 
-    def transform_leave_one_out(self, X_in, y, mapping=None, impute_missing=True, handle_unknown='impute'):
+        return {col: self.fit_column_map(X[col], y) for col in cols}
+
+    def fit_column_map(self, series, y):
+        category = pd.Categorical(series)
+
+        categories = category.categories
+        codes = category.codes.copy()
+
+        codes[codes == -1] = len(categories)
+        categories = np.append(categories, np.nan)
+
+        return_map = pd.Series(dict([(code, category) for code, category in enumerate(categories)]))
+
+        result = y.groupby(codes).agg(['sum', 'count'])
+        return result.rename(return_map)
+
+    def transform_leave_one_out(self, X_in, y, mapping=None):
         """
         Leave one out encoding uses a single column of floats to represent the means of the target variables.
         """
@@ -235,6 +252,16 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
 
         for col, colmap in mapping.items():
             level_notunique = colmap['count'] > 1
+
+            unique_train = colmap.index
+            unseen_values = pd.Series([x for x in X[col].unique() if x not in unique_train])
+
+            is_nan = X[col].isnull()
+            is_unknown_value = X[col].isin(unseen_values.dropna())
+
+            if self.handle_unknown == 'error' and is_unknown_value.any():
+                raise ValueError('Columns to be encoded can not contain new values')
+
             if y is None:    # Replace level with its mean target; if level occurs only once, use global mean
                 level_means = (colmap['sum'] / colmap['count']).where(level_notunique, self._mean)
                 X[col] = X[col].map(level_means)
@@ -245,12 +272,15 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
                 # The 'where' fills in singleton levels (count = 1 -> div by 0) with the global mean
                 X[col] = level_means.where(X[col].map(colmap['count'][level_notunique]).notnull(), self._mean)
 
-            if impute_missing:
-                if handle_unknown == 'impute':
-                    X[col].fillna(self._mean, inplace=True)
-                elif handle_unknown == 'error':
-                    if X[col].isnull().any():
-                        raise ValueError('Unexpected categories found in column %s' % col)
+            if self.handle_unknown == 'value':
+                X.loc[is_unknown_value, col] = self._mean
+            elif self.handle_unknown == 'return_nan':
+                X.loc[is_unknown_value, col] = np.nan
+
+            if self.handle_missing == 'value':
+                X.loc[is_nan & unseen_values.isnull().any(), col] = self._mean
+            elif self.handle_missing == 'return_nan':
+                X.loc[is_nan, col] = np.nan
 
             if self.sigma is not None and y is not None:
                 X[col] = X[col] * random_state_.normal(1., self.sigma, X[col].shape[0])
