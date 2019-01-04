@@ -68,15 +68,15 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
     PTRATIO             506 non-null float64
     B                   506 non-null float64
     LSTAT               506 non-null float64
-    RAD_mask_4          506 non-null int64
-    RAD_mask_6          506 non-null int64
-    RAD_mask_5          506 non-null int64
+    RAD_mask_1          506 non-null int64
     RAD_mask_2          506 non-null int64
+    RAD_mask_3          506 non-null int64
+    RAD_mask_4          506 non-null int64
+    RAD_mask_5          506 non-null int64
+    RAD_mask_6          506 non-null int64
+    RAD_mask_7          506 non-null int64
     RAD_mask_8          506 non-null int64
     RAD_mask_9          506 non-null int64
-    RAD_mask_3          506 non-null int64
-    RAD_mask_7          506 non-null int64
-    RAD_mask_1          506 non-null int64
     RAD_mask_withnan    449 non-null object
     dtypes: float64(13), int64(9), object(1)
     memory usage: 91.0+ KB
@@ -300,7 +300,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             if self.handle_unknown == "error" and new_transformed_sum > 0:
                 raise ValueError('Unexpected categories found in column %s' % col)
             old_column_index = cols.index(col)
-            cols[old_column_index: old_column_index + 1] = list(set(new_columns))
+            cols[old_column_index: old_column_index + 1] = new_columns
 
         return X.reindex(columns=cols)
 
