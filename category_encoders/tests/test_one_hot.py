@@ -23,8 +23,8 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(verbose=1, return_df=False)
         enc.fit(X)
         self.assertEqual(enc.transform(X_t).shape[1],
-                         enc.transform(X_t[X_t['extra'] != 'A']).shape[1],
-                         'We have to get the same count of columns')
+                         enc.transform(X).shape[1],
+                         'We have to get the same count of columns despite the presence of a new value')
 
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, impute_missing=True)
         enc.fit(X)
