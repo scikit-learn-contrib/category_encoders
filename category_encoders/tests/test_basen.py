@@ -2,6 +2,7 @@ import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
 import category_encoders as encoders
+import warnings
 
 
 class TestBaseNEncoder(TestCase):
@@ -84,3 +85,59 @@ class TestBaseNEncoder(TestCase):
         self.assertEqual(2, result.shape[0])
         self.assertListEqual([0, 0, 1], result.iloc[0, :].tolist())
         self.assertListEqual([0, 1, 0], result.iloc[1, :].tolist())
+
+    def test_inverse_transform_HaveNanInTrainAndHandleMissingValue_ExpectReturnedWithNan(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+
+        enc = encoders.BaseNEncoder(handle_missing='value', handle_unknown='value')
+        result = enc.fit_transform(train)
+        original = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(train, original)
+
+    def test_inverse_transform_HaveNanInTrainAndHandleMissingReturnNan_ExpectReturnedWithNan(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+
+        enc = encoders.BaseNEncoder(handle_missing='return_nan', handle_unknown='value')
+        result = enc.fit_transform(train)
+        original = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(train, original)
+
+    def test_inverse_transform_BothFieldsAreReturnNanWithNan_ExpectValueError(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+        test = pd.DataFrame({'city': ['chicago', 'los angeles']})
+
+        enc = encoders.BaseNEncoder(handle_missing='return_nan', handle_unknown='return_nan')
+        enc.fit(train)
+        result = enc.transform(test)
+
+        with warnings.catch_warnings(record=True) as w:
+            enc.inverse_transform(result)
+
+            self.assertEqual(2, len(w))
+            self.assertEqual('inverse_transform is not supported because transform impute '
+                             'the unknown category nan when encode city', str(w[1].message))
+
+    def test_inverse_transform_HaveMissingAndNoUnknown_ExpectInversed(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+        test = pd.DataFrame({'city': ['chicago', 'los angeles']})
+
+        enc = encoders.BaseNEncoder(handle_missing='value', handle_unknown='return_nan')
+        enc.fit(train)
+        result = enc.transform(test)
+        original = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(train, original)
+
+    def test_inverse_transform_HaveHandleMissingValueAndHandleUnknownReturnNan_ExpectBestInverse(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+        test = pd.DataFrame({'city': ['chicago', np.nan, 'los angeles']})
+        expected = pd.DataFrame({'city': ['chicago', np.nan, np.nan]})
+
+        enc = encoders.BaseNEncoder(handle_missing='value', handle_unknown='return_nan')
+        enc.fit(train)
+        result = enc.transform(test)
+        original = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(expected, original)

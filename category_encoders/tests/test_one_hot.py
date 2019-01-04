@@ -1,7 +1,7 @@
 import pandas as pd
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
-
+import warnings
 import category_encoders.tests.test_utils as tu
 
 import category_encoders as encoders
@@ -201,3 +201,59 @@ class TestOneHotEncoderTestCase(TestCase):
         expected = [[1, 0, 0],
                     [0, 1, 0]]
         self.assertEqual(result.values.tolist(), expected)
+
+    def test_inverse_transform_HaveNanInTrainAndHandleMissingValue_ExpectReturnedWithNan(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+
+        enc = encoders.OneHotEncoder(handle_missing='value', handle_unknown='value')
+        result = enc.fit_transform(train)
+        original = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(train, original)
+
+    def test_inverse_transform_HaveNanInTrainAndHandleMissingReturnNan_ExpectReturnedWithNan(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+
+        enc = encoders.OneHotEncoder(handle_missing='return_nan', handle_unknown='value')
+        result = enc.fit_transform(train)
+        original = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(train, original)
+
+    def test_inverse_transform_BothFieldsAreReturnNanWithNan_ExpectValueError(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+        test = pd.DataFrame({'city': ['chicago', 'los angeles']})
+
+        enc = encoders.OneHotEncoder(handle_missing='return_nan', handle_unknown='return_nan')
+        enc.fit(train)
+        result = enc.transform(test)
+
+        with warnings.catch_warnings(record=True) as w:
+            enc.inverse_transform(result)
+
+            self.assertEqual(1, len(w))
+            self.assertEqual('inverse_transform is not supported because transform impute '
+                             'the unknown category nan when encode city', str(w[0].message))
+
+    def test_inverse_transform_HaveMissingAndNoUnknown_ExpectInversed(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+        test = pd.DataFrame({'city': ['chicago', 'los angeles']})
+
+        enc = encoders.OneHotEncoder(handle_missing='value', handle_unknown='return_nan')
+        enc.fit(train)
+        result = enc.transform(test)
+        original = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(train, original)
+
+    def test_inverse_transform_HaveHandleMissingValueAndHandleUnknownReturnNan_ExpectBestInverse(self):
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+        test = pd.DataFrame({'city': ['chicago', np.nan, 'los angeles']})
+        expected = pd.DataFrame({'city': ['chicago', np.nan, np.nan]})
+
+        enc = encoders.OneHotEncoder(handle_missing='value', handle_unknown='return_nan')
+        enc.fit(train)
+        result = enc.transform(test)
+        original = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(expected, original)

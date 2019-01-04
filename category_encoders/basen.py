@@ -7,6 +7,7 @@ import warnings
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
+import warnings
 
 __author__ = 'willmcginnis'
 
@@ -276,22 +277,16 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        if self.handle_unknown == 'value':
-            for col in self.cols:
-                if any(X[col] == -1):
-                    raise ValueError("inverse_transform is not supported because transform impute "
-                                     "the unknown category -1 when encode %s" % (col,))
-
-        if self.handle_unknown == 'return_nan':
-            for col in self.cols:
-                if X[col].isnull().any():
-                    raise ValueError("inverse_transform is not supported because transform impute "
-                                     "the unknown category nan when encode %s" % (col,))
-
         for switch in self.ordinal_encoder.mapping:
             column_mapping = switch.get('mapping')
             inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
             X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
+
+            if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
+                for col in self.cols:
+                    if X[switch.get('col')].isnull().any():
+                        warnings.warn("inverse_transform is not supported because transform impute "
+                                      "the unknown category nan when encode %s" % (col,))
 
         return X if self.return_df else X.values
 
@@ -356,10 +351,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         for col in cols:
             col_list = [col0 for col0 in out_cols if str(col0).startswith(str(col))]
-            for col0 in col_list:
-                if any(X[col0].isnull()):
-                    raise ValueError("inverse_transform is not supported because transform impute"
-                                     "the unknown category -1 when encode %s" % (col,))
+
             if base == 1:
                 value_array = np.array([int(col0.split('_')[-1]) for col0 in col_list])
             else:
