@@ -23,12 +23,16 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    handle_missing: str (default is 'ignore)
-        option is 'error' or 'ignore'
-    handle_unknown: str (default is 'ignore')
-        option is 'error' or 'ignore' (used in transformation).
-        if 'ignore', the transformed output of unknown values includes only '0'.
-        if 'error', raise ValueError if the input contains unknown values.
+    handle_missing: str (default is 'value)
+        option is 'error', 'value' or 'return_nan'
+        if 'value', missing values are transformed as categorical features
+        if 'error', raise ValueError when the input contains missing values
+        if 'return_nan', return np.nan for missing values
+    handle_unknown: str (default is 'value')
+        option is 'error', value' or 'return_nan' (used in transformation).
+        if 'value', the transformed output of unknown values includes only '0'.
+        if 'error', raise ValueError when the input contains unknown values.
+        if 'return_nan', return np.nan for unknown values
     multiple_split_string: str (default is '|')
         Represents which string we should split input
 
@@ -91,7 +95,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='ignore', handle_unknown='ignore', multiple_split_string="|"):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value', handle_unknown='value', multiple_split_string="|"):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -154,13 +158,12 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
                 [self.feature_names.remove(x) for x in self.drop_cols]
             except KeyError as e:
                 if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                    "Not found in generated cols.\n{}".format(e))
+                    print("Could not remove column from feature names. Not found in generated cols.\n{}".format(e))
 
         return self
 
     @staticmethod
-    def generate_mapping(X_in, mapping=None, cols=None, handle_missing='ignore', handle_unknown='ignore', multiple_split_string="|"):
+    def generate_mapping(X_in, mapping=None, cols=None, handle_missing='value', handle_unknown='value', multiple_split_string="|"):
         """
         Parameters
         ----------
@@ -229,7 +232,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         """
         if self.handle_missing == 'error':
             if X[self.cols].isnull().any().bool():
-                raise ValueError('Columns to be encoded can not contain null')        
+                raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:
             raise ValueError(
@@ -294,12 +297,23 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
                     or ((type(x) == int or type(x) == float) and x == x and val == str(int(x)))
                     else 0))
                 new_columns.append(new_col_name)
+
             if normalize:
                 zero_index = X[new_columns].sum(axis=1) == 0
                 X.loc[~zero_index, new_columns] = X.loc[~zero_index, new_columns].div(X.loc[~zero_index, new_columns].sum(axis=1), axis=0)
-            new_transformed_sum = ((X[new_columns] > 0).sum(axis=1) == 0).sum()
-            if self.handle_unknown == "error" and new_transformed_sum > 0:
+            all_zero_index = (X[new_columns] != 0).sum(axis=1) == 0
+            new_transformed_allzero_sum = (all_zero_index).sum()
+            # ValueError judgement for handle_unknown
+            if self.handle_unknown == "error" and new_transformed_allzero_sum > 0:
                 raise ValueError('Unexpected categories found in column %s' % col)
+            # replace_nan judgement for handle_unknown
+            if self.handle_unknown == 'return_nan':
+                X.loc[all_zero_index, new_columns] = np.nan
+            # replace_nan judgement for handle_missing
+            if self.handle_missing == 'return_nan':
+                nan_index = X_in[col].isnull()
+                X.loc[nan_index, new_columns] = np.nan
+
             old_column_index = cols.index(col)
             cols[old_column_index: old_column_index + 1] = new_columns
 
