@@ -33,7 +33,7 @@ X_t_mask = X_t.pipe(mask_X_extra, mapping)
 
 
 def get_first_extract_column(df):
-    first_extract_column = df.columns.str.extract("(.*)_[1-9]+").dropna()
+    first_extract_column = df.columns.str.extract("(.*)_[1-9]+", expand=True).dropna()
     first_extract_column = set(first_extract_column.values.reshape(first_extract_column.shape[0])).pop()
     return first_extract_column
 
@@ -72,17 +72,17 @@ class TestMultiHotEncoderTestCase(TestCase):
         enc = encoders.MultiHotEncoder(verbose=1, return_df=True)
         enc.fit(X_mask)
         out = enc.transform(X_t_mask)
-        extra_column_length = out.columns.str.extract("(extra_*)_[1-9]+").dropna().shape[0]
+        extra_column_length = out.columns.str.extract("(extra_*)_[1-9]+", expand=True).dropna().shape[0]
         self.assertEqual(extra_column_length, 3, "We have to contain 3 extra columns")
 
-        extra_mask_columns = out.columns.str.extract("(extra_.*)_[1-9]+").dropna()
+        extra_mask_columns = out.columns.str.extract("(extra_.*)_[1-9]+", expand=True).dropna()
         set_extra_mask_columns = set(extra_mask_columns.values.reshape(extra_mask_columns.shape[0]))
         self.assertSetEqual(set_extra_mask_columns, set(['extra_mask', 'extra_mask_withnan']), "We have to contain extra_mask_* and extra_mask_withnan_* columns")
 
-        extra_mask_column_length = out.columns.str.extract("(extra_mask_*)_[1-9]+").dropna().shape[0]
+        extra_mask_column_length = out.columns.str.extract("(extra_mask_*)_[1-9]+", expand=True).dropna().shape[0]
         self.assertEqual(extra_mask_column_length, 3, "We have to contain 3 extra_mask columns")
 
-        extra_mask_withnan_column_length = out.columns.str.extract("(extra_mask_.*)_[1-9]+").dropna().shape[0]
+        extra_mask_withnan_column_length = out.columns.str.extract("(extra_mask_.*)_[1-9]+", expand=True).dropna().shape[0]
         self.assertEqual(extra_mask_withnan_column_length, 4, "We have to contain 4 extra_mask_withnan columns")
 
         enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask"])
