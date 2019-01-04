@@ -47,6 +47,10 @@ class TestMultiHotEncoderTestCase(TestCase):
                          enc.transform(X_t[X_t['extra'] != 'A']).shape[1],
                          'We have to get the same count of columns')
 
+        self.assertEqual(enc.transform(X_t).shape[1],
+                         enc.transform(X_t[X_t['extra'] != 'D']).shape[1],
+                         'We have to get the same count of columns')
+
         enc = encoders.MultiHotEncoder(verbose=1, return_df=True)
         enc.fit(X)
         out = enc.transform(X_t)
@@ -71,7 +75,8 @@ class TestMultiHotEncoderTestCase(TestCase):
         extra_column_length = out.columns.str.extract("(extra_*)_[1-9]+").dropna().shape[0]
         self.assertEqual(extra_column_length, 3, "We have to contain 3 extra columns")
 
-        set_extra_mask_columns = set(out.columns.str.extract("(extra_.*)_[1-9]+").dropna()[0].unique())
+        extra_mask_columns = out.columns.str.extract("(extra_.*)_[1-9]+").dropna()
+        set_extra_mask_columns = set(extra_mask_columns.values.reshape(extra_mask_columns.shape[0]))
         self.assertSetEqual(set_extra_mask_columns, set(['extra_mask', 'extra_mask_withnan']), "We have to contain extra_mask_* and extra_mask_withnan_* columns")
 
         extra_mask_column_length = out.columns.str.extract("(extra_mask_*)_[1-9]+").dropna().shape[0]
