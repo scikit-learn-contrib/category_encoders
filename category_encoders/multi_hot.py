@@ -23,13 +23,13 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
-    handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories. This can cause
-        unexpected changes in the dimension in some cases.
-    multiple_split_string: str
+    impute_missing: bool (default is True)
+        this option is now ignored in MultiHotEncoder
+    handle_unknown: str (default is 'ignore')
+        options are 'error' and 'ignore' (used in transformation).
+        if 'ignore', the transformed output of unknown values includes only '0'.
+        if 'error', raise ValueError if the input contains unknown values.
+    multiple_split_string: str (default is '|')
         Represents which string we should split input
 
     Example
@@ -91,7 +91,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute', multiple_split_string="|"):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='ignore', multiple_split_string="|"):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -156,7 +156,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         return self
 
     @staticmethod
-    def generate_mapping(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='impute', multiple_split_string="|"):
+    def generate_mapping(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='ignore', multiple_split_string="|"):
         """
         Parameters
         ----------
