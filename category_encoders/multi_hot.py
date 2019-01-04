@@ -296,6 +296,9 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             if normalize:
                 zero_index = X[new_columns].sum(axis=1) == 0
                 X.loc[~zero_index, new_columns] = X.loc[~zero_index, new_columns].div(X.loc[~zero_index, new_columns].sum(axis=1), axis=0)
+            new_transformed_sum = ((X[new_columns] > 0).sum(axis=1) == 0).sum()
+            if self.handle_unknown == "error" and new_transformed_sum > 0:
+                raise ValueError('Unexpected categories found in column %s' % col)
             old_column_index = cols.index(col)
             cols[old_column_index: old_column_index + 1] = list(set(new_columns))
 
