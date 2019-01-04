@@ -23,10 +23,10 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    impute_missing: bool (default is True)
-        this option is now ignored in MultiHotEncoder
+    handle_missing: str (default is 'ignore)
+        option is 'error' or 'ignore'
     handle_unknown: str (default is 'ignore')
-        options are 'error' and 'ignore' (used in transformation).
+        option is 'error' or 'ignore' (used in transformation).
         if 'ignore', the transformed output of unknown values includes only '0'.
         if 'error', raise ValueError if the input contains unknown values.
     multiple_split_string: str (default is '|')
@@ -91,7 +91,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='ignore', multiple_split_string="|"):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='ignore', handle_unknown='ignore', multiple_split_string="|"):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -100,7 +100,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
-        self.impute_missing = impute_missing
+        self.handle_missing = handle_missing
         self.handle_unknown = handle_unknown
         self.feature_names = None
         self.multiple_split_string = multiple_split_string
@@ -136,6 +136,10 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         # Indicate no transformation has been applied yet
         self.mapping, self.col_index_mapping = self.generate_mapping(X, cols=self.cols, multiple_split_string=self.multiple_split_string)
 
@@ -156,7 +160,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         return self
 
     @staticmethod
-    def generate_mapping(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='ignore', multiple_split_string="|"):
+    def generate_mapping(X_in, mapping=None, cols=None, handle_missing='ignore', handle_unknown='ignore', multiple_split_string="|"):
         """
         Parameters
         ----------
@@ -165,6 +169,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         mapping: list-like
         cols: list
             Represents categorical feature names
+        handle_missing, handle_unknown: see __init__()
         multiple_string_split: str
             Represents which string we should split input
         Returns
@@ -222,6 +227,9 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             Transformed values with encoding applied.
 
         """
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')        
 
         if self._dim is None:
             raise ValueError(
