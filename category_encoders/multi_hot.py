@@ -29,9 +29,6 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
         impute is used, an extra column will be added in if the transform matrix has unknown categories. This can cause
         unexpected changes in the dimension in some cases.
-    use_cat_names: bool
-        if True, category values will be included in the encoded column names. Since this can result into duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
-        If False, category indices will be used instead of the category values.
     multiple_split_string: str
         Represents which string we should split input
 
@@ -94,7 +91,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute', use_cat_names=False, multiple_split_string="|"):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, impute_missing=True, handle_unknown='impute', multiple_split_string="|"):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -105,7 +102,6 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         self._dim = None
         self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
-        self.use_cat_names = use_cat_names
         self.feature_names = None
         self.multiple_split_string = multiple_split_string
 
