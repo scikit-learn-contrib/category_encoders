@@ -41,12 +41,12 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
     >>> enc = MultiHotEncoder(cols=['RAD_mask'])
     >>> X_mask = enc.create_boston_RAD(X)
-    >>> numeric_dataset = enc.transform(X_mask, normilize=False)
+    >>> numeric_dataset = enc.transform(X_mask, normalize=False)
 
     or
     >>> from category_encoders import *
-    >>> numetic_dataset = MultiHotEncoder().run_example(normalize=False)
-    >>> numetic_normalized_dataset = MultiHotEncoder().run_example(normalize=True)
+    >>> numeric_dataset = MultiHotEncoder().run_example(normalize=False)
+    >>> numeric_normalized_dataset = MultiHotEncoder().run_example(normalize=True)
 
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
@@ -238,7 +238,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        X = self.get_dummies(X, mapping=self.mapping, multiple_split_string=self.multiple_split_string, normalize=normalize)
+        X = self.get_dummies(X, mapping=self.mapping, normalize=normalize)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -249,7 +249,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def get_dummies(self, X_in, mapping, multiple_split_string="|", normalize=True):
+    def get_dummies(self, X_in, mapping, normalize=True):
         """
         Convert numerical variable into dummy variables
         Parameters
@@ -257,8 +257,6 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         X_in: DataFrame
         mapping: list-like
               Contains mappings of column to be transformed to it's new columns and value represented
-        multiple_split_string: str
-              Represents which string we should split input
         normalize: bool
             If true, the summation of transformed output is 1 for each categorical column
 
@@ -274,7 +272,6 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         for switch in mapping:
             col = switch.get('col')
             mod = switch.get('mapping')
-            inv_map = switch.get('val_newcolname_mapping')
             new_columns = []
             # for column_mapping in mod:
             #     new_col_name = column_mapping['new_col_name']
@@ -304,7 +301,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
     def create_boston_RAD(df, col="RAD"):
         """
         Create ambiguous feature of the RAD column in boston dataset, used to check Example.
-        
+
         Returns
         -------
         df: DataFrame
@@ -323,7 +320,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
     def run_example(normalize=True):
         """
         Run Example
-        
+
         Returns
         -------
         df: DataFrame
