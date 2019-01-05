@@ -18,6 +18,9 @@ from category_encoders.basen import BaseNEncoder
 from category_encoders.leave_one_out import LeaveOneOutEncoder
 from category_encoders.target_encoder import TargetEncoder
 from category_encoders.woe import WOEEncoder
+from category_encoders.m_estimate import MEstimateEncoder
+from category_encoders.gauss import GaussEncoder
+from category_encoders.log_odds_ratio import LogOddsRatioEncoder
 
 __version__ = '1.3.0'
 
@@ -35,5 +38,8 @@ __all__ = [
     'BaseNEncoder',
     'LeaveOneOutEncoder',
     'TargetEncoder',
-    'WOEEncoder'
+    'WOEEncoder',
+    'MEstimateEncoder',
+    'GaussEncoder',
+    'LogOddsRatioEncoder'
 ]

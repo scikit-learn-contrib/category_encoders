@@ -360,8 +360,8 @@ class TestEncoders(TestCase):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
-                # These 3 need y also
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder']:
+                # Target encoders also need y
+                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -375,8 +375,8 @@ class TestEncoders(TestCase):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
-                # These 3 need y also
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder']:
+                # Target encoders also need y
+                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
