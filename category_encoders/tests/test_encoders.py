@@ -190,6 +190,17 @@ class TestEncoders(TestCase):
                 else:
                     self.assertTrue(result[1:].isnull().all())
 
+    def test_handle_unknown_in_invariant(self):
+        for encoder_name in ['BackwardDifferenceEncoder', 'HelmertEncoder']:
+            with self.subTest(encoder_name):
+
+                encoder = getattr(encoders, encoder_name)()
+                X_test = X_t.copy(deep=True)
+                X_test.loc[3, 'invariant'] = 'extra_value'
+                encoder.fit(X)
+
+                _ = encoder.transform(X_test)  # Empty mapping DataFrame for invariant feature
+
     def test_handle_unknown_value(self):
         train = pd.DataFrame({'city': ['chicago', 'los angeles']})
         test = pd.DataFrame({'city': ['chicago', 'denver']})

@@ -323,7 +323,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            base_df = mod.loc[X[col]]
+            base_df = mod.reindex(X[col])
             base_df.set_index(X.index, inplace=True)
             X = pd.concat([base_df, X], axis=1)
 
