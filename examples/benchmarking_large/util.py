@@ -1,11 +1,14 @@
 import time
+import warnings
 from copy import deepcopy
 
 import numpy as np
 import sklearn
+from sklearn.exceptions import ConvergenceWarning
+from sklearn.utils.testing import ignore_warnings
+from sklearn.impute import SimpleImputer
 from sklearn.model_selection import StratifiedKFold
-from sklearn.preprocessing import StandardScaler, Imputer
-
+from sklearn.preprocessing import StandardScaler
 
 def train_encoder(X, y, fold_count, encoder):
     """
@@ -23,7 +26,7 @@ def train_encoder(X, y, fold_count, encoder):
     """
     kf = StratifiedKFold(n_splits=fold_count, shuffle=True, random_state=2001)
     encoder = deepcopy(encoder)  # Because of https://github.com/scikit-learn-contrib/categorical-encoding/issues/106
-    imputer = Imputer(strategy='mean', axis=0)
+    imputer = SimpleImputer(strategy='mean')
     scaler = StandardScaler()
     folds = []
     fit_encoder_time = 0
@@ -66,7 +69,8 @@ def train_model(folds, model):
     for X_train, y_train, X_test, y_test in folds:
         # Training
         start_time = time.time()
-        model.fit(X_train, y_train)
+        with ignore_warnings(category=ConvergenceWarning):  # Yes, neural networks do not always converge
+            model.fit(X_train, y_train)
         fit_model_time += time.time() - start_time
         prediction_train_proba = model.predict_proba(X_train)[:, 1]
         prediction_train = (prediction_train_proba >= 0.5).astype('uint8')
@@ -77,13 +81,16 @@ def train_model(folds, model):
         score_model_time += time.time() - start_time
         prediction_test = (prediction_test_proba >= 0.5).astype('uint8')
 
-        scores.append([
-            sklearn.metrics.matthews_corrcoef(y_test, prediction_test),
-            sklearn.metrics.matthews_corrcoef(y_train, prediction_train),
-            sklearn.metrics.roc_auc_score(y_test, prediction_test_proba),
-            sklearn.metrics.roc_auc_score(y_train, prediction_train_proba),
-            sklearn.metrics.brier_score_loss(y_test, prediction_test_proba),
-            sklearn.metrics.brier_score_loss(y_train, prediction_train_proba)
-        ])
+        # When all the predictions are of a single class, we get a RuntimeWarning in matthews_corr
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            scores.append([
+                sklearn.metrics.matthews_corrcoef(y_test, prediction_test),
+                sklearn.metrics.matthews_corrcoef(y_train, prediction_train),
+                sklearn.metrics.roc_auc_score(y_test, prediction_test_proba),
+                sklearn.metrics.roc_auc_score(y_train, prediction_train_proba),
+                sklearn.metrics.brier_score_loss(y_test, prediction_test_proba),
+                sklearn.metrics.brier_score_loss(y_train, prediction_train_proba)
+            ])
 
     return np.mean(scores, axis=0), fit_model_time/len(folds), score_model_time/len(folds)

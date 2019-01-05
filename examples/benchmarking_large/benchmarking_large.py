@@ -26,18 +26,18 @@ from examples.benchmarking_large.util import train_model, train_encoder
 # The settings are taken from:
 #   Data-driven advice for applying machine learning to bioinformatics problems, Olson et al.
 # Following models have high variance of results: SGD, SVC and DecisionTree. That is not a big deal.
-# Just be careful during result interpretation.
+# Just be careful during the result interpretation.
 # Also, following models are slow because of their configuration: GradientBoosting and RandomForest.
 # SGD and DecisionTree benefit from stronger regularization.
-models = [SGDClassifier(loss='modified_huber', max_iter=50, tol=1e-3),
-          LogisticRegression(C=1.5, penalty='l1', fit_intercept=True),
-          SVC(kernel='poly', probability=True, C=0.01, gamma=0.1, degree=3, coef0=10.0),
+models = [SGDClassifier(loss='modified_huber', max_iter=50, tol=1e-3, random_state=2001),
+          LogisticRegression(C=1.5, penalty='l1', fit_intercept=True, solver='liblinear'),  # ElasticNet would rid us of overflows in the model
+          SVC(kernel='poly', probability=True, C=0.01, gamma=0.1, degree=3, coef0=10.0, random_state=2001),
           KNeighborsClassifier(),
           GaussianNB(),
-          DecisionTreeClassifier(max_depth=4),
-          GradientBoostingClassifier(loss='deviance', learning_rate=0.1, n_estimators=500, max_depth=3, max_features='log2'),
-          RandomForestClassifier(n_estimators=500, max_features=0.25, criterion='entropy'),
-          MLPClassifier()]
+          DecisionTreeClassifier(max_depth=4, random_state=2001),
+          GradientBoostingClassifier(loss='deviance', learning_rate=0.1, n_estimators=500, max_depth=3, max_features='log2', random_state=2001),
+          RandomForestClassifier(n_estimators=500, max_features=0.25, criterion='entropy', random_state=2001),
+          MLPClassifier(max_iter=200, n_iter_no_change=2, tol=1e-3, random_state=2001)]
 
 # We use Arff datasets on GitHub. But once OpenML loader will be part of scikit-learn:
 #   https://github.com/scikit-learn/scikit-learn/pull/11419
@@ -69,25 +69,33 @@ models = [SGDClassifier(loss='modified_huber', max_iter=50, tol=1e-3),
 #     sponge.arff                       Large impact
 #     tic-tac-toe.arff
 #     trains.arff                       Medium impact (note that this is a tiny dataset -> with high variance)
-datasets = [#'audiology.arff', 'autos.arff', 'breast.cancer.arff', 'bridges.version1.arff', 'bridges.version2.arff', 'car.arff',
-            # 'colic.arff',
-    'credit.a.arff', 'credit.g.arff', 'cylinder.bands.arff', 'flags.arff', 'heart.c.arff', 'heart.h.arff',
+datasets = ['audiology.arff', 'autos.arff', 'breast.cancer.arff', 'bridges.version1.arff', 'bridges.version2.arff', 'car.arff',
+            'colic.arff', 'credit.a.arff', 'credit.g.arff', 'cylinder.bands.arff', 'flags.arff', 'heart.c.arff', 'heart.h.arff',
             'hepatitis.arff', 'hypothyroid.arff', 'kr.vs.kp.arff', 'labor.arff', 'lymph.arff', 'mushroom.arff', 'nursery.arff',
             'postoperative.patient.data.arff', 'primary.tumor.arff', 'sick.arff', 'solar.flare1.arff', 'solar.flare2.arff',
             'soybean.arff', 'spectrometer.arff', 'sponge.arff', 'tic-tac-toe.arff', 'trains.arff', 'vote.arff', 'vowel.arff']
-# datasets = ['postoperative.patient.data.arff']
-# datasets = ['amazon.csv', 'carvana.csv', 'erasmus.csv', 'internetusage.csv', 'ipumsla97small.csv', 'kobe.csv', 'pbcseq.csv', 'phpvcoG8S.csv', 'westnile.csv']
 
-# We ignore encoders {BackwardDifferenceEncoder, HelmertEncoder, PolynomialEncoder and SumEncoder} because of:
-#   https://github.com/scikit-learn-contrib/categorical-encoding/issues/91
-encoders = [ category_encoders.TargetEncoderV2()]
+# We painstakingly initialize each encoder here because that gives us the freedom to initialize the
+# encoders with any setting we want.
+encoders = [ #category_encoders.BackwardDifferenceEncoder(),
+             category_encoders.BaseNEncoder(),
+             category_encoders.BinaryEncoder(),
+             category_encoders.GaussEncoder(),
+             category_encoders.HashingEncoder(),
+             # category_encoders.HelmertEncoder(),
+             category_encoders.LeaveOneOutEncoder(),
+             category_encoders.LogOddsRatioEncoder(),
+             category_encoders.MEstimateEncoder(),
+             category_encoders.OneHotEncoder(),
+             category_encoders.OrdinalEncoder(),
+             # category_encoders.PolynomialEncoder(),
+             # category_encoders.SumEncoder(),
+             category_encoders.TargetEncoder(),
+             category_encoders.WOEEncoder()]
 
 # Initialization
 if os.path.isfile('./output/result.csv'):
     os.remove('./output/result.csv')
-
-# Ok...
-warnings.filterwarnings('ignore')
 
 # Loop over datasets, then over encoders, and finally, over the models
 for dataset_name in datasets:
