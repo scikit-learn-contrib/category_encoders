@@ -27,7 +27,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-   mapping: list of dict
+    mapping: list of dict
         a mapping of class to label to use for the encoding, optional.
         the dict contains the keys 'col' and 'mapping'.
         the value of 'col' should be the feature name.
