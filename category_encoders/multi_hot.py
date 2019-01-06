@@ -120,7 +120,13 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             and n_features is the number of features.
         y : array-like, shape = [n_samples]
             Target values.
-
+        kwargs:
+            prior: str (option)
+                Represents which prior is used for ambiguous input when transform(normalize=True)
+                If prior is not included in kwargs, uniform prior will be selected
+            default_prior: dict (option)
+                Prior dictionary which is used for transformation when transform(normalize=True)
+                Columns that are not contained in default_prior are transformed by your prior setting
         Returns
         -------
 
@@ -128,6 +134,21 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             Returns self.
 
         """
+        # extract prior settings
+        self.prior_dict = None
+        if "prior" in kwargs:
+            if "default_prior" in kwargs:
+                if type(kwargs["default_prior"]) != dict:
+                    raise ValueError("The type of default_prior has to be dict")
+                self.prior_dict = kwargs["default_prior"]
+            if kwargs["prior"] == "train":
+                self.prior_setting = "train"
+            elif kwargs["prior"] == "uniform":
+                self.prior_setting = "uniform"
+            else:
+                raise ValueError('The values of kwargs, {} is not supported yet.'.format(kwargs["prior"]))
+        else:
+            self.prior_setting = "uniform"
 
         # first check the type
         X = util.convert_input(X).fillna(np.nan)
@@ -146,6 +167,13 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
 
         # Indicate no transformation has been applied yet
         self.mapping, self.col_index_mapping = self.generate_mapping(X, cols=self.cols, multiple_split_string=self.multiple_split_string)
+
+        # Train prior
+        if self.prior_setting == "train":
+            self.prior_dict = self.train_prior_dict(X, cols=self.cols, multiple_split_string=self.multiple_split_string, default_prior_dict=self.prior_dict)
+
+        if self.prior_dict is not None:
+            self.validate_prior_dict()
 
         X_temp = self.transform(X, override_return_df=True)
         self.feature_names = list(X_temp.columns)
@@ -173,7 +201,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         cols: list
             Represents categorical feature names
         handle_missing, handle_unknown: see __init__()
-        multiple_string_split: str
+        multiple_split_string: str
             Represents which string we should split input
         Returns
         -------
@@ -212,6 +240,59 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             mapping_out.append({'col': col, 'mapping': col_mappings, 'data_type': X[col].dtype, 'candidate_set': candidate_of_col, "val_newcolname_mapping": val_newcolname_mappings})
 
         return mapping_out, col_index_mapping
+
+    @staticmethod
+    def train_prior_dict(X_in, cols, multiple_split_string, default_prior_dict):
+        """
+        Parameters
+        ----------
+
+        X_in : array-like, shape = [n_samples, n_features]
+        mapping: list-like
+        cols: list
+            Represents categorical feature names
+        multiple_split_string: str
+            Represents which string we should split input
+        default_prior_dict: str
+            Default prior dict
+        Returns
+        -------
+
+        prior_dict : dict-like
+            dictionary used as prior (hyperprior is [1,1,1,...], which is reflected by '+ 1' for all value_counts())
+        """
+        X = X_in.copy(deep=True)
+        # dictionary which maps col name to index of ordinal mapping
+        prior_dict = {}
+
+        if cols is None:
+            cols = X.columns.values
+
+        for col in cols:
+            if default_prior_dict is not None and col in default_prior_dict:
+                prior_dict[col] = default_prior_dict[col]
+                continue
+            tmp_p_dict = (X[col].map(
+                lambda x: np.nan if type(x) == str and multiple_split_string in x else str(int(x)) if x == x and (type(x) == float or type(x) == int) else x).value_counts() + 1).to_dict()
+            prior_dict[col] = tmp_p_dict
+        return prior_dict
+
+    def validate_prior_dict(self):
+        """
+        Check whether prior dict is correct
+        """
+        prior_dict = {}
+        for col in self.cols:
+            if col not in self.prior_dict:
+                continue
+            tmp_p_dict = self.prior_dict[col]
+            tmp_mapping = self.mapping[self.col_index_mapping[col]]
+            tmp_p_dict[np.nan] = 1
+            set_diff = tmp_mapping["candidate_set"] - set(tmp_p_dict.keys())
+            if len(set_diff) > 0:
+                raise ValueError("prior dict does not cover candidate_set in {} column".format(col))
+            prior_dict[col] = tmp_p_dict
+        self.prior_dict = prior_dict
 
     def transform(self, X, override_return_df=False, normalize=True):
         """Perform the transformation to new categorical data.
@@ -296,11 +377,14 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
                     or (val != val and x != x)
                     or ((type(x) == int or type(x) == float) and x == x and val == str(int(x)))
                     else 0))
+                if normalize and self.prior_dict is not None and col in self.prior_dict:
+                    X[new_col_name] = X[new_col_name] * self.prior_dict[col][val]
                 new_columns.append(new_col_name)
 
             if normalize:
                 zero_index = X[new_columns].sum(axis=1) == 0
                 X.loc[~zero_index, new_columns] = X.loc[~zero_index, new_columns].div(X.loc[~zero_index, new_columns].sum(axis=1), axis=0)
+
             all_zero_index = (X[new_columns] != 0).sum(axis=1) == 0
             new_transformed_allzero_sum = (all_zero_index).sum()
             # ValueError judgement for handle_unknown
