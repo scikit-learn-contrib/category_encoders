@@ -1,10 +1,12 @@
 import pandas as pd
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
+from pandas.util.testing import assert_frame_equal
 
 import category_encoders.tests.test_utils as tu
 
 import category_encoders as encoders
+np.random.seed(123)
 
 mapping = {"A": "A|B", "B": "A|B", "C": "C", "D": "D"}
 
@@ -107,6 +109,52 @@ class TestMultiHotEncoderTestCase(TestCase):
         ambiguous_index = X_t_mask.extra_mask.map(lambda x: "|" in x)
         ambiguous_transformed_sum = ((out.loc[ambiguous_index, extra_transformed_columns] > 0).sum(axis=1) != 2).sum()
         self.assertEqual(ambiguous_transformed_sum, 0, "Every input whose extra_mask contains ambigous input (A|B) has to be transformed into [a,b,c] where a > 0 and b > 0 and c = 0")
+
+    def test_multi_hot_priors(self):
+        extra_D_index = X_t_mask["extra"] == "D"
+
+        enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask"])
+        enc.fit(X_mask, prior="uniform")
+        out = enc.transform(X_t_mask, normalize=True)
+        extra_mask_column_length = out.columns.str.extract("(extra_mask_*)_[1-9]+", expand=True).dropna().shape[0]
+        self.assertEqual(extra_mask_column_length, 3, "We have to contain 3 extra_mask columns")
+
+        enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask"])
+        enc.fit(X_mask)
+        out2 = enc.transform(X_t_mask, normalize=True)
+        assert_frame_equal(out, out2)
+
+        enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask"])
+        enc.fit(X_mask, prior="train")
+        out = enc.transform(X_t_mask, normalize=True)
+        extra_mask_column_length = out.columns.str.extract("(extra_mask_*)_[1-9]+", expand=True).dropna().shape[0]
+        self.assertEqual(extra_mask_column_length, 3, "We have to contain 3 extra_mask columns")
+
+        extra_mask_columns = ['extra_mask_1', 'extra_mask_2', 'extra_mask_3']
+        categorical_unnormalized_sum = (out.loc[~extra_D_index, extra_mask_columns].sum(axis=1) != 1).sum()
+        self.assertEqual(categorical_unnormalized_sum, 0, "Categorical features are transformed and normalized to 1")
+
+        default_prior_dict = {'extra_mask': {'A': 0.3, 'B': 0.6, 'C': 0.1}}
+        enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask"])
+        enc.fit(X_mask, prior="train", default_prior=default_prior_dict)
+        self.assertEqual(enc.prior_dict["extra_mask"]["A"], default_prior_dict["extra_mask"]["A"], "Default prior has to be preserved")
+
+        enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask", "extra_mask_withnan"])
+        enc.fit(X_mask, prior="train", default_prior=default_prior_dict)
+        self.assertEqual(enc.prior_dict["extra_mask"]["A"], default_prior_dict["extra_mask"]["A"], "Default prior has to be preserved")
+
+        out = enc.transform(X_t_mask, normalize=True)
+        extra_mask_columns = ['extra_mask_1', 'extra_mask_2', 'extra_mask_3']
+        categorical_unnormalized_sum = (out.loc[~extra_D_index, extra_mask_columns].sum(axis=1) != 1).sum()
+        self.assertEqual(categorical_unnormalized_sum, 0, "Categorical features are transformed and normalized to 1")
+
+        extra_mask_columns = ['extra_mask_withnan_1', 'extra_mask_withnan_2', 'extra_mask_withnan_3', 'extra_mask_withnan_4']
+        categorical_unnormalized_sum = (out.loc[~extra_D_index, extra_mask_columns].sum(axis=1) != 1).sum()
+        self.assertEqual(categorical_unnormalized_sum, 0, "Categorical features are transformed and normalized to 1")
+
+        out = enc.transform(X_t_mask, normalize=False)
+        categorical_unnormalized_sum = (out.loc[~extra_D_index, extra_mask_columns].sum(axis=1) != 1).sum()
+        self.assertNotEqual(categorical_unnormalized_sum, 0, "Categorical features are transformed and not normalized to 1")
 
     def test_multi_hot_fit_transform(self):
         enc = encoders.MultiHotEncoder(cols=["extra"])
