@@ -114,7 +114,7 @@ class TestMultiHotEncoderTestCase(TestCase):
         extra_D_index = X_t_mask["extra"] == "D"
 
         enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask"])
-        enc.fit(X_mask, prior="uniform")
+        enc.fit(X_mask, prior_setting="uniform")
         out = enc.transform(X_t_mask, normalize=True)
         extra_mask_column_length = out.columns.str.extract("(extra_mask_*)_[1-9]+", expand=True).dropna().shape[0]
         self.assertEqual(extra_mask_column_length, 3, "We have to contain 3 extra_mask columns")
@@ -125,7 +125,7 @@ class TestMultiHotEncoderTestCase(TestCase):
         assert_frame_equal(out, out2)
 
         enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask"])
-        enc.fit(X_mask, prior="train")
+        enc.fit(X_mask, prior_setting="train")
         out = enc.transform(X_t_mask, normalize=True)
         extra_mask_column_length = out.columns.str.extract("(extra_mask_*)_[1-9]+", expand=True).dropna().shape[0]
         self.assertEqual(extra_mask_column_length, 3, "We have to contain 3 extra_mask columns")
@@ -136,11 +136,11 @@ class TestMultiHotEncoderTestCase(TestCase):
 
         default_prior_dict = {'extra_mask': {'A': 0.3, 'B': 0.6, 'C': 0.1}}
         enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask"])
-        enc.fit(X_mask, prior="train", default_prior=default_prior_dict)
+        enc.fit(X_mask, prior_setting="train", default_prior=default_prior_dict)
         self.assertEqual(enc.prior_dict["extra_mask"]["A"], default_prior_dict["extra_mask"]["A"], "Default prior has to be preserved")
 
         enc = encoders.MultiHotEncoder(verbose=1, return_df=True, cols=["extra_mask", "extra_mask_withnan"])
-        enc.fit(X_mask, prior="train", default_prior=default_prior_dict)
+        enc.fit(X_mask, prior_setting="train", default_prior=default_prior_dict)
         self.assertEqual(enc.prior_dict["extra_mask"]["A"], default_prior_dict["extra_mask"]["A"], "Default prior has to be preserved")
 
         out = enc.transform(X_t_mask, normalize=True)

@@ -121,9 +121,9 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         y : array-like, shape = [n_samples]
             Target values.
         kwargs:
-            prior: str (option)
-                Represents which prior is used for ambiguous input when transform(normalize=True)
-                If prior is not included in kwargs, uniform prior will be selected
+            prior_setting: str (option)
+                Represents which prior setting is used for ambiguous input when transform(normalize=True)
+                If prior_setting is not included in kwargs, uniform prior will be selected
             default_prior: dict (option)
                 Prior dictionary which is used for transformation when transform(normalize=True)
                 Columns that are not contained in default_prior are transformed by your prior setting
@@ -136,17 +136,17 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         """
         # extract prior settings
         self.prior_dict = None
-        if "prior" in kwargs:
+        if "prior_setting" in kwargs:
             if "default_prior" in kwargs:
                 if type(kwargs["default_prior"]) != dict:
                     raise ValueError("The type of default_prior has to be dict")
                 self.prior_dict = kwargs["default_prior"]
-            if kwargs["prior"] == "train":
+            if kwargs["prior_setting"] == "train":
                 self.prior_setting = "train"
-            elif kwargs["prior"] == "uniform":
+            elif kwargs["prior_setting"] == "uniform":
                 self.prior_setting = "uniform"
             else:
-                raise ValueError('The values of kwargs, {} is not supported yet.'.format(kwargs["prior"]))
+                raise ValueError('The values of kwargs, {} is not supported yet.'.format(kwargs["prior_setting"]))
         else:
             self.prior_setting = "uniform"
 
