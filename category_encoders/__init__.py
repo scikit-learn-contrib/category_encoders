@@ -18,6 +18,7 @@ from category_encoders.basen import BaseNEncoder
 from category_encoders.leave_one_out import LeaveOneOutEncoder
 from category_encoders.target_encoder import TargetEncoder
 from category_encoders.woe import WOEEncoder
+from category_encoders.multi_hot import MultiHotEncoder
 
 __version__ = '1.3.0'
 
@@ -35,5 +36,6 @@ __all__ = [
     'BaseNEncoder',
     'LeaveOneOutEncoder',
     'TargetEncoder',
-    'WOEEncoder'
+    'WOEEncoder',
+    'MultiHotEncoder'
 ]
