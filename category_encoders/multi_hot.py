@@ -33,7 +33,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         if 'value', the transformed output of unknown values includes only '0'.
         if 'error', raise ValueError when the input contains unknown values.
         if 'return_nan', return np.nan for unknown values
-    multiple_split_string: str (default is '|')
+    or_delimiter: str (default is '|')
         Represents which string we should split input
 
     Example
@@ -95,7 +95,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value', handle_unknown='value', multiple_split_string="|"):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value', handle_unknown='value', or_delimiter="|"):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -107,7 +107,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         self.handle_missing = handle_missing
         self.handle_unknown = handle_unknown
         self.feature_names = None
-        self.multiple_split_string = multiple_split_string
+        self.or_delimiter = or_delimiter
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -166,11 +166,11 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
                 raise ValueError('Columns to be encoded can not contain null')
 
         # Indicate no transformation has been applied yet
-        self.mapping, self.col_index_mapping = self.generate_mapping(X, cols=self.cols, multiple_split_string=self.multiple_split_string)
+        self.mapping, self.col_index_mapping = self.generate_mapping(X, cols=self.cols, or_delimiter=self.or_delimiter)
 
         # Train prior
         if self.prior_setting == "train":
-            self.prior_dict = self.train_prior_dict(X, cols=self.cols, multiple_split_string=self.multiple_split_string, default_prior_dict=self.prior_dict)
+            self.prior_dict = self.train_prior_dict(X, cols=self.cols, or_delimiter=self.or_delimiter, default_prior_dict=self.prior_dict)
 
         if self.prior_dict is not None:
             self.validate_prior_dict()
@@ -191,7 +191,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         return self
 
     @staticmethod
-    def generate_mapping(X_in, mapping=None, cols=None, handle_missing='value', handle_unknown='value', multiple_split_string="|"):
+    def generate_mapping(X_in, mapping=None, cols=None, handle_missing='value', handle_unknown='value', or_delimiter="|"):
         """
         Parameters
         ----------
@@ -201,7 +201,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         cols: list
             Represents categorical feature names
         handle_missing, handle_unknown: see __init__()
-        multiple_split_string: str
+        or_delimiter: str
             Represents which string we should split input
         Returns
         -------
@@ -223,7 +223,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
             # append index mapping
             col_index_mapping[col] = i
             candidate_of_col = set()
-            tmp = (X[col].map(lambda x: candidate_of_col.update(x.split(multiple_split_string))
+            tmp = (X[col].map(lambda x: candidate_of_col.update(x.split(or_delimiter))
                 if type(x) == str
                 else candidate_of_col.add(str(int(x)))
                 if (type(x) == float or type(x) == int) and x == x
@@ -242,7 +242,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         return mapping_out, col_index_mapping
 
     @staticmethod
-    def train_prior_dict(X_in, cols, multiple_split_string, default_prior_dict):
+    def train_prior_dict(X_in, cols, or_delimiter, default_prior_dict):
         """
         Parameters
         ----------
@@ -251,7 +251,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
         mapping: list-like
         cols: list
             Represents categorical feature names
-        multiple_split_string: str
+        or_delimiter: str
             Represents which string we should split input
         default_prior_dict: str
             Default prior dict
@@ -273,7 +273,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
                 prior_dict[col] = default_prior_dict[col]
                 continue
             tmp_p_dict = (X[col].map(
-                lambda x: np.nan if type(x) == str and multiple_split_string in x else str(int(x)) if x == x and (type(x) == float or type(x) == int) else x).value_counts() + 1).to_dict()
+                lambda x: np.nan if type(x) == str and or_delimiter in x else str(int(x)) if x == x and (type(x) == float or type(x) == int) else x).value_counts() + 1).to_dict()
             prior_dict[col] = tmp_p_dict
         return prior_dict
 
@@ -373,7 +373,7 @@ class MultiHotEncoder(BaseEstimator, TransformerMixin):
                 val = column_mapping['val']
                 # multi-hot encoder
                 X[new_col_name] = (X[col].map(lambda x: 1
-                    if (type(x) == str and val in x.split(self.multiple_split_string))
+                    if (type(x) == str and val in x.split(self.or_delimiter))
                     or (val != val and x != x)
                     or ((type(x) == int or type(x) == float) and x == x and val == str(int(x)))
                     else 0))
