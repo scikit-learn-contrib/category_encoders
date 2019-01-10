@@ -133,17 +133,6 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
         if X.shape[0] != y.shape[0]:
             raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
-        # The label must be binary with values {0,1}
-        unique = y.unique()
-        if len(unique) != 2:
-            raise ValueError("The target column y must be binary. But the target contains " + str(len(unique)) + " unique value(s).")
-        if y.isnull().any():
-            raise ValueError("The target column y must not contain missing values.")
-        if np.max(unique) < 1:
-            raise ValueError("The target column y must be binary with values {0, 1}. Value 1 was not found in the target.")
-        if np.min(unique) > 0:
-            raise ValueError("The target column y must be binary with values {0, 1}. Value 0 was not found in the target.")
-
         self._dim = X.shape[1]
 
         # If columns aren't passed, just use every string column

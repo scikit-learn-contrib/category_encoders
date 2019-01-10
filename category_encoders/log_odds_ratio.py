@@ -7,6 +7,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
+from scipy import optimize
 
 __author__ = 'Jan Motl'
 
@@ -311,8 +312,11 @@ class LogOddsRatioEncoder(BaseEstimator, TransformerMixin):
                 result = scipy.optimize.minimize(get_best_sigma, x0=np.mean(sigma_k), args=(mu_k, sigma_k, K), bounds=[(0, np.inf)])
                 sigma = result.x[0]
 
-                # Empirical Bayes follows equation 7:
-                y_k = mu + (1 - (K - 3) * sigma_k ** 2 / ((K - 1) * (sigma ** 2 + sigma_k ** 2))) * (mu_k - mu)
+                # Empirical Bayes follows equation 7.
+                # However, James-Stein estimator behaves perversely when K < 3. Hence, we clip the B into interval <0,1>.
+                B = (K - 3) * sigma_k ** 2 / ((K - 1) * (sigma ** 2 + sigma_k ** 2))
+                B = B.clip(0,1)
+                y_k = mu + (1 - B) * (mu_k - mu)
 
                 # Convert Numpy vector back into Series
                 estimate = pd.Series(y_k, index=index)

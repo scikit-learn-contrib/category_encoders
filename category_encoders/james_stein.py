@@ -1,4 +1,6 @@
-"""Gauss empiric Bayes"""
+"""James-Stein"""
+import warnings
+
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -8,8 +10,8 @@ from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
 
-class GaussEncoder(BaseEstimator, TransformerMixin):
-    """Gauss empiric Bayes.
+class JamesSteinEncoder(BaseEstimator, TransformerMixin):
+    """James-Stein estimator.
 
     Parameters
     ----------
@@ -38,7 +40,7 @@ class GaussEncoder(BaseEstimator, TransformerMixin):
     >>> import pandas as pd
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
-    >>> y = bunch.target
+    >>> y = bunch.target > 22.5
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
     >>> enc = GaussEncoder(cols=['CHAS', 'RAD']).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
@@ -251,37 +253,37 @@ class GaussEncoder(BaseEstimator, TransformerMixin):
         self._sum = y.sum()
         self._count = y.count()
         prior = self._sum/self._count
-        global_var = y.var()
+        target_var = y.var()
 
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
             values = switch.get('mapping')
 
             # Calculate sum and count of the target for each unique value in the feature col
-            stats = y.groupby(X[col]).agg(['mean', 'var'])
+            stats = y.groupby(X[col]).agg(['mean', 'var', 'count'])
 
-            i_var = stats['var'].fillna(0)   # When we do not have more than 1 sample, assume 0 variance
-            unique_cnt = len(X[col].unique())
-
-            # See: Parametric Empirical Bayes Inference: Theory and Applications (Morris, 1983)
-            #   Equations 1.19 and 1.20.
+            # See: Computer Age Statistical Inference: Algorithms, Evidence, and Data Science (Bradley Efron & Trevor Hastie, 2016)
+            #   Equations 7.19 and 7.20.
             # Note: The equations assume normal distribution of the label. But our label is p(y|x),
             # which is definitely not normally distributed as probabilities are bound to lie on interval 0..1.
-            # Nevertheless, it seems to perform surprisingly well. This is in agreement with:
-            #   Data Analysis with Stein's Estimator and Its Generalizations (Efron & Morris, 1975)
-            # The equations are similar to James-Stein estimator, as listed in:
-            #   Stein's Paradox in Statistics (Efron & Morris, 1977)
-            # Or:
-            #   Computer Age Statistical Inference: Algorithms, Evidence, and Data Science (Efron & Hastie, 2016)
-            #   Equations 7.19 and 7.20.
-            # The difference is that they have equal count of observations per estimated variable, while we generally
-            # do not have that. Nice discussion about that is given at:
-            #   http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/
-            smoothing = i_var / (global_var + i_var) * (unique_cnt-3) / (unique_cnt-1)
-            smoothing = 1 - smoothing
-            smoothing = smoothing.clip(lower=0, upper=1)   # Smoothing should be in the interval <0,1>
+            # We make this approximation because Efron does it as well.
 
-            estimate = smoothing*(stats['mean']) + (1-smoothing)*prior
+            # Equation 7.19
+            # Explanation of the equation:
+            #   https://stats.stackexchange.com/questions/191444/variance-in-estimating-p-for-a-binomial-distribution
+            if stats['count'].var() > 0:
+                warnings.warn('The pooled model assumes that each category is observed exactly N times. This was violated in' + str(col) +'. Consider comparing the accuracy of this model to "independent" model.')
+            # This is a parametric estimate of var(p) in the binomial distribution.
+            # We do not use it because we also want to support non-binary targets.
+            # The difference in the estimates is small.
+            #   variance = prior * (1 - prior) / stats['count'].mean()
+            # This is a squared estimate of standard error of the mean:
+            #   https://en.wikipedia.org/wiki/Standard_error
+            variance = target_var/(stats['count'].mean())
+
+            # Equation 7.20
+            SSE = ((stats['mean']-prior)**2).sum() # Sum of Squared Errors
+            estimate = prior + (1 - ((len(stats['count'])-3)*variance) / SSE) * (stats['mean'] - prior)
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
             # estimate[stats['count'] == 1] = 0
