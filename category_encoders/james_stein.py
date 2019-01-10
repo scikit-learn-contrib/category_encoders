@@ -13,6 +13,39 @@ __author__ = 'Jan Motl'
 class JamesSteinEncoder(BaseEstimator, TransformerMixin):
     """James-Stein estimator.
 
+    For feature value i, James-Stein estimator returns a weighted average of:
+        1) The mean target value for the observed feature value i.
+        2) The mean target value (regardless of the feature value).
+    This can be written as:
+        JS_i = (1-B)*mean(y_i) + B*mean(y)
+    The question is, what should be the weight B?
+    If we put too much weight on the conditional mean value, we will overfit.
+    If we put too much weight on the global mean, we will underfit.
+    The canonical solution in machine learning is to perform cross-validation.
+    However, Charles Stein came with a closed-form solution to the problem.
+    The intuition is: If the estimate of mean(y_i) is unreliable (y_i has high variance),
+    we should put more weight on mean(y). Stein put it into an equation as:
+        B = var(y_i) / (var(y_i)+var(y))
+    The only remaining issue is that we do not know var(y), let alone var(y_i).
+    Hence, we have to estimate the variances. But how can we reliably estimate the
+    variances, when we already struggle with the estimation of the mean values?!
+    There are multiple solutions:
+        1) If we have the same count of observations for each feature value i and all
+        y_i are close to each other, we can pretend that all var(y_i) are identical.
+        This is called a pooled model.
+        2) If the observation counts are not equal, it makes sense to replace the variances
+        with squared standard errors, which penalize small observation counts:
+            SE^2 = var(y)/count(y)
+        This is called an independent model.
+
+    James-Stein estimator has, however, one practical limitation - it was defined
+    only for normal distributions. If you want to apply it for binary classification,
+    which allows only values {0, 1}, it is better to first convert the mean target value
+    from the bound interval <0,1> into an unbounded interval by replacing mean(y)
+    with log-odds ratio:
+        log-odds_ratio_i = log(mean(y_i)/mean(y_not_i))
+    This is called binary model.
+
     Parameters
     ----------
 
@@ -28,6 +61,8 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
         options are 'return_nan', 'error' and 'value', defaults to 'value', which returns the prior probability.
     handle_unknown: str
         options are 'return_nan', 'error' and 'value', defaults to 'value', which returns the prior probability.
+    model: str
+        options are 'pooled', 'binary' and 'independent', defaults to 'independent'.
     randomized: bool,
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float
@@ -271,8 +306,8 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             # Equation 7.19
             # Explanation of the equation:
             #   https://stats.stackexchange.com/questions/191444/variance-in-estimating-p-for-a-binomial-distribution
-            if stats['count'].var() > 0:
-                warnings.warn('The pooled model assumes that each category is observed exactly N times. This was violated in' + str(col) +'. Consider comparing the accuracy of this model to "independent" model.')
+            # if stats['count'].var() > 0:
+            #     warnings.warn('The pooled model assumes that each category is observed exactly N times. This was violated in "' + str(col) +'" column. Consider comparing the accuracy of this model to "independent" model.')
             # This is a parametric estimate of var(p) in the binomial distribution.
             # We do not use it because we also want to support non-binary targets.
             # The difference in the estimates is small.
@@ -283,10 +318,17 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
 
             # Equation 7.20
             SSE = ((stats['mean']-prior)**2).sum() # Sum of Squared Errors
-            estimate = prior + (1 - ((len(stats['count'])-3)*variance) / SSE) * (stats['mean'] - prior)
+            if SSE > 0:
+                B = ((len(stats['count'])-3)*variance) / SSE
+                B = B.clip(0,1)
+                estimate = prior + (1 - B) * (stats['mean'] - prior)
+            else:
+                estimate = stats['mean']
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
-            # estimate[stats['count'] == 1] = 0
+            # This works better than: estimate[stats['count'] == 1] = prior
+            if len(stats['mean'])==self._count:
+                estimate[:] = prior
 
             if self.handle_unknown == 'return_nan':
                 estimate.loc[-1] = np.nan

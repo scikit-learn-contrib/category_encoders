@@ -324,7 +324,8 @@ class LogOddsRatioEncoder(BaseEstimator, TransformerMixin):
                 estimate = pd.Series(0, index=values)
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
-            # estimate[stats['count'] == 1] = 0
+            if K==self._count:
+                estimate[:] = 0
 
             if self.handle_unknown == 'return_nan':
                 estimate.loc[-1] = np.nan

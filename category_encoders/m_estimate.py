@@ -271,7 +271,8 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
             estimate = (stats['sum'] + prior * self.m) / (self._sum + self.m)
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
-            estimate[stats['count'] == 1] = 0
+            if len(stats['count'])==self._count:
+                estimate[:] = prior
 
             if self.handle_unknown == 'return_nan':
                 estimate.loc[-1] = np.nan

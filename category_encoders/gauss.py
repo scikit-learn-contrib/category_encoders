@@ -284,7 +284,8 @@ class GaussEncoder(BaseEstimator, TransformerMixin):
             estimate = smoothing*(stats['mean']) + (1-smoothing)*prior
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
-            # estimate[stats['count'] == 1] = 0
+            if len(stats['mean'])==self._count:
+                estimate[:] = prior
 
             if self.handle_unknown == 'return_nan':
                 estimate.loc[-1] = np.nan
