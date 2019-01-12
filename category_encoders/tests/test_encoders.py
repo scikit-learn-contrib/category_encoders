@@ -25,6 +25,10 @@ y = pd.DataFrame(np_y)
 y_t = pd.DataFrame(np_y_t)
 
 
+# turn warnings like division by zero into errors
+np.seterr(all='raise')
+
+
 # this class utilises parametrised tests where we loop over different encoders
 class TestEncoders(TestCase):
 
@@ -361,7 +365,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 # Target encoders also need y
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder']:
+                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder','JamesSteinEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -376,7 +380,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
                 # Target encoders also need y
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder']:
+                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder','JamesSteinEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:

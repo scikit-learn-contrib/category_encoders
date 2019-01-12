@@ -35,7 +35,7 @@ def create_dataset(n_rows=1000, extras=False, has_none=True):
     """
     Creates a dataset with some categorical variables
     """
-
+    random.seed(2001)
     ds = [[
         random.random(),                                                                        # Floats
         random.choice([float('nan'), float('inf'), float('-inf'), -0, 0, 1, -1, math.pi]),      # Floats with edge scenarios

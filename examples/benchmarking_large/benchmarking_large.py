@@ -46,15 +46,15 @@ models = [SGDClassifier(loss='modified_huber', max_iter=50, tol=1e-3, random_sta
 # We also ignore 'splice.arff', 'anneal.arff', 'anneal.orig.arff' due to high runtime.
 # Datasets sensitive to amount of regularization are:
 #     breast.cancer.arff                Medium impact
-#     bridges.version1.arff
-#     bridges.version2.arff
+#     bridges.version1.arff                             (contains an ID)
+#     bridges.version2.arff                             (contains an ID)
 #     car.arff
 #     colic.arff
-#     cylinder.bands.arff               Medium impact
+#     cylinder.bands.arff               Medium impact   (contains a constant column + almost an ID)
 #     flags.arff                        Large impact
 #     heart.c.arff
 #     hepatitis.arff
-#     hypothyroid.arff
+#     hypothyroid.arff                                  (contains a constant column)
 #     kr.vs.kp.arff
 #     labor.arff                        Large impact
 #     lymph.arff
@@ -65,10 +65,10 @@ models = [SGDClassifier(loss='modified_huber', max_iter=50, tol=1e-3, random_sta
 #     solar.flare2.arff                 Medium impact
 #     soybean.arff                      Large impact
 #     sick.arff
-#     spectrometer.arff                 Large impact
+#     spectrometer.arff                 Large impact    (contains an ID)
 #     sponge.arff                       Large impact
 #     tic-tac-toe.arff
-#     trains.arff                       Medium impact (note that this is a tiny dataset -> with high variance)
+#     trains.arff                       Medium impact   (tiny dataset -> with high variance)
 datasets = ['audiology.arff', 'autos.arff', 'breast.cancer.arff', 'bridges.version1.arff', 'bridges.version2.arff', 'car.arff',
             'colic.arff', 'credit.a.arff', 'credit.g.arff', 'cylinder.bands.arff', 'flags.arff', 'heart.c.arff', 'heart.h.arff',
             'hepatitis.arff', 'hypothyroid.arff', 'kr.vs.kp.arff', 'labor.arff', 'lymph.arff', 'mushroom.arff', 'nursery.arff',
@@ -80,11 +80,10 @@ datasets = ['audiology.arff', 'autos.arff', 'breast.cancer.arff', 'bridges.versi
 encoders = [ #category_encoders.BackwardDifferenceEncoder(),
              category_encoders.BaseNEncoder(),
              category_encoders.BinaryEncoder(),
-             category_encoders.GaussEncoder(),
              category_encoders.HashingEncoder(),
              # category_encoders.HelmertEncoder(),
+             category_encoders.JamesSteinEncoder(),
              category_encoders.LeaveOneOutEncoder(),
-             category_encoders.LogOddsRatioEncoder(),
              category_encoders.MEstimateEncoder(),
              category_encoders.OneHotEncoder(),
              category_encoders.OrdinalEncoder(),
