@@ -73,6 +73,39 @@ class TestJamesSteinEncoder(TestCase):
         self.assertTrue(all(np.var(out)==0),
                           'This is not a standard behaviour of James-Stein estimator. But it helps a lot if we treat id-like attributes as non-predictive.')
 
+        ####### Beta
+        def test_continuous_target_pooled(self):
+            X = np.array(['a', 'b', 'b', 'c'])
+            y = np.array([-10, 0, 0, 10])
+            out = encoders.JamesSteinEncoder(return_df=False, model='beta').fit_transform(X, y)
+            self.assertEqual([-10, 0, 0, 10],
+                             list(out),
+                             'The model assumes normal distribution -> we support real numbers')
+
+        def test_large_samples_pooled(self):
+            X = np.array(['a', 'b', 'b', 'c', 'd'])
+            y = np.array([1, 0, 1, 0, 0])
+            out = encoders.JamesSteinEncoder(return_df=False, model='beta').fit_transform(X, y)
+            self.assertNotEqual([1, 0.5, 0.5, 0, 0],
+                                list(out),
+                                'Shrinkage should kick in with 4 or more unique values')
+            self.assertTrue(np.max(out) <= 1, 'This should still be a probability')
+            self.assertTrue(np.min(out) >= 0, 'This should still be a probability')
+
+        def test_ids_small_pooled(self):
+            X = np.array(['a', 'b', 'c'])
+            y = np.array([1, 0, 1])
+            out = encoders.JamesSteinEncoder(model='beta').fit_transform(X, y)
+            self.assertTrue(all(np.var(out) == 0),
+                            'This is not a standard behaviour of James-Stein estimator. But it helps a lot if we treat id-like attributes as non-predictive.')
+
+        def test_ids_large_pooled(self):
+            X = np.array(['a', 'b', 'c', 'd', 'e'])
+            y = np.array([1, 0, 1, 0, 1])
+            out = encoders.JamesSteinEncoder(model='beta').fit_transform(X, y)
+            self.assertTrue(all(np.var(out) == 0),
+                            'This is not a standard behaviour of James-Stein estimator. But it helps a lot if we treat id-like attributes as non-predictive.')
+
     ####### Binary
     def test_small_samples_binary(self):
         X = np.array(['a', 'b', 'b'])

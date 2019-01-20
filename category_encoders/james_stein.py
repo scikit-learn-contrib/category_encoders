@@ -44,7 +44,10 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
     from the bound interval <0,1> into an unbounded interval by replacing mean(y)
     with log-odds ratio:
         log-odds_ratio_i = log(mean(y_i)/mean(y_not_i))
-    This is called binary model.
+    This is called binary model. The estimation of parameters of this model is, however,
+    tricky and sometimes it fails fatally. In these situations, it is better to use beta
+    model, which generally delivers slightly worse accuracy than binary model but does
+    not suffer from fatal failures.
 
     Parameters
     ----------
@@ -62,7 +65,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
     handle_unknown: str
         options are 'return_nan', 'error' and 'value', defaults to 'value', which returns the prior probability.
     model: str
-        options are 'pooled', 'binary' and 'independent', defaults to 'independent'.
+        options are 'pooled', 'beta', 'binary' and 'independent', defaults to 'independent'.
     randomized: bool,
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float
@@ -112,7 +115,10 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
     .. [3] Shrinkage Estimation of Log-odds Ratios for Comparing Mobility Tables, from
     https://journals.sagepub.com/doi/abs/10.1177/0081175015570097
 
-    .. [4] Stein's Paradox in Statistics, from
+    .. [4] Stein’s paradox and group rationality, from
+    www.philos.rug.nl/~romeyn/presentation/2017_romeijn_-_Paris_Stein.pdf
+
+    .. [5] Stein's Paradox in Statistics, from
     http://statweb.stanford.edu/~ckirby/brad/other/Article1977.pdf
 
     """
@@ -193,6 +199,8 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             self.mapping = self._train_independent(X_ordinal, y)
         elif self.model == 'pooled':
             self.mapping = self._train_pooled(X_ordinal, y)
+        elif self.model == 'beta':
+            self.mapping = self._train_beta(X_ordinal, y)
         elif self.model == 'binary':
             # The label must be binary with values {0,1}
             unique = y.unique()
@@ -320,7 +328,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             values = switch.get('mapping')
 
             # Calculate sum and count of the target for each unique value in the feature col
-            stats = y.groupby(X[col]).agg(['mean', 'var', 'count'])
+            stats = y.groupby(X[col]).agg(['mean', 'count'])
 
             # See: Computer Age Statistical Inference: Algorithms, Evidence, and Data Science (Bradley Efron & Trevor Hastie, 2016)
             #   Equations 7.19 and 7.20.
@@ -425,7 +433,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             elif self.handle_missing == 'value':
                 estimate.loc[-2] = prior
 
-            # Store the m-probability estimate for transform() function
+            # Store the estimate for transform() function
             mapping[col] = estimate
 
         return mapping
@@ -511,6 +519,47 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
                 estimate.loc[values.loc[np.nan]] = np.nan
             elif self.handle_missing == 'value':
                 estimate.loc[-2] = 0
+
+            # Store the estimate for transform() function
+            mapping[col] = estimate
+
+        return mapping
+
+    def _train_beta(self, X, y):
+        # Implemented based on reference [4]
+
+        # Initialize the output
+        mapping = {}
+
+        # Calculate global statistics
+        prior = y.mean()
+        global_count = len(y)
+
+        for switch in self.ordinal_encoder.category_mapping:
+            col = switch.get('col')
+            values = switch.get('mapping')
+
+            # Calculate sum and count of the target for each unique value in the feature col
+            stats = y.groupby(X[col]).agg(['mean', 'count'])
+
+            # See: Stein’s paradox and group rationality (Romeijn, 2017), page 14
+            smoothing = stats['count'] / (stats['count'] + global_count)
+
+            estimate = smoothing*(stats['mean']) + (1-smoothing)*prior
+
+            # Ignore unique values. This helps to prevent overfitting on id-like columns
+            if len(stats['mean'])==global_count:
+                estimate[:] = prior
+
+            if self.handle_unknown == 'return_nan':
+                estimate.loc[-1] = np.nan
+            elif self.handle_unknown == 'value':
+                estimate.loc[-1] = prior
+
+            if self.handle_missing == 'return_nan':
+                estimate.loc[values.loc[np.nan]] = np.nan
+            elif self.handle_missing == 'value':
+                estimate.loc[-2] = prior
 
             # Store the estimate for transform() function
             mapping[col] = estimate
