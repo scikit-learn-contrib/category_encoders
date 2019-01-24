@@ -1,5 +1,6 @@
 import doctest
 import os
+import warnings
 from datetime import timedelta
 
 import numpy as np
@@ -27,6 +28,9 @@ y_t = pd.DataFrame(np_y_t)
 
 # turn warnings like division by zero into errors
 np.seterr(all='raise')
+
+# turn non-Numpy warnings into errors
+warnings.filterwarnings('error')
 
 
 # this class utilises parametrised tests where we loop over different encoders
@@ -272,7 +276,8 @@ class TestEncoders(TestCase):
                 result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
                 columns = result.columns.values
 
-                self.assertTrue('target' in columns[-1], "Target must be the last column as in the input")
+                self.assertTrue('target' in columns[-1],
+                                "Target must be the last column as in the input. This is a tricky test because 'y' is named 'target' as well.")
 
     def test_tmp_column_name(self):
         binary_cat_example = pd.DataFrame(
@@ -365,7 +370,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 # Target encoders also need y
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder','JamesSteinEncoder']:
+                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder','JamesSteinEncoder', 'CatBoostEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -380,7 +385,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
                 # Target encoders also need y
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder','JamesSteinEncoder']:
+                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','GaussEncoder','MEstimateEncoder','LogOddsRatioEncoder','JamesSteinEncoder','CatBoostEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:

@@ -20,6 +20,7 @@ from category_encoders.target_encoder import TargetEncoder
 from category_encoders.woe import WOEEncoder
 from category_encoders.m_estimate import MEstimateEncoder
 from category_encoders.james_stein import JamesSteinEncoder
+from category_encoders.cat_boost import CatBoostEncoder
 
 __version__ = '1.3.0'
 
@@ -39,5 +40,6 @@ __all__ = [
     'TargetEncoder',
     'WOEEncoder',
     'MEstimateEncoder',
-    'JamesSteinEncoder'
+    'JamesSteinEncoder',
+    'CatBoostEncoder'
 ]
