@@ -115,12 +115,10 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
 
         """
 
-        # first check the type
+        # unite the input into pandas types
         X = util.convert_input(X)
-        if isinstance(y, pd.DataFrame):
-            y = y.iloc[:, 0].astype(float)
-        else:
-            y = pd.Series(y, name='target', index=X.index)
+        y = util.convert_input_vector(y, X.index).astype(float)
+
         if X.shape[0] != y.shape[0]:
             raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -185,7 +183,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
-        # first check the type
+        # unite the input into pandas types
         X = util.convert_input(X)
 
         # then make sure that it is the right size
@@ -194,10 +192,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
 
         # if we are encoding the training data, we have to check the target
         if y is not None:
-            if isinstance(y, pd.DataFrame):
-                y = y.iloc[:, 0].astype(float)
-            else:
-                y = pd.Series(y, name='target', index=X.index)
+            y = util.convert_input_vector(y, X.index).astype(float)
             if X.shape[0] != y.shape[0]:
                 raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
