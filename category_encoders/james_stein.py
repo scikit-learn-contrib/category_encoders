@@ -115,7 +115,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
     .. [3] Shrinkage Estimation of Log-odds Ratios for Comparing Mobility Tables, from
     https://journals.sagepub.com/doi/abs/10.1177/0081175015570097
 
-    .. [4] Stein’s paradox and group rationality, from
+    .. [4] Stein's paradox and group rationality, from
     www.philos.rug.nl/~romeyn/presentation/2017_romeijn_-_Paris_Stein.pdf
 
     .. [5] Stein's Paradox in Statistics, from
