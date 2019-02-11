@@ -15,6 +15,14 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
     values "on-the-fly". Consequently, the values naturally vary
     during the training phase and it is not necessary to add random noise.
 
+    Beware, the training data have to be randomly permutated. E.g.:
+        # Random permutation
+        perm = np.random.permutation(len(X))
+        X = X.iloc[perm].reset_index(drop=True)
+        y = y.iloc[perm].reset_index(drop=True)
+    This is necessary because some datasets are sorted based on the target
+    value and this coder encodes the features on-the-fly in a single pass.
+
     Parameters
     ----------
 

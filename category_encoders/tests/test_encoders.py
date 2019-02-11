@@ -406,3 +406,16 @@ class TestEncoders(TestCase):
                 enc.fit(X, y)
                 out = enc.transform(X_t)
                 self.assertEqual(set(enc.get_feature_names()), set(out.columns))
+
+    def test_truncated_index(self):
+        # see: https://github.com/scikit-learn-contrib/categorical-encoding/issues/152
+        data = pd.DataFrame(data={'x': ['A', 'B', 'C', 'A', 'B'], 'y': [1, 0, 1, 0, 1]})
+        data = data.iloc[2:5]
+        data2 = pd.DataFrame(data={'x': ['C', 'A', 'B'], 'y': [1, 0, 1]})
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                result = enc.fit_transform(data.x, data.y)
+                enc2 = getattr(encoders, encoder_name)()
+                result2 = enc2.fit_transform(data2.x, data2.y)
+                self.assertTrue((result.values == result2.values).all())
