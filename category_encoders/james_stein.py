@@ -443,7 +443,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
         global_count = y.count()
 
         # Iterative estimation of mu and sigma as given on page 9.
-        # This problem is traditionally solved with Newton–Raphson method:
+        # This problem is traditionally solved with Newton-Raphson method:
         #   https://en.wikipedia.org/wiki/Newton%27s_method
         # But we just use sklearn minimizer.
         def get_best_sigma(sigma, mu_k, sigma_k, K):
