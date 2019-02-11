@@ -536,7 +536,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             # Calculate sum and count of the target for each unique value in the feature col
             stats = y.groupby(X[col]).agg(['mean', 'count'])
 
-            # See: Stein’s paradox and group rationality (Romeijn, 2017), page 14
+            # See: Stein's paradox and group rationality (Romeijn, 2017), page 14
             smoothing = stats['count'] / (stats['count'] + global_count)
 
             estimate = smoothing*(stats['mean']) + (1-smoothing)*prior
