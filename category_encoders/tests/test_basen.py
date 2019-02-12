@@ -6,8 +6,6 @@ import warnings
 
 
 class TestBaseNEncoder(TestCase):
-    def setUp(self):
-        warnings.catch_warnings(record=True)
 
     def test_fit_transform_have_base_2_expect_Correct_Encoding(self):
         train = pd.Series(['a', 'b', 'c', 'd'])

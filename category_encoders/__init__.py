@@ -22,7 +22,7 @@ from category_encoders.m_estimate import MEstimateEncoder
 from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.cat_boost import CatBoostEncoder
 
-__version__ = '1.3.0'
+__version__ = '2.0.0'
 
 __author__ = 'willmcginnis'
 
@@ -41,5 +41,6 @@ __all__ = [
     'WOEEncoder',
     'MEstimateEncoder',
     'JamesSteinEncoder',
-    'CatBoostEncoder'
+    'CatBoostEncoder',
+    'LeaveOneOutEncoderV2'
 ]
