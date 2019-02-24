@@ -70,41 +70,41 @@ Examples
 --------
 There are two types of encoders: unsupervised and supervised. An unsupervised example:
 ```python
-    from category_encoders import *
-    import pandas as pd
-    from sklearn.datasets import load_boston
+from category_encoders import *
+import pandas as pd
+from sklearn.datasets import load_boston
 
-    # prepare some data
-    bunch = load_boston()
-    y = bunch.target
-    X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+# prepare some data
+bunch = load_boston()
+y = bunch.target
+X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
 
-    # use binary encoding to encode two categorical features
-    enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X)
+# use binary encoding to encode two categorical features
+enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X)
 
-    # transform the dataset
-    numeric_dataset = enc.transform(X)
+# transform the dataset
+numeric_dataset = enc.transform(X)
 ```
 
 And a supervised example:
 ```python
-    from category_encoders import *
-    import pandas as pd
-    from sklearn.datasets import load_boston
+from category_encoders import *
+import pandas as pd
+from sklearn.datasets import load_boston
 
-    # prepare some data
-    bunch = load_boston()
-    y_train = bunch.target[0:250]
-    y_test = bunch.target[250:506]
-    X_train = pd.DataFrame(bunch.data[0:250], columns=bunch.feature_names)
-    X_test = pd.DataFrame(bunch.data[250:506], columns=bunch.feature_names)
+# prepare some data
+bunch = load_boston()
+y_train = bunch.target[0:250]
+y_test = bunch.target[250:506]
+X_train = pd.DataFrame(bunch.data[0:250], columns=bunch.feature_names)
+X_test = pd.DataFrame(bunch.data[250:506], columns=bunch.feature_names)
 
-    # use target encoding to encode two categorical features
-    enc = TargetEncoder(cols=['CHAS', 'RAD']).fit(X_train, y_train)
+# use target encoding to encode two categorical features
+enc = TargetEncoder(cols=['CHAS', 'RAD']).fit(X_train, y_train)
 
-    # transform the datasets
-    training_numeric_dataset = enc.transform(X_train, y_train)
-    testing_numeric_dataset = enc.transform(X_test)
+# transform the datasets
+training_numeric_dataset = enc.transform(X_train, y_train)
+testing_numeric_dataset = enc.transform(X_test)
 ```
 
 In the examples directory, there is an example script used to benchmark
