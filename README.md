@@ -107,13 +107,7 @@ training_numeric_dataset = enc.transform(X_train, y_train)
 testing_numeric_dataset = enc.transform(X_test)
 ```
 
-In the examples directory, there is an example script used to benchmark
-different encoding techniques on various datasets.
-
-The datasets used in the examples are car, mushroom, and splice datasets 
-from the UCI dataset repository, found here:
-
-[datasets](https://archive.ics.uci.edu/ml/datasets)
+Additional examples and benchmarks can be found in the `examples` directory.
 
 Contributing
 ------------
