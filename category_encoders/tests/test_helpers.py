@@ -43,7 +43,7 @@ def create_dataset(n_rows=1000, extras=False, has_none=True):
         random.choice([float('nan'), float('inf'), float('-inf'), -0, 0, 1, -1, math.pi]),      # Floats with edge scenarios
         row,                                                                                    # Unique integers
         str(row),                                                                               # Unique strings
-        random.choice(['A']),                                                                   # Invariant
+        random.choice(['A', 'B']) if extras else 'A',                                           # Invariant in the training data
         random.choice(['A', 'B_b', 'C_c_c']),                                                   # Strings with underscores to test reverse_dummies()
         random.choice(['A', 'B', 'C', None]) if has_none else random.choice(['A', 'B', 'C']),   # None
         random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),      # With a new string value
