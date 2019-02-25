@@ -2,17 +2,17 @@ import pandas as pd
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
 import warnings
-import category_encoders.tests.test_utils as tu
+import category_encoders.tests.test_helpers as th
 
 import category_encoders as encoders
 
 
-np_X = tu.create_array(n_rows=100)
-np_X_t = tu.create_array(n_rows=50, extras=True)
+np_X = th.create_array(n_rows=100)
+np_X_t = th.create_array(n_rows=50, extras=True)
 np_y = np.random.randn(np_X.shape[0]) > 0.5
 np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
-X = tu.create_dataset(n_rows=100)
-X_t = tu.create_dataset(n_rows=50, extras=True)
+X = th.create_dataset(n_rows=100)
+X_t = th.create_dataset(n_rows=50, extras=True)
 y = pd.DataFrame(np_y)
 y_t = pd.DataFrame(np_y_t)
 
@@ -54,14 +54,14 @@ class TestOneHotEncoderTestCase(TestCase):
         self.assertIn('extra_-1', out.columns.values)
 
         # test inverse_transform
-        X_i = tu.create_dataset(n_rows=100, has_none=False)
-        X_i_t = tu.create_dataset(n_rows=50, has_none=False)
+        X_i = th.create_dataset(n_rows=100, has_none=False)
+        X_i_t = th.create_dataset(n_rows=50, has_none=False)
         cols = ['underscore', 'none', 'extra', 321, 'categorical']
 
         enc = encoders.OneHotEncoder(verbose=1, use_cat_names=True, cols=cols)
         enc.fit(X_i)
         obtained = enc.inverse_transform(enc.transform(X_i_t))
-        tu.verify_inverse_transform(X_i_t, obtained)
+        th.verify_inverse_transform(X_i_t, obtained)
 
     def test_fit_transform_HaveMissingValuesAndUseCatNames_ExpectCorrectValue(self):
         encoder = encoders.OneHotEncoder(cols=[0], use_cat_names=True, handle_unknown='indicator')

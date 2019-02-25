@@ -22,7 +22,9 @@ Encoding Methods
  * Binary [5]
  * Hashing [1]
  * Helmert Contrast [2][3]
+ * James-Stein Estimator [9]
  * LeaveOneOut [4]
+ * M-estimator [7]
  * Ordinal [2][3]
  * One-Hot [2][3]
  * Polynomial Contrast [2][3]
@@ -30,13 +32,12 @@ Encoding Methods
  * Target Encoding [7]
  * Weight of Evidence [8]
 
-Usage
+Installation
 -----
 
-The package by itself comes with a single module and an estimator. Before
-installing the module you will need `numpy`, `statsmodels`, and `scipy`.
+The package requires: `numpy`, `statsmodels`, and `scipy`.
 
-To install the module execute:
+To install the package, execute:
 
 ```shell
 $ python setup.py install
@@ -44,60 +45,69 @@ $ python setup.py install
 
 or 
 
-```
+```shell
 pip install category_encoders
 ```
 
 or
 
-```
+```shell
 conda install -c conda-forge category_encoders
 ```
-    
-To use:
 
-    import category_encoders as ce
-    
-    encoder = ce.BackwardDifferenceEncoder(cols=[...])
-    encoder = ce.BaseNEncoder(cols=[...])
-    encoder = ce.BinaryEncoder(cols=[...])
-    encoder = ce.HashingEncoder(cols=[...])
-    encoder = ce.HelmertEncoder(cols=[...])
-    encoder = ce.LeaveOneOutEncoder(cols=[...])
-    encoder = ce.OneHotEncoder(cols=[...])
-    encoder = ce.OrdinalEncoder(cols=[...])
-    encoder = ce.PolynomialEncoder(cols=[...])
-    encoder = ce.SumEncoder(cols=[...])
-    encoder = ce.TargetEncoder(cols=[...])
-    encoder = ce.WOEEncoder(cols=[...])
+To install the development version, you may use:
 
-All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. Supported input formats include numpy arrays and pandas dataframes. If the cols parameter isn't passed, all columns with object or pandas categorical data type will be encoded. Please see the docs for transformer-specific configuration options.
+```shell
+pip install --upgrade git+https://github.com/scikit-learn-contrib/categorical-encoding
+```
+
+Usage
+-----
+
+All of the encoders are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. Supported input formats include numpy arrays and pandas dataframes. If the cols parameter isn't passed, all columns with object or pandas categorical data type will be encoded. Please see the docs for transformer-specific configuration options.
 
 Examples
 --------
+There are two types of encoders: unsupervised and supervised. An unsupervised example:
+```python
+from category_encoders import *
+import pandas as pd
+from sklearn.datasets import load_boston
 
-    from category_encoders import *
-    import pandas as pd
-    from sklearn.datasets import load_boston
+# prepare some data
+bunch = load_boston()
+y = bunch.target
+X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
 
-    # prepare some data
-    bunch = load_boston()
-    y = bunch.target
-    X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+# use binary encoding to encode two categorical features
+enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X)
 
-    # use binary encoding to encode two categorical features
-    enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+# transform the dataset
+numeric_dataset = enc.transform(X)
+```
 
-    # transform the dataset
-    numeric_dataset = enc.transform(X)
+And a supervised example:
+```python
+from category_encoders import *
+import pandas as pd
+from sklearn.datasets import load_boston
 
-In the examples directory, there is an example script used to benchmark
-different encoding techniques on various datasets.
+# prepare some data
+bunch = load_boston()
+y_train = bunch.target[0:250]
+y_test = bunch.target[250:506]
+X_train = pd.DataFrame(bunch.data[0:250], columns=bunch.feature_names)
+X_test = pd.DataFrame(bunch.data[250:506], columns=bunch.feature_names)
 
-The datasets used in the examples are car, mushroom, and splice datasets 
-from the UCI dataset repository, found here:
+# use target encoding to encode two categorical features
+enc = TargetEncoder(cols=['CHAS', 'RAD']).fit(X_train, y_train)
 
-[datasets](https://archive.ics.uci.edu/ml/datasets)
+# transform the datasets
+training_numeric_dataset = enc.transform(X_train, y_train)
+testing_numeric_dataset = enc.transform(X_test)
+```
+
+Additional examples and benchmarks can be found in the `examples` directory.
 
 Contributing
 ------------
@@ -105,19 +115,15 @@ Contributing
 Category encoders is under active development, if you'd like to be involved, we'd love to have you. Check out the CONTRIBUTING.md file
 or open an issue on the github project to get started.
 
-License
--------
-
-BSD 3-Clause
-
 References:
 -----------
 
  1. Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing for Large Scale Multitask Learning. Proc. ICML.
- 2. Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
- 3. Gregory Carey (2003). Coding Categorical Variables. from http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
- 4. Strategies to encode categorical variables with many categories. from https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
- 5. Beyond One-Hot: an exploration of categorical variables. from http://www.willmcginnis.com/2015/11/29/beyond-one-hot-an-exploration-of-categorical-variables/
- 6. BaseN Encoding and Grid Search in categorical variables. from http://www.willmcginnis.com/2016/12/18/basen-encoding-grid-search-category_encoders/
- 7. Daniele Miccii-Barreca (2001). A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. SIGKDD Explor. Newsl. 3, 1. from http://dx.doi.org/10.1145/507533.507538
- 8. Weight of Evidence (WOE) and Information Value Explained. from https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html
+ 2. Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. From https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
+ 3. Gregory Carey (2003). Coding Categorical Variables. From http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
+ 4. Strategies to encode categorical variables with many categories. From https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
+ 5. Beyond One-Hot: an exploration of categorical variables. From http://www.willmcginnis.com/2015/11/29/beyond-one-hot-an-exploration-of-categorical-variables/
+ 6. BaseN Encoding and Grid Search in categorical variables. From http://www.willmcginnis.com/2016/12/18/basen-encoding-grid-search-category_encoders/
+ 7. Daniele Miccii-Barreca (2001). A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. SIGKDD Explor. Newsl. 3, 1. From http://dx.doi.org/10.1145/507533.507538
+ 8. Weight of Evidence (WOE) and Information Value Explained. From https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html
+ 9. Empirical Bayes for multiple sample sizes. From http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/

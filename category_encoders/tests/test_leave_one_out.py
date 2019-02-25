@@ -1,17 +1,17 @@
 import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
-import category_encoders.tests.test_utils as tu
+import category_encoders.tests.test_helpers as th
 import numpy as np
 
 import category_encoders as encoders
 
 
-np_X = tu.create_array(n_rows=100)
-np_X_t = tu.create_array(n_rows=50, extras=True)
+np_X = th.create_array(n_rows=100)
+np_X_t = th.create_array(n_rows=50, extras=True)
 np_y = np.random.randn(np_X.shape[0]) > 0.5
 np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
-X = tu.create_dataset(n_rows=100)
-X_t = tu.create_dataset(n_rows=50, extras=True)
+X = th.create_dataset(n_rows=100)
+X_t = th.create_dataset(n_rows=50, extras=True)
 y = pd.DataFrame(np_y)
 y_t = pd.DataFrame(np_y_t)
 
@@ -21,8 +21,8 @@ class TestLeaveOneOutEncoder(TestCase):
     def test_leave_one_out(self):
         enc = encoders.LeaveOneOutEncoder(verbose=1, sigma=0.1)
         enc.fit(X, y)
-        tu.verify_numeric(enc.transform(X_t))
-        tu.verify_numeric(enc.transform(X_t, y_t))
+        th.verify_numeric(enc.transform(X_t))
+        th.verify_numeric(enc.transform(X_t, y_t))
 
     def test_leave_one_out_values(self):
         df = pd.DataFrame({

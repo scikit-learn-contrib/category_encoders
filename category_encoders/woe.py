@@ -115,10 +115,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
 
         # Unite parameters into pandas types
         X = util.convert_input(X)
-        if isinstance(y, pd.DataFrame):
-            y = y.iloc[:,0]
-        else:
-            y = pd.Series(y, name='target', index=X.index)
+        y = util.convert_input_vector(y, X.index).astype(float)
 
         # The lengths must be equal
         if X.shape[0] != y.shape[0]:
@@ -203,7 +200,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
-        # Unite the input into pandas DataFrame
+        # Unite the input into pandas types
         X = util.convert_input(X)
 
         # Then make sure that it is the right size
@@ -212,10 +209,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
 
         # If we are encoding the training data, we have to check the target
         if y is not None:
-            if isinstance(y, pd.DataFrame):
-                y = y.iloc[:, 0]
-            else:
-                y = pd.Series(y, name='target', index=X.index)
+            y = util.convert_input_vector(y, X.index).astype(float)
             if X.shape[0] != y.shape[0]:
                 raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 

@@ -1,19 +1,27 @@
-"""Leave one out coding"""
+"""CatBoost coding"""
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
-__author__ = 'hbghhy'
+__author__ = 'Jan Motl'
 
 
-class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
-    """Leave one out coding for categorical features.
+class CatBoostEncoder(BaseEstimator, TransformerMixin):
+    """CatBoost coding for categorical features.
 
-    This is very similar to target encoding, but excludes the current row's
-    target when calculating the mean target for a level to reduce the effect
-    of outliers.
+    This is very similar to leave-one-out encoding, but calculates the
+    values "on-the-fly". Consequently, the values naturally vary
+    during the training phase and it is not necessary to add random noise.
+
+    Beware, the training data have to be randomly permutated. E.g.:
+        # Random permutation
+        perm = np.random.permutation(len(X))
+        X = X.iloc[perm].reset_index(drop=True)
+        y = y.iloc[perm].reset_index(drop=True)
+    This is necessary because some datasets are sorted based on the target
+    value and this coder encodes the features on-the-fly in a single pass.
 
     Parameters
     ----------
@@ -29,11 +37,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     handle_unknown: str
         options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the target mean.
     sigma: float
-        adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing
-        data are untouched). Sigma gives the standard deviation (spread or "width") of the normal distribution.
-        The optimal value is commonly in between 0.05 and 0.6. The default is to not add noise, but that leads
-        to significantly suboptimal results.
-
+        adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
+        sigma gives the standard deviation (spread or "width") of the normal distribution.
 
     Example
     -------
@@ -69,8 +74,8 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Strategies to encode categorical variables with many categories. from
-    https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
+    .. [1] Transforming categorical features to numerical features. from
+    https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/.
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
@@ -135,7 +140,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         )
         self.mapping = categories
 
-        X_temp = self.transform(X, override_return_df=True)
+        X_temp = self.transform(X, y, override_return_df=True)
         self.feature_names = X_temp.columns.tolist()
 
         if self.drop_invariant:
@@ -244,31 +249,45 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         """
         Leave one out encoding uses a single column of floats to represent the means of the target variables.
         """
-
         X = X_in.copy(deep=True)
         random_state_ = check_random_state(self.random_state)
+
+        # Prepare the data
+        if y is not None:
+            # Convert bools to numbers (the target must be summable)
+            y = y.astype('double')
+
+            # Cumsum and cumcount do not work nicely with None.
+            # This is a terrible workaround that will fail, when the
+            # categorical input contains -999.9
+            for cat_col in X.select_dtypes('category').columns.values:
+                X[cat_col] = X[cat_col].cat.add_categories(-999.9)
+            X = X.fillna(-999.9)
 
         for col, colmap in mapping.items():
             level_notunique = colmap['count'] > 1
 
             unique_train = colmap.index
-            unseen_values = pd.Series([x for x in X[col].unique() if x not in unique_train])
+            unseen_values = pd.Series([x for x in X_in[col].unique() if x not in unique_train])
 
-            is_nan = X[col].isnull()
-            is_unknown_value = X[col].isin(unseen_values.dropna())
+            is_nan = X_in[col].isnull()
+            is_unknown_value = X_in[col].isin(unseen_values.dropna())
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
                 raise ValueError('Columns to be encoded can not contain new values')
 
             if y is None:    # Replace level with its mean target; if level occurs only once, use global mean
-                level_means = (colmap['sum'] / colmap['count']).where(level_notunique, self._mean)
+                level_means = ((colmap['sum'] + self._mean) / (colmap['count'] + 1)).where(level_notunique, self._mean)
                 X[col] = X[col].map(level_means)
-            else:            # Replace level with its mean target, calculated excluding this row's target
-                # The y (target) mean for this level is normally just the sum/count;
-                # excluding this row's y, it's (sum - y) / (count - 1)
-                level_means = (X[col].map(colmap['sum']) - y) / (X[col].map(colmap['count']) - 1)
-                # The 'where' fills in singleton levels (count = 1 -> div by 0) with the global mean
-                X[col] = level_means.where(X[col].map(colmap['count'][level_notunique]).notnull(), self._mean)
+            else:
+                ## Simulation of CatBoost implementation, which calculates leave-one-out on the fly.
+                # The nice thing about this is that it helps to prevent overfitting. The bad thing
+                # is that CatBoost uses many iterations over the data. But we run just one iteration.
+                # Still, it works better than leave-one-out without any noise.
+                # See:
+                #   https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
+                temp = y.groupby(X[col]).agg(['cumsum', 'cumcount'])
+                X[col] = (temp['cumsum'] - y + self._mean) / (temp['cumcount'] + 1)
 
             if self.handle_unknown == 'value':
                 X.loc[is_unknown_value, col] = self._mean
