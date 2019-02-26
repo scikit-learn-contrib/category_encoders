@@ -30,8 +30,12 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     base: int
         when the downstream model copes well with nonlinearities (like decision tree), use higher base.
     handle_unknown: str
-        options are 'error', 'return_nan' and 'value', defaults to 'value'. Warning: if value is used,
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
         an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        unexpected changes in dimension in some cases.
+    handle_missing: str
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has nan values.  This can cause
         unexpected changes in dimension in some cases.
 
     Example
@@ -319,7 +323,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            base_df = mod.loc[X[col]]
+            base_df = mod.reindex(X[col])
             base_df.set_index(X.index, inplace=True)
             X = pd.concat([base_df, X], axis=1)
 

@@ -23,13 +23,17 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    handle_unknown: str
-        options are 'error', 'return_nan' and 'value', defaults to 'value'. Warning: if value is used,
-        an extra column will be added in if the transform matrix has unknown categories. This can cause
-        unexpected changes in the dimension in some cases.
     use_cat_names: bool
         if True, category values will be included in the encoded column names. Since this can result into duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
         If False, category indices will be used instead of the category values.
+    handle_unknown: str
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        unexpected changes in dimension in some cases.
+    handle_missing: str
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has nan values.  This can cause
+        unexpected changes in dimension in some cases.
 
     Example
     -------
