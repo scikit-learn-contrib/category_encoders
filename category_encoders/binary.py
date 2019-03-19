@@ -71,9 +71,16 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
-        self.base_n_encoder = ce.BaseNEncoder(base=2, verbose=verbose, cols=cols, mapping=mapping,
-                                              drop_invariant=drop_invariant, return_df=return_df,
-                                              handle_unknown=handle_unknown, handle_missing=handle_missing)
+        self. verbose = verbose
+        self.cols = cols
+        self.mapping = mapping
+        self.drop_invariant = drop_invariant
+        self.return_df = return_df
+        self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
+        self.base_n_encoder = ce.BaseNEncoder(base=2, verbose=self.verbose, cols=self.cols, mapping=self.mapping,
+                                              drop_invariant=self.drop_invariant, return_df=self.return_df,
+                                              handle_unknown=self.handle_unknown, handle_missing=self.handle_missing)
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
