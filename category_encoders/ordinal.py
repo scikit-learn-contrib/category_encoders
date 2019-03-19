@@ -144,7 +144,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.mapping = categories
 
         X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = X_temp.columns.tolist()
+        self.feature_names = X_temp.columns.values.tolist()
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
@@ -323,7 +323,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 if handle_missing == 'value' and ~data.index.isnull().any():
                     data.loc[nan_identity] = -2
                 elif handle_missing == 'return_nan':
-                    data.loc[nan_identity] = -2
+                    data.loc[nan_identity] = np.nan
 
                 mapping_out.append({'col': col, 'mapping': data, 'data_type': X[col].dtype}, )
 
