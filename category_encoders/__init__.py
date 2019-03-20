@@ -41,6 +41,5 @@ __all__ = [
     'WOEEncoder',
     'MEstimateEncoder',
     'JamesSteinEncoder',
-    'CatBoostEncoder',
-    'LeaveOneOutEncoderV2'
+    'CatBoostEncoder'
 ]
