@@ -13,17 +13,7 @@ def verify_numeric(X_test):
     _NUMERIC_KINDS = set('buifc')
     
     for dt in X_test.dtypes:
-        try:
-            assert(dt.kind in _NUMERIC_KINDS)
-        except Exception as e:
-            print("\n\n\n\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\nFor dtype {} of kind {}, the assertion failed. It is not numeric\n\n\n\n\n"
-                  .format(dt, dt.kind))
-            raise e
-        #numeric = False
-        #assert(isinstance(dt, np.dtype(np.number)))
-        #if np.issubdtype(dt, np.dtype(int)) or np.issubdtype(dt, np.dtype(float)):
-        #    numeric = True
-        #assert numeric
+        assert(dt.kind in _NUMERIC_KINDS)
 
 
 def create_array(n_rows=1000, extras=False, has_none=True):
