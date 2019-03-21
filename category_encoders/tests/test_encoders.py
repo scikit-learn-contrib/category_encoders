@@ -6,7 +6,7 @@ from datetime import timedelta
 import numpy as np
 import pandas as pd
 import sklearn
-import category_encoders.tests.test_helpers as th
+import category_encoders.tests.helpers as th
 from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted
 from sklearn.compose import ColumnTransformer
 from unittest2 import TestSuite, TextTestRunner, TestCase  # or `from unittest import ...` if on Python 3.4+
