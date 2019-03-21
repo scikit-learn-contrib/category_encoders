@@ -1,36 +1,70 @@
+"""Helper functions that are used exclusively in the tests"""
+
 import numpy as np
+import random
 import pandas as pd
-from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
-
-from category_encoders.tests.helpers import verify_numeric
+import math
 
 
-class TestHelpers(TestCase):
+def verify_numeric(X_test):
+    """
+    Test that all attributes in the DataFrame are numeric.
+    """
+    for dt in X_test.dtypes:
+        numeric = False
+        if np.issubdtype(dt, np.dtype(int)) or np.issubdtype(dt, np.dtype(float)):
+            numeric = True
+        assert numeric
 
-    def test_is_numeric_pandas(self):
-        # Whole numbers, regardless of the byte length, should not raise AssertionError
-        X = pd.DataFrame(np.ones([5, 5]), dtype='int32')
-        verify_numeric(pd.DataFrame(X))
 
-        X = pd.DataFrame(np.ones([5, 5]), dtype='int64')
-        verify_numeric(pd.DataFrame(X))
+def create_array(n_rows=1000, extras=False, has_none=True):
+    """
+    Creates a numpy dataset with some categorical variables.
+    """
+    ds = [[
+        random.random(),
+        random.random(),
+        random.choice(['A', 'B', 'C']),
+        random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),
+        random.choice(['A', 'B', 'C', None, np.nan]) if has_none else random.choice(['A', 'B', 'C']),
+        random.choice(['A'])
+    ] for _ in range(n_rows)]
 
-        # Strings should raise AssertionError
-        X = pd.DataFrame([['a', 'b', 'c'], ['d', 'e', 'f']])
-        with self.assertRaises(Exception):
-            verify_numeric(pd.DataFrame(X))
+    return np.array(ds)
 
-    def test_is_numeric_numpy(self):
-        # Whole numbers, regardless of the byte length, should not raise AssertionError
-        X = np.ones([5, 5], dtype='int32')
-        verify_numeric(pd.DataFrame(X))
 
-        X = np.ones([5, 5], dtype='int64')
-        verify_numeric(pd.DataFrame(X))
+def create_dataset(n_rows=1000, extras=False, has_none=True):
+    """
+    Creates a dataset with some categorical variables.
+    """
+    random.seed(2001)
+    ds = [[
+        random.random(),                                                                        # Floats
+        random.choice([float('nan'), float('inf'), float('-inf'), -0, 0, 1, -1, math.pi]),      # Floats with edge scenarios
+        row,                                                                                    # Unique integers
+        str(row),                                                                               # Unique strings
+        random.choice(['A', 'B']) if extras else 'A',                                           # Invariant in the training data
+        random.choice(['A', 'B_b', 'C_c_c']),                                                   # Strings with underscores to test reverse_dummies()
+        random.choice(['A', 'B', 'C', None]) if has_none else random.choice(['A', 'B', 'C']),   # None
+        random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),      # With a new string value
+        random.choice([12, 43, -32]),                                                           # Number in the column name
+        random.choice(['A', 'B', 'C']),                                                         # What is going to become the categorical column
+    ] for row in range(n_rows)]
 
-        # Floats
-        X = np.ones([5, 5], dtype='float32')
-        verify_numeric(pd.DataFrame(X))
+    df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321, 'categorical'])
+    df['categorical'] = pd.Categorical(df['categorical'], categories=['A', 'B', 'C'])
+    return df
 
-        X = np.ones([5, 5], dtype='float64')
-        verify_numeric(pd.DataFrame(X))
+
+def verify_inverse_transform(x, x_inv):
+    """
+    Verify x is equal to x_inv. The test returns true for NaN.equals(NaN) as it should.
+    """
+    assert x.equals(x_inv)
+
+
+def deep_round(A, ndigits=5):
+    """
+    Rounds numbers in a list of lists. Useful for approximate equality testing.
+    """
+    return [[round(val, ndigits) for val in sublst] for sublst in A]

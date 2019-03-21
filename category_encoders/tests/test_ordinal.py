@@ -1,6 +1,6 @@
 import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
-import category_encoders.tests.helpers as th
+import category_encoders.tests.test_helpers as th
 import numpy as np
 import warnings
 import category_encoders as encoders
@@ -35,7 +35,7 @@ class TestOrdinalEncoder(TestCase):
         self.assertIn(-1, set(out['extra'].values))
         self.assertTrue(len(enc.mapping) > 0)
 
-        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, handle_unknown='return_nan')
+        enc = encoders.OrdinalEncoder(verbose=1, return_df=True, handle_unknown='return _nan')
         enc.fit(X)
         out = enc.transform(X_t)
         out_cats = [x for x in set(out['extra'].values) if np.isfinite(x)]
