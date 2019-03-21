@@ -2,7 +2,7 @@ import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
 import category_encoders as encoders
-from category_encoders.tests.test_helpers import deep_round
+from category_encoders.tests.helpers import deep_round
 
 a_encoding = [1, -0.7071067811865476, 0.40824829046386313]
 b_encoding = [1, -5.551115123125783e-17, -0.8164965809277261]
