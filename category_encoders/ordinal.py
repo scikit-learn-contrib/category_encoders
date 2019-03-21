@@ -323,7 +323,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 if handle_missing == 'value' and ~data.index.isnull().any():
                     data.loc[nan_identity] = -2
                 elif handle_missing == 'return_nan':
-                    data.loc[nan_identity] = np.nan
+                    data.loc[nan_identity] = -2
 
                 mapping_out.append({'col': col, 'mapping': data, 'data_type': X[col].dtype}, )
 
