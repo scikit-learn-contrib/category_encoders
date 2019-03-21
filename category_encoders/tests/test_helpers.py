@@ -34,3 +34,9 @@ class TestHelpers(TestCase):
 
         X = np.ones([5, 5], dtype='float64')
         verify_numeric(pd.DataFrame(X))
+        
+    def test_verify_raises_AssertionError_on_categories(self):
+        # Categories should raise AssertionError
+        X = pd.DataFrame([['a', 'b', 'c'], ['d', 'e', 'f']], dtype='category')
+        with self.assertRaises(Exception):
+            verify_numeric(pd.DataFrame(X))
