@@ -111,13 +111,12 @@ class TestBaseNEncoder(TestCase):
         enc = encoders.BaseNEncoder(handle_missing='return_nan', handle_unknown='return_nan')
         enc.fit(train)
         result = enc.transform(test)
+        
+        message = 'inverse_transform is not supported because transform impute '\
+                  'the unknown category nan when encode city'
 
-        with warnings.catch_warnings(record=True) as w:
+        with self.assertWarns(UserWarning, msg=message) as w:
             enc.inverse_transform(result)
-
-            self.assertEqual(1, len(w))
-            self.assertEqual('inverse_transform is not supported because transform impute '
-                             'the unknown category nan when encode city', str(w[0].message))
 
     def test_inverse_transform_HaveMissingAndNoUnknown_ExpectInversed(self):
         train = pd.DataFrame({'city': ['chicago', np.nan]})
