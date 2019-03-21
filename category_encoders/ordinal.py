@@ -144,7 +144,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         self.mapping = categories
 
         X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = X_temp.columns.values.tolist()
+        self.feature_names = X_temp.columns.tolist()
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
