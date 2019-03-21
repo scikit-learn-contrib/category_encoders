@@ -1,5 +1,5 @@
 import pandas as pd
-from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
 import warnings
 import category_encoders.tests.test_helpers as th
@@ -227,13 +227,12 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(handle_missing='return_nan', handle_unknown='return_nan')
         enc.fit(train)
         result = enc.transform(test)
+        
+        message = 'inverse_transform is not supported because transform impute '\
+                  'the unknown category nan when encode city'
 
-        with warnings.catch_warnings(record=True) as w:
+        with self.assertWarns(UserWarning, msg=message) as w:
             enc.inverse_transform(result)
-
-            self.assertEqual(1, len(w))
-            self.assertEqual('inverse_transform is not supported because transform impute '
-                             'the unknown category nan when encode city', str(w[0].message))
 
     def test_inverse_transform_HaveMissingAndNoUnknown_ExpectInversed(self):
         train = pd.DataFrame({'city': ['chicago', np.nan]})
