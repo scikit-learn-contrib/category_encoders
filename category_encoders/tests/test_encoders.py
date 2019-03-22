@@ -48,7 +48,7 @@ class TestEncoders(TestCase):
     def test_classification(self):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical']
+                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical']
 
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit(X, np_y)
