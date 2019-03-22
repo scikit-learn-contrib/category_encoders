@@ -50,9 +50,9 @@ def create_dataset(n_rows=1000, extras=False, has_none=True):
         random.choice(['A', 'B', 'C', np.nan])                                                  # Categorical with missing values
     ] for row in range(n_rows)]
 
-    df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321, 'categorical', 'categorical_na'])
+    df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321, 'categorical', 'na_categorical'])
     df['categorical'] = pd.Categorical(df['categorical'], categories=['A', 'B', 'C'])
-    df['categorical_na'] = pd.Categorical(df['categorical_na'], categories=['A', 'B', 'C'])
+    df['na_categorical'] = pd.Categorical(df['na_categorical'], categories=['A', 'B', 'C'])
     return df
 
 
@@ -61,6 +61,7 @@ def verify_inverse_transform(x, x_inv):
     Verify x is equal to x_inv. The test returns true for NaN.equals(NaN) as it should.
     """
     assert x.equals(x_inv)
+
 
 
 def deep_round(A, ndigits=5):
