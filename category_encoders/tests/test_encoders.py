@@ -8,6 +8,7 @@ import pandas as pd
 import sklearn
 import category_encoders.tests.helpers as th
 from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted
+from sklearn.compose import ColumnTransformer
 from unittest2 import TestSuite, TextTestRunner, TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
@@ -419,3 +420,23 @@ class TestEncoders(TestCase):
                 enc2 = getattr(encoders, encoder_name)()
                 result2 = enc2.fit_transform(data2.x, data2.y)
                 self.assertTrue((result.values == result2.values).all())
+
+    def test_column_transformer(self):
+        # see issue #169
+            for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}): # HashingEncoder does not accept handle_missing parameter
+                with self.subTest(encoder_name=encoder_name):
+
+                    # we can only test one data type at once. Here, we test string columns.
+                    tested_columns = ['unique_str', 'invariant', 'underscore', 'none', 'extra']
+
+                    # ColumnTransformer instantiates the encoder twice -> we have to make sure the encoder settings are correctly passed
+                    ct = ColumnTransformer([
+                        ("dummy_encoder_name", getattr(encoders, encoder_name)(handle_missing="return_nan"), tested_columns)
+                    ])
+                    obtained = ct.fit_transform(X, y)
+
+                    # the old-school approach
+                    enc = getattr(encoders, encoder_name)(handle_missing="return_nan", return_df=False)
+                    expected = enc.fit_transform(X[tested_columns], y)
+
+                    np.testing.assert_array_equal(obtained, expected)
