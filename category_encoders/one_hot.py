@@ -16,7 +16,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -24,7 +24,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     use_cat_names: bool
-        if True, category values will be included in the encoded column names. Since this can result into duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
+        if True, category values will be included in the encoded column names. Since this can result in duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
         If False, category indices will be used instead of the category values.
     handle_unknown: str
         options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
@@ -80,14 +80,14 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
-    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
+    .. [1] Contrast Coding Systems for Categorical Variables, from
+    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
-
     """
+
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_missing='value', handle_unknown='value', use_cat_names=False):
         self.return_df = return_df
@@ -330,12 +330,11 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X_in: DataFrame
-        mapping: list-like
-              Contains mappings of column to be transformed to it's new columns and value represented
 
         Returns
         -------
         dummies : DataFrame
+
         """
 
         X = X_in.copy(deep=True)
@@ -396,10 +395,11 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         Returns the names of all transformed / added columns.
 
         Returns
-        --------
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):

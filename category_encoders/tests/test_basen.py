@@ -2,7 +2,6 @@ import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
 import category_encoders as encoders
-import warnings
 
 
 class TestBaseNEncoder(TestCase):

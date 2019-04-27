@@ -17,7 +17,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -75,14 +75,14 @@ class SumEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
-    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
+    .. [1] Contrast Coding Systems for Categorical Variables, from
+    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
-
     """
+
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
@@ -91,7 +91,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         self.verbose = verbose
         self.mapping = mapping
         self.handle_unknown = handle_unknown
-        self.handle_missing=handle_missing
+        self.handle_missing = handle_missing
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
@@ -167,7 +167,6 @@ class SumEncoder(BaseEstimator, TransformerMixin):
                 if self.verbose > 0:
                     print("Could not remove column from feature names."
                     "Not found in generated cols.\n{}".format(e))
-
 
         return self
 
@@ -280,11 +279,12 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
         if not isinstance(self.feature_names, list):
             raise ValueError("Estimator has to be fitted to return feature names.")

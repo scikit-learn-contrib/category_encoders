@@ -17,7 +17,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -75,12 +75,11 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
-    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
+    .. [1] Contrast Coding Systems for Categorical Variables, from
+    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
-
 
     """
 
@@ -282,11 +281,12 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):

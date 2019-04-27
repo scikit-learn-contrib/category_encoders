@@ -147,4 +147,3 @@ class TestSumEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding]
         self.assertEqual(result.values.tolist(), expected)
-

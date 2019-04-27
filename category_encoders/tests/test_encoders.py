@@ -174,7 +174,7 @@ class TestEncoders(TestCase):
         X = pd.DataFrame({'city': ['chicago', 'los angeles', None]})
         y = pd.Series([1, 0, 1])
 
-        for encoder_name in ( set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(handle_missing='return_nan')
                 result = enc.fit_transform(X, y).iloc[2, :]
@@ -371,7 +371,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 # Target encoders also need y
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','MEstimateEncoder','JamesSteinEncoder', 'CatBoostEncoder']:
+                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -386,7 +386,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
                 # Target encoders also need y
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder','MEstimateEncoder','JamesSteinEncoder','CatBoostEncoder']:
+                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -423,7 +423,7 @@ class TestEncoders(TestCase):
 
     def test_column_transformer(self):
         # see issue #169
-            for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}): # HashingEncoder does not accept handle_missing parameter
+            for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder does not accept handle_missing parameter
                 with self.subTest(encoder_name=encoder_name):
 
                     # we can only test one data type at once. Here, we test string columns.

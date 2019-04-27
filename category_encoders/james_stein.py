@@ -10,40 +10,52 @@ from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
 
+
 class JamesSteinEncoder(BaseEstimator, TransformerMixin):
     """James-Stein estimator.
 
-    For feature value i, James-Stein estimator returns a weighted average of:
-        1) The mean target value for the observed feature value i.
-        2) The mean target value (regardless of the feature value).
-    This can be written as:
+    For feature value `i`, James-Stein estimator returns a weighted average of:
+
+        1. The mean target value for the observed feature value `i`.
+        2. The mean target value (regardless of the feature value).
+
+    This can be written as::
+
         JS_i = (1-B)*mean(y_i) + B*mean(y)
-    The question is, what should be the weight B?
+
+    The question is, what should be the weight `B`?
     If we put too much weight on the conditional mean value, we will overfit.
     If we put too much weight on the global mean, we will underfit.
     The canonical solution in machine learning is to perform cross-validation.
     However, Charles Stein came with a closed-form solution to the problem.
-    The intuition is: If the estimate of mean(y_i) is unreliable (y_i has high variance),
-    we should put more weight on mean(y). Stein put it into an equation as:
+    The intuition is: If the estimate of `mean(y_i)` is unreliable (`y_i` has high variance),
+    we should put more weight on `mean(y)`. Stein put it into an equation as::
+
         B = var(y_i) / (var(y_i)+var(y))
-    The only remaining issue is that we do not know var(y), let alone var(y_i).
+
+    The only remaining issue is that we do not know `var(y)`, let alone `var(y_i)`.
     Hence, we have to estimate the variances. But how can we reliably estimate the
     variances, when we already struggle with the estimation of the mean values?!
     There are multiple solutions:
-        1) If we have the same count of observations for each feature value i and all
-        y_i are close to each other, we can pretend that all var(y_i) are identical.
+
+        1. If we have the same count of observations for each feature value `i` and all
+        `y_i` are close to each other, we can pretend that all `var(y_i)` are identical.
         This is called a pooled model.
-        2) If the observation counts are not equal, it makes sense to replace the variances
-        with squared standard errors, which penalize small observation counts:
+        2. If the observation counts are not equal, it makes sense to replace the variances
+        with squared standard errors, which penalize small observation counts::
+
             SE^2 = var(y)/count(y)
+
         This is called an independent model.
 
     James-Stein estimator has, however, one practical limitation - it was defined
     only for normal distributions. If you want to apply it for binary classification,
     which allows only values {0, 1}, it is better to first convert the mean target value
     from the bound interval <0,1> into an unbounded interval by replacing mean(y)
-    with log-odds ratio:
+    with log-odds ratio::
+
         log-odds_ratio_i = log(mean(y_i)/mean(y_not_i))
+
     This is called binary model. The estimation of parameters of this model is, however,
     tricky and sometimes it fails fatally. In these situations, it is better to use beta
     model, which generally delivers slightly worse accuracy than binary model but does
@@ -53,7 +65,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -116,7 +128,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
     https://journals.sagepub.com/doi/abs/10.1177/0081175015570097
 
     .. [4] Stein's paradox and group rationality, from
-    www.philos.rug.nl/~romeyn/presentation/2017_romeijn_-_Paris_Stein.pdf
+    http://www.philos.rug.nl/~romeyn/presentation/2017_romeijn_-_Paris_Stein.pdf
 
     .. [5] Stein's Paradox in Statistics, from
     http://statweb.stanford.edu/~ckirby/brad/other/Article1977.pdf
@@ -344,17 +356,17 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             variance = target_var/(stats['count'].mean())
 
             # Equation 7.20
-            SSE = ((stats['mean']-prior)**2).sum() # Sum of Squared Errors
-            if SSE > 0: # We have to avoid division by zero
+            SSE = ((stats['mean']-prior)**2).sum()  # Sum of Squared Errors
+            if SSE > 0:  # We have to avoid division by zero
                 B = ((len(stats['count'])-3)*variance) / SSE
-                B = B.clip(0,1)
+                B = B.clip(0, 1)
                 estimate = prior + (1 - B) * (stats['mean'] - prior)
             else:
                 estimate = stats['mean']
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
             # This works better than: estimate[stats['count'] == 1] = prior
-            if len(stats['mean'])==global_count:
+            if len(stats['mean']) == global_count:
                 estimate[:] = prior
 
             if self.handle_unknown == 'return_nan':
@@ -414,7 +426,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             estimate = smoothing*(stats['mean']) + (1-smoothing)*prior
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
-            if len(stats['mean'])==global_count:
+            if len(stats['mean']) == global_count:
                 estimate[:] = prior
 
             if self.handle_unknown == 'return_nan':
@@ -459,7 +471,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             values = switch.get('mapping')
 
             # Calculate sum and count of the target for each unique value in the feature col
-            stats = y.groupby(X[col]).agg(['sum', 'count']) # Count of x_{i,+} and x_i
+            stats = y.groupby(X[col]).agg(['sum', 'count'])  # Count of x_{i,+} and x_i
 
             # Create 2x2 contingency table
             crosstable = pd.DataFrame()
@@ -468,7 +480,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             crosstable['E+A-'] = global_sum - stats['sum']
             crosstable['E+A+'] = stats['sum']
             index = crosstable.index.values
-            crosstable = np.array(crosstable, dtype=np.float32) # The argument unites the types into float
+            crosstable = np.array(crosstable, dtype=np.float32)  # The argument unites the types into float
 
             # Count of contingency tables.
             K = len(crosstable)
@@ -477,7 +489,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             if K == global_count:
                 estimate = pd.Series(0, index=values)
             else:
-                if K>1: # We want to avoid division by zero in y_k calculation
+                if K > 1:  # We want to avoid division by zero in y_k calculation
                     # Estimate log-odds ratios with Yates correction as listed on page 5.
                     mu_k = np.log((crosstable[:, 0] + 0.5) * (crosstable[:, 3] + 0.5) / ((crosstable[:, 1] + 0.5) * (crosstable[:, 2] + 0.5)))
 
@@ -487,7 +499,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
                     sigma_k = np.sqrt(np.sum(1. / (crosstable + 0.5), axis=1))
 
                     # Estimate the sigma and mu. Sigma is non-negative.
-                    result = scipy.optimize.minimize(get_best_sigma, x0=1e-4, args=(mu_k, sigma_k, K), bounds=[(0, np.inf)], method='TNC', tol=1e-12, options={'gtol': 1e-12, 'ftol': 1e-12, 'eps':1e-12})
+                    result = scipy.optimize.minimize(get_best_sigma, x0=1e-4, args=(mu_k, sigma_k, K), bounds=[(0, np.inf)], method='TNC', tol=1e-12, options={'gtol': 1e-12, 'ftol': 1e-12, 'eps': 1e-12})
                     sigma = result.x[0]
 
                     # Empirical Bayes follows equation 7.
@@ -496,7 +508,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
                     #   Estimates of Income for Small Places: An Application of James-Stein Procedures to Census Data (Fay & Harriout, 1979),
                     # page 270.
                     B = (K - 3) * sigma_k ** 2 / ((K - 1) * (sigma ** 2 + sigma_k ** 2))
-                    B = B.clip(0,1)
+                    B = B.clip(0, 1)
                     y_k = mu + (1 - B) * (mu_k - mu)
 
                     # Convert Numpy vector back into Series
@@ -542,7 +554,7 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             estimate = smoothing*(stats['mean']) + (1-smoothing)*prior
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
-            if len(stats['mean'])==global_count:
+            if len(stats['mean']) == global_count:
                 estimate[:] = prior
 
             if self.handle_unknown == 'return_nan':
@@ -576,11 +588,12 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
         if not isinstance(self.feature_names, list):
             raise ValueError("Estimator has to be fitted to return feature names.")

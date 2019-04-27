@@ -20,7 +20,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -310,9 +310,11 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         X_in: DataFrame
         cols: list-like, default None
             Column names in the DataFrame to be encoded
+
         Returns
         -------
         dummies : DataFrame
+
         """
 
         X = X_in.copy(deep=True)
@@ -348,6 +350,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         Returns
         -------
         numerical: DataFrame
+
         """
         out_cols = X.columns.values.tolist()
 
@@ -360,7 +363,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             else:
                 len0 = len(col_list)
                 value_array = np.array([base ** (len0 - 1 - i) for i in range(len0)])
-            X.insert(insert_at,col,np.dot(X[col_list].values, value_array.T))
+            X.insert(insert_at, col, np.dot(X[col_list].values, value_array.T))
             X.drop(col_list, axis=1, inplace=True)
             out_cols = X.columns.values.tolist()
 
@@ -374,14 +377,14 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if col is None or float(col) < 0.0:
             return None
         else:
-            col = self.numberToBase(int(col), self.base, digits)
+            col = self.number_to_base(int(col), self.base, digits)
             if len(col) == digits:
                 return col
             else:
                 return [0 for _ in range(digits - len(col))] + col
 
     @staticmethod
-    def numberToBase(n, b, limit):
+    def number_to_base(n, b, limit):
         if b == 1:
             return [0 if n != _ else 1 for _ in range(limit)]
 
@@ -399,11 +402,12 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):

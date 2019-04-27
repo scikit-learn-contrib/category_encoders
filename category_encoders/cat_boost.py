@@ -1,4 +1,5 @@
 """CatBoost coding"""
+
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -15,11 +16,13 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
     values "on-the-fly". Consequently, the values naturally vary
     during the training phase and it is not necessary to add random noise.
 
-    Beware, the training data have to be randomly permutated. E.g.:
+    Beware, the training data have to be randomly permutated. E.g.::
+
         # Random permutation
         perm = np.random.permutation(len(X))
         X = X.iloc[perm].reset_index(drop=True)
         y = y.iloc[perm].reset_index(drop=True)
+
     This is necessary because some datasets are sorted based on the target
     value and this coder encodes the features on-the-fly in a single pass.
 
@@ -27,7 +30,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -48,7 +51,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = LeaveOneOutEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> enc = CatBoostEncoder(cols=['CHAS', 'RAD']).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
@@ -74,8 +77,9 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Transforming categorical features to numerical features. from
-    https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/.
+    .. [1] Transforming categorical features to numerical features, from
+    https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
+
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
@@ -84,7 +88,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
-        self.use_default_cols = cols is None # if True, even a repeated call of fit() will select string columns from X
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
         self.cols = cols
         self._dim = None
         self.mapping = None
@@ -280,7 +284,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
                 level_means = ((colmap['sum'] + self._mean) / (colmap['count'] + 1)).where(level_notunique, self._mean)
                 X[col] = X[col].map(level_means)
             else:
-                ## Simulation of CatBoost implementation, which calculates leave-one-out on the fly.
+                # Simulation of CatBoost implementation, which calculates leave-one-out on the fly.
                 # The nice thing about this is that it helps to prevent overfitting. The bad thing
                 # is that CatBoost uses many iterations over the data. But we run just one iteration.
                 # Still, it works better than leave-one-out without any noise.
@@ -308,11 +312,12 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):

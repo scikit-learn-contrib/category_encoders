@@ -7,7 +7,7 @@ import category_encoders as encoders
 class TestBinaryEncoder(TestCase):
 
     def test_catBoost(self):
-        X = pd.DataFrame({'col1':['A', 'B', 'B', 'C', 'A']})
+        X = pd.DataFrame({'col1': ['A', 'B', 'B', 'C', 'A']})
         y = pd.Series([1, 0, 1, 0, 1])
         enc = encoders.CatBoostEncoder()
         obtained = enc.fit_transform(X, y)
@@ -18,7 +18,7 @@ class TestBinaryEncoder(TestCase):
         self.assertEqual(list(obtained['col1']), [1.6/3, 1.6/3, 2.6/3])
 
     def test_catBoost_missing(self):
-        X = pd.DataFrame({'col1':['A', 'B', 'B', 'C', 'A', None, None, None]})
+        X = pd.DataFrame({'col1': ['A', 'B', 'B', 'C', 'A', None, None, None]})
         y = pd.Series([1, 0, 1, 0, 1, 0, 1, 0])
         enc = encoders.CatBoostEncoder(handle_missing='value')
         obtained = enc.fit_transform(X, y)

@@ -8,18 +8,19 @@ from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
 
+
 class MEstimateEncoder(BaseEstimator, TransformerMixin):
     """M-probability estimate of likelihood.
 
     This is a simplified version of target encoder. In comparison to target encoder, m-probability estimate
-    has only one tunable parameter ('m'), while target encoder has two tunable parameters ('min_samples_leaf'
-    and 'smoothing').
+    has only one tunable parameter (`m`), while target encoder has two tunable parameters (`min_samples_leaf`
+    and `smoothing`).
 
     Parameters
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -73,11 +74,10 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from
-    https://dl.acm.org/citation.cfm?id=507538.
+    https://dl.acm.org/citation.cfm?id=507538
 
-    ..[2] Additive smoothing, from
+    .. [2] Additive smoothing, from
     https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
-
 
     """
 
@@ -171,8 +171,9 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None, override_return_df=False):
-        """Perform the transformation to new categorical data. When the data are used for model training,
-        it is important to also pass the target in order to apply leave one out.
+        """Perform the transformation to new categorical data.
+
+        When the data are used for model training, it is important to also pass the target in order to apply leave one out.
 
         Parameters
         ----------
@@ -180,7 +181,6 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples] when transform by leave one out
             None, when transform without target information (such as transform test set)
-
 
 
         Returns
@@ -259,13 +259,13 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             values = switch.get('mapping')
             # Calculate sum and count of the target for each unique value in the feature col
-            stats = y.groupby(X[col]).agg(['sum', 'count']) # Count of x_{i,+} and x_i
+            stats = y.groupby(X[col]).agg(['sum', 'count'])  # Count of x_{i,+} and x_i
 
             # Calculate the m-probability estimate
             estimate = (stats['sum'] + prior * self.m) / (self._sum + self.m)
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
-            if len(stats['count'])==self._count:
+            if len(stats['count']) == self._count:
                 estimate[:] = prior
 
             if self.handle_unknown == 'return_nan':
@@ -299,11 +299,12 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
         if not isinstance(self.feature_names, list):
             raise ValueError("Estimator has to be fitted to return feature names.")

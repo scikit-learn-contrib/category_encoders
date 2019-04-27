@@ -8,6 +8,7 @@ from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
 
+
 class WOEEncoder(BaseEstimator, TransformerMixin):
     """Weight of Evidence coding for categorical features.
 
@@ -15,7 +16,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -66,9 +67,8 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Weight of Evidence (WOE) and Information Value Explained. from
-    https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html.
-
+    .. [1] Weight of Evidence (WOE) and Information Value Explained, from
+    https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html
 
     """
 
@@ -183,8 +183,6 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         y : array-like, shape = [n_samples] when transform by leave one out
             None, when transform without target information (such as transform test set)
 
-
-
         Returns
         -------
 
@@ -260,7 +258,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             values = switch.get('mapping')
             # Calculate sum and count of the target for each unique value in the feature col
-            stats = y.groupby(X[col]).agg(['sum', 'count']) # Count of x_{i,+} and x_i
+            stats = y.groupby(X[col]).agg(['sum', 'count'])  # Count of x_{i,+} and x_i
 
             # Create a new column with regularized WOE.
             # Regularization helps to avoid division by zero.
@@ -303,11 +301,12 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
         if not isinstance(self.feature_names, list):
             raise ValueError("Estimator has to be fitted to return feature names.")

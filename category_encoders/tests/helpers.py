@@ -15,6 +15,7 @@ def verify_numeric(X_test):
     for dt in X_test.dtypes:
         assert(dt.kind in _NUMERIC_KINDS)
 
+
 def create_array(n_rows=1000, extras=False, has_none=True):
     """
     Creates a numpy dataset with some categorical variables.

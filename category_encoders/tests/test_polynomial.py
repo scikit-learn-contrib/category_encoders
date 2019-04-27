@@ -11,7 +11,6 @@ c_encoding = [1, 0.7071067811865475, 0.4082482904638631]
 
 class TestPolynomialEncoder(TestCase):
 
-
     def test_polynomial_encoder_preserve_dimension_1(self):
         train = ['A', 'B', 'C']
         test = ['A', 'D', 'E']

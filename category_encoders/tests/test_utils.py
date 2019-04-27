@@ -3,6 +3,7 @@ from category_encoders.utils import convert_input_vector
 import pandas as pd
 import numpy as np
 
+
 class TestUtils(TestCase):
     def test_convert_input_vector(self):
         index = [2, 3, 4]
@@ -42,7 +43,7 @@ class TestUtils(TestCase):
         self.assertEqual(3, len(result))
         np.testing.assert_array_equal(result.index, [4, 5, 6], 'We want to preserve the original index')
 
-        result = convert_input_vector(pd.DataFrame({'y' :[0, 1, 0]}, index=[4, 5, 6]), index)  # dataFrame
+        result = convert_input_vector(pd.DataFrame({'y': [0, 1, 0]}, index=[4, 5, 6]), index)  # dataFrame
         self.assertTrue(isinstance(result, pd.Series))
         self.assertEqual(3, len(result))
         np.testing.assert_array_equal(result.index, [4, 5, 6], 'We want to preserve the original index')
@@ -63,8 +64,8 @@ class TestUtils(TestCase):
         self.assertTrue(result.index == [2])
 
         # multiple columns and rows should cause an error because it is unclear which column/row to use as the target
-        self.assertRaises(ValueError, convert_input_vector, (pd.DataFrame({'col1' :[0 ,1 ,0], 'col2' :[1 ,0 ,1]})), index)
-        self.assertRaises(ValueError, convert_input_vector, (np.array([[0 ,1], [1 ,0], [0 ,1]])), index)
+        self.assertRaises(ValueError, convert_input_vector, (pd.DataFrame({'col1': [0, 1, 0], 'col2': [1, 0, 1]})), index)
+        self.assertRaises(ValueError, convert_input_vector, (np.array([[0, 1], [1, 0], [0, 1]])), index)
         self.assertRaises(ValueError, convert_input_vector, ([[0, 1], [1, 0], [0, 1]]), index)
 
         # edge scenarios (it is ok to raise an exception but please, provide then a helpful exception text)

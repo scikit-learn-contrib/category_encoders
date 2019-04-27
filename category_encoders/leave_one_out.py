@@ -11,7 +11,7 @@ __author__ = 'hbghhy'
 class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     """Leave one out coding for categorical features.
 
-    This is very similar to target encoding, but excludes the current row's
+    This is very similar to target encoding but excludes the current row's
     target when calculating the mean target for a level to reduce the effect
     of outliers.
 
@@ -19,7 +19,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -31,7 +31,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     sigma: float
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing
         data are untouched). Sigma gives the standard deviation (spread or "width") of the normal distribution.
-        The optimal value is commonly in between 0.05 and 0.6. The default is to not add noise, but that leads
+        The optimal value is commonly between 0.05 and 0.6. The default is to not add noise, but that leads
         to significantly suboptimal results.
 
 
@@ -69,8 +69,9 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Strategies to encode categorical variables with many categories. from
+    .. [1] Strategies to encode categorical variables with many categories, from
     https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
+
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
@@ -79,7 +80,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
-        self.use_default_cols = cols is None # if True, even a repeated call of fit() will select string columns from X
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
         self.cols = cols
         self._dim = None
         self.mapping = None
@@ -289,11 +290,12 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):
