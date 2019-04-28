@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>category_encoders.binary &mdash; Category Encoders latest documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Category Encoders
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../backward_difference.html">Backward Difference Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../basen.html">BaseN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../binary.html">Binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../helmert.html">Helmert Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../leaveoneout.html">Leave One Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../onehot.html">One Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ordinal.html">Ordinal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../polynomial.html">Polynomial Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sum.html">Sum Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../targetencoder.html">Target Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../woe.html">Weight of Evidence</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Category Encoders</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>category_encoders.binary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for category_encoders.binary</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Binary encoding&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="k">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+
+<span class="kn">import</span> <span class="nn">category_encoders</span> <span class="k">as</span> <span class="nn">ce</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;willmcginnis&#39;</span>
+
+
+<div class="viewcode-block" id="BinaryEncoder"><a class="viewcode-back" href="../../binary.html#category_encoders.binary.BinaryEncoder">[docs]</a><span class="k">class</span> <span class="nc">BinaryEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Binary encoding for categorical variables, similar to onehot, but stores categories as binary bitstrings.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    verbose: int</span>
+<span class="sd">        integer indicating verbosity of the output. 0 for none.</span>
+<span class="sd">    cols: list</span>
+<span class="sd">        a list of columns to encode, if None, all string columns will be encoded.</span>
+<span class="sd">    drop_invariant: bool</span>
+<span class="sd">        boolean for whether or not to drop columns with 0 variance.</span>
+<span class="sd">    return_df: bool</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</span>
+<span class="sd">    handle_unknown: str</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;. Warning: if indicator is used,</span>
+<span class="sd">        an extra column will be added in if the transform matrix has unknown categories.  This can cause</span>
+<span class="sd">        unexpected changes in dimension in some cases.</span>
+<span class="sd">    handle_missing: str</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;. Warning: if indicator is used,</span>
+<span class="sd">        an extra column will be added in if the transform matrix has nan values.  This can cause</span>
+<span class="sd">        unexpected changes in dimension in some cases.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
+<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import load_boston</span>
+<span class="sd">    &gt;&gt;&gt; bunch = load_boston()</span>
+<span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
+<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)</span>
+<span class="sd">    &gt;&gt;&gt; enc = BinaryEncoder(cols=[&#39;CHAS&#39;, &#39;RAD&#39;]).fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; numeric_dataset = enc.transform(X)</span>
+<span class="sd">    &gt;&gt;&gt; print(numeric_dataset.info())</span>
+<span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
+<span class="sd">    RangeIndex: 506 entries, 0 to 505</span>
+<span class="sd">    Data columns (total 18 columns):</span>
+<span class="sd">    CRIM       506 non-null float64</span>
+<span class="sd">    ZN         506 non-null float64</span>
+<span class="sd">    INDUS      506 non-null float64</span>
+<span class="sd">    CHAS_0     506 non-null int64</span>
+<span class="sd">    CHAS_1     506 non-null int64</span>
+<span class="sd">    NOX        506 non-null float64</span>
+<span class="sd">    RM         506 non-null float64</span>
+<span class="sd">    AGE        506 non-null float64</span>
+<span class="sd">    DIS        506 non-null float64</span>
+<span class="sd">    RAD_0      506 non-null int64</span>
+<span class="sd">    RAD_1      506 non-null int64</span>
+<span class="sd">    RAD_2      506 non-null int64</span>
+<span class="sd">    RAD_3      506 non-null int64</span>
+<span class="sd">    RAD_4      506 non-null int64</span>
+<span class="sd">    TAX        506 non-null float64</span>
+<span class="sd">    PTRATIO    506 non-null float64</span>
+<span class="sd">    B          506 non-null float64</span>
+<span class="sd">    LSTAT      506 non-null float64</span>
+<span class="sd">    dtypes: float64(11), int64(7)</span>
+<span class="sd">    memory usage: 71.2 KB</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="n">mapping</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span> <span class="o">=</span> <span class="n">drop_invariant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="o">=</span> <span class="n">return_df</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">=</span> <span class="n">handle_unknown</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">=</span> <span class="n">handle_missing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_n_encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">BaseNEncoder</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span>
+                                              <span class="n">drop_invariant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_df</span><span class="p">,</span>
+                                              <span class="n">handle_unknown</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BinaryEncoder.fit"><a class="viewcode-back" href="../../binary.html#category_encoders.binary.BinaryEncoder.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit encoder according to X and y.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
+<span class="sd">            Training vectors, where n_samples is the number of samples</span>
+<span class="sd">            and n_features is the number of features.</span>
+<span class="sd">        y : array-like, shape = [n_samples]</span>
+<span class="sd">            Target values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        self : encoder</span>
+<span class="sd">            Returns self.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_n_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="BinaryEncoder.transform"><a class="viewcode-back" href="../../binary.html#category_encoders.binary.BinaryEncoder.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">override_return_df</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform the transformation to new categorical data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        p : array, shape = [n_samples, n_numeric + N]</span>
+<span class="sd">            Transformed values with encoding applied.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_n_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BinaryEncoder.inverse_transform"><a class="viewcode-back" href="../../binary.html#category_encoders.binary.BinaryEncoder.inverse_transform">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform the inverse transformation to encoded data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X_in : array-like, shape = [n_samples, n_features]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        p: array, the same size of X_in</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_n_encoder</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">X_in</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BinaryEncoder.get_feature_names"><a class="viewcode-back" href="../../binary.html#category_encoders.binary.BinaryEncoder.get_feature_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the names of all transformed / added columns.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        feature_names: list</span>
+<span class="sd">            A list with all feature names transformed or added.</span>
+<span class="sd">            Note: potentially dropped features are not included!</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_n_encoder</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Will McGinnis
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
