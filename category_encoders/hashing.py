@@ -20,7 +20,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -69,8 +69,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     References
     ----------
-    .. [1] Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing for
-    Large Scale Multitask Learning. Proc. ICML.
+    .. [1] Feature Hashing for Large Scale Multitask Learning, from
+    https://alex.smola.org/papers/2009/Weinbergeretal09.pdf
 
     """
 
@@ -258,11 +258,12 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):

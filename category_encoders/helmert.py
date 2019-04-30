@@ -18,7 +18,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -26,12 +26,12 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     handle_unknown: str
-        options are 'error', 'return_nan', 'value', and 'indicator', defaults to 'indicator'. Warning: if indicator is used,
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
         an extra column will be added in if the transform matrix has unknown categories.  This can cause
         unexpected changes in dimension in some cases.
     handle_missing: str
-        options are 'error', 'return_nan', 'value', and 'indicator', defaults to 'indicator'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has nan values.  This can cause
         unexpected changes in dimension in some cases.
 
     Example
@@ -76,14 +76,14 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
-    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
+    .. [1] Contrast Coding Systems for Categorical Variables, from
+    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
-
     """
+
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='indicator', handle_missing='indicator'):
         self.return_df = return_df
@@ -264,7 +264,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            base_df = mod.loc[X[col]]
+            base_df = mod.reindex(X[col])
             base_df.set_index(X.index, inplace=True)
             X = pd.concat([base_df, X], axis=1)
 
@@ -279,11 +279,12 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):

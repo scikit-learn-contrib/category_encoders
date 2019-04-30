@@ -20,7 +20,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -30,8 +30,12 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     base: int
         when the downstream model copes well with nonlinearities (like decision tree), use higher base.
     handle_unknown: str
-        options are 'error', 'return_nan' and 'value', defaults to 'value'. Warning: if value is used,
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
         an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        unexpected changes in dimension in some cases.
+    handle_missing: str
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has nan values.  This can cause
         unexpected changes in dimension in some cases.
 
     Example
@@ -306,9 +310,11 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         X_in: DataFrame
         cols: list-like, default None
             Column names in the DataFrame to be encoded
+
         Returns
         -------
         dummies : DataFrame
+
         """
 
         X = X_in.copy(deep=True)
@@ -319,7 +325,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            base_df = mod.loc[X[col]]
+            base_df = mod.reindex(X[col])
             base_df.set_index(X.index, inplace=True)
             X = pd.concat([base_df, X], axis=1)
 
@@ -344,22 +350,22 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         Returns
         -------
         numerical: DataFrame
+
         """
-        out_cols = X.columns.values
+        out_cols = X.columns.values.tolist()
 
         for col in cols:
             col_list = [col0 for col0 in out_cols if str(col0).startswith(str(col))]
+            insert_at = out_cols.index(col_list[0])
 
             if base == 1:
                 value_array = np.array([int(col0.split('_')[-1]) for col0 in col_list])
             else:
                 len0 = len(col_list)
                 value_array = np.array([base ** (len0 - 1 - i) for i in range(len0)])
-
-            X[col] = np.dot(X[col_list].values, value_array.T)
-            out_cols = [col0 for col0 in out_cols if col0 not in col_list]
-
-        X = X.reindex(columns=out_cols + cols)
+            X.insert(insert_at, col, np.dot(X[col_list].values, value_array.T))
+            X.drop(col_list, axis=1, inplace=True)
+            out_cols = X.columns.values.tolist()
 
         return X
 
@@ -371,14 +377,14 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if col is None or float(col) < 0.0:
             return None
         else:
-            col = self.numberToBase(int(col), self.base, digits)
+            col = self.number_to_base(int(col), self.base, digits)
             if len(col) == digits:
                 return col
             else:
                 return [0 for _ in range(digits - len(col))] + col
 
     @staticmethod
-    def numberToBase(n, b, limit):
+    def number_to_base(n, b, limit):
         if b == 1:
             return [0 if n != _ else 1 for _ in range(limit)]
 
@@ -396,11 +402,12 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):

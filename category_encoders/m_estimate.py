@@ -1,4 +1,4 @@
-"""Weight of Evidence"""
+"""M-probability estimate"""
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -9,8 +9,12 @@ from sklearn.utils.random import check_random_state
 __author__ = 'Jan Motl'
 
 
-class WOEEncoder(BaseEstimator, TransformerMixin):
-    """Weight of Evidence coding for categorical features.
+class MEstimateEncoder(BaseEstimator, TransformerMixin):
+    """M-probability estimate of likelihood.
+
+    This is a simplified version of target encoder. In comparison to target encoder, m-probability estimate
+    has only one tunable parameter (`m`), while target encoder has two tunable parameters (`min_samples_leaf`
+    and `smoothing`).
 
     Parameters
     ----------
@@ -20,18 +24,20 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
-        boolean for whether or not to drop columns with 0 variance.
+        boolean for whether or not to drop encoded columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+    handle_missing: str
+        options are 'return_nan', 'error' and 'value', defaults to 'value', which returns the prior probability.
     handle_unknown: str
-        options are 'return_nan', 'error' and 'value', defaults to 'value', which will assume WOE=0.
+        options are 'return_nan', 'error' and 'value', defaults to 'value', which returns the prior probability.
     randomized: bool,
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float
         standard deviation (spread or "width") of the normal distribution.
-    regularization: float
-        the purpose of regularization is mostly to prevent division by zero.
-        When regularization is 0, you may encounter division by zero.
+    m: float
+        this is the "m" in the m-probability estimate. Higher value of m results into stronger shrinking.
+        M is non-negative.
 
     Example
     -------
@@ -41,7 +47,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     >>> bunch = load_boston()
     >>> y = bunch.target > 22.5
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = WOEEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> enc = MEstimateEncoder(cols=['CHAS', 'RAD']).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
@@ -67,13 +73,16 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Weight of Evidence (WOE) and Information Value Explained, from
-    https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html
+    .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from
+    https://dl.acm.org/citation.cfm?id=507538
+
+    .. [2] Additive smoothing, from
+    https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
 
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
-                 handle_unknown='value', handle_missing='value', random_state=None, randomized=False, sigma=0.05, regularization=1.0):
+                 handle_unknown='value', handle_missing='value', random_state=None, randomized=False, sigma=0.05, m=1.0):
         self.verbose = verbose
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -89,7 +98,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         self.random_state = random_state
         self.randomized = randomized
         self.sigma = sigma
-        self.regularization = regularization
+        self.m = m
         self.feature_names = None
 
     # noinspection PyUnusedLocal
@@ -120,17 +129,6 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         # The lengths must be equal
         if X.shape[0] != y.shape[0]:
             raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
-
-        # The label must be binary with values {0,1}
-        unique = y.unique()
-        if len(unique) != 2:
-            raise ValueError("The target column y must be binary. But the target contains " + str(len(unique)) + " unique value(s).")
-        if y.isnull().any():
-            raise ValueError("The target column y must not contain missing values.")
-        if np.max(unique) < 1:
-            raise ValueError("The target column y must be binary with values {0, 1}. Value 1 was not found in the target.")
-        if np.min(unique) > 0:
-            raise ValueError("The target column y must be binary with values {0, 1}. Value 0 was not found in the target.")
 
         self._dim = X.shape[1]
 
@@ -173,8 +171,9 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None, override_return_df=False):
-        """Perform the transformation to new categorical data. When the data are used for model training,
-        it is important to also pass the target in order to apply leave one out.
+        """Perform the transformation to new categorical data.
+
+        When the data are used for model training, it is important to also pass the target in order to apply leave one out.
 
         Parameters
         ----------
@@ -182,6 +181,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples] when transform by leave one out
             None, when transform without target information (such as transform test set)
+
 
         Returns
         -------
@@ -253,6 +253,7 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         # Calculate global statistics
         self._sum = y.sum()
         self._count = y.count()
+        prior = self._sum/self._count
 
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
@@ -260,28 +261,25 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
             # Calculate sum and count of the target for each unique value in the feature col
             stats = y.groupby(X[col]).agg(['sum', 'count'])  # Count of x_{i,+} and x_i
 
-            # Create a new column with regularized WOE.
-            # Regularization helps to avoid division by zero.
-            # Pre-calculate WOEs because logarithms are slow.
-            nominator = (stats['sum'] + self.regularization) / (self._sum + 2*self.regularization)
-            denominator = ((stats['count'] - stats['sum']) + self.regularization) / (self._count - self._sum + 2*self.regularization)
-            woe = np.log(nominator / denominator)
+            # Calculate the m-probability estimate
+            estimate = (stats['sum'] + prior * self.m) / (self._sum + self.m)
 
-            # Ignore unique values. This helps to prevent overfitting on id-like columns.
-            woe[stats['count'] == 1] = 0
+            # Ignore unique values. This helps to prevent overfitting on id-like columns
+            if len(stats['count']) == self._count:
+                estimate[:] = prior
 
             if self.handle_unknown == 'return_nan':
-                woe.loc[-1] = np.nan
+                estimate.loc[-1] = np.nan
             elif self.handle_unknown == 'value':
-                woe.loc[-1] = 0
+                estimate.loc[-1] = prior
 
             if self.handle_missing == 'return_nan':
-                woe.loc[values.loc[np.nan]] = np.nan
+                estimate.loc[values.loc[np.nan]] = np.nan
             elif self.handle_missing == 'value':
-                woe.loc[-2] = 0
+                estimate.loc[-2] = prior
 
-            # Store WOE for transform() function
-            mapping[col] = woe
+            # Store the m-probability estimate for transform() function
+            mapping[col] = estimate
 
         return mapping
 

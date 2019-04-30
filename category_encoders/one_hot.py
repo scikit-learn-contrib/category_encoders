@@ -16,20 +16,24 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    handle_unknown: str
-        options are 'error', 'return_nan' and 'value', defaults to 'value'. Warning: if value is used,
-        an extra column will be added in if the transform matrix has unknown categories. This can cause
-        unexpected changes in the dimension in some cases.
     use_cat_names: bool
-        if True, category values will be included in the encoded column names. Since this can result into duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
+        if True, category values will be included in the encoded column names. Since this can result in duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
         If False, category indices will be used instead of the category values.
+    handle_unknown: str
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        unexpected changes in dimension in some cases.
+    handle_missing: str
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has nan values.  This can cause
+        unexpected changes in dimension in some cases.
 
     Example
     -------
@@ -76,14 +80,14 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
-    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
+    .. [1] Contrast Coding Systems for Categorical Variables, from
+    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
-
     """
+
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_missing='value', handle_unknown='value', use_cat_names=False):
         self.return_df = return_df
@@ -326,12 +330,11 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X_in: DataFrame
-        mapping: list-like
-              Contains mappings of column to be transformed to it's new columns and value represented
 
         Returns
         -------
         dummies : DataFrame
+
         """
 
         X = X_in.copy(deep=True)
@@ -368,36 +371,35 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         numerical: DataFrame
 
         """
-        out_cols = X.columns.values
-        cols = []
+        out_cols = X.columns.values.tolist()
         mapped_columns = []
         for switch in mapping:
             col = switch.get('col')
             mod = switch.get('mapping')
-            cols.append(col)
+            insert_at = out_cols.index(mod.columns[0])
 
-            X[col] = 0
+            X.insert(insert_at, col, 0)
             positive_indexes = mod.index[mod.index > 0]
             for i in range(positive_indexes.shape[0]):
                 existing_col = mod.columns[i]
                 val = positive_indexes[i]
-
                 X.loc[X[existing_col] == 1, col] = val
                 mapped_columns.append(existing_col)
+            X.drop(mod.columns, axis=1, inplace=True)
+            out_cols = X.columns.values.tolist()
 
-        out_cols = [col0 for col0 in out_cols if col0 not in mapped_columns]
-
-        return X.reindex(columns=out_cols + cols)
+        return X
 
     def get_feature_names(self):
         """
         Returns the names of all transformed / added columns.
 
         Returns
-        --------
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):

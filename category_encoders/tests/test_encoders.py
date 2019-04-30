@@ -1,12 +1,14 @@
 import doctest
 import os
+import warnings
 from datetime import timedelta
 
 import numpy as np
 import pandas as pd
 import sklearn
-import category_encoders.tests.test_utils as tu
+import category_encoders.tests.helpers as th
 from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted
+from sklearn.compose import ColumnTransformer
 from unittest2 import TestSuite, TextTestRunner, TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
@@ -15,14 +17,21 @@ __author__ = 'willmcginnis'
 
 
 # data definitions
-np_X = tu.create_array(n_rows=100)
-np_X_t = tu.create_array(n_rows=50, extras=True)
+np_X = th.create_array(n_rows=100)
+np_X_t = th.create_array(n_rows=50, extras=True)
 np_y = np.random.randn(np_X.shape[0]) > 0.5
 np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
-X = tu.create_dataset(n_rows=100)
-X_t = tu.create_dataset(n_rows=50, extras=True)
+X = th.create_dataset(n_rows=100)
+X_t = th.create_dataset(n_rows=50, extras=True)
 y = pd.DataFrame(np_y)
 y_t = pd.DataFrame(np_y_t)
+
+
+# turn warnings like division by zero into errors
+np.seterr(all='raise')
+
+# turn non-Numpy warnings into errors
+warnings.filterwarnings('error')
 
 
 # this class utilises parametrised tests where we loop over different encoders
@@ -35,24 +44,24 @@ class TestEncoders(TestCase):
                 # Encode a numpy array
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(np_X, np_y)
-                tu.verify_numeric(enc.transform(np_X_t))
+                th.verify_numeric(enc.transform(np_X_t))
 
     def test_classification(self):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical']
+                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical']
 
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit(X, np_y)
-                tu.verify_numeric(enc.transform(X_t))
+                th.verify_numeric(enc.transform(X_t))
 
                 enc = getattr(encoders, encoder_name)(verbose=1)
                 enc.fit(X, np_y)
-                tu.verify_numeric(enc.transform(X_t))
+                th.verify_numeric(enc.transform(X_t))
 
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
                 enc.fit(X, np_y)
-                tu.verify_numeric(enc.transform(X_t))
+                th.verify_numeric(enc.transform(X_t))
 
                 enc = getattr(encoders, encoder_name)(return_df=False)
                 enc.fit(X, np_y)
@@ -70,18 +79,18 @@ class TestEncoders(TestCase):
                 # verify_numeric(enc.transform(X_b))
 
     def test_impact_encoders(self):
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder']:
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
             with self.subTest(encoder_name=encoder_name):
 
                 # encode a numpy array and transform with the help of the target
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(np_X, np_y)
-                tu.verify_numeric(enc.transform(np_X_t, np_y_t))
+                th.verify_numeric(enc.transform(np_X_t, np_y_t))
 
                 # target is a DataFrame
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(X, y)
-                tu.verify_numeric(enc.transform(X_t, y_t))
+                th.verify_numeric(enc.transform(X_t, y_t))
 
                 # when we run transform(X, y) and there is a new value in X, something is wrong and we raise an error
                 enc = getattr(encoders, encoder_name)(handle_unknown='error', cols=['extra'])
@@ -93,9 +102,9 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
 
                 # we exclude some columns
-                X = tu.create_dataset(n_rows=100)
+                X = th.create_dataset(n_rows=100)
                 X = X.drop(['unique_str', 'none'], axis=1)
-                X_t = tu.create_dataset(n_rows=50, extras=True)
+                X_t = th.create_dataset(n_rows=50, extras=True)
                 X_t = X_t.drop(['unique_str', 'none'], axis=1)
 
                 # illegal state, we have to first train the encoder...
@@ -116,8 +125,8 @@ class TestEncoders(TestCase):
 
     def test_handle_unknown_error(self):
         # BaseN has problems with None -> ignore None
-        X = tu.create_dataset(n_rows=100, has_none=False)
-        X_t = tu.create_dataset(n_rows=50, extras=True, has_none=False)
+        X = th.create_dataset(n_rows=100, has_none=False)
+        X_t = th.create_dataset(n_rows=50, extras=True, has_none=False)
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
@@ -165,7 +174,7 @@ class TestEncoders(TestCase):
         X = pd.DataFrame({'city': ['chicago', 'los angeles', None]})
         y = pd.Series([1, 0, 1])
 
-        for encoder_name in ( set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(handle_missing='return_nan')
                 result = enc.fit_transform(X, y).iloc[2, :]
@@ -219,9 +228,9 @@ class TestEncoders(TestCase):
 
     def test_inverse_transform(self):
         # we do not allow None in these data (but "none" column without any None is ok)
-        X = tu.create_dataset(n_rows=100, has_none=False)
-        X_t = tu.create_dataset(n_rows=50, has_none=False)
-        X_t_extra = tu.create_dataset(n_rows=50, extras=True, has_none=False)
+        X = th.create_dataset(n_rows=100, has_none=False)
+        X_t = th.create_dataset(n_rows=50, has_none=False)
+        X_t_extra = th.create_dataset(n_rows=50, extras=True, has_none=False)
         cols = ['underscore', 'none', 'extra', 321, 'categorical']
 
         for encoder_name in ['BaseNEncoder', 'BinaryEncoder', 'OneHotEncoder', 'OrdinalEncoder']:
@@ -230,7 +239,7 @@ class TestEncoders(TestCase):
                 # simple run
                 enc = getattr(encoders, encoder_name)(verbose=1, cols=cols)
                 enc.fit(X)
-                tu.verify_inverse_transform(X_t, enc.inverse_transform(enc.transform(X_t)))
+                th.verify_inverse_transform(X_t, enc.inverse_transform(enc.transform(X_t)))
 
     def test_types(self):
         X = pd.DataFrame({
@@ -268,7 +277,8 @@ class TestEncoders(TestCase):
                 result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
                 columns = result.columns.values
 
-                self.assertTrue('target' in columns[-1], "Target must be the last column as in the input")
+                self.assertTrue('target' in columns[-1],
+                                "Target must be the last column as in the input. This is a tricky test because 'y' is named 'target' as well.")
 
     def test_tmp_column_name(self):
         binary_cat_example = pd.DataFrame(
@@ -276,7 +286,7 @@ class TestEncoders(TestCase):
              'Trend_tmp': ['UP', 'UP', 'DOWN', 'FLAT'],
              'target': [1, 1, 0, 0]}, columns=['Trend', 'Trend_tmp', 'target'])
 
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder']:
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
             with self.subTest(encoder_name=encoder_name):
                 encoder = getattr(encoders, encoder_name)()
                 _ = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
@@ -296,7 +306,7 @@ class TestEncoders(TestCase):
                 self.assertTrue('ignore' in columns, "Column 'ignore' is missing in: " + str(columns))
 
     def test_unique_column_is_not_predictive(self):
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder']:
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
             with self.subTest(encoder_name=encoder_name):
                 encoder = getattr(encoders, encoder_name)()
                 result = encoder.fit_transform(X[['unique_str']], y)
@@ -360,8 +370,8 @@ class TestEncoders(TestCase):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
-                # These 3 need y also
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder']:
+                # Target encoders also need y
+                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -375,8 +385,8 @@ class TestEncoders(TestCase):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
-                # These 3 need y also
-                if not encoder_name in ['TargetEncoder','WOEEncoder','LeaveOneOutEncoder']:
+                # Target encoders also need y
+                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -397,3 +407,36 @@ class TestEncoders(TestCase):
                 enc.fit(X, y)
                 out = enc.transform(X_t)
                 self.assertEqual(set(enc.get_feature_names()), set(out.columns))
+
+    def test_truncated_index(self):
+        # see: https://github.com/scikit-learn-contrib/categorical-encoding/issues/152
+        data = pd.DataFrame(data={'x': ['A', 'B', 'C', 'A', 'B'], 'y': [1, 0, 1, 0, 1]})
+        data = data.iloc[2:5]
+        data2 = pd.DataFrame(data={'x': ['C', 'A', 'B'], 'y': [1, 0, 1]})
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                result = enc.fit_transform(data.x, data.y)
+                enc2 = getattr(encoders, encoder_name)()
+                result2 = enc2.fit_transform(data2.x, data2.y)
+                self.assertTrue((result.values == result2.values).all())
+
+    def test_column_transformer(self):
+        # see issue #169
+            for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder does not accept handle_missing parameter
+                with self.subTest(encoder_name=encoder_name):
+
+                    # we can only test one data type at once. Here, we test string columns.
+                    tested_columns = ['unique_str', 'invariant', 'underscore', 'none', 'extra']
+
+                    # ColumnTransformer instantiates the encoder twice -> we have to make sure the encoder settings are correctly passed
+                    ct = ColumnTransformer([
+                        ("dummy_encoder_name", getattr(encoders, encoder_name)(handle_missing="return_nan"), tested_columns)
+                    ])
+                    obtained = ct.fit_transform(X, y)
+
+                    # the old-school approach
+                    enc = getattr(encoders, encoder_name)(handle_missing="return_nan", return_df=False)
+                    expected = enc.fit_transform(X[tested_columns], y)
+
+                    np.testing.assert_array_equal(obtained, expected)

@@ -1,7 +1,21 @@
+v2.0.0
+======
+
+ * Added James-Stein, CatBoost and m-estimate encoders
+ * Added get_feature_names method
+ * Refactored treatment of missing and new values 
+ * Speed up the encoders with vectorization
+ * Improved compatibility with Pandas Series and Numpy Arrays
+
+v1.3.0
+======
+
+ * Added Weight of Evidence encoder
+
 v1.2.8
 ======
 
- * critical bugfix in hashing encoder
+ * Critical bugfix in hashing encoder
 
 v1.2.7
 ======

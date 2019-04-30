@@ -13,21 +13,21 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     """Encodes categorical features as ordinal, in one ordered feature.
 
     Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
-    in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
+    in; in this case, we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
     are assumed to have no true order and integers are selected at random.
 
     Parameters
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-   mapping: list of dict
+    mapping: list of dict
         a mapping of class to label to use for the encoding, optional.
         the dict contains the keys 'col' and 'mapping'.
         the value of 'col' should be the feature name.
@@ -73,12 +73,11 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
-    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
+    .. [1] Contrast Coding Systems for Categorical Variables, from
+    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
-
 
     """
 
@@ -335,11 +334,12 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
         if not isinstance(self.feature_names, list):
             raise ValueError("Estimator has to be fitted to return feature names.")

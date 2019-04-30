@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-__version__ = '1.3.0'
+__version__ = '2.0.0'
 
 
 here = path.abspath(path.dirname(__file__))
@@ -30,8 +30,8 @@ setup(
     author='Will McGinnis',
     install_requires=[
       'numpy>=1.12.0',
-      'scikit-learn>=0.17.1',
-      'scipy>=0.17.0',
+      'scikit-learn>=0.20.0',
+      'scipy>=0.19.0',
       'statsmodels>=0.6.1',
       'pandas>=0.24.2',
       'patsy>=0.4.1',

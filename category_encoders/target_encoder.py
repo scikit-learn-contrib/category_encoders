@@ -9,19 +9,19 @@ __author__ = 'chappers'
 
 
 class TargetEncoder(BaseEstimator, TransformerMixin):
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
-                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
-        """Target encoding for categorical features.
-         For the case of categorical target: features are replaced with a blend of posterior probability of the target
-          given particular categorical value and prior probability of the target over all the training data.
-        For the case of continuous target: features are replaced with a blend of expected value of the target
-          given particular categorical value and expected value of the target over all the training data.
+    """Target encoding for categorical features.
+
+    For the case of categorical target: features are replaced with a blend of posterior probability of the target
+    given particular categorical value and the prior probability of the target over all the training data.
+
+    For the case of continuous target: features are replaced with a blend of the expected value of the target
+    given particular categorical value and the expected value of the target over all the training data.
 
     Parameters
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -70,9 +70,13 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. from
-    https://kaggle2.blob.core.windows.net/forum-message-attachments/225952/7441/high%20cardinality%20categoricals.pdf.
-        """
+    .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, from
+    https://dl.acm.org/citation.cfm?id=507538
+
+    """
+
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
+                     handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -84,12 +88,13 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         self._dim = None
         self.mapping = None
         self.handle_unknown = handle_unknown
-        self.handle_missing=handle_missing
+        self.handle_missing = handle_missing
         self._mean = None
         self.feature_names = None
 
     def fit(self, X, y, **kwargs):
         """Fit encoder according to X and y.
+
         Parameters
         ----------
         X : array-like, shape = [n_samples, n_features]
@@ -97,18 +102,18 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
             and n_features is the number of features.
         y : array-like, shape = [n_samples]
             Target values.
+
         Returns
         -------
         self : encoder
             Returns self.
+
         """
 
-        # first check the type
+        # unite the input into pandas types
         X = util.convert_input(X)
-        if isinstance(y, pd.DataFrame):
-            y = y.iloc[:, 0]
-        else:
-            y = pd.Series(y, name='target', index=X.index)
+        y = util.convert_input_vector(y, X.index)
+
         if X.shape[0] != y.shape[0]:
             raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -182,6 +187,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None, override_return_df=False):
         """Perform the transformation to new categorical data.
+
         Parameters
         ----------
         X : array-like, shape = [n_samples, n_features]
@@ -192,6 +198,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         -------
         p : array, shape = [n_samples, n_numeric + N]
             Transformed values with encoding applied.
+
         """
 
         if self.handle_missing == 'error':
@@ -201,7 +208,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
-        # first check the type
+        # unite the input into pandas types
         X = util.convert_input(X)
 
         # then make sure that it is the right size
@@ -210,10 +217,7 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
 
         # if we are encoding the training data, we have to check the target
         if y is not None:
-            if isinstance(y, pd.DataFrame):
-                y = y.iloc[:, 0]
-            else:
-                y = pd.Series(y, name='target')
+            y = util.convert_input_vector(y, X.index)
             if X.shape[0] != y.shape[0]:
                 raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
@@ -258,11 +262,12 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         if not isinstance(self.feature_names, list):

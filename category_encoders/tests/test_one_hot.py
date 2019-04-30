@@ -1,18 +1,17 @@
 import pandas as pd
-from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
-import warnings
-import category_encoders.tests.test_utils as tu
+import category_encoders.tests.helpers as th
 
 import category_encoders as encoders
 
 
-np_X = tu.create_array(n_rows=100)
-np_X_t = tu.create_array(n_rows=50, extras=True)
+np_X = th.create_array(n_rows=100)
+np_X_t = th.create_array(n_rows=50, extras=True)
 np_y = np.random.randn(np_X.shape[0]) > 0.5
 np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
-X = tu.create_dataset(n_rows=100)
-X_t = tu.create_dataset(n_rows=50, extras=True)
+X = th.create_dataset(n_rows=100)
+X_t = th.create_dataset(n_rows=50, extras=True)
 y = pd.DataFrame(np_y)
 y_t = pd.DataFrame(np_y_t)
 
@@ -54,14 +53,14 @@ class TestOneHotEncoderTestCase(TestCase):
         self.assertIn('extra_-1', out.columns.values)
 
         # test inverse_transform
-        X_i = tu.create_dataset(n_rows=100, has_none=False)
-        X_i_t = tu.create_dataset(n_rows=50, has_none=False)
+        X_i = th.create_dataset(n_rows=100, has_none=False)
+        X_i_t = th.create_dataset(n_rows=50, has_none=False)
         cols = ['underscore', 'none', 'extra', 321, 'categorical']
 
         enc = encoders.OneHotEncoder(verbose=1, use_cat_names=True, cols=cols)
         enc.fit(X_i)
         obtained = enc.inverse_transform(enc.transform(X_i_t))
-        tu.verify_inverse_transform(X_i_t, obtained)
+        th.verify_inverse_transform(X_i_t, obtained)
 
     def test_fit_transform_HaveMissingValuesAndUseCatNames_ExpectCorrectValue(self):
         encoder = encoders.OneHotEncoder(cols=[0], use_cat_names=True, handle_unknown='indicator')
@@ -227,13 +226,12 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(handle_missing='return_nan', handle_unknown='return_nan')
         enc.fit(train)
         result = enc.transform(test)
+        
+        message = 'inverse_transform is not supported because transform impute '\
+                  'the unknown category nan when encode city'
 
-        with warnings.catch_warnings(record=True) as w:
+        with self.assertWarns(UserWarning, msg=message) as w:
             enc.inverse_transform(result)
-
-            self.assertEqual(1, len(w))
-            self.assertEqual('inverse_transform is not supported because transform impute '
-                             'the unknown category nan when encode city', str(w[0].message))
 
     def test_inverse_transform_HaveMissingAndNoUnknown_ExpectInversed(self):
         train = pd.DataFrame({'city': ['chicago', np.nan]})

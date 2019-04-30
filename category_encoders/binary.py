@@ -15,7 +15,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -23,12 +23,12 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     handle_unknown: str
-        options are 'error', 'return_nan' and 'value', defaults to 'value'. Warning: if value is used,
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
         an extra column will be added in if the transform matrix has unknown categories.  This can cause
         unexpected changes in dimension in some cases.
     handle_missing: str
-        options are 'error', 'return_nan', 'value', and 'indicator', defaults to 'indicator'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has nan values.  This can cause
         unexpected changes in dimension in some cases.
 
     Example
@@ -71,9 +71,16 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
-        self.base_n_encoder = ce.BaseNEncoder(base=2, verbose=verbose, cols=cols, mapping=mapping,
-                                              drop_invariant=drop_invariant, return_df=return_df,
-                                              handle_unknown=handle_unknown, handle_missing=handle_missing)
+        self.verbose = verbose
+        self.cols = cols
+        self.mapping = mapping
+        self.drop_invariant = drop_invariant
+        self.return_df = return_df
+        self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
+        self.base_n_encoder = ce.BaseNEncoder(base=2, verbose=self.verbose, cols=self.cols, mapping=self.mapping,
+                                              drop_invariant=self.drop_invariant, return_df=self.return_df,
+                                              handle_unknown=self.handle_unknown, handle_missing=self.handle_missing)
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -137,11 +144,12 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
         """
         Returns the names of all transformed / added columns.
 
-        Returns:
-        --------
+        Returns
+        -------
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
+
         """
 
         return self.base_n_encoder.get_feature_names()

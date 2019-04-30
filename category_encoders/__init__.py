@@ -18,8 +18,11 @@ from category_encoders.basen import BaseNEncoder
 from category_encoders.leave_one_out import LeaveOneOutEncoder
 from category_encoders.target_encoder import TargetEncoder
 from category_encoders.woe import WOEEncoder
+from category_encoders.m_estimate import MEstimateEncoder
+from category_encoders.james_stein import JamesSteinEncoder
+from category_encoders.cat_boost import CatBoostEncoder
 
-__version__ = '1.3.0'
+__version__ = '2.0.0'
 
 __author__ = 'willmcginnis'
 
@@ -35,5 +38,8 @@ __all__ = [
     'BaseNEncoder',
     'LeaveOneOutEncoder',
     'TargetEncoder',
-    'WOEEncoder'
+    'WOEEncoder',
+    'MEstimateEncoder',
+    'JamesSteinEncoder',
+    'CatBoostEncoder'
 ]
