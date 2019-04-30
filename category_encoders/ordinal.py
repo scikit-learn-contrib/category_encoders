@@ -288,6 +288,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping_out = mapping
             for switch in mapping:
                 column = switch.get('col')
+
+                X[column] = X[column].fillna(np.nan)
                 X[column] = X[column].map(switch['mapping'])
 
                 try:
