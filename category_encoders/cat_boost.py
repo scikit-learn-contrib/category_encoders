@@ -272,7 +272,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
             level_notunique = colmap['count'] > 1
 
             unique_train = colmap.index
-            unseen_values = pd.Series([x for x in X_in[col].unique() if x not in unique_train])
+            unseen_values = pd.Series([x for x in X[col].fillna(np.nan).unique() if x not in unique_train])
 
             is_nan = X_in[col].isnull()
             is_unknown_value = X_in[col].isin(unseen_values.dropna())
@@ -282,7 +282,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
 
             if y is None:    # Replace level with its mean target; if level occurs only once, use global mean
                 level_means = ((colmap['sum'] + self._mean) / (colmap['count'] + 1)).where(level_notunique, self._mean)
-                X[col] = X[col].map(level_means)
+                X[col] = X[col].fillna(np.nan).map(level_means)
             else:
                 # Simulation of CatBoost implementation, which calculates leave-one-out on the fly.
                 # The nice thing about this is that it helps to prevent overfitting. The bad thing
