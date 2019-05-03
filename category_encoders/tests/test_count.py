@@ -1,7 +1,8 @@
 import random
 import pandas as pd
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
-import category_encoders.tests.test_utils as tu
+
+import category_encoders.tests.helpers as th
 import numpy as np
 
 import category_encoders as encoders
@@ -9,8 +10,8 @@ import category_encoders as encoders
 
 random.seed(1)
 
-X = tu.create_dataset(n_rows=100, random_seed=0)
-X_t = tu.create_dataset(n_rows=51, extras=True, random_seed=0)
+X = th.create_dataset(n_rows=100, random_seed=0)
+X_t = th.create_dataset(n_rows=51, extras=True, random_seed=0)
 
 class TestCountEncoder(TestCase):
 
