@@ -10,8 +10,8 @@ import category_encoders as encoders
 
 random.seed(1)
 
-X = th.create_dataset(n_rows=100, random_seed=0)
-X_t = th.create_dataset(n_rows=51, extras=True, random_seed=0)
+X = th.create_dataset(n_rows=100)
+X_t = th.create_dataset(n_rows=51, extras=True)
 
 class TestCountEncoder(TestCase):
 
