@@ -1,69 +1,75 @@
-import numpy as np
-import random
+from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
+from category_encoders.utils import convert_input_vector
 import pandas as pd
-import math
+import numpy as np
 
 
-def verify_numeric(X_test):
-    for dt in X_test.dtypes:
-        numeric = False
-        if np.issubdtype(dt, np.dtype(int)) or np.issubdtype(dt, np.dtype(float)):
-            numeric = True
-        assert numeric
+class TestUtils(TestCase):
+    def test_convert_input_vector(self):
+        index = [2, 3, 4]
 
+        result = convert_input_vector([0, 1, 0], index)  # list
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(3, len(result))
+        np.testing.assert_array_equal(result.index, [2, 3, 4])
 
-# subroutines
-def create_array(n_rows=1000, extras=False, has_none=True):
-    """
-    Creates a numpy dataset with some categorical variables
-    :return:
-    """
+        result = convert_input_vector([[0, 1, 0]], index)  # list of lists (row)
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(3, len(result))
+        np.testing.assert_array_equal(result.index, [2, 3, 4])
 
-    ds = [[
-        random.random(),
-        random.random(),
-        random.choice(['A', 'B', 'C']),
-        random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),
-        random.choice(['A', 'B', 'C', None, np.nan]) if has_none else random.choice(['A', 'B', 'C']),
-        random.choice(['A'])
-    ] for _ in range(n_rows)]
+        result = convert_input_vector([[0], [1], [0]], index)  # list of lists (column)
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(3, len(result))
+        np.testing.assert_array_equal(result.index, [2, 3, 4])
 
-    return np.array(ds)
+        result = convert_input_vector(np.array([1, 0, 1]), index)  # np vector
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(3, len(result))
+        np.testing.assert_array_equal(result.index, [2, 3, 4])
 
+        result = convert_input_vector(np.array([[1, 0, 1]]), index)  # np matrix row
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(3, len(result))
+        np.testing.assert_array_equal(result.index, [2, 3, 4])
 
-def create_dataset(n_rows=1000, extras=False, has_none=True):
-    """
-    Creates a dataset with some categorical variables
-    """
+        result = convert_input_vector(np.array([[1], [0], [1]]), index)  # np matrix column
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(3, len(result))
+        np.testing.assert_array_equal(result.index, [2, 3, 4])
 
-    ds = [[
-        random.random(),                                                                        # Floats
-        random.choice([float('nan'), float('inf'), float('-inf'), -0, 0, 1, -1, math.pi]),      # Floats with edge scenarios
-        row,                                                                                    # Unique integers
-        str(row),                                                                               # Unique strings
-        random.choice(['A']),                                                                   # Invariant
-        random.choice(['A', 'B_b', 'C_c_c']),                                                   # Strings with underscores to test reverse_dummies()
-        random.choice(['A', 'B', 'C', None]) if has_none else random.choice(['A', 'B', 'C']),   # None
-        random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),      # With a new string value
-        random.choice([12, 43, -32]),                                                           # Number in the column name
-        random.choice(['A', 'B', 'C']),                                                         # What is going to become the categorical column
-    ] for row in range(n_rows)]
+        result = convert_input_vector(pd.Series([0, 1, 0], index=[4, 5, 6]), index)  # series
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(3, len(result))
+        np.testing.assert_array_equal(result.index, [4, 5, 6], 'We want to preserve the original index')
 
-    df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321, 'categorical'])
-    df['categorical'] = pd.Categorical(df['categorical'], categories=['A', 'B', 'C'])
-    return df
+        result = convert_input_vector(pd.DataFrame({'y': [0, 1, 0]}, index=[4, 5, 6]), index)  # dataFrame
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(3, len(result))
+        np.testing.assert_array_equal(result.index, [4, 5, 6], 'We want to preserve the original index')
 
+        result = convert_input_vector((0, 1, 0), index)  # tuple
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(3, len(result))
+        np.testing.assert_array_equal(result.index, [2, 3, 4])
 
-def verify_inverse_transform(x, x_inv):
-    """
-    Verify x is equal to x_inv. The test returns true for NaN.equals(NaN) as it should.
+        result = convert_input_vector(0, [2])  # scalar
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(1, len(result))
+        self.assertTrue(result.index == [2])
 
-    """
-    assert x.equals(x_inv)
+        result = convert_input_vector('a', [2])  # scalar
+        self.assertTrue(isinstance(result, pd.Series))
+        self.assertEqual(1, len(result))
+        self.assertTrue(result.index == [2])
 
+        # multiple columns and rows should cause an error because it is unclear which column/row to use as the target
+        self.assertRaises(ValueError, convert_input_vector, (pd.DataFrame({'col1': [0, 1, 0], 'col2': [1, 0, 1]})), index)
+        self.assertRaises(ValueError, convert_input_vector, (np.array([[0, 1], [1, 0], [0, 1]])), index)
+        self.assertRaises(ValueError, convert_input_vector, ([[0, 1], [1, 0], [0, 1]]), index)
 
-def deep_round(A, ndigits=5):
-    """
-    Rounds numbers in a list of lists. Useful for approximate equality testing.
-    """
-    return [[round(val, ndigits) for val in sublst] for sublst in A]
+        # edge scenarios (it is ok to raise an exception but please, provide then a helpful exception text)
+        _ = convert_input_vector(pd.Series(), [])
+        _ = convert_input_vector([], [])
+        _ = convert_input_vector([[]], [])
+        _ = convert_input_vector(pd.DataFrame(), [])

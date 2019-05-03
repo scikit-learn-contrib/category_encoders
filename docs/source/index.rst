@@ -7,21 +7,7 @@ Category Encoders
 =================
 
 A set of scikit-learn-style transformers for encoding categorical variables into numeric with different
-techniques.  Currently implemented are:
-
- * Ordinal
- * One-Hot
- * Binary
- * Helmert Contrast
- * Sum Contrast
- * Polynomial Contrast
- * Backward Difference Contrast
- * Hashing
- * BaseN
- * LeaveOneOut
- * Target Encoding
-
-The ordinal, one-hot, and hashing encoders have similar equivalents in the existing scikit-learn version, but the
+techniques. While ordinal, one-hot, and hashing encoders have similar equivalents in the existing scikit-learn version, the
 transformers in this library all share a few useful properties:
 
  * First-class support for pandas dataframes as an input (and optionally as output)
@@ -53,16 +39,20 @@ To use:
     import category_encoders as ce
 
     encoder = ce.BackwardDifferenceEncoder(cols=[...])
+    encoder = ce.BaseNEncoder(cols=[...])
     encoder = ce.BinaryEncoder(cols=[...])
+    encoder = ce.CatBoostEncoder(cols=[...])
     encoder = ce.HashingEncoder(cols=[...])
     encoder = ce.HelmertEncoder(cols=[...])
+    encoder = ce.JamesSteinEncoder(cols=[...])
+    encoder = ce.LeaveOneOutEncoder(cols=[...])
+    encoder = ce.MEstimateEncoder(cols=[...])
     encoder = ce.OneHotEncoder(cols=[...])
     encoder = ce.OrdinalEncoder(cols=[...])
     encoder = ce.SumEncoder(cols=[...])
     encoder = ce.PolynomialEncoder(cols=[...])
-    encoder = ce.BaseNEncoder(cols=[...])
     encoder = ce.TargetEncoder(cols=[...])
-    encoder = ce.LeaveOneOutEncoder(cols=[...])
+    encoder = ce.WOEEncoder(cols=[...])
 
     encoder.fit(X, y)
     X_cleaned = encoder.transform(X_dirty)
@@ -76,16 +66,20 @@ Contents:
    :maxdepth: 3
 
    backward_difference
+   basen
    binary
+   catboost
    hashing
    helmert
+   jamesstein
+   leaveoneout
+   mestimate
    onehot
    ordinal
    polynomial
    sum
-   basen
-   leaveoneout
    targetencoder
+   woe
 
 
 Indices and tables

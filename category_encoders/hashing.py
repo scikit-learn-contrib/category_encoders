@@ -20,7 +20,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -69,10 +69,11 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     References
     ----------
-    .. [1] Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing for
-    Large Scale Multitask Learning. Proc. ICML.
+    .. [1] Feature Hashing for Large Scale Multitask Learning, from
+    https://alex.smola.org/papers/2009/Weinbergeretal09.pdf
 
     """
+
     def __init__(self, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -82,6 +83,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self.hash_method = hash_method
         self._dim = None
+        self.feature_names = None
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -114,16 +116,24 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = X_temp.columns.tolist()
+
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                          "Not found in generated cols.\n{}".format(e))
 
         return self
 
-    def transform(self, X):
+    def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -158,7 +168,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        if self.return_df:
+        if self.return_df or override_return_df:
             return X
         else:
             return X.values
@@ -234,12 +244,29 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         new_cols = ['col_%d' % d for d in range(N)]
 
-        X_cat = X.reindex(columns=cols)
-        X_num = X.reindex(columns=[x for x in X.columns.values if x not in cols])
+        X_cat = X.loc[:, cols]
+        X_num = X.loc[:, [x for x in X.columns.values if x not in cols]]
 
         X_cat = X_cat.apply(hash_fn, axis=1)
         X_cat.columns = new_cols
 
-        X = pd.merge(X_cat, X_num, left_index=True, right_index=True)
+        X = pd.concat([X_cat, X_num], axis=1)
 
         return X
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns
+        -------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+
+        """
+
+        if not isinstance(self.feature_names, list):
+            raise ValueError('Must fit data first. Affected feature names are not known before.')
+        else:
+            return self.feature_names

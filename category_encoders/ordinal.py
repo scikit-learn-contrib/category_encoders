@@ -1,9 +1,10 @@
 """Ordinal or label encoding"""
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
+import warnings
 
 __author__ = 'willmcginnis'
 
@@ -12,30 +13,31 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     """Encodes categorical features as ordinal, in one ordered feature.
 
     Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
-    in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
+    in; in this case, we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
     are assumed to have no true order and integers are selected at random.
 
     Parameters
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-   mapping: list of dict
+    mapping: list of dict
         a mapping of class to label to use for the encoding, optional.
         the dict contains the keys 'col' and 'mapping'.
         the value of 'col' should be the feature name.
         the value of 'mapping' should be a list of tuples of format (original_label, encoded_label).
         example mapping: [{'col': 'col1', 'mapping': [(None, 0), ('a', 1), ('b', 2)]}]
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1.
+        options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the category -1.
+    handle_missing: str
+        options are 'error', 'return_nan', and 'value, default to 'value', which treat nan as a category at fit time,
+        or -2 at transform time if nan is not a category during fit.
 
     Example
     -------
@@ -71,26 +73,26 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     References
     ----------
 
-    .. [1] Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. from
-    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
+    .. [1] Contrast Coding Systems for Categorical Variables, from
+    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
-
     """
 
-    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True, impute_missing=True,
-                 handle_unknown='impute'):
+    def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True,
+                 handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
         self.cols = cols
         self.mapping = mapping
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
         self._dim = None
+        self.feature_names = None
 
     @property
     def category_mapping(self):
@@ -127,25 +129,38 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         _, categories = self.ordinal_encoding(
             X,
             mapping=self.mapping,
             cols=self.cols,
-            impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown=self.handle_unknown,
+            handle_missing=self.handle_missing
         )
         self.mapping = categories
+
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = X_temp.columns.tolist()
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
+
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                    "Not found in generated cols.\n{}".format(e))
 
         return self
 
-    def transform(self, X):
+    def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Will use the mapping (if available) and the column list (if available, otherwise every column) to encode the
@@ -164,8 +179,13 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
         """
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
+            raise ValueError(
+                'Must train encoder before it can be used to transform data.')
 
         # first check the type
         X = util.convert_input(X)
@@ -181,19 +201,24 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             X,
             mapping=self.mapping,
             cols=self.cols,
-            impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown=self.handle_unknown,
+            handle_missing=self.handle_missing
         )
 
         if self.drop_invariant:
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        return X if self.return_df else X.values
+        if self.return_df or override_return_df:
+            return X
+        else:
+            return X.values
 
     def inverse_transform(self, X_in):
         """
-        Perform the inverse transformation to encoded data.
+        Perform the inverse transformation to encoded data. Will attempt best case reconstruction, which means
+        it will return nan for handle_missing and handle_unknown settings that break the bijection. We issue
+        warnings when some of those cases occur.
 
         Parameters
         ----------
@@ -210,7 +235,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         X = util.convert_input(X)
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to inverse_transform data')
+            raise ValueError(
+                'Must train encoder before it can be used to inverse_transform data')
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -223,25 +249,34 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        if self.impute_missing and self.handle_unknown == 'impute':
+        if self.handle_unknown == 'value':
             for col in self.cols:
                 if any(X[col] == -1):
-                    raise ValueError("inverse_transform is not supported because transform impute "
-                                     "the unknown category -1 when encode %s" % (col,))
+                    warnings.warn("inverse_transform is not supported because transform impute "
+                                  "the unknown category -1 when encode %s" % (col,))
+
+        if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
+            for col in self.cols:
+                if X[col].isnull().any():
+                    warnings.warn("inverse_transform is not supported because transform impute "
+                                  "the unknown category nan when encode %s" % (col,))
 
         for switch in self.mapping:
-            col_dict = {col_pair[1]: col_pair[0] for col_pair in switch.get('mapping')}
-            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x)).astype(switch.get('data_type'))
+            column_mapping = switch.get('mapping')
+            inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
+            X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
 
         return X if self.return_df else X.values
 
     @staticmethod
-    def ordinal_encoding(X_in, mapping=None, cols=None, impute_missing=True, handle_unknown='impute'):
+    def ordinal_encoding(X_in, mapping=None, cols=None, handle_unknown='value', handle_missing='value'):
         """
         Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
         in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
         are assumed to have no true order and integers are selected at random.
         """
+
+        return_nan_series = pd.Series(data=[np.nan], index=[-2])
 
         X = X_in.copy(deep=True)
 
@@ -251,35 +286,60 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         if mapping is not None:
             mapping_out = mapping
             for switch in mapping:
-                categories_dict = dict(switch.get('mapping'))
                 column = switch.get('col')
-                transformed_column = X[column].map(lambda x: categories_dict.get(x, np.nan))
+                X[column] = X[column].map(switch['mapping'])
 
                 try:
-                    transformed_column = transformed_column.astype(int)
+                    X[column] = X[column].astype(int)
                 except ValueError as e:
-                    transformed_column = transformed_column.astype(float)
+                    X[column] = X[column].astype(float)
 
-                if impute_missing:
-                    if handle_unknown == 'impute':
-                        transformed_column.fillna(0, inplace=True)
-                    elif handle_unknown == 'error':
-                        missing = transformed_column.isnull()
-                        if any(missing):
-                            raise ValueError('Unexpected categories found in column %s' % column)
-                X[column] = transformed_column
+                if handle_unknown == 'value':
+                    X[column].fillna(-1, inplace=True)
+                elif handle_unknown == 'error':
+                    missing = X[column].isnull()
+                    if any(missing):
+                        raise ValueError('Unexpected categories found in column %s' % column)
+
+                if handle_missing == 'return_nan':
+                    X[column] = X[column].map(return_nan_series).where(X[column] == -2, X[column])
 
         else:
             mapping_out = []
             for col in cols:
 
+                nan_identity = np.nan
+
                 if util.is_category(X[col].dtype):
                     categories = X[col].cat.categories
                 else:
-                    categories = [x for x in pd.unique(X[col].values) if x is not None]
+                    categories = X[col].unique()
 
-                categories_dict = {x: i + 1 for i, x in enumerate(categories)}
+                index = pd.Series(categories).fillna(nan_identity).unique()
 
-                mapping_out.append({'col': col, 'mapping': list(categories_dict.items()), 'data_type': X[col].dtype}, )
+                data = pd.Series(index=index, data=range(1, len(index) + 1))
+
+                if handle_missing == 'value' and ~data.index.isnull().any():
+                    data.loc[nan_identity] = -2
+                elif handle_missing == 'return_nan':
+                    data.loc[nan_identity] = -2
+
+                mapping_out.append({'col': col, 'mapping': data, 'data_type': X[col].dtype}, )
 
         return X, mapping_out
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns
+        -------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+
+        """
+        if not isinstance(self.feature_names, list):
+            raise ValueError("Estimator has to be fitted to return feature names.")
+        else:
+            return self.feature_names

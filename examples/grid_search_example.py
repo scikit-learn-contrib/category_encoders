@@ -1,35 +1,41 @@
-""" Modified from http://scikit-learn.org/stable/auto_examples/model_selection/grid_search_digits.html
+"""
+Modified from https://scikit-learn.org/stable/auto_examples/model_selection/plot_grid_search_digits.html
+Tested to work with scikit-learn 0.20.2
 """
 
 from __future__ import print_function
 
-from sklearn import datasets
-from sklearn.grid_search import GridSearchCV
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 from category_encoders.basen import BaseNEncoder
 from examples.source_data.loaders import get_mushroom_data
 from sklearn.linear_model import LogisticRegression
+import warnings
+from sklearn.exceptions import DataConversionWarning
+
+warnings.filterwarnings(action='ignore', category=DataConversionWarning)
 
 print(__doc__)
 
-# first we get data from the mushroom dataset
+# first get data from the mushroom dataset
 X, y, _ = get_mushroom_data()
 X = X.values  # use numpy array not dataframe here
 n_samples = X.shape[0]
 
-# Split the dataset in two equal parts
+# split the dataset in two equal parts
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
 
 # create a pipeline
 ppl = Pipeline([
     ('enc', BaseNEncoder(base=2, return_df=False, verbose=True)),
-    ('clf', LogisticRegression())
+    ('norm', StandardScaler()),
+    ('clf', LogisticRegression(solver='lbfgs', random_state=0))
 ])
 
-
-# Set the parameters by cross-validation
+# set the parameters by cross-validation
 tuned_parameters = {
     'enc__base': [1, 2, 3, 4, 5, 6]
 }
@@ -44,7 +50,9 @@ for score in scores:
     print("Best parameters set found on development set:\n")
     print(clf.best_params_)
     print("\nGrid scores on development set:\n")
-    for mean, std, params in clf.grid_scores_:
+    means = clf.cv_results_['mean_test_score']
+    stds = clf.cv_results_['std_test_score']
+    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
         print("%s (+/-%s) for %s" % (mean, std * 2, params))
 
     print("\nDetailed classification report:\n")

@@ -1,11 +1,12 @@
 """BaseX encoding"""
 
+import pandas as pd
 import numpy as np
 import math
-import warnings
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
+import warnings
 
 __author__ = 'willmcginnis'
 
@@ -19,7 +20,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     ----------
 
     verbose: int
-        integer indicating verbosity of output. 0 for none.
+        integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -28,11 +29,13 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     base: int
         when the downstream model copes well with nonlinearities (like decision tree), use higher base.
-    impute_missing: bool
-        boolean for whether or not to apply the logic for handle_unknown, will be deprecated in the future.
     handle_unknown: str
-        options are 'error', 'ignore' and 'impute', defaults to 'impute', which will impute the category -1. Warning: if
-        impute is used, an extra column will be added in if the transform matrix has unknown categories.  This can causes
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has unknown categories.  This can cause
+        unexpected changes in dimension in some cases.
+    handle_missing: str
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
+        an extra column will be added in if the transform matrix has nan values.  This can cause
         unexpected changes in dimension in some cases.
 
     Example
@@ -49,20 +52,20 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
     Data columns (total 18 columns):
+    CRIM       506 non-null float64
+    ZN         506 non-null float64
+    INDUS      506 non-null float64
     CHAS_0     506 non-null int64
     CHAS_1     506 non-null int64
+    NOX        506 non-null float64
+    RM         506 non-null float64
+    AGE        506 non-null float64
+    DIS        506 non-null float64
     RAD_0      506 non-null int64
     RAD_1      506 non-null int64
     RAD_2      506 non-null int64
     RAD_3      506 non-null int64
     RAD_4      506 non-null int64
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
     TAX        506 non-null float64
     PTRATIO    506 non-null float64
     B          506 non-null float64
@@ -73,20 +76,21 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, base=2, impute_missing=True,
-                 handle_unknown='impute'):
+    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True, base=2,
+                 handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
         self.verbose = verbose
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
         self.cols = cols
+        self.mapping = mapping
         self.ordinal_encoder = None
         self._dim = None
         self.base = base
         self._encoded_columns = None
-        self.digits_per_col = {}
+        self.feature_names = None
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
@@ -120,30 +124,71 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         # train an ordinal pre-encoder
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
-            impute_missing=self.impute_missing,
-            handle_unknown=self.handle_unknown
+            handle_unknown='value',
+            handle_missing='value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
-        for col in self.cols:
-            self.digits_per_col[col] = self.calc_required_digits(X, col)
+        self.mapping = self.fit_base_n_encoding(X)
 
         # do a transform on the training data to get a column list
-        X_t = self.transform(X, override_return_df=True)
-        self._encoded_columns = X_t.columns.values
+        X_temp = self.transform(X, override_return_df=True)
+        self._encoded_columns = X_temp.columns.values
+        self.feature_names = list(X_temp.columns)
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                          "Not found in generated cols.\n{}".format(e))
 
         return self
+
+    def fit_base_n_encoding(self, X):
+        mappings_out = []
+
+        for switch in self.ordinal_encoder.category_mapping:
+            col = switch.get('col')
+            values = switch.get('mapping')
+
+            if self.handle_missing == 'value':
+                values = values[values > 0]
+
+            if self.handle_unknown == 'indicator':
+                values = np.append(values, -1)
+
+            digits = self.calc_required_digits(values)
+            X_unique = pd.DataFrame(index=values,
+                                    columns=[str(col) + '_%d' % x for x in range(digits)],
+                                    data=np.array([self.col_transform(x, digits) for x in range(1, len(values) + 1)]))
+
+            if self.handle_unknown == 'return_nan':
+                X_unique.loc[-1] = np.nan
+            elif self.handle_unknown == 'value':
+                X_unique.loc[-1] = 0
+
+            if self.handle_missing == 'return_nan':
+                X_unique.loc[values.loc[np.nan]] = np.nan
+            elif self.handle_missing == 'value':
+                X_unique.loc[-2] = 0
+
+            mappings_out.append({'col': col, 'mapping': X_unique})
+
+        return mappings_out
 
     def transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
@@ -161,6 +206,10 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         """
 
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().bool():
+                raise ValueError('Columns to be encoded can not contain null')
+
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
@@ -175,6 +224,11 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             return X
 
         X_out = self.ordinal_encoder.transform(X)
+
+        if self.handle_unknown == 'error':
+            if X_out[self.cols].isin([-1]).any().any():
+                raise ValueError('Columns to be encoded can not contain new values')
+
         X_out = self.basen_encode(X_out, cols=self.cols)
 
         if self.drop_invariant:
@@ -182,8 +236,8 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
                 X_out.drop(col, 1, inplace=True)
 
         # impute missing values only in the generated columns
-        generated_cols = util.get_generated_cols(X, X_out, self.cols)
-        X_out[generated_cols] = X_out[generated_cols].fillna(value=0.0)
+        # generated_cols = util.get_generated_cols(X, X_out, self.cols)
+        # X_out[generated_cols] = X_out[generated_cols].fillna(value=0.0)
 
         if self.return_df or override_return_df:
             return X_out
@@ -204,7 +258,6 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         """
 
-        warnings.warn('Inverse transform in basen is a currently experimental feature, please be careful')
         X = X_in.copy(deep=True)
 
         # first check the type
@@ -226,24 +279,25 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return X if self.return_df else X.values
 
-        if self.impute_missing and self.handle_unknown == 'impute':
-            for col in self.cols:
-                if any(X[col] == -1):
-                    raise ValueError("inverse_transform is not supported because transform impute "
-                                     "the unknown category -1 when encode %s" % (col,))
-
         for switch in self.ordinal_encoder.mapping:
-            col_dict = {col_pair[1]: col_pair[0] for col_pair in switch.get('mapping')}
-            X[switch.get('col')] = X[switch.get('col')].apply(lambda x: col_dict.get(x)).astype(switch.get('data_type'))
+            column_mapping = switch.get('mapping')
+            inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
+            X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
+
+            if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
+                for col in self.cols:
+                    if X[switch.get('col')].isnull().any():
+                        warnings.warn("inverse_transform is not supported because transform impute "
+                                      "the unknown category nan when encode %s" % (col,))
 
         return X if self.return_df else X.values
 
-    def calc_required_digits(self, X, col):
+    def calc_required_digits(self, values):
         # figure out how many digits we need to represent the classes present
         if self.base == 1:
-            digits = len(X[col].unique()) + 1
+            digits = len(values) + 1
         else:
-            digits = int(np.ceil(math.log(len(X[col].unique()), self.base))) + 1
+            digits = int(np.ceil(math.log(len(values), self.base))) + 1
 
         return digits
 
@@ -256,37 +310,29 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         X_in: DataFrame
         cols: list-like, default None
             Column names in the DataFrame to be encoded
+
         Returns
         -------
         dummies : DataFrame
+
         """
 
         X = X_in.copy(deep=True)
 
-        if cols is None:
-            cols = X.columns.values
-            pass_thru = []
-        else:
-            pass_thru = [col for col in X.columns.values if col not in cols]
+        cols = X.columns.values.tolist()
 
-        bin_cols = []
-        for col in cols:
-            # get how many digits we need to represent the classes present
-            digits = self.calc_required_digits(X, col)
+        for switch in self.mapping:
+            col = switch.get('col')
+            mod = switch.get('mapping')
 
-            # map the ordinal column into a list of these digits, of length digits
-            X[col] = X[col].map(lambda x: self.col_transform(x, digits))
+            base_df = mod.reindex(X[col])
+            base_df.set_index(X.index, inplace=True)
+            X = pd.concat([base_df, X], axis=1)
 
-            for dig in range(digits):
-                X[str(col) + '_%d' % (dig,)] = X[col].map(lambda r: int(r[dig]) if r is not None else None)
-                bin_cols.append(str(col) + '_%d' % (dig,))
+            old_column_index = cols.index(col)
+            cols[old_column_index: old_column_index + 1] = mod.columns
 
-        if self._encoded_columns is None:
-            X = X.reindex(columns=bin_cols + pass_thru)
-        else:
-            X = X.reindex(columns=self._encoded_columns)
-
-        return X
+        return X.reindex(columns=cols)
 
     def basen_to_integer(self, X, cols, base):
         """
@@ -304,25 +350,22 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         Returns
         -------
         numerical: DataFrame
+
         """
-        out_cols = X.columns.values
+        out_cols = X.columns.values.tolist()
 
         for col in cols:
             col_list = [col0 for col0 in out_cols if str(col0).startswith(str(col))]
-            for col0 in col_list:
-                if any(X[col0].isnull()):
-                    raise ValueError("inverse_transform is not supported because transform impute"
-                                     "the unknown category -1 when encode %s" % (col,))
+            insert_at = out_cols.index(col_list[0])
+
             if base == 1:
                 value_array = np.array([int(col0.split('_')[-1]) for col0 in col_list])
             else:
                 len0 = len(col_list)
                 value_array = np.array([base ** (len0 - 1 - i) for i in range(len0)])
-
-            X[col] = np.dot(X[col_list].values, value_array.T)
-            out_cols = [col0 for col0 in out_cols if col0 not in col_list]
-
-        X = X.reindex(columns=out_cols + cols)
+            X.insert(insert_at, col, np.dot(X[col_list].values, value_array.T))
+            X.drop(col_list, axis=1, inplace=True)
+            out_cols = X.columns.values.tolist()
 
         return X
 
@@ -334,14 +377,14 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if col is None or float(col) < 0.0:
             return None
         else:
-            col = self.numberToBase(int(col), self.base, digits)
+            col = self.number_to_base(int(col), self.base, digits)
             if len(col) == digits:
                 return col
             else:
                 return [0 for _ in range(digits - len(col))] + col
 
     @staticmethod
-    def numberToBase(n, b, limit):
+    def number_to_base(n, b, limit):
         if b == 1:
             return [0 if n != _ else 1 for _ in range(limit)]
 
@@ -354,3 +397,20 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             n, _ = divmod(n, b)
 
         return digits[::-1]
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns
+        -------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+
+        """
+
+        if not isinstance(self.feature_names, list):
+            raise ValueError('Must fit data first. Affected feature names are not known before.')
+        else:
+            return self.feature_names
