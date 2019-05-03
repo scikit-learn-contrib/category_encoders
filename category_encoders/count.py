@@ -121,7 +121,8 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.combine_min_nan_groups = combine_min_nan_groups
 
     def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X and y.
+        """Fit encoder according to X.
+
         Parameters
         ----------
         X : array-like, shape = [n_samples, n_features]
@@ -129,6 +130,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             and n_features is the number of features.
         y : array-like, shape = [n_samples]
             Target values.
+
         Returns
         -------
         self : encoder
@@ -160,11 +162,11 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None):
         """Perform the transformation to new categorical data.
+
         Parameters
         ----------
         X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples] when transform by leave one out
-            None, when transform without target info (such as transform test set)
+        y : array-like, shape = [n_samples]
             
         Returns
         -------
@@ -202,11 +204,9 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
     def fit_transform(self, X, y=None, **fit_params):
         """
-        Encoders that utilize the target must make sure that the training data
-        are transformed with:
-            transform(X, y)
-        and not with:
-            transform(X)
+        Fit to data, then transform it.
+
+        Fits transformer to X and y with optional parameters fit_params and returns a transformed version of X.
         """
         return self.fit(X, y, **fit_params).transform(X, y)
 
@@ -292,7 +292,9 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 mapper = mapper.loc[~min_groups_idx]
                 
                 if mapper.index.is_categorical():
-                    mapper.index = mapper.index.add_categories(min_group_mapper_name)
+                    mapper.index = mapper.index.add_categories(
+                        min_group_mapper_name
+                    )
                 mapper[min_group_mapper_name] = min_groups_sum
 
             self.mapping[col] = mapper
