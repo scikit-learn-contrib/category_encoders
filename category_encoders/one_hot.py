@@ -287,14 +287,13 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         p: array, the same size of X_in
 
         """
-        X = X_in.copy(deep=True)
 
-        # first check the type
-        X = util.convert_input(X)
-
+        # fail fast
         if self._dim is None:
-            raise ValueError(
-                'Must train encoder before it can be used to inverse_transform data')
+            raise ValueError('Must train encoder before it can be used to inverse_transform data')
+
+        # first check the type and make deep copy
+        X = util.convert_input(X_in, deep=True)
 
         X = self.reverse_dummies(X, self.mapping)
 
@@ -302,7 +301,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if X.shape[1] != self._dim:
             if self.drop_invariant:
                 raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "set as False when transform data" % (X.shape[1],))
+                                 "be False when transforming the data" % (X.shape[1],))
             else:
                 raise ValueError('Unexpected input dimension %d, expected %d' % (
                     X.shape[1], self._dim, ))

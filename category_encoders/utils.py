@@ -40,23 +40,26 @@ def is_category(dtype):
     return pd.api.types.is_categorical_dtype(dtype)
 
 
-def convert_input(X):
+def convert_input(X, deep=False):
     """
     Unite data into a DataFrame.
+    Optionally perform deep copy of the data.
     """
     if not isinstance(X, pd.DataFrame):
         if isinstance(X, list):
-            X = pd.DataFrame(X)
+            X = pd.DataFrame(X, copy=deep)  # lists are always copied, but for consistency, we still pass the argument
         elif isinstance(X, (np.generic, np.ndarray)):
-            X = pd.DataFrame(X)
+            X = pd.DataFrame(X, copy=deep)
         elif isinstance(X, csr_matrix):
-            X = pd.DataFrame(X.todense())
+            X = pd.DataFrame(X.todense(), copy=deep)
         elif isinstance(X, pd.Series):
-            X = pd.DataFrame(X)
+            X = pd.DataFrame(X, copy=deep)
         else:
             raise ValueError('Unexpected input type: %s' % (str(type(X))))
 
         X = X.apply(lambda x: pd.to_numeric(x, errors='ignore'))
+    elif deep:
+        X = X.copy(deep=True)
 
     return X
 

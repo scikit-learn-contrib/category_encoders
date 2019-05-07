@@ -241,6 +241,22 @@ class TestEncoders(TestCase):
                 enc.fit(X)
                 th.verify_inverse_transform(X_t, enc.inverse_transform(enc.transform(X_t)))
 
+    def test_inverse_uninitialized(self):
+        # raise an error when we call inverse_transform() before the encoder is fitted
+        for encoder_name in {'BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'}:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                self.assertRaises(ValueError, enc.inverse_transform, X)
+
+    def test_inverse_wrong_feature_count(self):
+        x1 = [['A', 'B', 'C'], ['D', 'E', 'F'], ['G', 'H', 'I']]
+        x2 = [['A', 'B'], ['C', 'D']]
+        for encoder_name in {'BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'}:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                enc.fit(x1)
+                self.assertRaises(ValueError, enc.inverse_transform, x2)
+
     def test_types(self):
         X = pd.DataFrame({
             'Int': [1, 2, 1, 2],
@@ -440,3 +456,43 @@ class TestEncoders(TestCase):
                     expected = enc.fit_transform(X[tested_columns], y)
 
                     np.testing.assert_array_equal(obtained, expected)
+
+    def test_error_messages(self):
+        # when the count of features change between training and scoring, we raise an exception
+        data = pd.DataFrame(data={'x': ['A', 'B', 'C', 'A', 'B'], 'y': [1, 0, 1, 0, 1]})
+        data2 = pd.DataFrame(data={'x': ['C', 'A', 'B'], 'x2': ['C', 'A', 'B']})
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                enc.fit(data.x, data.y)
+                self.assertRaises(ValueError, enc.transform, data2)
+
+        # supervised encoders must obtain 'y' of the same length as 'x' during training...
+        x = ['A', 'B', 'C']
+        y_good = pd.Series([1, 0, 1])
+        y_bad = pd.Series([1, 0, 1, 0])
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                self.assertRaises(ValueError, enc.fit, x, y_bad)
+
+        # ...and scoring. Otherwise they raise an error of ValueError type.
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                enc.fit(x, y_good)
+                self.assertRaises(ValueError, enc.transform, x, y_bad)
+
+    def test_drop_invariant(self):
+        x = pd.DataFrame([['A', 'B', 'C'], ['A', 'B', 'C'], ['A', 'B', 'C'], ['D', 'E', 'C'], ['A', 'B', 'C']])
+        y = [0, 0, 1, 1, 1]
+
+        for encoder_name in set(encoders.__all__) - {'CatBoostEncoder'}:  # CatBoost does not generally deliver a constant column when the feature is constant
+            with self.subTest(encoder_name=encoder_name):
+                enc1 = getattr(encoders, encoder_name)(drop_invariant=False)
+                enc2 = getattr(encoders, encoder_name)(drop_invariant=True)
+
+                result1 = enc1.fit_transform(x, y)
+                result2 = enc2.fit_transform(x, y)
+
+                self.assertTrue(len(result1.columns) > len(result2.columns))

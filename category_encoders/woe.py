@@ -23,6 +23,8 @@ class WOEEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+    handle_missing: str
+        options are 'return_nan', 'error' and 'value', defaults to 'value', which will assume WOE=0.
     handle_unknown: str
         options are 'return_nan', 'error' and 'value', defaults to 'value', which will assume WOE=0.
     randomized: bool,
