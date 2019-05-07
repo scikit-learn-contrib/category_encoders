@@ -257,6 +257,26 @@ class TestEncoders(TestCase):
                 enc.fit(x1)
                 self.assertRaises(ValueError, enc.inverse_transform, x2)
 
+    def test_inverse_wrong_feature_count_drop_invariant(self):
+        x1 = [['A', 'B', 'C'], ['D', 'E', 'F'], ['G', 'H', 'I']]
+        x2 = [['A', 'B'], ['C', 'D']]
+        for encoder_name in {'BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'}:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(drop_invariant=True)
+                enc.fit(x1)
+                self.assertRaises(ValueError, enc.inverse_transform, x2)
+
+    def test_inverse_numeric(self):
+        x = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        y = [0, 0, 1]
+
+        for encoder_name in {'BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'}:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                transformed = enc.fit_transform(x, y)
+                result = enc.inverse_transform(transformed)
+                self.assertTrue((x == result.values).all())
+
     def test_types(self):
         X = pd.DataFrame({
             'Int': [1, 2, 1, 2],
