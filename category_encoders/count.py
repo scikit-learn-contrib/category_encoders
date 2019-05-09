@@ -9,8 +9,8 @@ __author__ = 'joshua t. dunn'
 
 class CountEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
-                 return_df=True, impute_missing=True, handle_unknown='impute',
-                 count_nan_fit=True,
+                 return_df=True, handle_unknown='value',
+                 handle_missing='value',
                  min_group_size=None, combine_min_nan_groups=True,
                  min_group_name=None, normalize=False):
         """Count encoding for categorical features.
@@ -31,15 +31,15 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         return_df: bool
             boolean for whether to return a pandas DataFrame from transform
             (otherwise it will be a numpy array).
-        impute_missing: bool
-            boolean for whether or not to apply the logic for handle_unknown, will
-            be deprecated in the future.
         handle_unknown: str
-            options are 'error', 'ignore' and 'impute'. Defaults to 'impute', which
-            will do a count for all nans.
-        count_nan_fit: bool
-            whether to count missing values during fit. See Pandas `value_counts` for
-            more details.
+            how to handle unknown labels at transform time. Options are 'error'
+            'return_nan' and 'value'. defaults to 'value' which uses  NaN behaviour
+            specified at fit time or fills with 0 if no NaNs at fit time.
+
+        handle_missing: str
+            how to handle missing values at fit time. Options are 'error', 'return_nan',
+            and 'value', default to 'value', which treat NaNs as a category at fit time.
+
         normalize: bool
             whether to normalize the counts to the range (0, 1). See Pandas `value_counts`
             for more details.
@@ -54,8 +54,9 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             to long. Default None. In this case the category names will be joined
             with a `_` delimeter.
         combine_min_nan_groups: bool
-            whether to combine the leftovers group with missing group. Default
-            True.
+            whether to combine the leftovers group with NaN group. Default True. Can
+            also be forced to combine with 'force' meaning small groups are effectively
+            counted as NaNs. Only used when 'handle_missing' is value.
 
 
         Example
@@ -112,10 +113,10 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.cols = cols
         self._dim = None
         self.mapping = None
-        self.impute_missing = impute_missing
         self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
         self.normalize = normalize
-        self.count_nan_fit = count_nan_fit
+        self.count_nan_fit = handle_missing == 'value'
         self.min_group_size = min_group_size
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
@@ -202,14 +203,6 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def fit_transform(self, X, y=None, **fit_params):
-        """
-        Fit to data, then transform it.
-
-        Fits transformer to X and y with optional parameters fit_params and returns a transformed version of X.
-        """
-        return self.fit(X, y, **fit_params).transform(X, y)
-
     def count_encode(self, X_in, y):
         """Perform the count encoding."""
         X = X_in.copy(deep=True)
@@ -221,6 +214,16 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             self.mapping = {}
 
             for col in self.cols:
+                if (
+                    self.handle_missing == 'error'
+                    and X[col].isna().any()
+                    ):
+
+                    raise ValueError(
+                        'Missing data found in column %s at fit time.'
+                        % col
+                    )
+
                 self.mapping[col] = X[col].value_counts(
                     normalize=self.normalize,
                     dropna=not self.count_nan_fit
@@ -239,16 +242,16 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                         )
 
                 X[col] = X[col].map(self.mapping[col])
-                if self.impute_missing and self.handle_unknown == 'impute':
+
+                if self.handle_unknown == 'value':
                     X[col] = X[col].fillna(0)
                 elif (
-                    self.impute_missing
-                    and self.handle_unknown == 'error'
+                    self.handle_unknown == 'error'
                     and X[col].isna().any()
                     ):
 
                     raise ValueError(
-                        'Unexpected categories found in column %s'
+                        'Missing data found in column %s at transform time.'
                         % col
                     )
 
@@ -265,6 +268,11 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         for col, mapper in self.mapping.items():
             if self.combine_min_nan_groups:
                 min_groups_idx = mapper < self.min_group_size
+            elif self.combine_min_nan_groups == 'force':
+                min_groups_idx = (
+                    (mapper < self.min_group_size)
+                    & (mapper.index.isna())
+                )
             else:
                 min_groups_idx = (
                     (mapper < self.min_group_size)

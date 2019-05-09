@@ -71,7 +71,7 @@ class TestCountEncoder(TestCase):
         self.assertEqual(len(set(out['extra'].values)), 3)
 
     def test_count_impute_missing(self):
-        enc = encoders.CountEncoder(verbose=1, handle_unknown='ignore')
+        enc = encoders.CountEncoder(verbose=1, handle_unknown='return_nan')
         enc.fit(X)
         out = enc.transform(X_t)
 
@@ -85,14 +85,14 @@ class TestCountEncoder(TestCase):
         self.assertEqual(len(set(out['none'].values)), 3)
 
     def test_count_count_nan_fit(self):
-        enc = encoders.CountEncoder(verbose=1, count_nan_fit=False)
+        enc = encoders.CountEncoder(verbose=1, handle_missing='return_nan')
         enc.fit(X)
         out = enc.transform(X_t)
 
         self.assertEqual(len(set(out['none'].values)), 3)
 
     def test_count_normalize(self):
-        enc = encoders.CountEncoder(verbose=1, count_nan_fit=False)
+        enc = encoders.CountEncoder(verbose=1, handle_missing='return_nan')
         enc.fit(X)
         out = enc.transform(X_t)
 
