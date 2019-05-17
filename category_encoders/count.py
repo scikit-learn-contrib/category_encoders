@@ -14,7 +14,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
                  return_df=True, handle_unknown=None,
                  handle_missing='count',
-                 min_group_size=None, combine_min_nan_groups=True,
+                 min_group_size=None, combine_min_nan_groups=None,
                  min_group_name=None, normalize=False):
         """Count encoding for categorical features.
 
@@ -61,6 +61,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             whether to combine the leftovers group with NaN group. Default True. Can
             also be forced to combine with 'force' meaning small groups are effectively
             counted as NaNs. Force can only used when 'handle_missing' is 'count' or 'error'.
+            Note: Will not force if it creates an binary or invariant column.
 
 
         Example
@@ -113,6 +114,9 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.min_group_size = min_group_size
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
+
+        self._check_set_create_attrs()
+
         self._min_group_categories = {}
         self._normalize = {}
         self._min_group_name = {}
@@ -223,11 +227,11 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                         % (col,)
                     )
 
-                elif self._handle_missing[col] not in ['count', 'return_nan',  'error']:
+                elif self._handle_missing[col] not in ['count', 'return_nan',  'error', None]:
                     raise ValueError(
                         '%s key in `handle_missing` should be one of: '
-                        ' `value`, `return_nan` and `error`.'
-                        % (col,)
+                        ' `count`, `return_nan` and `error` not `%s`.'
+                        % (col, str(self._handle_missing[col]))
                     )
 
             self.mapping[col] = X[col].value_counts(
@@ -244,6 +248,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
     def _transform_count_encode(self, X_in, y):
         """Perform the transform count encoding."""
         X = X_in.copy(deep=True)
+        X.loc[:, self.cols] = X.fillna(value=pd.np.nan)
 
         for col in self.cols:
             if self._min_group_size is not None:
@@ -255,7 +260,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
             X[col] = X[col].map(self.mapping[col])
 
-            if isinstance(self._handle_unknown[col], np.integer):
+            if isinstance(self._handle_unknown[col], (int, np.integer)):
                 X[col] = X[col].fillna(self._handle_unknown[col])
             elif (
                 self._handle_unknown[col] == 'error'
@@ -293,9 +298,13 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
             min_groups_sum = mapper.loc[min_groups_idx].sum()
 
-            if min_groups_sum > 0 and (min_groups_idx).sum() > 1:
+            if (
+                min_groups_sum > 0
+                and min_groups_idx.sum() > 1
+                and not min_groups_idx.loc[min_groups_idx.index.notna()].all()
+            ):
                 if isinstance(self._min_group_name[col], str):
-                    min_group_mapper_name = self._min_group_name
+                    min_group_mapper_name = self._min_group_name[col]
                 else:
                     min_group_mapper_name = '_'.join([
                         str(idx)
@@ -311,7 +320,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
                 if not min_groups_idx.all():
                     mapper = mapper.loc[~min_groups_idx]
-                    
+
                     if mapper.index.is_categorical():
                         mapper.index = mapper.index.add_categories(
                             min_group_mapper_name
@@ -319,17 +328,58 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
                     mapper[min_group_mapper_name] = min_groups_sum
 
-            self.mapping[col] = mapper
+                self.mapping[col] = mapper
+
+    def _check_set_create_attrs(self):
+        """Check attributes setting that don't play nicely `self.cols`."""
+        if not (
+            (self.combine_min_nan_groups in ['force', True, False, None])
+            or isinstance(self.combine_min_nan_groups, dict)
+        ):
+            raise ValueError(
+                "'combine_min_nan_groups' should be one of: "
+                "['force', True, False, None] or type dict."
+            )
+
+        if (
+            self.handle_missing == 'return_nan'
+            and self.combine_min_nan_groups == 'force'
+        ):
+            raise ValueError(
+                "Cannot have `handle_missing` == 'return_nan' and "
+                "'combine_min_nan_groups' == 'force' for all columns."
+            )
+        
+        if (
+            self.combine_min_nan_groups is not None
+            and self.min_group_size is None
+        ):
+            raise ValueError(
+                "`combine_min_nan_groups` only works when `min_group_size` "
+                "is set for all columns."
+            )
+
+        if (
+            self.min_group_name is not None
+            and self.min_group_size is None
+        ):
+            raise ValueError(
+                "`min_group_name` only works when `min_group_size` is set "
+                "for all columns."
+            )
+
+        if self.combine_min_nan_groups is None:
+            self.combine_min_nan_groups = True
 
     def _check_set_create_dict_attrs(self):
-        """Check attributes that can be dicts and format for all self.cols."""
+        """Check attributes that can be dicts and format for all `self.cols`."""
         dict_attrs = {
             'normalize': False,
             'min_group_name': None,
             'combine_min_nan_groups': True,
             'min_group_size': None,
-            'handle_unknown': 'value',
-            'handle_missing': 'value',
+            'handle_unknown': 'count',
+            'handle_missing': None,
         }
 
         for attr_name, attr_default in dict_attrs.items():
@@ -353,5 +403,25 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 raise ValueError(
                     "Cannot have `handle_missing` == 'return_nan' and "
                     "'combine_min_nan_groups' == 'force' for columns `%s`."
+                    % (col,)
+                )
+            
+            if (
+                self._combine_min_nan_groups[col] is not True
+                and self._min_group_size[col] is None
+            ):
+                raise ValueError(
+                    "`combine_min_nan_groups` only works when `min_group_size`"
+                    "is set for column %s."
+                    % (col,)
+                )
+
+            if (
+                self._min_group_name[col] is not None
+                and self._min_group_size[col] is None
+            ):
+                raise ValueError(
+                    "`min_group_name` only works when `min_group_size`"
+                    "is set for column %s."
                     % (col,)
                 )
