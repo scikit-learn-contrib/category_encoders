@@ -20,6 +20,7 @@ Encoding Methods
  * Backward Difference Contrast [2][3]
  * BaseN [6]
  * Binary [5]
+ * Count [10]
  * Hashing [1]
  * Helmert Contrast [2][3]
  * James-Stein Estimator [9]
@@ -127,3 +128,5 @@ References:
  7. Daniele Miccii-Barreca (2001). A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. SIGKDD Explor. Newsl. 3, 1. From http://dx.doi.org/10.1145/507533.507538
  8. Weight of Evidence (WOE) and Information Value Explained. From https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html
  9. Empirical Bayes for multiple sample sizes. From http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/
+ 10. Simple Count or Frequency Encoding. https://www.datacamp.com/community/tutorials/encoding-methodologies
+ 
