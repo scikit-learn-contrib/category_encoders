@@ -113,7 +113,6 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         """
 
         # if the input dataset isn't already a dataframe, convert it to one (using default column names)
-        # first check the type
         X = util.convert_input(X)
 
         self._dim = X.shape[1]
@@ -258,21 +257,20 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         """
 
-        X = X_in.copy(deep=True)
-
-        # first check the type
-        X = util.convert_input(X)
-
+        # fail fast
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
+        # unite the type into pandas dataframe (it makes the input size detection code easier...) and make deep copy
+        X = util.convert_input(X_in, deep=True)
+
         X = self.basen_to_integer(X, self.cols, self.base)
 
-        # then make sure that it is the right size
+        # make sure that it is the right size
         if X.shape[1] != self._dim:
             if self.drop_invariant:
                 raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "set as False when transform data" % (X.shape[1],))
+                                 "be False when transforming the data" % (X.shape[1],))
             else:
                 raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
