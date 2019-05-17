@@ -12,7 +12,7 @@ __author__ = 'joshua t. dunn'
 
 class CountEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
-                 return_df=True, handle_unknown='',
+                 return_df=True, handle_unknown=None,
                  handle_missing='count',
                  min_group_size=None, combine_min_nan_groups=True,
                  min_group_name=None, normalize=False):
@@ -38,26 +38,26 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             how to handle missing values at fit time. Options are 'error', 'return_nan',
             and 'count'. Default 'count', which treat NaNs as a countable category at
             fit time.
-        handle_unknown: str, int
+        handle_unknown: str, int or dict of.
             how to handle unknown labels at transform time. Options are 'error'
             'return_nan' and an int. Defaults to None which uses NaN behaviour
             specified at fit time. Passing an int will fill with this int value.
-        normalize: bool
+        normalize: bool or dict of.
             whether to normalize the counts to the range (0, 1). See Pandas `value_counts`
             for more details.
-        min_group_size: int, float
+        min_group_size: int, float or dict of.
             the minimal count threshold of a group needed to ensure it is not
             combined into a "leftovers" group. If float in the range (0, 1),
             `min_group_size` is calculated as int(X.shape[0] * min_group_size).
             Note: This value may change type based on the `normalize` variable. If True
             this will become a float. If False, it will be an int.
-        min_group_name: None, str
+        min_group_name: None, str or dict of.
             Set the name of the combined minimum groups when the defaults become
             too long. Default None. In this case the category names will be joined
             alphabetically with a `_` delimiter.
             Note: The default name can be long ae may keep changing, for example, 
             in cross-validation.
-        combine_min_nan_groups: bool
+        combine_min_nan_groups: bool or dict of.
             whether to combine the leftovers group with NaN group. Default True. Can
             also be forced to combine with 'force' meaning small groups are effectively
             counted as NaNs. Force can only used when 'handle_missing' is 'count' or 'error'.
@@ -114,6 +114,12 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
         self._min_group_categories = {}
+        self._normalize = {}
+        self._min_group_name = {}
+        self._combine_min_nan_groups = {}
+        self._min_group_size = {}
+        self._handle_unknown = {}
+        self._handle_missing = {}
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X.
@@ -316,7 +322,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             self.mapping[col] = mapper
 
     def _check_set_create_dict_attrs(self):
-        """Check attribute that can be dicts and format for all self.cols."""
+        """Check attributes that can be dicts and format for all self.cols."""
         dict_attrs = {
             'normalize': False,
             'min_group_name': None,
@@ -338,7 +344,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 for col in self.cols:
                     attr_dict[col] = attr
                 setattr(self, '_' + attr_name, attr_dict)
-        
+
         for col in self.cols:
             if (
                 self._handle_missing[col] == 'return_nan'
