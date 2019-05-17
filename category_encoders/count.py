@@ -1,16 +1,19 @@
 """Count Encoder"""
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
+
+from copy import copy
+from sklearn.base import BaseEstimator, TransformerMixin
+
 
 __author__ = 'joshua t. dunn'
 
 
 class CountEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
-                 return_df=True, handle_unknown='value',
-                 handle_missing='value',
+                 return_df=True, handle_unknown='',
+                 handle_missing='count',
                  min_group_size=None, combine_min_nan_groups=True,
                  min_group_name=None, normalize=False):
         """Count encoding for categorical features.
@@ -24,39 +27,40 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         verbose: int
             integer indicating verbosity of output. 0 for none.
         cols: list
-            a list of columns to encode, if None, all string columns will be
-            encoded.
+            a list of columns to encode, if None, all string and categorical columns
+            will be encoded.
         drop_invariant: bool
             boolean for whether or not to drop columns with 0 variance.
         return_df: bool
             boolean for whether to return a pandas DataFrame from transform
             (otherwise it will be a numpy array).
-        handle_unknown: str
-            how to handle unknown labels at transform time. Options are 'error'
-            'return_nan' and 'value'. defaults to 'value' which uses  NaN behaviour
-            specified at fit time or fills with 0 if no NaNs at fit time.
-
         handle_missing: str
             how to handle missing values at fit time. Options are 'error', 'return_nan',
-            and 'value', default to 'value', which treat NaNs as a category at fit time.
-
+            and 'count'. Default 'count', which treat NaNs as a countable category at
+            fit time.
+        handle_unknown: str, int
+            how to handle unknown labels at transform time. Options are 'error'
+            'return_nan' and an int. Defaults to None which uses NaN behaviour
+            specified at fit time. Passing an int will fill with this int value.
         normalize: bool
             whether to normalize the counts to the range (0, 1). See Pandas `value_counts`
             for more details.
         min_group_size: int, float
-            the minimun count threshold of a group needed to ensure it is not
+            the minimal count threshold of a group needed to ensure it is not
             combined into a "leftovers" group. If float in the range (0, 1),
             `min_group_size` is calculated as int(X.shape[0] * min_group_size).
             Note: This value may change type based on the `normalize` variable. If True
             this will become a float. If False, it will be an int.
         min_group_name: None, str
             Set the name of the combined minimum groups when the defaults become
-            to long. Default None. In this case the category names will be joined
-            with a `_` delimeter.
+            too long. Default None. In this case the category names will be joined
+            alphabetically with a `_` delimiter.
+            Note: The default name can be long ae may keep changing, for example, 
+            in cross-validation.
         combine_min_nan_groups: bool
             whether to combine the leftovers group with NaN group. Default True. Can
             also be forced to combine with 'force' meaning small groups are effectively
-            counted as NaNs. Only used when 'handle_missing' is value.
+            counted as NaNs. Force can only used when 'handle_missing' is 'count' or 'error'.
 
 
         Example
@@ -96,16 +100,6 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         ----------
 
         """
-        if (
-            isinstance(min_group_size, float)
-            and (min_group_size >= 1.0)
-            and (min_group_size <= 0.0)
-        ):
-            raise ValueError(
-                'If `min_group_size` is float, '
-                'it must be in the range (0, 1).'
-            )
-
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -116,10 +110,10 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
         self.normalize = normalize
-        self.count_nan_fit = handle_missing == 'value'
         self.min_group_size = min_group_size
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
+        self._min_group_categories = {}
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X.
@@ -149,7 +143,9 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
-        self.count_encode(X, y)
+        self._check_set_create_dict_attrs()
+
+        self._fit_count_encode(X, y)
 
         if self.drop_invariant:
             self.drop_cols = []
@@ -192,7 +188,8 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
         if not self.cols:
             return X
-        X, _ = self.count_encode(X, y)
+
+        X, _ = self._transform_count_encode(X, y)
 
         if self.drop_invariant:
             for col in self.drop_cols:
@@ -203,106 +200,152 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         else:
             return X.values
 
-    def count_encode(self, X_in, y):
+    def _fit_count_encode(self, X_in, y):
         """Perform the count encoding."""
         X = X_in.copy(deep=True)
 
         if self.cols is None:
             self.cols = X.columns.values
 
-        if self.mapping is None:
-            self.mapping = {}
+        self.mapping = {}
 
-            for col in self.cols:
-                if (
-                    self.handle_missing == 'error'
-                    and X[col].isna().any()
-                    ):
-
+        for col in self.cols:
+            if X[col].isna().any():
+                if self._handle_missing[col] == 'error':
                     raise ValueError(
                         'Missing data found in column %s at fit time.'
-                        % col
+                        % (col,)
                     )
 
-                self.mapping[col] = X[col].value_counts(
-                    normalize=self.normalize,
-                    dropna=not self.count_nan_fit
-                )
-
-            if self.min_group_size is not None:
-                self.combine_min_categories(X)
-
-        else:
-            for col in self.cols:
-                if self.min_group_size is not None:
-                    if col in self._min_group_categories.keys():
-                        X[col] = (
-                            X[col].map(self._min_group_categories[col])
-                            .fillna(X[col])
-                        )
-
-                X[col] = X[col].map(self.mapping[col])
-
-                if self.handle_unknown == 'value':
-                    X[col] = X[col].fillna(0)
-                elif (
-                    self.handle_unknown == 'error'
-                    and X[col].isna().any()
-                    ):
-
+                elif self._handle_missing[col] not in ['count', 'return_nan',  'error']:
                     raise ValueError(
-                        'Missing data found in column %s at transform time.'
-                        % col
+                        '%s key in `handle_missing` should be one of: '
+                        ' `value`, `return_nan` and `error`.'
+                        % (col,)
                     )
+
+            self.mapping[col] = X[col].value_counts(
+                normalize=self._normalize[col],
+                dropna=False
+            )
+
+            if self._handle_missing[col] == 'return_nan':
+                self.mapping[col][np.NaN] = np.NaN
+
+        if any([val is not None for val in self._min_group_size.values()]):
+            self.combine_min_categories(X)
+
+    def _transform_count_encode(self, X_in, y):
+        """Perform the transform count encoding."""
+        X = X_in.copy(deep=True)
+
+        for col in self.cols:
+            if self._min_group_size is not None:
+                if col in self._min_group_categories.keys():
+                    X[col] = (
+                        X[col].map(self._min_group_categories[col])
+                        .fillna(X[col])
+                    )
+
+            X[col] = X[col].map(self.mapping[col])
+
+            if isinstance(self._handle_unknown[col], np.integer):
+                X[col] = X[col].fillna(self._handle_unknown[col])
+            elif (
+                self._handle_unknown[col] == 'error'
+                and X[col].isna().any()
+            ):
+
+                raise ValueError(
+                    'Missing data found in column %s at transform time.'
+                    % (col,)
+                )
 
         return X, self.mapping
 
     def combine_min_categories(self, X):
         """Combine small categories into a single category."""
-        if self.normalize and isinstance(self.min_group_size, int):
-            self.min_group_size = self.min_group_size / X.shape[0]
-        elif not self.normalize and isinstance(self.min_group_size, float):
-            self.min_group_size = self.min_group_size * X.shape[0]
-
-        self._min_group_categories = {}
         for col, mapper in self.mapping.items():
-            if self.combine_min_nan_groups:
-                min_groups_idx = mapper < self.min_group_size
-            elif self.combine_min_nan_groups == 'force':
+
+            if self._normalize[col] and isinstance(self._min_group_size[col], int):
+                self._min_group_size[col] = self._min_group_size[col] / X.shape[0]
+            elif not self._normalize and isinstance(self._min_group_size[col], float):
+                self._min_group_size[col] = self._min_group_size[col] * X.shape[0]
+
+            if self._combine_min_nan_groups[col] is True:
+                min_groups_idx = mapper < self._min_group_size[col]
+            elif self._combine_min_nan_groups[col] == 'force':
                 min_groups_idx = (
-                    (mapper < self.min_group_size)
-                    & (mapper.index.isna())
+                    (mapper < self._min_group_size[col])
+                    | (mapper.index.isna())
                 )
             else:
                 min_groups_idx = (
-                    (mapper < self.min_group_size)
+                    (mapper < self._min_group_size[col])
                     & (~mapper.index.isna())
                 )
 
             min_groups_sum = mapper.loc[min_groups_idx].sum()
 
             if min_groups_sum > 0 and (min_groups_idx).sum() > 1:
-                if isinstance(self.min_group_name, str):
-                    min_group_mapper_name = self.min_group_name
+                if isinstance(self._min_group_name[col], str):
+                    min_group_mapper_name = self._min_group_name
                 else:
                     min_group_mapper_name = '_'.join([
                         str(idx)
                         for idx
-                        in mapper.loc[min_groups_idx].index
+                        in mapper.loc[min_groups_idx].index.astype(str).sort_values()
                     ])
-                
+
                 self._min_group_categories[col] = {
                     cat: min_group_mapper_name
                     for cat
                     in mapper.loc[min_groups_idx].index.tolist()
                 }
 
-                mapper = mapper.loc[~min_groups_idx]
-                
-                if mapper.index.is_categorical():
-                    mapper.index = mapper.index.add_categories(
-                        min_group_mapper_name
-                    )
-                mapper[min_group_mapper_name] = min_groups_sum
+                if not min_groups_idx.all():
+                    mapper = mapper.loc[~min_groups_idx]
+                    
+                    if mapper.index.is_categorical():
+                        mapper.index = mapper.index.add_categories(
+                            min_group_mapper_name
+                        )
+
+                    mapper[min_group_mapper_name] = min_groups_sum
 
             self.mapping[col] = mapper
+
+    def _check_set_create_dict_attrs(self):
+        """Check attribute that can be dicts and format for all self.cols."""
+        dict_attrs = {
+            'normalize': False,
+            'min_group_name': None,
+            'combine_min_nan_groups': True,
+            'min_group_size': None,
+            'handle_unknown': 'value',
+            'handle_missing': 'value',
+        }
+
+        for attr_name, attr_default in dict_attrs.items():
+            attr = copy(getattr(self, attr_name))
+            if isinstance(attr, dict):
+                for col in self.cols:
+                    if col not in attr:
+                        attr[col] = attr_default
+                setattr(self, '_' + attr_name, attr)
+            else:
+                attr_dict = {}
+                for col in self.cols:
+                    attr_dict[col] = attr
+                setattr(self, '_' + attr_name, attr_dict)
+        
+        for col in self.cols:
+            if (
+                self._handle_missing[col] == 'return_nan'
+                and self._combine_min_nan_groups[col] == 'force'
+            ):
+                raise ValueError(
+                    "Cannot have `handle_missing` == 'return_nan' and "
+                    "'combine_min_nan_groups' == 'force' for columns `%s`."
+                    % (col,)
+                )
