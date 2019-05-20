@@ -220,7 +220,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.mapping = {}
 
         for col in self.cols:
-            if X[col].isna().any():
+            if X[col].isnull().any():
                 if self._handle_missing[col] == 'error':
                     raise ValueError(
                         'Missing data found in column %s at fit time.'
@@ -264,7 +264,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 X[col] = X[col].fillna(self._handle_unknown[col])
             elif (
                 self._handle_unknown[col] == 'error'
-                and X[col].isna().any()
+                and X[col].isnull().any()
             ):
 
                 raise ValueError(
@@ -288,12 +288,12 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             elif self._combine_min_nan_groups[col] == 'force':
                 min_groups_idx = (
                     (mapper < self._min_group_size[col])
-                    | (mapper.index.isna())
+                    | (mapper.index.isnull())
                 )
             else:
                 min_groups_idx = (
                     (mapper < self._min_group_size[col])
-                    & (~mapper.index.isna())
+                    & (~mapper.index.isnull())
                 )
 
             min_groups_sum = mapper.loc[min_groups_idx].sum()
@@ -301,7 +301,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             if (
                 min_groups_sum > 0
                 and min_groups_idx.sum() > 1
-                and not min_groups_idx.loc[min_groups_idx.index.notna()].all()
+                and not min_groups_idx.loc[~min_groups_idx.index.isnull()].all()
             ):
                 if isinstance(self._min_group_name[col], str):
                     min_group_mapper_name = self._min_group_name[col]
