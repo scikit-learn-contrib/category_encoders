@@ -239,6 +239,8 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 dropna=False
             )
 
+            self.mapping[col].index = self.mapping[col].index.astype(object)
+
             if self._handle_missing[col] == 'return_nan':
                 self.mapping[col][np.NaN] = np.NaN
 
@@ -320,12 +322,6 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
                 if not min_groups_idx.all():
                     mapper = mapper.loc[~min_groups_idx]
-
-                    if mapper.index.is_categorical():
-                        mapper.index = mapper.index.add_categories(
-                            min_group_mapper_name
-                        )
-
                     mapper[min_group_mapper_name] = min_groups_sum
 
                 self.mapping[col] = mapper
