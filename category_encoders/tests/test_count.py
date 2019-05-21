@@ -234,7 +234,7 @@ class TestCountEncoder(TestCase):
     def test_count_normalize_bool(self):
         """Test the normalize bool on 'none' and 'na_categorical'."""
         enc = encoders.CountEncoder(
-            min_group_size=7,
+            min_group_size=6,
             normalize=True
         )
 
@@ -242,10 +242,10 @@ class TestCountEncoder(TestCase):
         out = enc.transform(X_t)
 
         self.assertIn('none', enc._normalize)
-        self.assertTrue(out['none'].round(5).isin([0.3 , 0.15, 0.25]).all())
-        self.assertEqual(out['none'].unique().shape[0], 3)
+        self.assertTrue(out['none'].round(5).isin([0.3, 0.4]).all())
+        self.assertEqual(out['none'].unique().shape[0], 2)
         self.assertEqual(out['none'].isnull().sum(), 0)
-        self.assertTrue(pd.Series([0.65, 0.35]).isin(out['na_categorical']).all())
+        self.assertTrue(pd.Series([0.3, 0.35]).isin(out['na_categorical']).all())
         self.assertEqual(out['na_categorical'].unique().shape[0], 2)
         self.assertTrue(enc.mapping is not None)
 
