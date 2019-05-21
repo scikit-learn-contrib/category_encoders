@@ -32,11 +32,11 @@ def create_array(n_rows=1000, extras=False, has_none=True):
     return np.array(ds)
 
 
-def create_dataset(n_rows=1000, extras=False, has_none=True):
+def create_dataset(n_rows=1000, extras=False, has_none=True, random_seed=2001):
     """
     Creates a dataset with some categorical variables.
     """
-    random.seed(2001)
+    random.seed(random_seed)
     ds = [[
         random.random(),                                                                        # Floats
         random.choice([float('nan'), float('inf'), float('-inf'), -0, 0, 1, -1, math.pi]),      # Floats with edge scenarios
