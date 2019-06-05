@@ -10,6 +10,7 @@ from category_encoders.backward_difference import BackwardDifferenceEncoder
 from category_encoders.binary import BinaryEncoder
 from category_encoders.count import CountEncoder
 from category_encoders.hashing import HashingEncoder
+from category_encoders.nhashing import NHashingEncoder
 from category_encoders.helmert import HelmertEncoder
 from category_encoders.one_hot import OneHotEncoder
 from category_encoders.ordinal import OrdinalEncoder
@@ -31,6 +32,7 @@ __all__ = [
     'BackwardDifferenceEncoder',
     'BinaryEncoder',
     'HashingEncoder',
+    'NHashingEncoder',
     'HelmertEncoder',
     'OneHotEncoder',
     'OrdinalEncoder',
