@@ -4,13 +4,74 @@ import sys
 import hashlib
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
+import multiprocessing
 import pandas as pd
+import math
 
-__author__ = 'willmcginnis'
+__author__ = 'willmcginnis', 'LiuShulun'
 
 
 class HashingEncoder(BaseEstimator, TransformerMixin):
-    """A basic multivariate hashing implementation with configurable dimensionality/precision.
+
+    """ Update by LiuShulun
+
+    An extended HashingEncoder by multi-process
+
+    !!! Significant !!! improve the encoding speed of hashing encoding on
+    multi-cores machine. This allows settingmax_process & max_sample to use
+    more CPU resource when hashing encoding (several times faster easily).
+
+    It's important to read about how max_process & max_sample work
+    before setting them manually, inappropriate setting slows down encoding.
+
+    Parameters add max_process & max_sample
+        Commonly, leave both of them empty is fine.
+    ----------
+
+    max_process: int
+        how many PROCESS to use. limited in range(1, 64)
+            as default, it use half of logical CPU num
+            for example, 4C4T makes max_process=2, 4C8T makes max_process=4
+        set it larger if you get a strong cpu
+        not recommended to set it larger than logical CPU num
+    max_sample: int
+        how many samples will be encode by each process at each time
+        (commonly for low memory machine)
+            as default, max_sample = (all samples num) / (max_process)
+            for example,
+                4C8T CPU with 100,000 samples makes max_sample=25,000
+                6C12T CPU with 100,000 samples makes max_sample=16,666
+            not recommended to set it larger than default value
+
+    Example
+    -------
+    >>> from category_encoders.hashing import HashingEncoder
+    >>> from category_encoders.hashing import NHashingEncoder
+    >>> import time
+    >>> import pandas as pd
+    >>> from sklearn.datasets import load_boston
+    >>> bunch = load_boston()
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> DL = []
+    >>> for i in range(1000): DL.append(X)
+    >>> DF = pd.concat(DL, ignore_index=True).reset_index(drop=True)
+    >>> he = HashingEncoder(cols=['CHAS', 'RAD'])
+    >>> start = time.time()
+    >>> he.fit_transform(DF)
+    >>> he_time = time.time() - start
+    >>> nhe = NHashingEncoder(cols=['CHAS', 'RAD'], max_process=4)
+    >>> start = time.time()
+    >>> nhe.fit_transform(DF)
+    >>> nhe_time = time.time() - start
+    >>> print("500000samples HashingEncoder Time:", he_time, "NHashingEncoder Time:", nhe_time)
+
+    500000samples HashingEncoder Time: 358.14579820632935 NHashingEncoder Time: 110.51188397407532
+    """
+
+
+    """ Create by willmcginnis
+
+    A basic multivariate hashing implementation with configurable dimensionality/precision.
 
     The advantage of this encoder is that it does not maintain a dictionary of observed categories.
     Consequently, the encoder does not grow in size and accepts new values during data scoring
@@ -74,7 +135,22 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
+    def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
+
+        if max_process not in range(1, 64):
+            self.max_process = int(multiprocessing.cpu_count() / 2)
+        else:
+            self.max_process = max_process
+        self.max_sample = max_sample
+        self.data_lock = multiprocessing.Lock()
+        self.start_state = multiprocessing.Manager().Queue()
+        self.start_state.put(-1)
+        self.origin_parts = multiprocessing.Manager().Queue()
+        self.hashing_parts = multiprocessing.Manager().Queue()
+        self.n_process = []
+        self.data_lines = 0
+        self.X = None
+
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -116,7 +192,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
-        X_temp = self.transform(X, override_return_df=True)
+        X_temp = self._transform(X, override_return_df=True)
         self.feature_names = X_temp.columns.tolist()
 
         # drop all output columns with 0 variance.
@@ -133,7 +209,84 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
+    def __require_data(self, cols, process_index, override_return_df):
+        if self.data_lock.acquire():
+            if not self.start_state.empty():
+                done_index = 0
+                while not self.start_state.empty():
+                    self.start_state.get()
+            else:
+                if self.origin_parts.empty():
+                    done_index = self.data_lines
+                else:
+                    done_index = self.origin_parts.get()
+
+            if all([self.data_lines > 0, done_index < self.data_lines]):
+                start_index = done_index
+                is_last_part = (
+                                           self.data_lines - done_index) <= self.max_sample
+                if is_last_part:
+                    done_index = self.data_lines
+                else:
+                    done_index += self.max_sample
+                self.origin_parts.put(done_index)
+                self.data_lock.release()
+
+                data_part = self.X.iloc[start_index: done_index]
+                data_part = self._transform(X=data_part,
+                                                  override_return_df=override_return_df)
+                part_index = math.ceil(done_index / self.max_sample)
+                self.hashing_parts.put({part_index: data_part})
+                if done_index < self.data_lines:
+                    self.__require_data(cols=cols, process_index=process_index,
+                                        override_return_df=override_return_df)
+            else:
+                self.data_lock.release()
+        else:
+            self.data_lock.release()
+
     def transform(self, X, override_return_df=False):
+        """
+        Call _transform() if you want to use single CPU with all samples
+        """
+        if X is None or self.cols is None:
+            raise AttributeError("None data or feature input")
+
+        self.X = X
+        self.data_lines = len(X)
+        if self.max_sample == 0 and self.max_process == 1:
+            self.max_sample = self.data_lines
+
+            self.__require_data(self.cols, 1,
+                                override_return_df=override_return_df)
+        else:
+            if self.max_sample == 0:
+                self.max_sample = int(self.data_lines / self.max_process)
+            for thread_index in range(self.max_process):
+                process = multiprocessing.Process(target=self.__require_data,
+                                                  args=(self.cols, thread_index + 1, override_return_df))
+                process.daemon = True
+                self.n_process.append(process)
+            for process in self.n_process:
+                process.start()
+            for process in self.n_process:
+                process.join()
+        if self.max_sample == 0 or self.max_sample == self.data_lines:
+            if self.hashing_parts:
+                return list(self.hashing_parts.get().values())[0]
+            else:
+                return None
+        else:
+            list_data = {}
+            while not self.hashing_parts.empty():
+                list_data.update(self.hashing_parts.get())
+            sort_data = []
+            for index in range(1, len(list_data) + 1):
+                sort_data.append(list_data.get(index, None))
+            data = pd.concat(sort_data, ignore_index=True)
+            return data
+
+    def _transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
