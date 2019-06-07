@@ -46,7 +46,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     Example
     -------
     >>> from category_encoders.hashing import HashingEncoder
-    >>> from category_encoders.hashing import NHashingEncoder
     >>> import time
     >>> import pandas as pd
     >>> from sklearn.datasets import load_boston
@@ -55,17 +54,18 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     >>> DL = []
     >>> for i in range(1000): DL.append(X)
     >>> DF = pd.concat(DL, ignore_index=True).reset_index(drop=True)
-    >>> he = HashingEncoder(cols=['CHAS', 'RAD'])
+    >>> he = HashingEncoder(max_process=1, cols=['CHAS', 'RAD'])
     >>> start = time.time()
-    >>> he.fit_transform(DF)
+    >>> he = he.fit(DF)
+    >>> he = he._transform(DF)
     >>> he_time = time.time() - start
-    >>> nhe = NHashingEncoder(cols=['CHAS', 'RAD'], max_process=4)
+    >>> nhe = NHashingEncoder(max_process=4, cols=['CHAS', 'RAD'])
     >>> start = time.time()
     >>> nhe.fit_transform(DF)
     >>> nhe_time = time.time() - start
-    >>> print("500000samples HashingEncoder Time:", he_time, "NHashingEncoder Time:", nhe_time)
+    >>> print("500000samples single process Time:", he_time, "4xprocesses Time:", nhe_time)
 
-    500000samples HashingEncoder Time: 358.14579820632935 NHashingEncoder Time: 110.51188397407532
+    500000samples single process Time: 358.14579820632935 4xprocesses Time: 110.51188397407532
     """
 
 
@@ -138,7 +138,11 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
 
         if max_process not in range(1, 64):
-            self.max_process = int(multiprocessing.cpu_count() / 2)
+            self.max_process = math.ceil(multiprocessing.cpu_count() / 2)
+            if self.max_process <= 1:
+                self.max_process = 1
+            elif self.max_process >= 64:
+                self.max_process = 64
         else:
             self.max_process = max_process
         self.max_sample = max_sample
@@ -209,7 +213,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def __require_data(self, cols, process_index, override_return_df):
+    def __require_data(self, cols, process_index):
         if self.data_lock.acquire():
             if not self.start_state.empty():
                 done_index = 0
@@ -223,8 +227,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
             if all([self.data_lines > 0, done_index < self.data_lines]):
                 start_index = done_index
-                is_last_part = (
-                                           self.data_lines - done_index) <= self.max_sample
+                is_last_part = (self.data_lines - done_index) <= self.max_sample
                 if is_last_part:
                     done_index = self.data_lines
                 else:
@@ -233,13 +236,12 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 self.data_lock.release()
 
                 data_part = self.X.iloc[start_index: done_index]
-                data_part = self._transform(X=data_part,
-                                                  override_return_df=override_return_df)
+                # Always get df and turn after merge all data parts
+                data_part = self._transform(X=data_part, override_return_df=True)
                 part_index = math.ceil(done_index / self.max_sample)
                 self.hashing_parts.put({part_index: data_part})
                 if done_index < self.data_lines:
-                    self.__require_data(cols=cols, process_index=process_index,
-                                        override_return_df=override_return_df)
+                    self.__require_data(cols=cols, process_index=process_index)
             else:
                 self.data_lock.release()
         else:
@@ -257,14 +259,13 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if self.max_sample == 0 and self.max_process == 1:
             self.max_sample = self.data_lines
 
-            self.__require_data(self.cols, 1,
-                                override_return_df=override_return_df)
+            self.__require_data(cols=self.cols, process_index=1)
         else:
             if self.max_sample == 0:
                 self.max_sample = int(self.data_lines / self.max_process)
             for thread_index in range(self.max_process):
                 process = multiprocessing.Process(target=self.__require_data,
-                                                  args=(self.cols, thread_index + 1, override_return_df))
+                                                  args=(self.cols, thread_index + 1))
                 process.daemon = True
                 self.n_process.append(process)
             for process in self.n_process:
@@ -284,7 +285,11 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             for index in range(1, len(list_data) + 1):
                 sort_data.append(list_data.get(index, None))
             data = pd.concat(sort_data, ignore_index=True)
-            return data
+            # Check if is_return_df
+            if self.return_df or override_return_df:
+                return data
+            else:
+                return data.values
 
     def _transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
