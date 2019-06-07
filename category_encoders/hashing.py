@@ -24,62 +24,22 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     It's important to read about how max_process & max_sample work
     before setting them manually, inappropriate setting slows down encoding.
 
-    Parameters add max_process & max_sample
-        Commonly, leave both of them empty is fine.
+    Parameters
     ----------
 
     max_process: int
         how many PROCESS to use. limited in range(1, 64)
             as default, it use half of logical CPU num
             for example, 4C4T makes max_process=2, 4C8T makes max_process=4
-        set it larger if you get a strong cpu
-        not recommended to set it larger than logical CPU num
+            set it larger if you get a strong cpu
+            not recommended to set it larger than logical CPU num
     max_sample: int
         how many samples will be encode by each process at each time
         (commonly for low memory machine)
             as default, max_sample = (all samples num) / (max_process)
-            for example,
-                4C8T CPU with 100,000 samples makes max_sample=25,000
-                6C12T CPU with 100,000 samples makes max_sample=16,666
+            for example,4C8T CPU with 100,000 samples makes max_sample=25,000
+            6C12T CPU with 100,000 samples makes max_sample=16,666
             not recommended to set it larger than default value
-
-    Example
-    -------
-    >>> from category_encoders.hashing import HashingEncoder
-    >>> import time
-    >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> DL = []
-    >>> for i in range(1000): DL.append(X)
-    >>> DF = pd.concat(DL, ignore_index=True).reset_index(drop=True)
-    >>> he = HashingEncoder(max_process=1, cols=['CHAS', 'RAD'])
-    >>> start = time.time()
-    >>> he = he.fit(DF)
-    >>> he = he._transform(DF)
-    >>> he_time = time.time() - start
-    >>> nhe = NHashingEncoder(max_process=4, cols=['CHAS', 'RAD'])
-    >>> start = time.time()
-    >>> nhe.fit_transform(DF)
-    >>> nhe_time = time.time() - start
-    >>> print("500000samples single process Time:", he_time, "4xprocesses Time:", nhe_time)
-
-    500000samples single process Time: 358.14579820632935 4xprocesses Time: 110.51188397407532
-    """
-
-
-    """ Create by willmcginnis
-
-    A basic multivariate hashing implementation with configurable dimensionality/precision.
-
-    The advantage of this encoder is that it does not maintain a dictionary of observed categories.
-    Consequently, the encoder does not grow in size and accepts new values during data scoring
-    by design.
-
-    Parameters
-    ----------
-
     verbose: int
         integer indicating verbosity of the output. 0 for none.
     cols: list
@@ -93,15 +53,15 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     Example
     -------
-    >>> from category_encoders import *
+    >>> from category_encoders.hashing import HashingEncoder
     >>> import pandas as pd
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
-    >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = HashingEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>> numeric_dataset = enc.transform(X)
-    >>> print(numeric_dataset.info())
+    >>> y = bunch.target
+    >>> he = HashingEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> data = he.transform(X)
+    >>> print(data.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
     Data columns (total 19 columns):
@@ -127,6 +87,31 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     dtypes: float64(11), int64(8)
     memory usage: 75.2 KB
     None
+
+    """
+
+
+    """ Create by willmcginnis
+
+    A basic multivariate hashing implementation with configurable dimensionality/precision.
+
+    The advantage of this encoder is that it does not maintain a dictionary of observed categories.
+    Consequently, the encoder does not grow in size and accepts new values during data scoring
+    by design.
+
+    Parameters
+    ----------
+
+    verbose: int
+        integer indicating verbosity of the output. 0 for none.
+    cols: list
+        a list of columns to encode, if None, all string columns will be encoded.
+    drop_invariant: bool
+        boolean for whether or not to drop columns with 0 variance.
+    return_df: bool
+        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+    hash_method: str
+        which hashing method to use. Any method from hashlib works.
 
     References
     ----------
