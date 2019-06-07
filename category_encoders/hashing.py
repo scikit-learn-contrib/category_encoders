@@ -251,11 +251,22 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         """
         Call _transform() if you want to use single CPU with all samples
         """
-        if X is None or self.cols is None:
-            raise AttributeError("None data or feature input")
+        # if X is None:
+        #     raise AttributeError("None data input")
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to transform data.')
 
-        self.X = X
+        # first check the type
+        self.X = util.convert_input(X)
         self.data_lines = len(X)
+
+        # then make sure that it is the right size
+        if X.shape[1] != self._dim:
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+
+        if not self.cols:
+            return X
+
         if self.max_sample == 0 and self.max_process == 1:
             self.max_sample = self.data_lines
 
@@ -307,18 +318,19 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         """
 
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
-
-        # first check the type
-        X = util.convert_input(X)
-
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
-
-        if not self.cols:
-            return X
+        # Do the check in transform()
+        # if self._dim is None:
+        #     raise ValueError('Must train encoder before it can be used to transform data.')
+        #
+        # # first check the type
+        # X = util.convert_input(X)
+        #
+        # # then make sure that it is the right size
+        # if X.shape[1] != self._dim:
+        #     raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+        #
+        # if not self.cols:
+        #     return X
 
         X = self.hashing_trick(X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
 
