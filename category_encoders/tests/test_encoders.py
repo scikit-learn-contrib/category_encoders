@@ -65,8 +65,6 @@ class TestEncoders(TestCase):
 
                 enc = getattr(encoders, encoder_name)(return_df=False)
                 enc.fit(X, np_y)
-                if encoder_name == 'HashingEncoder':
-                    raise ValueError(type(enc.transform(X_t)))
                 self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
                 self.assertEqual(enc.transform(X_t).shape[0], X_t.shape[0], 'Row count must not change')
 
