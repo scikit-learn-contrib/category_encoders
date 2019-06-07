@@ -196,7 +196,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
-        X_temp = self._transform(X, override_return_df=True)
+        X_temp = self.transform(X, override_return_df=True)
         self.feature_names = X_temp.columns.tolist()
 
         # drop all output columns with 0 variance.
