@@ -261,14 +261,14 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         # first check the type
         self.X = util.convert_input(X)
-        self.data_lines = len(X)
+        self.data_lines = len(self.X)
 
         # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+        if self.X.shape[1] != self._dim:
+            raise ValueError('Unexpected input dimension %d, expected %d' % (self.X.shape[1], self._dim, ))
 
         if not self.cols:
-            return X
+            return self.X
 
         if self.max_sample == 0 and self.max_process == 1:
             self.max_sample = self.data_lines
