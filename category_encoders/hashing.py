@@ -237,7 +237,10 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
                 data_part = self.X.iloc[start_index: done_index]
                 # Always get df and turn after merge all data parts
-                data_part = self._transform(X=data_part, override_return_df=True)
+                data_part = self.hashing_trick(X_in=data_part, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
+                if self.drop_invariant:
+                    for col in self.drop_cols:
+                        data_part.drop(col, 1, inplace=True)
                 part_index = math.ceil(done_index / self.max_sample)
                 self.hashing_parts.put({part_index: data_part})
                 if done_index < self.data_lines:
@@ -318,19 +321,18 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         """
 
-        # Do the check in transform()
-        # if self._dim is None:
-        #     raise ValueError('Must train encoder before it can be used to transform data.')
-        #
-        # # first check the type
-        # X = util.convert_input(X)
-        #
-        # # then make sure that it is the right size
-        # if X.shape[1] != self._dim:
-        #     raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
-        #
-        # if not self.cols:
-        #     return X
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to transform data.')
+
+        # first check the type
+        X = util.convert_input(X)
+
+        # then make sure that it is the right size
+        if X.shape[1] != self._dim:
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+
+        if not self.cols:
+            return X
 
         X = self.hashing_trick(X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
 
