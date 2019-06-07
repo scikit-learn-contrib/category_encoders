@@ -318,18 +318,19 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         """
 
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
-
-        # first check the type
-        X = util.convert_input(X)
-
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
-
-        if not self.cols:
-            return X
+        # Do the check in transform()
+        # if self._dim is None:
+        #     raise ValueError('Must train encoder before it can be used to transform data.')
+        #
+        # # first check the type
+        # X = util.convert_input(X)
+        #
+        # # then make sure that it is the right size
+        # if X.shape[1] != self._dim:
+        #     raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+        #
+        # if not self.cols:
+        #     return X
 
         X = self.hashing_trick(X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
 
