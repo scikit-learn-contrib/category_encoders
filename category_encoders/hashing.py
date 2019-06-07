@@ -250,7 +250,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             self.data_lock.release()
 
-    def transform(self, X, override_return_df=False, test_index=False):
+    def transform(self, X, override_return_df=False):
         """
         Call _transform() if you want to use single CPU with all samples
         """
@@ -300,8 +300,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 sort_data.append(list_data.get(index, None))
             data = pd.concat(sort_data, ignore_index=True)
             # Check if is_return_df
-            if test_index:
-                raise ValueError("re: " + str(self.return_df) + "  over: " + str(override_return_df) + "  data: " + str(type(data)) + "  data.value: " + str(type(data.value)))
             if self.return_df or override_return_df:
                 return data
             else:
