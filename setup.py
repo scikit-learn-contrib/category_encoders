@@ -29,7 +29,7 @@ setup(
     include_package_data=True,
     author='Will McGinnis',
     install_requires=[
-      'numpy>=1.11.3',
+      'numpy>=1.16.4',
       'scikit-learn>=0.20.0',
       'scipy>=0.19.0',
       'statsmodels>=0.6.1',
