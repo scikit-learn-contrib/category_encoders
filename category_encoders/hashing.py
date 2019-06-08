@@ -99,20 +99,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     Consequently, the encoder does not grow in size and accepts new values during data scoring
     by design.
 
-    Parameters
-    ----------
-
-    verbose: int
-        integer indicating verbosity of the output. 0 for none.
-    cols: list
-        a list of columns to encode, if None, all string columns will be encoded.
-    drop_invariant: bool
-        boolean for whether or not to drop columns with 0 variance.
-    return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
-    hash_method: str
-        which hashing method to use. Any method from hashlib works.
-
     References
     ----------
     .. [1] Feature Hashing for Large Scale Multitask Learning, from
@@ -134,9 +120,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         self.data_lock = multiprocessing.Lock()
         self.start_state = multiprocessing.Manager().Queue()
         self.start_state.put(-1)
-        self.origin_parts = multiprocessing.Manager().Queue()
+        self.done_index = multiprocessing.Manager().Queue()
         self.hashing_parts = multiprocessing.Manager().Queue()
-        self.n_process = []
         self.data_lines = 0
         self.X = None
 
@@ -175,6 +160,10 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         self._dim = X.shape[1]
 
+        # Set a new start signal
+        if self.start_state.empty():
+            self.start_state.put(-1)
+
         # if columns aren't passed, just use every string column
         if self.cols is None:
             self.cols = util.get_obj_cols(X)
@@ -201,34 +190,36 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     def __require_data(self, cols, process_index):
         if self.data_lock.acquire():
             if not self.start_state.empty():
-                done_index = 0
+                end_index = 0
                 while not self.start_state.empty():
                     self.start_state.get()
             else:
-                if self.origin_parts.empty():
-                    done_index = self.data_lines
+                if self.done_index.empty():
+                    end_index = self.data_lines
                 else:
-                    done_index = self.origin_parts.get()
+                    end_index = self.done_index.get()
 
-            if all([self.data_lines > 0, done_index < self.data_lines]):
-                start_index = done_index
-                is_last_part = (self.data_lines - done_index) <= self.max_sample
-                if is_last_part:
-                    done_index = self.data_lines
+            if all([self.data_lines > 0, end_index < self.data_lines]):
+                start_index = end_index
+                if (self.data_lines - end_index) <= self.max_sample:
+                    end_index = self.data_lines
                 else:
-                    done_index += self.max_sample
-                self.origin_parts.put(done_index)
+                    end_index += self.max_sample
+                self.done_index.put(end_index)
                 self.data_lock.release()
 
-                data_part = self.X.iloc[start_index: done_index]
+                data_part = self.X.iloc[start_index: end_index]
                 # Always get df and turn after merge all data parts
                 data_part = self.hashing_trick(X_in=data_part, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
                 if self.drop_invariant:
                     for col in self.drop_cols:
                         data_part.drop(col, 1, inplace=True)
-                part_index = math.ceil(done_index / self.max_sample)
+                part_index = math.ceil(end_index / self.max_sample)
                 self.hashing_parts.put({part_index: data_part})
-                if done_index < self.data_lines:
+                if self.verbose == 5:
+                    print("Process - " + str(process_index)
+                          + " done hashing data : " + str(start_index) + "~" + str(end_index))
+                if end_index < self.data_lines:
                     self.__require_data(cols=cols, process_index=process_index)
             else:
                 self.data_lock.release()
@@ -255,27 +246,29 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return self.X
 
-        if self.max_sample == 0 and self.max_process == 1:
-            self.max_sample = self.data_lines
+        # Set a new start signal
+        if self.start_state.empty():
+            self.start_state.put(-1)
 
+        if self.max_sample == 0:
+            self.max_sample = int(self.data_lines / self.max_process)
+        if self.max_process == 1:
             self.__require_data(cols=self.cols, process_index=1)
         else:
-            if self.max_sample == 0:
-                self.max_sample = int(self.data_lines / self.max_process)
+            n_process = []
             for thread_index in range(self.max_process):
                 process = multiprocessing.Process(target=self.__require_data,
                                                   args=(self.cols, thread_index + 1))
                 process.daemon = True
-                self.n_process.append(process)
-            for process in self.n_process:
+                n_process.append(process)
+            for process in n_process:
                 process.start()
-            for process in self.n_process:
+            for process in n_process:
                 process.join()
+        data = None
         if self.max_sample == 0 or self.max_sample == self.data_lines:
             if self.hashing_parts:
-                return list(self.hashing_parts.get().values())[0]
-            else:
-                return None
+                data = list(self.hashing_parts.get().values())[0]
         else:
             list_data = {}
             while not self.hashing_parts.empty():
@@ -284,11 +277,11 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             for index in range(1, len(list_data) + 1):
                 sort_data.append(list_data.get(index, None))
             data = pd.concat(sort_data, ignore_index=True)
-            # Check if is_return_df
-            if self.return_df or override_return_df:
-                return data
-            else:
-                return data.values
+        # Check if is_return_df
+        if self.return_df or override_return_df:
+            return data
+        else:
+            return data.values
 
     def _transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
