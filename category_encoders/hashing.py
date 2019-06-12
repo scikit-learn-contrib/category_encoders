@@ -275,8 +275,13 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 list_data.update(self.hashing_parts.get())
             sort_data = []
             for index in range(1, len(list_data) + 1):
-                sort_data.append(list_data.get(index, None))
-            data = pd.concat(sort_data, ignore_index=True)
+                sd = list_data.get(index, None)
+                if not sd is None:
+                    sort_data.append(sd)
+            if sort_data:
+                data = pd.concat(sort_data, ignore_index=True)
+            else:
+                data = self.X
         # Check if is_return_df
         if self.return_df or override_return_df:
             return data
