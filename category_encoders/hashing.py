@@ -13,33 +13,18 @@ __author__ = 'willmcginnis', 'LiuShulun'
 
 class HashingEncoder(BaseEstimator, TransformerMixin):
 
-    """ Update by LiuShulun
+    """ A multivariate hashing implementation with configurable dimensionality/precision.
 
-    An extended HashingEncoder by multi-process
-
-    !!! Significant !!! improve the encoding speed of hashing encoding on
-    multi-cores machine. This allows settingmax_process & max_sample to use
-    more CPU resource when hashing encoding (several times faster easily).
-
+    The advantage of this encoder is that it does not maintain a dictionary of observed categories.
+    Consequently, the encoder does not grow in size and accepts new values during data scoring
+    by design.
+    
     It's important to read about how max_process & max_sample work
     before setting them manually, inappropriate setting slows down encoding.
 
     Parameters
     ----------
 
-    max_process: int
-        how many PROCESS to use. limited in range(1, 64)
-            as default, it use half of logical CPU num
-            for example, 4C4T makes max_process=2, 4C8T makes max_process=4
-            set it larger if you get a strong cpu
-            not recommended to set it larger than logical CPU num
-    max_sample: int
-        how many samples will be encode by each process at each time
-        (commonly for low memory machine)
-            as default, max_sample = (all samples num) / (max_process)
-            for example,4C8T CPU with 100,000 samples makes max_sample=25,000
-            6C12T CPU with 100,000 samples makes max_sample=16,666
-            not recommended to set it larger than default value
     verbose: int
         integer indicating verbosity of the output. 0 for none.
     cols: list
@@ -50,6 +35,20 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     hash_method: str
         which hashing method to use. Any method from hashlib works.
+    max_process: int
+        how many processes to use in transform(). Limited in range(1, 64).
+        By default, it uses half of the logical CPUs.
+        For example, 4C4T makes max_process=2, 4C8T makes max_process=4.
+        Set it larger if you have a strong CPU.
+        It is not recommended to set it larger than is the count of the
+        logical CPUs as it will actually slow down the encoding.
+    max_sample: int
+        how many samples to encode by each process at a time.
+        This setting is useful on low memory machines.
+        By default, max_sample=(all samples num)/(max_process).
+        For example, 4C8T CPU with 100,000 samples makes max_sample=25,000,
+        6C12T CPU with 100,000 samples makes max_sample=16,666.
+        It is not recommended to set it larger than the default value.
 
     Example
     -------
@@ -87,17 +86,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     dtypes: float64(11), int64(8)
     memory usage: 75.2 KB
     None
-
-    """
-
-
-    """ Create by willmcginnis
-
-    A basic multivariate hashing implementation with configurable dimensionality/precision.
-
-    The advantage of this encoder is that it does not maintain a dictionary of observed categories.
-    Consequently, the encoder does not grow in size and accepts new values during data scoring
-    by design.
 
     References
     ----------
