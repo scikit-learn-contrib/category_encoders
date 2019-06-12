@@ -14,7 +14,7 @@ X = th.create_dataset(n_rows=10000)
 X_t = th.create_dataset(n_rows=5000, extras=True)
 
 
-result_cols = ['encoder', 'X_shape', 'average_time', 'average_cpu_utilization']
+result_cols = ['encoder', 'X_shape', 'average_time (s)', 'average_cpu_utilization (%)']
 
 results = []
 

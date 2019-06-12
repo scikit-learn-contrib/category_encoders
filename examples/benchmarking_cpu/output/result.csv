@@ -1,4 +1,4 @@
-,encoder,X_shape,average_time,average_cpu_utilization
+,encoder,X_shape,average_time (s),average_cpu_utilization (%)
 0,BackwardDifferenceEncoder,"(10000, 11)",33.953908363978066,15.623140735584172
 1,BinaryEncoder,"(10000, 11)",0.24237966537475586,16.916666666666668
 2,HashingEncoder,"(10000, 11)",1.4827313423156738,46.98333333333333
