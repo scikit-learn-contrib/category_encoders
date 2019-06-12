@@ -17,9 +17,9 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     An extended HashingEncoder by multi-process
 
-    Significant improve the encoding speed of hashing encoding on
-    multi-cores machine. Set a larger max_process to use more CPU resource
-    when hashing encoding (several times faster easily).
+    !!! Significant !!! improve the encoding speed of hashing encoding on
+    multi-cores machine. This allows settingmax_process & max_sample to use
+    more CPU resource when hashing encoding (several times faster easily).
 
     It's important to read about how max_process & max_sample work
     before setting them manually, inappropriate setting slows down encoding.
@@ -29,14 +29,14 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     max_process: int
         how many PROCESS to use. limited in range(1, 64)
-            as default, it use half of logical CPU num (recommended)
+            as default, it use half of logical CPU num
             for example, 4C4T makes max_process=2, 4C8T makes max_process=4
             set it larger if you get a strong cpu
             not recommended to set it larger than logical CPU num
     max_sample: int
         how many samples will be encode by each process at each time
         (commonly for low memory machine)
-            as default, max_sample = all samples num / max_process (recommended)
+            as default, max_sample = (all samples num) / (max_process)
             for example,4C8T CPU with 100,000 samples makes max_sample=25,000
             6C12T CPU with 100,000 samples makes max_sample=16,666
             not recommended to set it larger than default value
@@ -170,7 +170,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
-        X_temp = self.transform(X, override_return_df=True)
+        X_temp = self._transform(X, override_return_df=True)
         self.feature_names = X_temp.columns.tolist()
 
         # drop all output columns with 0 variance.
