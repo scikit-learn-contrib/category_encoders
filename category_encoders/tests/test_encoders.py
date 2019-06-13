@@ -53,7 +53,10 @@ class TestEncoders(TestCase):
 
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit(X, np_y)
-                th.verify_numeric(enc.transform(X_t))
+                if encoder_name == 'HashingEncoder':
+                    th.verify_numeric(enc.transform(X_t, tes=-1))
+                else:
+                    th.verify_numeric(enc.transform(X_t))
 
                 enc = getattr(encoders, encoder_name)(verbose=1)
                 enc.fit(X, np_y)

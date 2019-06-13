@@ -214,7 +214,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             self.data_lock.release()
 
-    def transform(self, X, override_return_df=False):
+    def transform(self, X, override_return_df=False, tes=0):
         """
         Call _transform() if you want to use single CPU with all samples
         """
@@ -260,6 +260,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             while not self.hashing_parts.empty():
                 list_data.update(self.hashing_parts.get())
             sort_data = []
+            if tes == -1:
+                raise ValueError(len(list_data))
             for index in range(1, len(list_data) + 1):
                 sort_data.append(list_data.get(index, None))
             if sort_data:
