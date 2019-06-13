@@ -261,7 +261,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 list_data.update(self.hashing_parts.get())
             sort_data = []
             if tes == -1:
-                raise ValueError(len(list_data))
+                raise ValueError(str(len(list_data)))
             for index in range(1, len(list_data) + 1):
                 sort_data.append(list_data.get(index, None))
             if sort_data:
