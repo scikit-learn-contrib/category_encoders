@@ -227,7 +227,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         # then make sure that it is the right size
         if self.X.shape[1] != self._dim:
-            raise ValueError("shape: " + str(self.X.shape) + " process: " + str(self.max_process) + " sample: " + str(self.max_sample))
+            raise ValueError('Unexpected input dimension %d, expected %d' % (self.X.shape[1], self._dim, ))
 
         if not self.cols:
             return self.X
