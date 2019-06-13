@@ -236,13 +236,10 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if self.start_state.empty():
             self.start_state.put(-1)
 
-        before = self.max_sample
-        after = -1
         if self.max_sample == 0:
             self.max_sample = int(self.data_lines / self.max_process)
-            after = self.max_sample
         if tes == -1:
-            raise ValueError("lines: " + str(self.data_lines) + " len: " + str(len(self.X)) + " shape: " + str(self.X.shape) + " shpe[0]" + str(self.X.shape[0]) + " process: " + str(self.max_process) + " sample: " + str(self.max_sample) + " before: " + str(before) + " after: " + str(after))
+            raise ValueError("lines: " + str(self.data_lines) + " len" + str(len(self.X)) + " shape: " + str(self.X.shape) + " shpe[0]" + str(self.X.shape[0]) + " process: " + str(self.max_process) + " sample: " + str(self.max_sample))
         if self.max_process == 1:
             self.__require_data(cols=self.cols, process_index=1)
         else:
