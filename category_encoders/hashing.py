@@ -18,7 +18,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     The advantage of this encoder is that it does not maintain a dictionary of observed categories.
     Consequently, the encoder does not grow in size and accepts new values during data scoring
     by design.
-    
+
     It's important to read about how max_process & max_sample work
     before setting them manually, inappropriate setting slows down encoding.
 
@@ -158,7 +158,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
-        X_temp = self._transform(X, override_return_df=True)
+        X_temp = self.transform(X, override_return_df=True)
         self.feature_names = X_temp.columns.tolist()
 
         # drop all output columns with 0 variance.
@@ -218,8 +218,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         """
         Call _transform() if you want to use single CPU with all samples
         """
-        # if X is None:
-        #     raise AttributeError("None data input")
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to transform data.')
 
