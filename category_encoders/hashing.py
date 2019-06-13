@@ -239,7 +239,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if self.max_sample == 0:
             self.max_sample = int(self.data_lines / self.max_process)
         if tes == -1:
-            raise ValueError("shape: " + self.X.shape + " process: " + str(self.max_process) + " sample: " + str(self.max_sample))
+            raise ValueError("process: " + str(self.max_process) + " sample: " + str(self.max_sample))
         if self.max_process == 1:
             self.__require_data(cols=self.cols, process_index=1)
         else:
