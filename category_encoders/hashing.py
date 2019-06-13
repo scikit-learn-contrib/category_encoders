@@ -202,7 +202,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 if self.drop_invariant:
                     for col in self.drop_cols:
                         data_part.drop(col, 1, inplace=True)
-                part_index = math.ceil(end_index / self.max_sample)
+                part_index = int(math.ceil(end_index / self.max_sample))
                 self.hashing_parts.put({part_index: data_part})
                 if self.verbose == 5:
                     print("Process - " + str(process_index)
