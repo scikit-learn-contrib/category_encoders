@@ -238,6 +238,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         if self.max_sample == 0:
             self.max_sample = int(self.data_lines / self.max_process)
+        if tes == -1:
+            raise ValueError("process: " + str(self.max_process) + " sample: " + str(self.max_sample))
         if self.max_process == 1:
             self.__require_data(cols=self.cols, process_index=1)
         else:
@@ -260,10 +262,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             while not self.hashing_parts.empty():
                 list_data.update(self.hashing_parts.get())
             sort_data = []
-            if tes == -1:
-                raise ValueError(len(list_data))
-            for index in range(1, len(list_data) + 1):
-                sort_data.append(list_data.get(index, None))
+            for part_index in sorted(list_data):
+                sort_data.append(list_data[part_index])
             if sort_data:
                 data = pd.concat(sort_data, ignore_index=True)
             else:
