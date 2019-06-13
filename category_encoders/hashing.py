@@ -104,7 +104,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 self.max_process = 64
         else:
             self.max_process = max_process
-        self.max_sample = max_sample
+        self.max_sample = int(max_sample)
+        self.auto_sample = max_sample <= 0
         self.data_lock = multiprocessing.Lock()
         self.start_state = multiprocessing.Manager().Queue()
         self.start_state.put(-1)
@@ -236,7 +237,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if self.start_state.empty():
             self.start_state.put(-1)
 
-        if self.max_sample == 0:
+        if self.auto_sample:
             self.max_sample = int(self.data_lines / self.max_process)
         if self.max_process == 1:
             self.__require_data(cols=self.cols, process_index=1)
@@ -260,8 +261,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             while not self.hashing_parts.empty():
                 list_data.update(self.hashing_parts.get())
             sort_data = []
-            for index in range(1, len(list_data) + 1):
-                sort_data.append(list_data.get(index, None))
+            for part_index in sorted(list_data):
+                sort_data.append(list_data[part_index])
             if sort_data:
                 data = pd.concat(sort_data, ignore_index=True)
             else:
