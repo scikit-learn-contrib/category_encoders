@@ -106,7 +106,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             self.max_process = max_process
         self.max_sample = int(max_sample)
         self.auto_sample = max_sample <= 0
-        self.data_lock = multiprocessing.Lock()
+        self.data_lock = multiprocessing.Manager().Lock()
         self.start_state = multiprocessing.Manager().Queue()
         self.start_state.put(-1)
         self.done_index = multiprocessing.Manager().Queue()

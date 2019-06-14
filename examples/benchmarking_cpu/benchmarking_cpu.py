@@ -10,11 +10,12 @@ __author__ = 'LiuShulun'
 
 
 """
-Record the peak and average benchmarking of cpu utilization during every encoding.
-Commonly, the value is below 50 because of the core distribution by system.
-In HashingEncoder, set max_process equals num of logical CPUs maximize the cpu utilization.
-average_cpu_utilization represents pressure of CPUs,
-50 means half of logical CPUs working during encoding in multi-cores device, or half of CPU resource cost in single-core device
+Record the average and peak system-wide CPU utilization during encoder training and scoring.
+The utilization is reported as a percentage and as such should always be in the range 0..100%.
+E.g.: 50% means half of the logical CPUs are completely utilized in a multi-core device,
+or half of the CPU is utilized in a single-core device.
+
+TODO: Add a time counter to terminate training and scoring after timeout.
 """
 
 # sampling rate of cpu utilization, smaller for more accurate
