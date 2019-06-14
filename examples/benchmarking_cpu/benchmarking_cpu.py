@@ -10,66 +10,87 @@ __author__ = 'LiuShulun'
 
 
 """
-Benchmarking of cpu utilization during every encoding.
-Record the peak value and average value.
+Record the peak and average benchmarking of cpu utilization during every encoding.
 Commonly, the value is below 50 because of the core distribution by system.
-
-TODO:
-differentiate between average and peak
-differentiate between training and scoring
+In HashingEncoder, set max_process equals num of logical CPUs maximize the cpu utilization.
+average_cpu_utilization represents pressure of CPUs,
+50 means half of logical CPUs working during encoding in multi-cores device, or half of CPU resource cost in single-core device
 """
 
+# sampling rate of cpu utilization, smaller for more accurate
+cpu_sampling_rate = 0.2
+
+# loop times of benchmarking in every encoding, larger for more accurate but longer benchmarking time
+benchmark_repeat = 3
+
+# sample num of data
+data_lines = 10000
+
 # benchmarking result format
-result_cols = ['encoder', 'X_shape', 'average_time (s)', 'average_cpu_utilization (%)']
+result_cols = ['encoder', 'used_processes', 'X_shape', 'min_time(s)', 'average_time(s)', 'max_cpu_utilization(%)', 'average_cpu_utilization(%)']
 results = []
 cpu_utilization = multiprocessing.Manager().Queue()
 
-np_X = th.create_array(n_rows=10000)
+# define data_set
+np_X = th.create_array(n_rows=data_lines)
 np_y = np.random.randn(np_X.shape[0]) > 0.5
-X = th.create_dataset(n_rows=10000)
-X_t = th.create_dataset(n_rows=5000, extras=True)
+X = th.create_dataset(n_rows=data_lines)
+X_t = th.create_dataset(n_rows=int(data_lines / 2), extras=True)
+
+cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical']
 
 
 def get_cpu_utilization():
     """
     new process for recording cpu utilization
-    record cpu utilization every 0.2 second & calculate its mean value
+    record cpu utilization every [cpu_sampling_rate] second & calculate its mean value
     the value is the cpu utilization during every encoding
     """
     global cpu_utilization
     psutil.cpu_percent(None)
     while True:
         cpu_utilization.put(psutil.cpu_percent(None))
-        time.sleep(0.2)
+        time.sleep(cpu_sampling_rate)
 
 
 psutil.cpu_percent(None)
 for encoder_name in encoders.__all__:
-    print(encoder_name)
-    rsl = [encoder_name, X.shape]
-    enc = getattr(encoders, encoder_name)(cols=['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical'])
+    """
+    HashingEncoder gets more benchmarking for different max_process
+    """
+    num = multiprocessing.cpu_count() if encoder_name == 'HashingEncoder' else 1
 
-    t = []
-    c = []
-    for index in range(3):
-        start = time.time()
-        proc = multiprocessing.Process(target=get_cpu_utilization, args=())
-        proc.start()
-        enc.fit(X, np_y)
-        th.verify_numeric(enc.transform(X_t))
-        end = time.time()
-        proc.terminate()
-        proc.join()
-        cost = []
-        while not cpu_utilization.empty():
-            cost.append(cpu_utilization.get())
-        t.append(end - start)
-        c.append(np.mean(cost))
-    rsl.append(np.mean(t))
-    rsl.append(np.mean(c))
+    for index in range(num):
+        rsl = [encoder_name, index + 1, X.shape]
 
-    results.append(rsl)
-    print(rsl)
+        if encoder_name == 'HashingEncoder':
+            enc = encoders.HashingEncoder(max_process=index+1, cols=cols)
+        else:
+            enc = getattr(encoders, encoder_name)(cols=cols)
+
+        t = []
+        c = []
+        for _ in range(benchmark_repeat):
+            start = time.time()
+            proc = multiprocessing.Process(target=get_cpu_utilization, args=())
+            proc.start()
+            enc.fit(X, np_y)
+            th.verify_numeric(enc.transform(X_t))
+            end = time.time()
+            proc.terminate()
+            proc.join()
+            cost = []
+            while not cpu_utilization.empty():
+                cost.append(cpu_utilization.get())
+            t.append(end - start)
+            c.append(np.mean(cost))
+        rsl.append(min(t))
+        rsl.append(np.mean(t))
+        rsl.append(max(c))
+        rsl.append(np.mean(c))
+
+        results.append(rsl)
+        print(rsl)
 
 result_df = pd.DataFrame(results, columns=result_cols)
 result_df.to_csv('./output/result.csv')
