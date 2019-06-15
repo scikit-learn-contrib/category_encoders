@@ -80,6 +80,8 @@ datasets = ['audiology.arff', 'autos.arff', 'breast.cancer.arff', 'bridges.versi
 encoders = [category_encoders.BackwardDifferenceEncoder(),
             category_encoders.BaseNEncoder(),
             category_encoders.BinaryEncoder(),
+            category_encoders.CatBoostEncoder(),
+            category_encoders.CountEncoder(),
             category_encoders.HashingEncoder(),
             category_encoders.HelmertEncoder(),
             category_encoders.JamesSteinEncoder(),

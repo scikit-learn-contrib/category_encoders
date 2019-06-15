@@ -6,14 +6,14 @@ results_df = pd.read_csv('./output/result.csv')
 
 
 # AUC grouped by encoder
-f = plt.figure(figsize=(15, 9))
-sb.boxplot(data=results_df, x='encoder', y='test_auc', notch=True)
-plt.grid(True, axis='y')
+f = plt.figure(figsize=(9, 9))
+sb.boxplot(data=results_df, y='encoder', x='test_auc', notch=True)
+plt.grid(True, axis='x')
 f.savefig("./output/auc.pdf", bbox_inches='tight')
 
 
 # AUC grouped by encoder + classifier
-f = plt.figure(figsize=(12, 12))
+f = plt.figure(figsize=(12, 15))
 for index, clf in enumerate(results_df['model'].unique()):
     plt.subplot(3, 3, index + 1)
     plt.title(clf)
@@ -34,14 +34,14 @@ df_overfitting = pd.melt(results_df, col_level=0, id_vars=['encoder', 'model'], 
 
 
 # Clustered AUC grouped by encoder
-f = plt.figure(figsize=(15, 9))
-sb.boxplot(data=df_overfitting, x='encoder', y='auc', hue='variable', notch=True)
-plt.grid(True, axis='y')
+f = plt.figure(figsize=(9, 9))
+sb.boxplot(data=df_overfitting, y='encoder', x='auc', hue='variable', notch=True)
+plt.grid(True, axis='x')
 f.savefig("./output/overfitting.pdf", bbox_inches='tight')
 
 
 # Clustered AUC grouped by encoder + classifier
-f = plt.figure(figsize=(12, 12))
+f = plt.figure(figsize=(12, 15))
 for index, clf in enumerate(df_overfitting['model'].unique()):
     plt.subplot(3, 3, index + 1)
     plt.title(clf)
