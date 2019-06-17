@@ -106,11 +106,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             self.max_process = max_process
         self.max_sample = int(max_sample)
         self.auto_sample = max_sample <= 0
-        self.data_lock = multiprocessing.Manager().Lock()
-        self.start_state = multiprocessing.Manager().Queue()
-        self.start_state.put(-1)
-        self.done_index = multiprocessing.Manager().Queue()
-        self.hashing_parts = multiprocessing.Manager().Queue()
         self.data_lines = 0
         self.X = None
 
@@ -149,10 +144,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         self._dim = X.shape[1]
 
-        # Set a new start signal
-        if self.start_state.empty():
-            self.start_state.put(-1)
-
         # if columns aren't passed, just use every string column
         if self.cols is None:
             self.cols = util.get_obj_cols(X)
@@ -176,17 +167,13 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def __require_data(self, cols, process_index):
-        if self.data_lock.acquire():
-            if not self.start_state.empty():
+    def __require_data(self, data_lock, new_start, done_index, hashing_parts, cols, process_index):
+        if data_lock.acquire():
+            if new_start.value:
                 end_index = 0
-                while not self.start_state.empty():
-                    self.start_state.get()
+                new_start.value = False
             else:
-                if self.done_index.empty():
-                    end_index = self.data_lines
-                else:
-                    end_index = self.done_index.get()
+                end_index = done_index.value
 
             if all([self.data_lines > 0, end_index < self.data_lines]):
                 start_index = end_index
@@ -194,26 +181,26 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                     end_index = self.data_lines
                 else:
                     end_index += self.max_sample
-                self.done_index.put(end_index)
-                self.data_lock.release()
+                done_index.value = end_index
+                data_lock.release()
 
                 data_part = self.X.iloc[start_index: end_index]
-                # Always get df and turn after merge all data parts
+                # Always get df and check it after merge all data parts
                 data_part = self.hashing_trick(X_in=data_part, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
                 if self.drop_invariant:
                     for col in self.drop_cols:
                         data_part.drop(col, 1, inplace=True)
                 part_index = int(math.ceil(end_index / self.max_sample))
-                self.hashing_parts.put({part_index: data_part})
+                hashing_parts.put({part_index: data_part})
                 if self.verbose == 5:
-                    print("Process - " + str(process_index)
-                          + " done hashing data : " + str(start_index) + "~" + str(end_index))
+                    print("Process - " + str(process_index),
+                          "done hashing data : " + str(start_index) + "~" + str(end_index))
                 if end_index < self.data_lines:
-                    self.__require_data(cols=cols, process_index=process_index)
+                    self.__require_data(data_lock, new_start, done_index, hashing_parts, cols=cols, process_index=process_index)
             else:
-                self.data_lock.release()
+                data_lock.release()
         else:
-            self.data_lock.release()
+            data_lock.release()
 
     def transform(self, X, override_return_df=False):
         """
@@ -233,40 +220,39 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if not self.cols:
             return self.X
 
-        # Set a new start signal
-        if self.start_state.empty():
-            self.start_state.put(-1)
+        data_lock = multiprocessing.Manager().Lock()
+        new_start = multiprocessing.Manager().Value('d', True)
+        done_index = multiprocessing.Manager().Value('d', int(0))
+        hashing_parts = multiprocessing.Manager().Queue()
 
         if self.auto_sample:
             self.max_sample = int(self.data_lines / self.max_process)
         if self.max_process == 1:
-            self.__require_data(cols=self.cols, process_index=1)
+            self.__require_data(data_lock, new_start, done_index, hashing_parts, cols=self.cols, process_index=1)
         else:
             n_process = []
             for thread_index in range(self.max_process):
                 process = multiprocessing.Process(target=self.__require_data,
-                                                  args=(self.cols, thread_index + 1))
+                                                  args=(data_lock, new_start, done_index, hashing_parts, self.cols, thread_index + 1))
                 process.daemon = True
                 n_process.append(process)
             for process in n_process:
                 process.start()
             for process in n_process:
                 process.join()
-        data = None
+        data = self.X
         if self.max_sample == 0 or self.max_sample == self.data_lines:
-            if self.hashing_parts:
-                data = list(self.hashing_parts.get().values())[0]
+            if hashing_parts:
+                data = list(hashing_parts.get().values())[0]
         else:
             list_data = {}
-            while not self.hashing_parts.empty():
-                list_data.update(self.hashing_parts.get())
+            while not hashing_parts.empty():
+                list_data.update(hashing_parts.get())
             sort_data = []
             for part_index in sorted(list_data):
                 sort_data.append(list_data[part_index])
             if sort_data:
                 data = pd.concat(sort_data, ignore_index=True)
-            else:
-                data = self.X
         # Check if is_return_df
         if self.return_df or override_return_df:
             return data

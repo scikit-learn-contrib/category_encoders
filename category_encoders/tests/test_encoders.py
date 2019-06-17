@@ -78,6 +78,16 @@ class TestEncoders(TestCase):
                 # enc.fit(X_b, y_dummy)
                 # verify_numeric(enc.transform(X_b))
 
+    def test_deepcopy(self):
+        """
+        Generate instance of evert encoder and test deepcopyable
+        See: https://github.com/scikit-learn-contrib/categorical-encoding/pull/194
+        """
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                enc2 = deepcopy(enc)
+
     def test_impact_encoders(self):
         for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder']:
             with self.subTest(encoder_name=encoder_name):
