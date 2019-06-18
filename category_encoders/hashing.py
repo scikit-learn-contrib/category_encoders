@@ -4,17 +4,23 @@ import sys
 import hashlib
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
+import multiprocessing
 import pandas as pd
+import math
 
-__author__ = 'willmcginnis'
+__author__ = 'willmcginnis', 'LiuShulun'
 
 
 class HashingEncoder(BaseEstimator, TransformerMixin):
-    """A basic multivariate hashing implementation with configurable dimensionality/precision.
+
+    """ A multivariate hashing implementation with configurable dimensionality/precision.
 
     The advantage of this encoder is that it does not maintain a dictionary of observed categories.
     Consequently, the encoder does not grow in size and accepts new values during data scoring
     by design.
+
+    It's important to read about how max_process & max_sample work
+    before setting them manually, inappropriate setting slows down encoding.
 
     Parameters
     ----------
@@ -29,18 +35,32 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     hash_method: str
         which hashing method to use. Any method from hashlib works.
+    max_process: int
+        how many processes to use in transform(). Limited in range(1, 64).
+        By default, it uses half of the logical CPUs.
+        For example, 4C4T makes max_process=2, 4C8T makes max_process=4.
+        Set it larger if you have a strong CPU.
+        It is not recommended to set it larger than is the count of the
+        logical CPUs as it will actually slow down the encoding.
+    max_sample: int
+        how many samples to encode by each process at a time.
+        This setting is useful on low memory machines.
+        By default, max_sample=(all samples num)/(max_process).
+        For example, 4C8T CPU with 100,000 samples makes max_sample=25,000,
+        6C12T CPU with 100,000 samples makes max_sample=16,666.
+        It is not recommended to set it larger than the default value.
 
     Example
     -------
-    >>> from category_encoders import *
+    >>> from category_encoders.hashing import HashingEncoder
     >>> import pandas as pd
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
-    >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = HashingEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>> numeric_dataset = enc.transform(X)
-    >>> print(numeric_dataset.info())
+    >>> y = bunch.target
+    >>> he = HashingEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> data = he.transform(X)
+    >>> print(data.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
     Data columns (total 19 columns):
@@ -74,7 +94,21 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
+    def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
+
+        if max_process not in range(1, 64):
+            self.max_process = int(math.ceil(multiprocessing.cpu_count() / 2))
+            if self.max_process <= 1:
+                self.max_process = 1
+            elif self.max_process >= 64:
+                self.max_process = 64
+        else:
+            self.max_process = max_process
+        self.max_sample = int(max_sample)
+        self.auto_sample = max_sample <= 0
+        self.data_lines = 0
+        self.X = None
+
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -133,7 +167,99 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
+    def __require_data(self, data_lock, new_start, done_index, hashing_parts, cols, process_index):
+        if data_lock.acquire():
+            if new_start.value:
+                end_index = 0
+                new_start.value = False
+            else:
+                end_index = done_index.value
+
+            if all([self.data_lines > 0, end_index < self.data_lines]):
+                start_index = end_index
+                if (self.data_lines - end_index) <= self.max_sample:
+                    end_index = self.data_lines
+                else:
+                    end_index += self.max_sample
+                done_index.value = end_index
+                data_lock.release()
+
+                data_part = self.X.iloc[start_index: end_index]
+                # Always get df and check it after merge all data parts
+                data_part = self.hashing_trick(X_in=data_part, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
+                if self.drop_invariant:
+                    for col in self.drop_cols:
+                        data_part.drop(col, 1, inplace=True)
+                part_index = int(math.ceil(end_index / self.max_sample))
+                hashing_parts.put({part_index: data_part})
+                if self.verbose == 5:
+                    print("Process - " + str(process_index),
+                          "done hashing data : " + str(start_index) + "~" + str(end_index))
+                if end_index < self.data_lines:
+                    self.__require_data(data_lock, new_start, done_index, hashing_parts, cols=cols, process_index=process_index)
+            else:
+                data_lock.release()
+        else:
+            data_lock.release()
+
     def transform(self, X, override_return_df=False):
+        """
+        Call _transform() if you want to use single CPU with all samples
+        """
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to transform data.')
+
+        # first check the type
+        self.X = util.convert_input(X)
+        self.data_lines = len(self.X)
+
+        # then make sure that it is the right size
+        if self.X.shape[1] != self._dim:
+            raise ValueError('Unexpected input dimension %d, expected %d' % (self.X.shape[1], self._dim, ))
+
+        if not self.cols:
+            return self.X
+
+        data_lock = multiprocessing.Manager().Lock()
+        new_start = multiprocessing.Manager().Value('d', True)
+        done_index = multiprocessing.Manager().Value('d', int(0))
+        hashing_parts = multiprocessing.Manager().Queue()
+
+        if self.auto_sample:
+            self.max_sample = int(self.data_lines / self.max_process)
+        if self.max_process == 1:
+            self.__require_data(data_lock, new_start, done_index, hashing_parts, cols=self.cols, process_index=1)
+        else:
+            n_process = []
+            for thread_index in range(self.max_process):
+                process = multiprocessing.Process(target=self.__require_data,
+                                                  args=(data_lock, new_start, done_index, hashing_parts, self.cols, thread_index + 1))
+                process.daemon = True
+                n_process.append(process)
+            for process in n_process:
+                process.start()
+            for process in n_process:
+                process.join()
+        data = self.X
+        if self.max_sample == 0 or self.max_sample == self.data_lines:
+            if hashing_parts:
+                data = list(hashing_parts.get().values())[0]
+        else:
+            list_data = {}
+            while not hashing_parts.empty():
+                list_data.update(hashing_parts.get())
+            sort_data = []
+            for part_index in sorted(list_data):
+                sort_data.append(list_data[part_index])
+            if sort_data:
+                data = pd.concat(sort_data, ignore_index=True)
+        # Check if is_return_df
+        if self.return_df or override_return_df:
+            return data
+        else:
+            return data.values
+
+    def _transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
