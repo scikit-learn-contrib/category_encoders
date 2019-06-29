@@ -286,6 +286,19 @@ class TestEncoders(TestCase):
                 result = enc.inverse_transform(transformed)
                 self.assertTrue((x == result.values).all())
 
+    def test_inverse_numpy(self):
+        # See issue #196
+        for encoder_name in {'BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'}:
+            with self.subTest(encoder_name=encoder_name):
+                arr = np.array([[f"cat{i}"] for i in np.random.randint(0, 3, 10)])
+                enc = getattr(encoders, encoder_name)(return_df=False)
+
+                enc.fit(arr)
+                arr_encoded = enc.transform(arr)
+                arr_decoded = enc.inverse_transform(arr_encoded)
+
+                assert np.array_equal(arr, arr_decoded)
+
     def test_types(self):
         X = pd.DataFrame({
             'Int': [1, 2, 1, 2],

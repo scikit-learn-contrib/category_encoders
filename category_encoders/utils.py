@@ -40,24 +40,28 @@ def is_category(dtype):
     return pd.api.types.is_categorical_dtype(dtype)
 
 
-def convert_input(X, deep=False):
+def convert_input(X, columns=None, deep=False):
     """
     Unite data into a DataFrame.
+    Objects that do not contain column names take the names from the argument.
     Optionally perform deep copy of the data.
     """
     if not isinstance(X, pd.DataFrame):
-        if isinstance(X, list):
-            X = pd.DataFrame(X, copy=deep)  # lists are always copied, but for consistency, we still pass the argument
-        elif isinstance(X, (np.generic, np.ndarray)):
-            X = pd.DataFrame(X, copy=deep)
-        elif isinstance(X, csr_matrix):
-            X = pd.DataFrame(X.todense(), copy=deep)
-        elif isinstance(X, pd.Series):
+        if isinstance(X, pd.Series):
             X = pd.DataFrame(X, copy=deep)
         else:
-            raise ValueError('Unexpected input type: %s' % (str(type(X))))
+            if columns is not None and np.size(X,1) != len(columns):
+                raise ValueError('The count of the column names does not correspond to the count of the columns')
+            if isinstance(X, list):
+                X = pd.DataFrame(X, columns=columns, copy=deep)  # lists are always copied, but for consistency, we still pass the argument
+            elif isinstance(X, (np.generic, np.ndarray)):
+                X = pd.DataFrame(X, columns=columns, copy=deep)
+            elif isinstance(X, csr_matrix):
+                X = pd.DataFrame(X.todense(), columns=columns, copy=deep)
+            else:
+                raise ValueError('Unexpected input type: %s' % (str(type(X))))
 
-        X = X.apply(lambda x: pd.to_numeric(x, errors='ignore'))
+            X = X.apply(lambda x: pd.to_numeric(x, errors='ignore'))
     elif deep:
         X = X.copy(deep=True)
 

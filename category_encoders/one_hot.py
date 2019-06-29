@@ -293,7 +293,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
         # first check the type and make deep copy
-        X = util.convert_input(X_in, deep=True)
+        X = util.convert_input(X_in, columns=self.feature_names, deep=True)
 
         X = self.reverse_dummies(X, self.mapping)
 
