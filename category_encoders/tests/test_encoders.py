@@ -290,7 +290,7 @@ class TestEncoders(TestCase):
         # See issue #196
         for encoder_name in {'BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'}:
             with self.subTest(encoder_name=encoder_name):
-                arr = np.array([[f"cat{i}"] for i in np.random.randint(0, 3, 10)])
+                arr = np.array([['A'], ['B'], ['B'], ['C']])
                 enc = getattr(encoders, encoder_name)(return_df=False)
 
                 enc.fit(arr)
