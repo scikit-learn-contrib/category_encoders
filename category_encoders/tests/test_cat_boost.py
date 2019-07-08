@@ -4,7 +4,7 @@ from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4
 import category_encoders as encoders
 
 
-class TestBinaryEncoder(TestCase):
+class TestCatBoostEncoder(TestCase):
 
     def test_catBoost(self):
         X = pd.DataFrame({'col1': ['A', 'B', 'B', 'C', 'A']})
