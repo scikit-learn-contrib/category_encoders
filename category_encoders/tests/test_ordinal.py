@@ -101,6 +101,20 @@ class TestOrdinalEncoder(TestCase):
 
         self.assertEqual(expected, result)
 
+    def test_custom_mapping(self):
+        # See issue 193
+        custom_mapping = [{'col': 'col1', 'mapping': {None: 0, 'a': 1, 'b': 2}},  # The mapping from the documentation
+                          {'col': 'col2', 'mapping': {None: -3, 'x': 11, 'y': 2}}]
+
+        train = pd.DataFrame({'col1': ['a', 'a', 'b', None],
+                              'col2': ['x', 'y', None, None]})
+
+        enc = encoders.OrdinalEncoder(handle_missing='value', mapping=custom_mapping)
+        out = enc.fit_transform(train)  # We have to first 'fit' before 'transform' even if we do nothing during the fit...
+
+        self.assertListEqual([1, 1, 2, 0], out['col1'].tolist())
+        self.assertListEqual([11, 2, -3, -3], out['col2'].tolist())
+
     def test_HaveNegativeOneInTrain_ExpectCodedAsOne(self):
         train = pd.DataFrame({'city': [-1]})
         expected = [1]
