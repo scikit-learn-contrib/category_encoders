@@ -31,8 +31,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         a mapping of class to label to use for the encoding, optional.
         the dict contains the keys 'col' and 'mapping'.
         the value of 'col' should be the feature name.
-        the value of 'mapping' should be a list of tuples of format (original_label, encoded_label).
-        example mapping: [{'col': 'col1', 'mapping': [(None, 0), ('a', 1), ('b', 2)]}]
+        the value of 'mapping' should be a dictionary of 'original_label' to 'encoded_label'.
+        example mapping: [{'col': 'col1', 'mapping': {None: 0, 'a': 1, 'b': 2}}]
     handle_unknown: str
         options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the category -1.
     handle_missing: str
