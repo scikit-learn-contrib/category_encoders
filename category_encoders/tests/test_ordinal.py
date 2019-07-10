@@ -80,6 +80,22 @@ class TestOrdinalEncoder(TestCase):
 
         self.assertListEqual([1, 2], out['city'].tolist())
 
+
+    def test_custom_mapping(self):
+        custom_mapping = [
+            {
+            'col': 'city',
+            'mapping': {'chicago': 1, None:0}
+            }
+        ]
+
+        train = pd.DataFrame({'city': ['chicago', None]})
+
+        enc = encoders.OrdinalEncoder(handle_missing='value', mapping=custom_mapping)
+        out = enc.fit_transform(train)
+
+        self.assertListEqual([1, 0], out['city'].tolist())
+
     def test_handle_missing_have_nan_transform_time_expect_negative_2(self):
         train = pd.DataFrame({'city': ['chicago', 'st louis']})
         test = pd.DataFrame({'city': ['chicago', np.nan]})
