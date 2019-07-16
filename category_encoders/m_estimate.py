@@ -12,7 +12,8 @@ __author__ = 'Jan Motl'
 class MEstimateEncoder(BaseEstimator, TransformerMixin):
     """M-probability estimate of likelihood.
 
-    This is a simplified version of target encoder. In comparison to target encoder, m-probability estimate
+    This is a simplified version of target encoder, which goes under names like m-probability estimate or
+    additive smoothing with known incidence rates. In comparison to target encoder, m-probability estimate
     has only one tunable parameter (`m`), while target encoder has two tunable parameters (`min_samples_leaf`
     and `smoothing`).
 
@@ -76,7 +77,10 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
     .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from
     https://dl.acm.org/citation.cfm?id=507538
 
-    .. [2] Additive smoothing, from
+    .. [2] On estimating probabilities in tree pruning, equation 1, from
+    https://link.springer.com/chapter/10.1007/BFb0017010
+
+    .. [3] Additive smoothing, from
     https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
 
     """
