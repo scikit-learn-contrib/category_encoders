@@ -262,9 +262,9 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
             stats = y.groupby(X[col]).agg(['sum', 'count'])  # Count of x_{i,+} and x_i
 
             # Calculate the m-probability estimate
-            estimate = (stats['sum'] + prior * self.m) / (self._sum + self.m)
+            estimate = (stats['sum'] + prior * self.m) / (stats['count'] + self.m)
 
-            # Ignore unique values. This helps to prevent overfitting on id-like columns
+            # Ignore unique columns. This helps to prevent overfitting on id-like columns
             if len(stats['count']) == self._count:
                 estimate[:] = prior
 
