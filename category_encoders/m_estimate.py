@@ -227,7 +227,7 @@ class MEstimateEncoder(BaseEstimator, TransformerMixin):
             if X[self.cols].isin([-1]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
-        # Loop over columns and replace nominal values with WOE
+        # Loop over the columns and replace the nominal values with the numbers
         X = self._score(X, y)
 
         # Postprocessing
