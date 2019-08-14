@@ -248,6 +248,11 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         and not with:
             transform(X)
         """
+
+        # the interface requires 'y=None' in the signature but we need 'y'
+        if y is None:
+            raise(TypeError, 'fit_transform() missing argument: ''y''')
+
         return self.fit(X, y, **fit_params).transform(X, y)
 
     def target_encode(self, X_in):

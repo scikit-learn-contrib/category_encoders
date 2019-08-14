@@ -541,8 +541,8 @@ class TestEncoders(TestCase):
 
     def test_target_encoders(self):
         # See issue #206
-        for encoder_name in {'TargetEncoder', 'CatBoostEncoder', 'MEstimateEncoder', 'JamesSteinEncoder'}:
+        for encoder_name in {'CatBoostEncoder', 'JamesSteinEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'TargetEncoder', 'WOEEncoder'}:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(return_df=False)
-                # an attempt to fit a supervised encoder without the target should result into a meaningful error message
-                self.assertRaises(ValueError, enc.fit, X)
+                # an attempt to fit_transform() a supervised encoder without the target should result into a meaningful error message
+                self.assertRaises(TypeError, enc.fit_transform, X)
