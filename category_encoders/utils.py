@@ -75,7 +75,7 @@ def convert_input_vector(y, index):
     But if the target does not contain index attribute, we use the index from the argument.
     """
     if y is None:
-        return None
+        raise ValueError('Supervised encoders need a target for the fitting. Pass the target.')
     if isinstance(y, pd.Series):
         return y
     elif isinstance(y, np.ndarray):
