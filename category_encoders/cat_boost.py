@@ -16,14 +16,14 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
     values "on-the-fly". Consequently, the values naturally vary
     during the training phase and it is not necessary to add random noise.
 
-    Beware, the training data have to be randomly permutated. E.g.::
+    Beware, the training data have to be randomly permutated. E.g.:
 
         # Random permutation
         perm = np.random.permutation(len(X))
         X = X.iloc[perm].reset_index(drop=True)
         y = y.iloc[perm].reset_index(drop=True)
 
-    This is necessary because some datasets are sorted based on the target
+    This is necessary because some data sets are sorted based on the target
     value and this coder encodes the features on-the-fly in a single pass.
 
     Parameters
@@ -42,6 +42,8 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
     sigma: float
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
         sigma gives the standard deviation (spread or "width") of the normal distribution.
+    a: float
+        additive smoothing (it is the same variable as "m" in m-probability estimate). By default set to 1.
 
     Example
     -------
@@ -80,10 +82,13 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
     .. [1] Transforming categorical features to numerical features, from
     https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
 
+    .. [2] CatBoost: unbiased boosting with categorical features, from
+    https://arxiv.org/abs/1706.09516
+
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
-                 handle_unknown='value', handle_missing='value', random_state=None, sigma=None):
+                 handle_unknown='value', handle_missing='value', random_state=None, sigma=None, a=1):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -98,6 +103,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
         self.random_state = random_state
         self.sigma = sigma
         self.feature_names = None
+        self.a = a
 
     def fit(self, X, y, **kwargs):
         """Fit encoder according to X and y.
@@ -138,7 +144,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
             if X[self.cols].isnull().any().bool():
                 raise ValueError('Columns to be encoded can not contain null')
 
-        categories = self.fit_leave_one_out(
+        categories = self._fit(
             X, y,
             cols=self.cols
         )
@@ -202,7 +208,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
 
         if not self.cols:
             return X
-        X = self.transform_leave_one_out(
+        X = self._transform(
             X, y,
             mapping=self.mapping
         )
@@ -230,7 +236,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
 
         return self.fit(X, y, **fit_params).transform(X, y)
 
-    def fit_leave_one_out(self, X_in, y, cols=None):
+    def _fit(self, X_in, y, cols=None):
         X = X_in.copy(deep=True)
 
         if cols is None:
@@ -238,9 +244,9 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
 
         self._mean = y.mean()
 
-        return {col: self.fit_column_map(X[col], y) for col in cols}
+        return {col: self._fit_column_map(X[col], y) for col in cols}
 
-    def fit_column_map(self, series, y):
+    def _fit_column_map(self, series, y):
         category = pd.Categorical(series)
 
         categories = category.categories
@@ -254,9 +260,9 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
         result = y.groupby(codes).agg(['sum', 'count'])
         return result.rename(return_map)
 
-    def transform_leave_one_out(self, X_in, y, mapping=None):
+    def _transform(self, X_in, y, mapping=None):
         """
-        Leave one out encoding uses a single column of floats to represent the means of the target variables.
+        The model uses a single column of floats to represent the means of the target variables.
         """
         X = X_in.copy(deep=True)
         random_state_ = check_random_state(self.random_state)
@@ -265,13 +271,6 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
         if y is not None:
             # Convert bools to numbers (the target must be summable)
             y = y.astype('double')
-
-            # Cumsum and cumcount do not work nicely with None.
-            # This is a terrible workaround that will fail, when the
-            # categorical input contains -999.9
-            for cat_col in X.select_dtypes('category').columns.values:
-                X[cat_col] = X[cat_col].cat.add_categories(-999.9)
-            X = X.fillna(-999.9)
 
         for col, colmap in mapping.items():
             level_notunique = colmap['count'] > 1
@@ -286,7 +285,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
                 raise ValueError('Columns to be encoded can not contain new values')
 
             if y is None:    # Replace level with its mean target; if level occurs only once, use global mean
-                level_means = ((colmap['sum'] + self._mean) / (colmap['count'] + 1)).where(level_notunique, self._mean)
+                level_means = ((colmap['sum'] + self._mean) / (colmap['count'] + self.a)).where(level_notunique, self._mean)
                 X[col] = X[col].map(level_means)
             else:
                 # Simulation of CatBoost implementation, which calculates leave-one-out on the fly.
@@ -295,8 +294,11 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
                 # Still, it works better than leave-one-out without any noise.
                 # See:
                 #   https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
-                temp = y.groupby(X[col]).agg(['cumsum', 'cumcount'])
-                X[col] = (temp['cumsum'] - y + self._mean) / (temp['cumcount'] + 1)
+                # Cumsum does not work nicely with None (while cumcount does).
+                # As a workaround, we cast the grouping column as string.
+                # See: issue #209
+                temp = y.groupby(X[col].astype(str)).agg(['cumsum', 'cumcount'])
+                X[col] = (temp['cumsum'] - y + self._mean) / (temp['cumcount'] + self.a)
 
             if self.handle_unknown == 'value':
                 X.loc[is_unknown_value, col] = self._mean
