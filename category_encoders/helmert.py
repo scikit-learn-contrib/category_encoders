@@ -85,7 +85,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
-                 handle_unknown='indicator', handle_missing='indicator'):
+                 handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
