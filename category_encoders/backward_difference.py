@@ -131,7 +131,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
             self.cols = util.convert_cols_to_list(self.cols)
 
         if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().bool():
+            if X[self.cols].isnull().any().any():
                 raise ValueError('Columns to be encoded can not contain null')
 
         # train an ordinal pre-encoder
@@ -189,7 +189,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
         """
 
         if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().bool():
+            if X[self.cols].isnull().any().any():
                 raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:

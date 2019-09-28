@@ -159,6 +159,25 @@ class TestEncoders(TestCase):
                     enc.fit(has_null, y)
 
                 enc.fit(non_null, y)    # we raise an error only if a missing value is in one of the transformed columns
+
+                with self.assertRaises(ValueError):
+                    enc.transform(has_null)
+
+    def test_handle_missing_error_2cols(self):
+        # See issue #213
+        non_null = pd.DataFrame({'country': ['us', 'uk'], 'city': ['chicago', 'los angeles'], 'color': ['red', np.nan]})  # only 'city' column is going to be transformed
+        has_null = pd.DataFrame({'country': ['us', 'uk'], 'city': ['chicago', np.nan], 'color': ['red', np.nan]})
+        y = pd.Series([1, 0])
+
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
+            with self.subTest(encoder_name=encoder_name):
+
+                enc = getattr(encoders, encoder_name)(handle_missing='error', cols=['country', 'city'])
+                with self.assertRaises(ValueError):
+                    enc.fit(has_null, y)
+
+                enc.fit(non_null, y)    # we raise an error only if a missing value is in one of the transformed columns
+
                 with self.assertRaises(ValueError):
                     enc.transform(has_null)
 
