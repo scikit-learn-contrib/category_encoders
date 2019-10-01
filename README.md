@@ -34,7 +34,7 @@ Encoding Methods
  * Weight of Evidence [8]
 
 Installation
------
+------------
 
 The package requires: `numpy`, `statsmodels`, and `scipy`.
 
@@ -116,8 +116,8 @@ Contributing
 Category encoders is under active development, if you'd like to be involved, we'd love to have you. Check out the CONTRIBUTING.md file
 or open an issue on the github project to get started.
 
-References:
------------
+References
+----------
 
  1. Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing for Large Scale Multitask Learning. Proc. ICML.
  2. Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. From https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.

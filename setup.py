@@ -16,6 +16,7 @@ setup(
     version=__version__,
     description='A collection sklearn transformers to encode categorical variables as numeric',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/wdm0006/categorical_encoding',
     download_url='https://github.com/wdm0006/categorical_encoding/tarball/' + __version__,
     license='BSD',

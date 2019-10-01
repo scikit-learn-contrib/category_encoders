@@ -3,6 +3,7 @@ v2.1.0
 
 * Added experimental support for multithreading in hashing encoder
 * Support for pandas >=0.24
+* Removed support for missing values represented by None due to changes in Pandas 0.24. Use numpy.NaN
 * Changed the default setting of Helmert encoder for handle_missing and handle_unknown
 * Fixed wrong calculation in m-estimate encoder
 * Fixed missing value handling in CatBoost encoder
