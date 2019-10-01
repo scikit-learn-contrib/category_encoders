@@ -28,8 +28,10 @@ class TargetEncoder(BaseEstimator, TransformerMixin):
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+    handle_missing: str
+        options are 'error', 'return_nan'  and 'value', defaults to 'value', which returns the target mean.
     handle_unknown: str
-        options are 'error', 'return_nan' and 'value', defaults to 'value', which will impute the target mean.
+        options are 'error', 'return_nan' and 'value', defaults to 'value', which returns the target mean.
     min_samples_leaf: int
         minimum samples to take category average into account.
     smoothing: float

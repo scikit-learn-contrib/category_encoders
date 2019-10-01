@@ -1,3 +1,12 @@
+v2.1.0
+======
+
+* Added experimental support for multithreading in hashing encoder
+* Support for pandas >=0.24
+* Changed the default setting of Helmert encoder for handle_missing and handle_unknown
+* Fixed wrong calculation in m-estimate encoder
+* Fixed missing value handling in CatBoost encoder
+
 v2.0.0
 ======
 
