@@ -261,7 +261,10 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             unseen_values = pd.Series([x for x in X[col].unique() if x not in unique_train])
 
             is_nan = X[col].isnull()
-            is_unknown_value = X[col].isin(unseen_values.dropna())
+            is_unknown_value = X[col].isin(unseen_values.dropna().astype(object))
+
+            if X[col].dtype.name == 'category': # Pandas 0.24 tries hard to preserve categorical data type
+                X[col] = X[col].astype(str)
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
                 raise ValueError('Columns to be encoded can not contain new values')

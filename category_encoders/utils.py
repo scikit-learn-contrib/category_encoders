@@ -19,7 +19,7 @@ def convert_cols_to_list(cols):
     elif isinstance(cols, tuple):
         return list(cols)
     elif pd.api.types.is_categorical(cols):
-        return cols.get_values().tolist()
+        return cols.astype(object).tolist()
 
     return cols
 

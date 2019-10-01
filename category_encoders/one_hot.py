@@ -311,7 +311,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         for switch in self.ordinal_encoder.mapping:
             column_mapping = switch.get('mapping')
-            inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
+            inverse = pd.Series(data=column_mapping.index, index=column_mapping.values)
             X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
 
             if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':

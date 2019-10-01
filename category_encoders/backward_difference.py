@@ -227,7 +227,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
         if handle_missing == 'value':
             values = values[values > 0]
 
-        values_to_encode = values.get_values()
+        values_to_encode = values.values
 
         if len(values) < 2:
             return pd.DataFrame(index=values_to_encode)

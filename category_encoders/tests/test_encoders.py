@@ -50,7 +50,7 @@ class TestEncoders(TestCase):
     def test_classification(self):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical']
+                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical', 'categorical_int']
 
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit(X, np_y)
@@ -134,8 +134,8 @@ class TestEncoders(TestCase):
 
     def test_handle_unknown_error(self):
         # BaseN has problems with None -> ignore None
-        X = th.create_dataset(n_rows=100, has_none=False)
-        X_t = th.create_dataset(n_rows=50, extras=True, has_none=False)
+        X = th.create_dataset(n_rows=100, has_missing=False)
+        X_t = th.create_dataset(n_rows=50, extras=True, has_missing=False)
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
@@ -199,7 +199,7 @@ class TestEncoders(TestCase):
                     self.assertTrue(result[1:].isnull().all())
 
     def test_handle_missing_return_nan_train(self):
-        X = pd.DataFrame({'city': ['chicago', 'los angeles', None]})
+        X = pd.DataFrame({'city': ['chicago', 'los angeles', np.NaN]})
         y = pd.Series([1, 0, 1])
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
@@ -214,7 +214,7 @@ class TestEncoders(TestCase):
 
     def test_handle_missing_return_nan_test(self):
         X = pd.DataFrame({'city': ['chicago', 'los angeles', 'chicago']})
-        X_t = pd.DataFrame({'city': ['chicago', 'los angeles', None]})
+        X_t = pd.DataFrame({'city': ['chicago', 'los angeles', np.NaN]})
         y = pd.Series([1, 0, 1])
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
@@ -255,11 +255,10 @@ class TestEncoders(TestCase):
                 check_transformers_unfitted(encoder_name, encoder)
 
     def test_inverse_transform(self):
-        # we do not allow None in these data (but "none" column without any None is ok)
-        X = th.create_dataset(n_rows=100, has_none=False)
-        X_t = th.create_dataset(n_rows=50, has_none=False)
-        X_t_extra = th.create_dataset(n_rows=50, extras=True, has_none=False)
-        cols = ['underscore', 'none', 'extra', 321, 'categorical']
+        # we do not allow None in these data (but "none" column without any missing value is ok)
+        X = th.create_dataset(n_rows=100, has_missing=False)
+        X_t = th.create_dataset(n_rows=50, has_missing=False)
+        cols = ['underscore', 'none', 321, 'categorical', 'categorical_int']
 
         for encoder_name in ['BaseNEncoder', 'BinaryEncoder', 'OneHotEncoder', 'OrdinalEncoder']:
             with self.subTest(encoder_name=encoder_name):
@@ -565,3 +564,27 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(return_df=False)
                 # an attempt to fit_transform() a supervised encoder without the target should result into a meaningful error message
                 self.assertRaises(TypeError, enc.fit_transform, X)
+
+    def test_missing_values(self):
+
+        # by default, treat missing values as another valid value
+        x_placeholder = pd.Series(['a', 'b', 'b', 'c', 'c'])
+        x_nan = pd.Series(['a', 'b', 'b', np.NaN, np.NaN])
+        x_float = pd.DataFrame({'col1': [1.0, 2.0, 2.0, np.NaN, np.NaN]})
+        y = [0, 1, 1, 1, 1]
+
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):   # HashingEncoder currently violates it
+            with self.subTest(encoder_name=encoder_name):
+
+                enc = getattr(encoders, encoder_name)()
+                result_placeholder = enc.fit_transform(x_placeholder, y)
+
+                enc = getattr(encoders, encoder_name)()
+                result_nan = enc.fit_transform(x_nan, y)
+
+                enc = getattr(encoders, encoder_name)(cols='col1')
+                result_float = enc.fit_transform(x_float, y)
+
+                pd.testing.assert_frame_equal(result_placeholder, result_nan)
+                self.assertTrue(sum(sum(np.array(result_placeholder) - np.array(result_float))) == 0)
+                

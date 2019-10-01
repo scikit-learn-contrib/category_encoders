@@ -103,11 +103,11 @@ class TestOrdinalEncoder(TestCase):
 
     def test_custom_mapping(self):
         # See issue 193
-        custom_mapping = [{'col': 'col1', 'mapping': {None: 0, 'a': 1, 'b': 2}},  # The mapping from the documentation
-                          {'col': 'col2', 'mapping': {None: -3, 'x': 11, 'y': 2}}]
+        custom_mapping = [{'col': 'col1', 'mapping': {np.NaN: 0, 'a': 1, 'b': 2}},  # The mapping from the documentation
+                          {'col': 'col2', 'mapping': {np.NaN: -3, 'x': 11, 'y': 2}}]
 
-        train = pd.DataFrame({'col1': ['a', 'a', 'b', None],
-                              'col2': ['x', 'y', None, None]})
+        train = pd.DataFrame({'col1': ['a', 'a', 'b', np.NaN],
+                              'col2': ['x', 'y', np.NaN, np.NaN]})
 
         enc = encoders.OrdinalEncoder(handle_missing='value', mapping=custom_mapping)
         out = enc.fit_transform(train)  # We have to first 'fit' before 'transform' even if we do nothing during the fit...
@@ -210,3 +210,14 @@ class TestOrdinalEncoder(TestCase):
         original = enc.inverse_transform(result)
 
         pd.testing.assert_frame_equal(expected, original)
+
+    def test_inverse_with_mapping(self):
+        df = X.copy(deep=True)
+        categoricals = ['unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321]
+        mapping = [{'col': c, 'mapping': pd.Series(data=range(len(df[c].unique())), index=df[c].unique()), 'data_type': X[c].dtype} for c in categoricals]
+        enc = encoders.OrdinalEncoder(cols=categoricals, handle_unknown='ignore', mapping=mapping, return_df=True)
+        df[categoricals] = enc.fit_transform(df[categoricals])
+
+        recovered = enc.inverse_transform(df[categoricals])
+
+        pd.testing.assert_frame_equal(X[categoricals], recovered)

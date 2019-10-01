@@ -64,7 +64,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     B          506 non-null float64
     LSTAT      506 non-null float64
     dtypes: float64(11), int64(7)
-    memory usage: 71.2 KB
+    memory usage: 71.3 KB
     None
 
     """

@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 import math
+import re
 from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
@@ -71,7 +72,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
     B          506 non-null float64
     LSTAT      506 non-null float64
     dtypes: float64(11), int64(7)
-    memory usage: 71.2 KB
+    memory usage: 71.3 KB
     None
 
     """
@@ -279,7 +280,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         for switch in self.ordinal_encoder.mapping:
             column_mapping = switch.get('mapping')
-            inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
+            inverse = pd.Series(data=column_mapping.index, index=column_mapping.values)
             X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
 
             if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
@@ -353,7 +354,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         out_cols = X.columns.values.tolist()
 
         for col in cols:
-            col_list = [col0 for col0 in out_cols if str(col0).startswith(str(col))]
+            col_list = [col0 for col0 in out_cols if re.match(str(col)+'_\\d+', str(col0))]
             insert_at = out_cols.index(col_list[0])
 
             if base == 1:

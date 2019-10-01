@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
@@ -20,13 +21,13 @@ class TestCatBoostEncoder(TestCase):
         self.assertEqual(list(obtained['col1']), [1.6/3, 1.6/3, 2.6/3])
 
     def test_catBoost_missing(self):
-        X = pd.DataFrame({'col1': ['A', 'B', 'B', 'C', 'A', None, None, None]})
+        X = pd.DataFrame({'col1': ['A', 'B', 'B', 'C', 'A', np.NaN, np.NaN, np.NaN]})
         y = pd.Series([1, 0, 1, 0, 1, 0, 1, 0])
         enc = encoders.CatBoostEncoder(handle_missing='value')
         obtained = enc.fit_transform(X, y)
         self.assertEqual(list(obtained['col1']), [0.5, 0.5, 0.5/2, 0.5, 1.5/2, 0.5, 0.5/2, 1.5/3], 'We treat None as another category.')
 
-        X_t = pd.DataFrame({'col1': ['B', 'B', 'A', None]})
+        X_t = pd.DataFrame({'col1': ['B', 'B', 'A', np.NaN]})
         obtained = enc.transform(X_t)
         self.assertEqual(list(obtained['col1']), [1.5/3, 1.5/3, 2.5/3, 1.5/4])
 
@@ -56,4 +57,3 @@ class TestCatBoostEncoder(TestCase):
         obtained = enc.fit_transform(X, y)
         prior = 30./8
         self.assertEqual(list(obtained['col1']), [prior, prior, prior, (4+prior)/2, (4+prior)/2, (1+prior)/2, (10+prior)/3, (17+prior)/4])
-        print([prior, prior, prior, (4+prior)/2, (4+prior)/2, (1+prior)/2, (10+prior)/3, (17+prior)/4])

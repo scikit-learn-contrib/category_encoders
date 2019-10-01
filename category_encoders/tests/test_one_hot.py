@@ -53,8 +53,8 @@ class TestOneHotEncoderTestCase(TestCase):
         self.assertIn('extra_-1', out.columns.values)
 
         # test inverse_transform
-        X_i = th.create_dataset(n_rows=100, has_none=False)
-        X_i_t = th.create_dataset(n_rows=50, has_none=False)
+        X_i = th.create_dataset(n_rows=100, has_missing=False)
+        X_i_t = th.create_dataset(n_rows=50, has_missing=False)
         cols = ['underscore', 'none', 'extra', 321, 'categorical']
 
         enc = encoders.OneHotEncoder(verbose=1, use_cat_names=True, cols=cols)
@@ -63,11 +63,11 @@ class TestOneHotEncoderTestCase(TestCase):
         th.verify_inverse_transform(X_i_t, obtained)
 
     def test_fit_transform_HaveMissingValuesAndUseCatNames_ExpectCorrectValue(self):
-        encoder = encoders.OneHotEncoder(cols=[0], use_cat_names=True, handle_unknown='indicator')
+        encoder = encoders.OneHotEncoder(cols=[0], use_cat_names=True, handle_unknown='indicator', return_df=False)
 
         result = encoder.fit_transform([[-1]])
 
-        self.assertListEqual([[1, 0]], result.get_values().tolist())
+        self.assertListEqual([[1, 0]], result.tolist())
 
     def test_inverse_transform_HaveDedupedColumns_ExpectCorrectInverseTransform(self):
         encoder = encoders.OneHotEncoder(cols=['match', 'match_box'], use_cat_names=True)

@@ -279,7 +279,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
             unseen_values = pd.Series([x for x in X_in[col].unique() if x not in unique_train])
 
             is_nan = X_in[col].isnull()
-            is_unknown_value = X_in[col].isin(unseen_values.dropna())
+            is_unknown_value = X_in[col].isin(unseen_values.dropna().astype(object))
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
                 raise ValueError('Columns to be encoded can not contain new values')
@@ -301,6 +301,8 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
                 X[col] = (temp['cumsum'] - y + self._mean) / (temp['cumcount'] + self.a)
 
             if self.handle_unknown == 'value':
+                if X[col].dtype.name == 'category':
+                    X[col] = X[col].astype(float)
                 X.loc[is_unknown_value, col] = self._mean
             elif self.handle_unknown == 'return_nan':
                 X.loc[is_unknown_value, col] = np.nan

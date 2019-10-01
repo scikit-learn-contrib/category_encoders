@@ -17,7 +17,7 @@ y_t = pd.DataFrame(np_y_t)
 
 class TestWeightOfEvidenceEncoder(TestCase):
     def test_woe(self):
-        cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical']
+        cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical', 'categorical_int']
 
         # balanced label with balanced features
         X_balanced = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col1'])
