@@ -1,0 +1,45 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Challenger
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Challenger
+
+@attribute TEMP INTEGER
+@attribute INCIDENTS {0,1,2,3}
+
+@data
+66,0
+70,1
+69,0
+68,0
+67,0
+72,0
+73,0
+70,0
+57,1
+63,1
+70,1
+78,0
+67,0
+53,3
+67,0
+75,0
+70,0
+81,0
+76,0
+79,0
+75,2
+76,0
+58,1

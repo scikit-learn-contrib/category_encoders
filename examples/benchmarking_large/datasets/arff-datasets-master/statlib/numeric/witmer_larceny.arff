@@ -1,0 +1,82 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Larceny
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Larceny
+
+@attribute MONTH INTEGER
+@attribute LARCENIES INTEGER
+
+@data
+1,511
+2,408
+3,479
+4,598
+5,674
+6,740
+7,769
+8,812
+9,634
+10,664
+11,614
+12,635
+13,614
+14,698
+15,663
+16,711
+17,707
+18,845
+19,865
+20,917
+21,753
+22,760
+23,683
+24,717
+25,575
+26,573
+27,668
+28,679
+29,778
+30,865
+31,1011
+32,933
+33,825
+34,813
+35,697
+36,807
+37,643
+38,638
+39,673
+40,713
+41,803
+42,941
+43,967
+44,929
+45,748
+46,755
+47,742
+48,749
+49,602
+50,574
+51,669
+52,758
+53,831
+54,921
+55,984
+56,1002
+57,789
+58,821
+59,701
+60,766

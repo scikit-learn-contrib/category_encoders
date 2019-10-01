@@ -1,0 +1,141 @@
+% These data are those collected in a cloud-seeding experiment in Tasmania
+% between mid-1964 and January 1971.   Their analysis, using regression
+% techniques and permutation tests, is discussed in:
+% 
+%       Miller, A.J., Shaw, D.E., Veitch, L.G. & Smith, E.J. (1979).
+%       `Analyzing the results of a cloud-seeding experiment in Tasmania',
+%       Communications in Statistics - Theory & Methods, vol.A8(10),
+%       1017-1047.
+% 
+% The rainfalls are period rainfalls in inches.   TE and TW are the east and
+% west target areas respectively, while NC, SC and NWC are the corresponding
+% rainfalls in the north, south and north-west control areas respectively.
+% S = seeded, U = unseeded.
+% 
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: 3
+%
+
+@relation cloud
+
+@attribute PERIOD INTEGER
+@attribute SEEDED {seeded,unseeded}
+@attribute SEASON {AUTUMN,SPRING,SUMMER,WINTER}
+@attribute TE REAL
+@attribute TW REAL
+@attribute NC REAL
+@attribute SC REAL
+@attribute NWC REAL
+
+@data
+1,seeded,AUTUMN,1.69,3.73,1.65,1.80,3.33
+2,unseeded,AUTUMN,0.74,0.78,1.09,0.79,1.59
+3,seeded,WINTER,0.81,0.86,2.39,0.36,2.06
+4,unseeded,WINTER,1.44,2.01,2.96,1.27,4.05
+5,seeded,WINTER,2.48,4.61,4.16,2.16,6.00
+6,unseeded,WINTER,0.84,2.39,2.76,0.87,4.17
+7,unseeded,WINTER,0.37,1.37,1.08,0.85,3.45
+8,seeded,WINTER,0.37,0.84,0.26,0.47,0.90
+9,unseeded,SPRING,1.33,2.31,2.53,1.08,3.65
+10,seeded,SPRING,3.38,5.56,2.76,3.10,5.06
+11,seeded,SPRING,0.69,1.46,1.07,0.64,1.95
+12,unseeded,SPRING,1.42,2.79,1.42,1.08,1.22
+13,seeded,SPRING,0.44,1.05,0.24,0.44,0.94
+14,unseeded,SPRING,0.76,1.24,0.70,0.67,0.94
+15,seeded,SUMMER,1.13,2.28,0.97,1.66,2.21
+16,unseeded,SUMMER,0.88,1.58,1.06,1.13,1.46
+45,seeded,SUMMER,0.17,0.55,0.13,0.27,0.35
+46,unseeded,SUMMER,0.25,0.77,0.10,0.30,0.34
+47,unseeded,SUMMER,0.78,1.45,0.38,0.58,0.67
+48,seeded,SUMMER,0.40,0.34,0.45,0.43,0.44
+49,seeded,AUTUMN,0.52,0.79,0.42,0.47,0.53
+50,unseeded,AUTUMN,2.73,2.09,2.24,4.02,2.52
+51,unseeded,AUTUMN,0.90,2.45,0.52,1.32,2.18
+52,seeded,AUTUMN,1.62,2.54,0.94,1.59,1.73
+53,unseeded,AUTUMN,0.93,2.11,1.19,0.85,2.31
+54,seeded,AUTUMN,0.63,1.31,0.76,0.71,1.28
+55,seeded,WINTER,0.42,1.23,0.13,0.59,0.91
+56,unseeded,WINTER,0.64,0.43,1.50,0.24,1.15
+57,unseeded,WINTER,0.30,0.69,1.03,0.22,1.88
+58,seeded,WINTER,0.88,1.32,1.87,0.58,2.97
+59,unseeded,WINTER,0.76,1.25,1.85,1.36,2.17
+60,seeded,WINTER,1.25,1.00,2.04,0.71,2.22
+61,unseeded,WINTER,1.08,0.99,1.44,1.00,1.64
+62,seeded,WINTER,1.11,0.80,1.46,1.48,0.40
+63,seeded,SPRING,3.43,2.55,5.08,1.77,4.20
+64,unseeded,SPRING,0.54,0.43,0.66,0.73,0.91
+65,seeded,SPRING,0.39,0.44,0.49,0.55,0.51
+66,unseeded,SPRING,2.53,3.18,3.27,2.68,3.60
+67,unseeded,SPRING,0.81,0.89,1.33,0.43,2.18
+68,seeded,SPRING,0.39,1.22,0.25,0.46,0.89
+69,seeded,SUMMER,0.86,1.24,0.69,0.49,0.69
+70,unseeded,SUMMER,2.16,2.29,2.12,0.95,1.82
+95,unseeded,SPRING,1.70,2.18,1.45,1.47,2.20
+96,seeded,SPRING,1.22,2.00,2.13,1.13,2.33
+97,seeded,SPRING,0.07,0.22,0.02,0.08,0.24
+98,unseeded,SPRING,0.49,1.07,0.36,0.87,0.57
+99,unseeded,SPRING,0.71,1.73,0.72,0.99,0.98
+100,seeded,SPRING,1.67,3.46,1.02,1.89,2.47
+101,unseeded,SUMMER,0.73,1.51,0.18,1.42,0.71
+102,seeded,SUMMER,1.79,3.13,1.83,1.82,3.11
+103,unseeded,SUMMER,0.19,1.05,0.08,0.40,0.57
+104,seeded,SUMMER,0.00,0.15,0.00,0.04,0.04
+105,seeded,SUMMER,0.44,0.89,0.83,0.38,0.70
+106,unseeded,SUMMER,0.31,1.15,0.01,0.44,0.66
+107,seeded,SUMMER,0.96,0.88,2.65,0.85,1.48
+108,unseeded,SUMMER,1.04,1.20,1.27,1.39,1.20
+109,seeded,AUTUMN,0.05,0.06,0.01,0.23,0.10
+110,unseeded,AUTUMN,0.04,0.20,0.35,0.75,0.20
+111,seeded,AUTUMN,1.83,2.93,1.80,1.62,3.02
+112,unseeded,AUTUMN,2.24,2.17,4.44,1.05,3.59
+113,seeded,AUTUMN,2.50,3.99,2.84,2.44,4.48
+114,unseeded,AUTUMN,1.10,1.71,2.05,1.30,4.04
+115,seeded,AUTUMN,1.83,3.87,3.01,1.66,4.56
+116,unseeded,AUTUMN,1.41,2.99,2.58,1.21,3.95
+117,unseeded,WINTER,0.74,1.36,2.22,0.61,2.68
+118,seeded,WINTER,1.09,3.56,0.07,2.26,2.08
+119,seeded,WINTER,0.79,1.43,1.62,1.16,2.87
+120,unseeded,WINTER,4.06,6.71,4.34,3.29,6.40
+121,unseeded,WINTER,0.40,0.64,1.03,0.58,1.77
+122,seeded,WINTER,0.76,1.83,1.50,0.41,2.56
+123,seeded,SPRING,1.53,3.62,1.52,1.62,2.86
+124,unseeded,SPRING,0.56,2.88,0.37,1.25,1.74
+125,unseeded,SPRING,1.74,3.45,2.14,1.00,4.39
+126,seeded,SPRING,1.59,3.19,2.36,1.53,3.03
+127,unseeded,SPRING,1.91,4.74,1.71,2.03,3.24
+128,seeded,SPRING,2.09,5.23,2.12,2.77,4.44
+129,unseeded,SUMMER,1.59,3.92,1.38,2.11,3.01
+130,seeded,SUMMER,0.66,2.22,0.21,1.41,0.80
+131,unseeded,SUMMER,0.68,0.42,0.48,0.59,0.68
+132,seeded,SUMMER,0.46,1.08,0.01,0.65,0.48
+133,seeded,SUMMER,0.22,0.62,0.15,0.13,0.42
+134,unseeded,SUMMER,1.11,1.70,1.32,0.57,1.54
+135,seeded,SUMMER,1.76,1.19,2.26,1.04,1.27
+136,unseeded,SUMMER,5.12,5.25,5.95,3.97,5.37
+171,unseeded,AUTUMN,0.12,0.60,0.19,0.28,0.70
+172,seeded,AUTUMN,0.37,0.65,0.31,0.23,0.83
+173,seeded,AUTUMN,4.97,3.03,1.44,3.14,0.86
+174,unseeded,AUTUMN,0.57,1.53,0.30,0.72,1.38
+175,seeded,AUTUMN,0.13,0.54,0.11,0.14,0.58
+176,unseeded,AUTUMN,2.47,4.70,3.66,1.84,5.36
+177,unseeded,AUTUMN,1.01,2.32,1.14,0.81,2.09
+178,seeded,AUTUMN,0.55,1.13,1.30,0.34,2.45
+179,seeded,WINTER,0.24,0.61,0.05,0.38,0.90
+180,unseeded,WINTER,2.36,1.15,1.84,1.73,2.33
+181,seeded,WINTER,2.35,4.29,4.24,1.67,5.48
+182,unseeded,WINTER,2.23,4.30,1.99,1.90,3.67
+183,unseeded,WINTER,1.16,3.06,2.44,1.52,4.01
+184,seeded,WINTER,1.63,3.31,2.21,2.36,3.25
+185,seeded,WINTER,1.08,3.17,0.80,2.25,2.79
+186,unseeded,WINTER,6.00,6.15,9.42,3.60,7.84
+187,seeded,SPRING,2.67,6.93,2.74,3.03,6.39
+188,unseeded,SPRING,0.36,0.15,0.00,0.19,0.06
+189,seeded,SPRING,0.58,1.41,0.96,0.64,1.24
+190,unseeded,SPRING,1.36,3.43,1.38,1.86,2.91
+191,seeded,SPRING,1.17,1.65,1.22,2.28,1.58
+192,unseeded,SPRING,2.37,1.94,2.46,2.47,2.39
+193,seeded,SPRING,0.02,0.08,0.05,0.02,0.09
+194,unseeded,SPRING,0.92,2.09,0.61,0.87,1.35

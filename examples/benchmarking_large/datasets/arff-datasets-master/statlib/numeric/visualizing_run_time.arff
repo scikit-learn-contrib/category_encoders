@@ -1,0 +1,65 @@
+% This S dump contains 22 data sets from the
+% book Visualizing Data published by
+% Hobart Press (books@hobart.com).
+% The dump was created by data.dump()
+% and can be read back into S by data.restore().
+% The name of each S data set is the name of
+% the data set used in the book. To find the
+% description of the data set in the book look
+% under the entry - data, name - in the index.
+% For example, one data set is barley.
+% To find the description of barley, look
+% in the index under the entry - data, barley.
+%
+% File: ../data/visualizing/run.time.csv
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation visualizing-run_time
+
+@attribute time REAL
+@attribute algorithm {7th,new,ucb}
+@attribute machine {mips,vax}
+@attribute input {double,float,integer,pointer,record,string}
+
+@data
+1.25,7th,vax,integer
+1.39,7th,vax,float
+1.78,7th,vax,double
+3.24,7th,vax,record
+2.48,7th,vax,pointer
+3.89,7th,vax,string
+0.8,ucb,vax,integer
+0.89,ucb,vax,float
+1.23,ucb,vax,double
+2.01,ucb,vax,record
+2.1,ucb,vax,pointer
+2.82,ucb,vax,string
+0.57,new,vax,integer
+0.68,new,vax,float
+0.88,new,vax,double
+0.88,new,vax,record
+1.7,new,vax,pointer
+1.62,new,vax,string
+0.97,7th,mips,integer
+0.96,7th,mips,float
+1.67,7th,mips,double
+3.89,7th,mips,record
+1.36,7th,mips,pointer
+4.17,7th,mips,string
+0.53,ucb,mips,integer
+0.56,ucb,mips,float
+1.01,ucb,mips,double
+2.2,ucb,mips,record
+0.93,ucb,mips,pointer
+2.31,ucb,mips,string
+0.17,new,mips,integer
+0.21,new,mips,float
+0.27,new,mips,double
+0.28,new,mips,record
+0.52,new,mips,pointer
+0.45,new,mips,string

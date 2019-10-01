@@ -1,0 +1,15 @@
+%
+% XOR
+%
+
+@RELATION xor
+
+@ATTRIBUTE input1 REAL
+@ATTRIBUTE input2 REAL
+@ATTRIBUTE y REAL
+
+@DATA
+0.0,0.0,0.0
+0.0,1.0,1.0
+1.0,0.0,1.0
+1.0,1.0,0.0

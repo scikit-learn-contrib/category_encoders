@@ -1,0 +1,98 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Height_by_sex
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Height_by_sex
+
+@attribute SEX {0,1}
+@attribute HEIGHT INTEGER
+
+@data
+0,68
+1,64
+1,67
+1,64
+1,67
+1,60
+1,60
+0,71
+0,71
+1,70
+1,64
+0,73
+1,65
+1,63
+1,66
+0,68
+0,70
+1,67
+1,64
+1,61
+1,62
+1,64
+1,61
+1,63
+1,68
+0,69
+1,63
+1,72
+0,73
+1,63
+1,66
+1,66
+0,66
+1,65
+0,68
+1,64
+1,67
+1,62
+1,67
+1,64
+1,67
+1,63
+1,66
+1,62
+1,64
+1,69
+1,64
+0,70
+0,66
+1,64
+0,72
+1,63
+1,68
+0,73
+1,62
+0,73
+1,64
+0,70
+0,65
+0,75
+1,62
+1,67
+1,65
+1,62
+0,72
+1,63
+0,70
+1,69
+0,67
+1,58
+1,66
+0,64
+0,72
+1,65
+0,67
+1,64

@@ -1,0 +1,72 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: last
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-randomgen
+
+@attribute Group {Advanced,Arts,Psychology,Science}
+@attribute Digit {0,1,2,3,4,5,6,7,8,9}
+@attribute Count INTEGER
+
+@data
+Psychology,0,375
+Science,0,199
+Arts,0,89
+Advanced,0,128
+Psychology,1,637
+Science,1,316
+Arts,1,149
+Advanced,1,183
+Psychology,2,676
+Science,2,314
+Arts,2,144
+Advanced,2,199
+Psychology,3,709
+Science,3,307
+Arts,3,135
+Advanced,3,187
+Psychology,4,607
+Science,4,270
+Arts,4,140
+Advanced,4,177
+Psychology,5,522
+Science,5,243
+Arts,5,117
+Advanced,5,152
+Psychology,6,534
+Science,6,265
+Arts,6,112
+Advanced,6,159
+Psychology,7,573
+Science,7,291
+Arts,7,135
+Advanced,7,178
+Psychology,8,515
+Science,8,265
+Arts,8,117
+Advanced,8,169
+Psychology,9,552
+Science,9,305
+Arts,9,137
+Advanced,9,168

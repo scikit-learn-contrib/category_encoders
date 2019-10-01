@@ -1,0 +1,72 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: last
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-gmat
+
+@attribute Years_of_experience REAL
+@attribute Days_of_preparation INTEGER
+@attribute GPA REAL
+@attribute Female {0,1}
+@attribute GMAT INTEGER
+
+@data
+5,3,3.6,0,680
+3,25,3.6,0,690
+1,10,3.27,1,720
+4,25,3.5,1,700
+2.5,18,3.7,1,710
+7,3,3.7,0,730
+4,25,3.6,1,710
+1,10,3.7,1,700
+1.5,14,3.3,1,700
+1.5,25,3.86,1,690
+1,18,3.4,1,650
+8,5,3.5,0,720
+2.5,3,3.4,0,700
+3,10,3.65,0,690
+2,20,3.9,1,710
+2,18,3.4,0,680
+5,10,3.5,0,700
+3,15,3.5,0,690
+3,5,3.4,0,710
+4,10,3.3,0,680
+8,15,3.9,0,730
+4,22,3.2,1,660
+1.5,5,3.5,1,670
+1,3,3.5,0,700
+2,7,3.45,1,690
+4,10,3.3,1,710
+3,5,3.3,0,700
+3,3,3.7,0,720
+7,20,3.8,1,660
+5,5,3.6,0,720
+3,14,3.3,1,680
+3,10,3,1,650
+4,7,3.4,0,700
+2,15,3.2,0,670
+3,15,3.2,1,680
+4,20,3.3,1,700
+3,21,3.4,1,690
+3.5,25,2.8,0,700

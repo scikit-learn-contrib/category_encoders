@@ -1,0 +1,50 @@
+% This file contains data from Regression Analysis By Example, 2nd Edition,
+% by Samprit Chatterjee and Bertram Price, John Wiley, 1991.
+% Data sets have names of the form 'rabe.xxx' where xxx is the page number
+% in the book where the data occurs.
+% 
+% For additional information, Samprit Chatterjee can be reached using
+% "schatter@stern.nyu.edu".
+%
+% File: ../data/rabe/rabe.16
+%
+% Note: there were no information about the columns in the data set,
+%       hence automatically generated names
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation rabe-16
+
+@attribute col_1 INTEGER
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+
+@data
+1,1,23
+2,2,29
+3,3,49
+4,4,74
+5,4,64
+6,5,87
+7,6,96
+8,6,97
+9,7,109
+10,8,119
+11,9,149
+12,9,145
+13,10,154
+14,10,166
+15,11,162
+16,11,174
+17,12,180
+18,12,176
+19,14,179
+20,16,193
+21,17,193
+22,18,195
+23,18,198
+24,20,205

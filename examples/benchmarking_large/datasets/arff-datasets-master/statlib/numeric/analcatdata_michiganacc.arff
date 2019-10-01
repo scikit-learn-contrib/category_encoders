@@ -1,0 +1,142 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: last
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-michiganacc
+
+@attribute Time_index INTEGER
+@attribute Season {Autumn,Spring,Summer,Winter}
+@attribute Month {April,August,December,February,January,July,June,March,May,November,October,September}
+@attribute Unemployment_rate REAL
+@attribute Accidents INTEGER
+
+@data
+1,Winter,January,8,40
+2,Winter,February,8.2,39
+3,Spring,March,8,32
+4,Spring,April,8.75,27
+5,Spring,May,7.25,31
+6,Summer,June,7.25,30
+7,Summer,July,7.75,23
+8,Summer,August,7.5,25
+9,Autumn,September,7.25,24
+10,Autumn,October,7.25,35
+11,Autumn,November,8,38
+12,Winter,December,8.5,37
+13,Winter,January,10.25,22
+14,Winter,February,11.25,28
+15,Spring,March,11,22
+16,Spring,April,12.5,28
+17,Spring,May,14,20
+18,Summer,June,14,25
+19,Summer,July,14.25,24
+20,Summer,August,12.75,22
+21,Autumn,September,12,20
+22,Autumn,October,12.25,28
+23,Autumn,November,12.5,24
+24,Winter,December,12.25,43
+25,Winter,January,14,29
+26,Winter,February,14.25,28
+27,Spring,March,13.25,19
+28,Spring,April,12.25,25
+29,Spring,May,11.5,21
+30,Summer,June,11,30
+31,Summer,July,12,23
+32,Summer,August,11,24
+33,Autumn,September,10.75,28
+34,Autumn,October,11.75,26
+35,Autumn,November,12,23
+36,Winter,December,14.5,32
+37,Winter,January,16,29
+38,Winter,February,16.25,29
+39,Spring,March,17,20
+40,Spring,April,15.5,28
+41,Spring,May,14.25,25
+42,Summer,June,14.25,21
+43,Summer,July,14.75,16
+44,Summer,August,14.5,19
+45,Autumn,September,14.5,19
+46,Autumn,October,15,27
+47,Autumn,November,16.5,29
+48,Winter,December,17.25,26
+49,Winter,January,17,24
+50,Winter,February,16.5,20
+51,Spring,March,17,22
+52,Spring,April,15.5,21
+53,Spring,May,14.75,25
+54,Summer,June,14.5,24
+55,Summer,July,13.25,25
+56,Summer,August,13.5,26
+57,Autumn,September,12.5,26
+58,Autumn,October,12.75,31
+59,Autumn,November,11.75,27
+60,Winter,December,12,39
+61,Winter,January,13,27
+62,Winter,February,12.75,22
+63,Spring,March,12.5,24
+64,Spring,April,11.25,27
+65,Spring,May,11.25,24
+66,Summer,June,11.25,33
+67,Summer,July,11.25,27
+68,Summer,August,10.5,30
+69,Autumn,September,10,23
+70,Autumn,October,10.25,29
+71,Autumn,November,11,33
+72,Winter,December,10.75,40
+73,Winter,January,12.5,34
+74,Winter,February,10.5,31
+75,Spring,March,10.75,22
+76,Spring,April,10.5,24
+77,Spring,May,10,35
+78,Summer,June,10.5,24
+79,Summer,July,11,29
+80,Summer,August,10,25
+81,Autumn,September,10,28
+82,Autumn,October,9.75,34
+83,Autumn,November,9,46
+84,Winter,December,7.75,40
+85,Winter,January,9.5,32
+86,Winter,February,9.5,34
+87,Spring,March,10,35
+88,Spring,April,9.25,37
+89,Spring,May,9.5,36
+90,Summer,June,9.5,27
+91,Summer,July,9.25,26
+92,Summer,August,8,31
+93,Autumn,September,8.5,39
+94,Autumn,October,8.25,35
+95,Autumn,November,8.25,45
+96,Winter,December,7.75,35
+97,Winter,January,8,46
+98,Winter,February,9,26
+99,Spring,March,8.5,32
+100,Spring,April,8.75,27
+101,Spring,May,8.25,30
+102,Summer,June,9,36
+103,Summer,July,8.75,26
+104,Summer,August,8.5,33
+105,Autumn,September,7.5,34
+106,Autumn,October,7,39
+107,Autumn,November,7.5,36
+108,Winter,December,8.5,39

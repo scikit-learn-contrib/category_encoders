@@ -1,0 +1,42 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex2115.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex2115
+
+@attribute dose REAL
+@attribute tumor INTEGER
+@attribute total {81,82,85,86,87,88,89,90}
+
+@data
+0.010,9,87
+0.010,5,86
+0.010,2,89
+0.010,9,85
+0.025,30,86
+0.025,41,86
+0.025,27,86
+0.025,34,88
+0.050,54,89
+0.050,53,86
+0.050,64,90
+0.050,55,88
+0.100,71,88
+0.100,73,89
+0.100,65,88
+0.100,72,90
+0.250,66,86
+0.250,75,82
+0.250,72,81
+0.250,73,89

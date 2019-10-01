@@ -1,0 +1,45 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/case0701.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-case0701
+
+@attribute velocity INTEGER
+@attribute distance REAL
+
+@data
+170,0.032
+290,0.034
+-130,0.214
+-70,0.263
+-185,0.275
+-220,0.275
+200,0.450
+290,0.500
+270,0.500
+200,0.630
+300,0.800
+-30,0.900
+650,0.900
+150,0.900
+500,0.900
+920,1.000
+450,1.100
+500,1.100
+500,1.400
+960,1.700
+500,2.000
+850,2.000
+800,2.000
+1090,2.000

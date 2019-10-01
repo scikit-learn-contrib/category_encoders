@@ -1,0 +1,78 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: mort.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-mort
+
+@attribute col_1 {Anchor_Savings,Bank_of_the_Hamptons,Bay_Ridge_Federal,Brooklyn_Federal,Chemical_Bank,Citibank,Columbia_Federal,Countrywide_Funding,Dale_Mortgage_Bankers,EAB,East_NY_Savings_Bank,Fairmont_Funding,GMAC_Mortgage,Home_Federal_Savings,Maspeth_Federal,Ridgewood_Savings,Roosevelt_Savings,Roslyn_Savings_Bank,The_Mortgage_Corner,Triumphe_Financial}
+@attribute col_2 {0,1}
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+
+@data
+Anchor_Savings,0,7875,000
+Bank_of_the_Hamptons,0,7125,150
+Bay_Ridge_Federal,1,5000,200
+Brooklyn_Federal,1,4500,150
+Chemical_Bank,0,7500,200
+Citibank,0,7125,200
+Columbia_Federal,0,7500,200
+Countrywide_Funding,0,7500,000
+Dale_Mortgage_Bankers,0,6750,275
+EAB,1,6000,175
+East_NY_Savings_Bank,1,5250,000
+Fairmont_Funding,0,7250,350
+GMAC_Mortgage,1,4250,250
+Home_Federal_Savings,0,7250,200
+Maspeth_Federal,0,8000,000
+Ridgewood_Savings,1,4500,200
+Roosevelt_Savings,0,8000,000
+Roslyn_Savings_Bank,0,6875,200
+The_Mortgage_Corner,0,7375,200
+Triumphe_Financial,0,6875,225

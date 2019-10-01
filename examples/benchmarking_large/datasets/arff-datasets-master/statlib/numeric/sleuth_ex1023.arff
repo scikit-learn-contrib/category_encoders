@@ -1,0 +1,39 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex1023.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex1023
+
+@attribute inhibit REAL
+@attribute uvb REAL
+@attribute surface {D,S}
+
+@data
+0.0,.0000,D
+1.0,.0000,D
+6.0,.0100,D
+7.0,.0150,S
+7.0,.0185,S
+7.0,.0335,S
+9.0,.0435,S
+9.5,.0090,D
+10.0,.0025,D
+11.0,.0255,S
+12.5,.0280,S
+14.0,.0055,D
+20.0,.0285,D
+21.0,.0435,S
+25.0,.0180,D
+39.0,.0325,D
+59.0,.0300,D

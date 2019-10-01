@@ -1,0 +1,183 @@
+% Graeme D. Hutcheson and Nick Sofroniou 1999
+% 
+% The Multivariate Social Scientist:
+% Introductory Statistics Using Generalized Linear Models.
+% 
+% SAGE Publications.
+% 
+% Copyright: Graeme D. Hutcheson & Nick Sofroniou, 1999
+% 
+% This software can be freely used for non-commercial purposes and can be
+% freely distributed.
+% 
+% 
+% Readme file
+% ===========
+% 
+% The data sets in this directory are taken from the above book.
+% The data are presented in two formats, *.dat (ascii) and
+% *.por (SPSS portable). The GLIM code and macros are provided in
+% files *.glm and *.mac. Please read the errata file which indicates some
+% minor differences between these data sets and those reported in the
+% book.
+% 
+% 
+% 
+% 
+% DATA FILE      SOURCE IN BOOK    DESCRIPTION
+% 
+% Chapter 1
+%    tab1_01.*   Table 1.1         Video Games and Hostility
+% 
+% Chapter 2
+%    tab2_01.*   Table 2.1         Normal Errors
+%    tab2_02.*   Table 2.2         Skewed Errors
+%    tab2_03.*   Table 2.3         Curvilinearity
+% 
+% Chapter 3
+%    tab3_01.*   Table 3.1         Two Simple Models
+%    tab3_05.*   Table 3.5         Cost and Sound Quality
+%    tab3_07.*   Table 3.7         Exam marks and College Offers
+%    tab3_11.*   Table 3.11        Quality of Children's Testimonies
+%                                     Age: 5-6 = 0; 8-9 = 1
+%                                     Gender: female = 0; male = 1
+%                                     Location: 1 = home; 2 = school;
+%                                               3 = police interview
+%                                               4 = special interview
+%    tab3_11d.*  Table 3.11        Data in Table 3.11 with indicator dummy codes
+%                                  added
+% 
+% Chapter 4
+%    tab4_01.*   Table 4.1         Infection Severity and Treatment Outcome
+%                                     Treatment Outcome: 0 = survived
+%                                                        1 = died
+%    tab4_14.*   Table 4.14        Infection severity, Treatment outcome and
+%                                  Hospital Attended
+%                                     Hospital: 1 = hospital A
+%                                               2 = hospital B
+%                                               3 = hospital C
+%    tab4.14d.*  Table 4.14        Infection severity, Treatment outcome and
+%                                  Hospital Attended including dummy codes
+% 
+%    logis.*                       Child witness data: copy of
+%                                     tab3_11, but includes prosecution
+%    logis_d.*                     Child witness data: copy of
+%                                     tab3_11d, but includes prosecution
+% 
+%                                  logis.por and logis_d.por provide the data to
+%                                  obtain the parameters calculated in the book
+%                                  (pages 147 to 152). It should be noted that
+%                                  these differ slightly to the parameters
+%                                  obtained using the data sets logis.dat and
+%                                  logis_d.dat, as the *.dat files only record
+%                                  the variable 'coherence' to 2 decimal places.
+% 
+% Chapter 5
+% 
+%    tab5_01.*    Table 5.1        Job Satisfaction for doctors and dentists
+%    tab5_04.*    Table 5.4        Race, Housing and Illness
+%    tab5_07.*    Table 5.7        Dopamine and psychosis: integer scoring
+%    tab5_08.*    Table 5.8        Dopamine and psychosis: mid-ranks scoring
+%    tab5_10.*    Table 5.10       Treatment and Depression: integer scoring
+%    tab5_11.*    Table 5.11       Treatment and depression: mid-ranks scoring
+%    tab5_13.*    Table 5.13       Alcohol consumption and Libido: integer scores
+%    tab5_16.*    Table 5.16       Alcohol consumption and libido: low vs medium
+%                                  or high
+%    tab5_17.*    Table 5.17       Alcohol consumption and libido: medium vs high
+% 
+% 
+% Chapter 6
+% 
+%    tab6_11.*    Table 6.11       Child witness example data set
+%
+% File: ../data/hutsof99/tab3_11.dat
+%
+% Note: changes from Errata.txt where not included!
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation hutsof99-tab3_11
+
+@attribute Age {0,1}
+@attribute Gender {0,1}
+@attribute Location {1,2,3,4}
+@attribute Coherence REAL
+@attribute Maturity REAL
+@attribute Delay INTEGER
+@attribute Quality REAL
+
+@data
+0,0,3,3.81,3.62,45,34.11
+0,1,2,1.63,1.61,27,36.59
+0,0,1,3.54,3.63,102,37.23
+0,1,2,4.21,4.11,39,39.65
+0,0,3,3.30,3.12,41,42.07
+0,1,3,2.32,2.13,70,44.91
+0,1,4,4.51,4.31,72,45.23
+0,1,2,3.18,3.08,41,47.53
+0,0,1,2.66,2.72,13,45.81
+0,1,3,4.70,4.98,39,49.38
+0,0,2,4.31,4.21,39,49.53
+0,1,3,3.46,3.54,47,47.51
+0,1,2,3.42,3.33,31,50.54
+0,0,1,3.08,3.07,82,51.25
+0,1,4,4.04,4.12,29,51.63
+1,0,3,3.12,3.01,51,52.02
+0,1,3,3.23,3.08,71,52.39
+0,0,1,2.63,2.62,81,54.49
+1,0,3,3.02,3.00,71,54.64
+0,1,2,3.62,3.53,43,55.27
+1,0,1,1.54,1.21,55,55.47
+0,0,3,2.79,2.74,45,55.56
+1,0,1,2.76,2.71,27,56.47
+1,1,1,4.63,4.66,74,56.72
+0,0,3,3.35,3.07,88,57.07
+0,1,1,2.63,2.82,29,57.76
+1,1,2,2.77,2.71,56,57.87
+1,0,4,3.26,3.91,55,58.33
+0,0,1,2.99,2.87,75,58.73
+0,0,3,3.59,3.09,61,58.84
+1,1,2,2.43,2.39,76,59.19
+1,0,4,2.41,2.38,45,59.64
+1,0,1,2.37,3.36,90,59.86
+1,0,2,3.92,3.98,92,59.97
+0,0,3,3.63,3.72,44,60.81
+0,1,1,2.30,2.21,45,60.88
+1,1,4,1.56,1.92,12,61.83
+1,1,2,2.92,2.81,23,61.98
+1,1,3,3.10,1.72,63,62.09
+0,1,1,2.49,2.51,97,62.54
+0,1,2,2.41,2.04,55,62.84
+1,1,3,2.56,2.65,66,63.38
+1,0,1,1.95,2.03,8,63.67
+1,0,2,2.52,2.49,75,64.34
+1,1,3,2.15,2.09,71,64.37
+0,0,4,2.78,2.79,9,65.07
+0,1,1,2.95,3.01,39,65.77
+1,0,4,1.89,3.45,68,65.93
+1,1,3,3.62,3.56,36,66.60
+1,1,2,2.16,2.91,4,67.08
+1,0,1,3.65,3.91,52,68.33
+1,0,4,2.32,2.33,19,68.44
+1,0,1,1.34,1.42,77,68.90
+1,1,1,2.02,2.11,25,69.59
+1,0,4,1.76,1.72,86,69.89
+0,1,4,1.78,1.77,45,70.45
+1,1,2,2.52,2.54,2,70.71
+1,0,4,1.83,1.73,29,71.40
+1,0,4,1.51,1.73,45,71.83
+1,1,3,3.08,2.08,14,72.30
+0,1,4,1.03,0.98,25,72.61
+1,1,1,1.76,1.65,21,73.99
+1,0,4,2.00,1.94,17,74.18
+1,0,4,2.90,2.94,19,75.38
+1,0,2,3.24,3.43,22,76.01
+1,0,2,2.90,2.87,14,76.28
+0,1,4,3.11,3.01,26,77.59
+1,1,3,2.86,2.93,57,78.47
+1,1,2,1.94,1.99,46,80.67
+1,0,4,1.89,1.87,15,83.15

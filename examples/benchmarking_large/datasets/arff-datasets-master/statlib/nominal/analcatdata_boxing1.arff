@@ -1,0 +1,153 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: last
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-boxing1
+
+@attribute Judge {Associated_Press,Boxing_Monthly-Leach,Boxing_Times,E._Williams,ESPN,HBO-Lederman,L._OConnell,S._Christodoulu,Sportsline,Sportsticker}
+@attribute Official {No,Yes}
+@attribute Round {1,2,3,4,5,6,7,8,9,10,11,12}
+@attribute Winner {Holyfield,Lewis}
+
+@data
+E._Williams,Yes,1,Lewis
+E._Williams,Yes,2,Lewis
+E._Williams,Yes,3,Holyfield
+E._Williams,Yes,4,Holyfield
+E._Williams,Yes,5,Holyfield
+E._Williams,Yes,6,Lewis
+E._Williams,Yes,7,Lewis
+E._Williams,Yes,8,Holyfield
+E._Williams,Yes,9,Holyfield
+E._Williams,Yes,10,Holyfield
+E._Williams,Yes,11,Holyfield
+E._Williams,Yes,12,Lewis
+L._OConnell,Yes,1,Lewis
+L._OConnell,Yes,2,Lewis
+L._OConnell,Yes,3,Holyfield
+L._OConnell,Yes,4,Lewis
+L._OConnell,Yes,5,Lewis
+L._OConnell,Yes,6,Holyfield
+L._OConnell,Yes,7,Holyfield
+L._OConnell,Yes,8,Holyfield
+L._OConnell,Yes,9,Holyfield
+L._OConnell,Yes,10,Holyfield
+L._OConnell,Yes,11,Holyfield
+L._OConnell,Yes,12,Lewis
+S._Christodoulu,Yes,1,Lewis
+S._Christodoulu,Yes,2,Lewis
+S._Christodoulu,Yes,3,Holyfield
+S._Christodoulu,Yes,4,Lewis
+S._Christodoulu,Yes,5,Lewis
+S._Christodoulu,Yes,6,Lewis
+S._Christodoulu,Yes,7,Lewis
+S._Christodoulu,Yes,8,Holyfield
+S._Christodoulu,Yes,9,Holyfield
+S._Christodoulu,Yes,10,Holyfield
+S._Christodoulu,Yes,11,Holyfield
+S._Christodoulu,Yes,12,Lewis
+HBO-Lederman,No,1,Lewis
+HBO-Lederman,No,2,Lewis
+HBO-Lederman,No,3,Holyfield
+HBO-Lederman,No,4,Lewis
+HBO-Lederman,No,5,Lewis
+HBO-Lederman,No,6,Lewis
+HBO-Lederman,No,7,Lewis
+HBO-Lederman,No,8,Lewis
+HBO-Lederman,No,9,Holyfield
+HBO-Lederman,No,10,Holyfield
+HBO-Lederman,No,11,Lewis
+HBO-Lederman,No,12,Lewis
+Sportsticker,No,1,Lewis
+Sportsticker,No,2,Lewis
+Sportsticker,No,3,Holyfield
+Sportsticker,No,4,Lewis
+Sportsticker,No,5,Lewis
+Sportsticker,No,6,Lewis
+Sportsticker,No,7,Lewis
+Sportsticker,No,8,Lewis
+Sportsticker,No,9,Holyfield
+Sportsticker,No,10,Holyfield
+Sportsticker,No,11,Lewis
+Sportsticker,No,12,Lewis
+Boxing_Times,No,1,Lewis
+Boxing_Times,No,2,Lewis
+Boxing_Times,No,3,Holyfield
+Boxing_Times,No,4,Lewis
+Boxing_Times,No,5,Lewis
+Boxing_Times,No,6,Lewis
+Boxing_Times,No,7,Lewis
+Boxing_Times,No,8,Lewis
+Boxing_Times,No,9,Holyfield
+Boxing_Times,No,10,Holyfield
+Boxing_Times,No,11,Lewis
+Boxing_Times,No,12,Lewis
+Sportsline,No,1,Lewis
+Sportsline,No,2,Lewis
+Sportsline,No,3,Holyfield
+Sportsline,No,4,Lewis
+Sportsline,No,5,Lewis
+Sportsline,No,6,Holyfield
+Sportsline,No,7,Lewis
+Sportsline,No,8,Lewis
+Sportsline,No,9,Lewis
+Sportsline,No,10,Holyfield
+Sportsline,No,11,Lewis
+Sportsline,No,12,Lewis
+Associated_Press,No,1,Lewis
+Associated_Press,No,2,Lewis
+Associated_Press,No,3,Holyfield
+Associated_Press,No,4,Holyfield
+Associated_Press,No,5,Lewis
+Associated_Press,No,6,Lewis
+Associated_Press,No,7,Lewis
+Associated_Press,No,8,Lewis
+Associated_Press,No,9,Lewis
+Associated_Press,No,10,Holyfield
+Associated_Press,No,11,Lewis
+Associated_Press,No,12,Lewis
+ESPN,No,1,Lewis
+ESPN,No,2,Lewis
+ESPN,No,3,Lewis
+ESPN,No,4,Lewis
+ESPN,No,5,Lewis
+ESPN,No,6,Lewis
+ESPN,No,7,Lewis
+ESPN,No,8,Lewis
+ESPN,No,9,Lewis
+ESPN,No,10,Holyfield
+ESPN,No,11,Lewis
+ESPN,No,12,Lewis
+Boxing_Monthly-Leach,No,1,Lewis
+Boxing_Monthly-Leach,No,2,Lewis
+Boxing_Monthly-Leach,No,3,Holyfield
+Boxing_Monthly-Leach,No,4,Holyfield
+Boxing_Monthly-Leach,No,5,Lewis
+Boxing_Monthly-Leach,No,6,Holyfield
+Boxing_Monthly-Leach,No,7,Lewis
+Boxing_Monthly-Leach,No,8,Holyfield
+Boxing_Monthly-Leach,No,9,Holyfield
+Boxing_Monthly-Leach,No,10,Holyfield
+Boxing_Monthly-Leach,No,11,Holyfield
+Boxing_Monthly-Leach,No,12,Lewis

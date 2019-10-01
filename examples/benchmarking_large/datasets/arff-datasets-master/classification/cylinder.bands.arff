@@ -1,0 +1,695 @@
+% 1. Title: Cylinder bands
+% 
+% 2. Sources:
+%     (a) Creator: Bob Evans
+% 		 RR Donnelley & Sons Co.
+% 		 Gallatin Division
+% 	 	 801 Steam Plant Rd
+% 		 Gallatin, Tennessee 37066-3396
+% 		 (615) 452-5170
+%     (b) Donor: same
+%     (c) Date: August, 1995
+% 
+% 3. Past Usage:
+% 
+% 	Evans, B., and Fisher, D. (1994). Overcoming process delays with
+% 	decision tree induction. IEEE Expert , Vol. 9, No. 1, 60--66.
+% 
+% 4. Relevant Information:n
+% 
+% Here's the abstract from the above reference:
+% 
+% ABSTRACT: Machine learning tools show significant promise for
+% knowledge acquisition, particularly when human expertise is
+% inadequate. Recently, process delays known as cylinder banding in
+% rotogravure printing were substantially mitigated using control rules
+% discovered by decision tree induction. Our work exemplifies a more
+% general methodology which transforms the knowledge acquisition task
+% from one in which rules are directly elicited from an expert, to one
+% in which a learning system is responsible for rule generation. The
+% primary responsibilities of the human expert are to evaluate the
+% merits of generated rules, and to guide the acquisition and
+% classification of data necessary for machine induction. These
+% responsibilities require the expert to do what an expert does best: to
+% exercise his or her expertise. This seems a more natural fit to an
+% expert's capabilities than the requirements of traditional
+% methodologies that experts explicitly enumerate the rules that they
+% employ.
+% 
+% 5. Number of Instances: 512
+% 
+% 6. Number of Attributes: 40 including the class attribute
+%    -- 20 attributes are numeric, 20 are nominal
+% 
+% 7. Attribute Information:
+% 	 1. timestamp: numeric;19500101 - 21001231 
+% 	 2. cylinder number: nominal
+% 	 3. customer: nominal; 
+% 	 4. job number: nominal; 
+% 	 5. grain screened: nominal; yes, no 
+% 	 6. ink color: nominal;  key, type 
+% 	 7. proof on ctd ink:  nominal;  yes, no  
+% 	 8. blade mfg: nominal;  benton, daetwyler, uddeholm 
+% 	 9. cylinder division: nominal;  gallatin, warsaw, mattoon 
+% 	10. paper type: nominal;  uncoated, coated, super 
+% 	11. ink type: nominal;  uncoated, coated, cover 
+% 	12. direct steam: nominal; use; yes, no *
+% 	13. solvent type: nominal;  xylol, lactol, naptha, line, other 
+% 	14. type on cylinder:  nominal;  yes, no  
+% 	15. press type: nominal; use; 70 wood hoe, 70 motter, 70 albert, 94 motter 
+% 	16. press: nominal;  821, 802, 813, 824, 815, 816, 827, 828 
+% 	17. unit number: nominal;  1, 2, 3, 4, 5, 6, 7, 8, 9, 10 
+% 	18. cylinder size: nominal;  catalog, spiegel, tabloid 
+% 	19. paper mill location: nominal; north us, south us, canadian, 
+% 				 scandanavian, mid european
+% 	20. plating tank: nominal; 1910, 1911, other 
+% 	21. proof cut: numeric;  0-100 
+% 	22. viscosity: numeric;  0-100 
+% 	23. caliper: numeric;  0-1.0 
+% 	24. ink temperature: numeric;  5-30 
+% 	25. humifity: numeric;  5-120 
+% 	26. roughness: numeric;  0-2 
+% 	27. blade pressure: numeric;  10-75 
+% 	28. varnish pct: numeric;  0-100 
+% 	29. press speed: numeric;  0-4000 
+% 	30. ink pct: numeric;  0-100 
+% 	31. solvent pct: numeric;  0-100 
+% 	32. ESA Voltage: numeric;  0-16 
+% 	33. ESA Amperage: numeric;  0-10 
+% 	34. wax: numeric ;  0-4.0
+% 	35. hardener:  numeric; 0-3.0 
+% 	36. roller durometer:  numeric;  15-120 
+% 	37. current density:  numeric;  20-50 
+% 	38. anode space ratio:  numeric;  70-130 
+% 	39. chrome content: numeric; 80-120 
+% 	40. band type: nominal; class; band, no band *
+% 
+% 8. Missing Attribute Values: yes, in 302 examples
+% 
+% 
+% 9. Class Distribution: (out of 512 total instances)
+%     -- 312 No band
+%     -- 200 Band
+% 
+% 
+% 
+% 
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: last
+%
+
+@relation cylinder-bands
+
+@attribute timestamp {19900330,19900409,19900414,19900417,19900418,19900425,19900426,19900505,19900507,19900509,19900510,19900511,19900514,19900517,19900518,19900524,19900602,19900603,19900606,19900608,19900611,19900612,19900614,19900615,19900617,19900620,19900621,19900622,19900625,19900626,19900702,19900705,19900706,19900707,19900708,19900710,19900718,19900719,19900723,19900726,19900727,19900730,19900801,19900804,19900805,19900806,19900807,19900809,19900810,19900811,19900812,19900813,19900814,19900818,19900819,19900820,19900821,19900824,19900825,19900830,19900831,19900909,19900910,19900913,19900915,19900920,19900921,19900924,19900926,19901001,19901002,19901003,19901004,19901005,19901006,19901007,19901008,19901010,19901014,19901017,19901023,19901027,19901030,19901031,19901101,19901102,19901105,19901106,19901107,19901108,19901109,19901113,19901114,19901115,19901116,19901117,19901119,19901120,19901121,19901124,19901125,19901206,19901208,19901209,19901210,19901211,19901212,19901214,19901215,19901218,19901219,19901222,19901230,19910103,19910104,19910108,19910109,19910111,19910112,19910113,19910114,19910117,19910118,19910123,19910125,19910127,19910129,19910130,19910131,19910201,19910206,19910208,19910211,19910212,19910213,19910214,19910215,19910216,19910220,19910221,19910223,19910227,19910301,19910302,19910303,19910304,19910306,19910307,19910308,19910309,19910310,19910311,19910314,19910316,19910317,19910318,19910319,19910320,19910322,19910323,19910325,19910327,19910330,19910402,19910404,19910405,19910406,19910409,19910415,19910416,19910419,19910422,19910423,19910426,19910428,19910430,19910501,19910502,19910503,19910505,19910507,19910508,19910511,19910517,19910524,19910528,19910529,19910531,19910603,19910604,19910605,19910607,19910609,19910610,19910611,19910614,19910617,19910618,19910619,19910622,19910626,19910627,19910629,19910706,19910707,19910712,19910718,19910719,19910724,19910727,19910729,19910730,19910802,19910804,19910806,19910807,19910809,19910810,19910815,19910817,19910818,19910822,19910829,19910903,19910915,19910917,19910920,19910923,19910924,19911102,19911103,19911104,19911124,19911203,19911209,19911211,19920105,19920110,19920114,19920115,19920205,19920207,19920208,19920220,19920317,19920320,19920326,19920402,19920405,19920408,19920416,19920515,19920523,19920529,19920530,19920531,19920603,19920610,19920705,19920709,19920712,19920808,19920822,19920826,19920911,19920915,19920918,19920920,19921001,19921004,19921125,19921129,19930113,19930205,19930217,19930219,19930227,19930309,19930407,19930421,19930514,19930624,19930906,19930908,19930915,19930916,19930928,19931008,19940904,19940927,19941001,19941004,19941005,19941007,19941009,19941010,tabloid}
+@attribute cylinder_number {1351,3,aa067,aa1,aa11,aa17,aa28,aa29,aa40,aa43,aa45,aa56,aa58,aa66,aa7,aa70,aa97,b125,b181,b6,b7,e26,e302,e303,e310,e38,e510,e67,e68,e69,e72,e74,e77,e78,e81,e83,e84,e85,e86,e90,e91,e92,ee304,f067,f103,f108,f121,f126,f131,f133,f135,f146,f159,f169,f170,f19,f192,f219,f227,f236,f237,f242,f25,f257,f26,f261,f264,f267,f294,f308,f310,f321,f329,f331,f337,f372,f374,f38,f383,f416,f450,f466,f482,f492,f510,f569,f571,f590,f601,f615,f620,f629,f633,f670,f672,f679,f685,f72,f76,f77,f85,f89,f98,g089,g108,g145,g150,g3,g38,g404,g407,g412,g416,g433,g459,g462,g465,g467,g48,g496,g5,g518,g519,g55,g572,g60,g604,g608,g625,g628,g634,g640,g648,g657,g67,g69,g71,g78,g81,g84,g95,g98,i010,i25,i301,i303,i305,i309,i311,i317,i320,i324,i325,i331,i337,i343,i346,i347,i349,i353,i354,i357,i358,i365,i366,i383,i400,i46,i49,i820,j15,j29,j33,j34,j38,j40,j42,j43,j44,j45,j582,j6,j60,j62,j68,j70,j9,m103,m200,m208,m254,m257,m260,m272,m309,m332,m337,m362,m372,m374,m39,m4,m402,m410,m432,m45,m65,m74,m93,o1,o14,o15,o2,o21,o28,o4,o5,o6,o7,o8,r1,r14,r15,r17,r18,r2,r22,r23,r25,r29,r3,r30,r32,r34,r38,r4,r43,r5,r6,r7,r9,s180,s21,t117,t133,t176,t178,t195,t200,t204,t218,t233,t234,t244,t245,t26,t280,t281,t284,t30,t31,t312,t313,t32,t333,t351,t365,t368,t380,t383,t78,t8,v376,w30,w357,w364,w368,w395,w406,w516,w717,w785,w90,w92,x001,x019,x102,x103,x108,x116,x118,x12,x126,x127,x129,x13,x132,x135,x138,x139,x141,x146,x147,x151,x153,x155,x158,x160,x163,x18,x184,x185,x195,x196,x197,x199,x201,x203,x206,x21,x216,x220,x221,x232,x235,x242,x243,x249,x25,x251,x253,x255,x264,x266,x271,x272,x273,x281,x282,x29,x291,x292,x295,x297,x304,x308,x315,x326,x333,x342,x346,x35,x350,x351,x352,x356,x36,x367,x37,x374,x377,x381,x388,x389,x390,x396,x400,x405,x408,x414,x420,x423,x53,x57,x60,x65,x66,x67,x7,x713,x720,x727,x742,x746,x750,x753,x754,x760,x766,x768,x770,x771,x776,x777,x779,x787,x788,x791,x793,x795,x798,x799,x80,x802,x804,x809,x817,x818,x819,x820,x821,x823,x826,x828,x830,x831,x837,x838,x84,x89,x9,x91,x95,x96,y209,y216,y228,y255,y270}
+@attribute customer {1910,abbey,abbeypress,abbypress,adco,ames,austads,belk,belks,best,bestprod,brendls,burdines,campingworld,casliving,casualliving,cenpurch,childcraft,childworld,colorfulimage,colortil,colortile,competitivedge,cvs,downs,dunns,eckerd,eckerds,exxon,galls,global,globalequp,guideposts,gurney,hanhouse,hanoverhouse,hanoverhse,hanovrhous,hanovrhouse,hills,homeshop,homeshopping,jamesway,jcp,jcpenny,jfk,kidsrus,kmart,lazarus,lurias,massey,mervyns,modmat,natlwildlife,ntlwildlife,oldvillageshop,penney,rei,roses,sears,servmerch,sheplers,target,toysrus,tvguide,uscav,venture,walmart,wards,woolworth,woolwrth,yieldhouse}
+@attribute job_number INTEGER
+@attribute grain_screened {45,no,yes}
+@attribute ink_color {0.200,key}
+@attribute proof_on_ctd_ink {17,no,yes}
+@attribute blade_mfg {84,benton,uddeholm}
+@attribute cylinder_division {0.8125,gallatin}
+@attribute paper_type {27,coated,super,uncoated}
+@attribute ink_type {coated,cover,uncoated}
+@attribute direct_steam {1865,no,yes}
+@attribute solvent_type {line,naptha,xylol}
+@attribute type_on_cylinder {no,yes}
+@attribute press_type {albert70,motter70,motter94,woodhoe70}
+@attribute press {802,813,815,816,821,824,827,828}
+@attribute unit_number REAL
+@attribute cylinder_size {0.7,catalog,spiegel,tabloid}
+@attribute paper_mill_location {canadian,mideuropean,northus,scandanavian,southus}
+@attribute plating_tank {40,1910,1911}
+@attribute proof_cut REAL
+@attribute viscosity INTEGER
+@attribute caliper {.200,0.133,0.167,0.2,0.200,0.217,0.233,0.25,0.267,0.283,0.3,0.300,0.333,0.35,0.367,0.4,0.433,0.467,0.5,0.533,band}
+@attribute ink_temperature REAL
+@attribute humifity INTEGER
+@attribute roughness REAL
+@attribute blade_pressure INTEGER
+@attribute varnish_pct REAL
+@attribute press_speed INTEGER
+@attribute ink_pct REAL
+@attribute solvent_pct REAL
+@attribute ESA_Voltage REAL
+@attribute ESA_Amperage REAL
+@attribute wax REAL
+@attribute hardener REAL
+@attribute roller_durometer REAL
+@attribute current_density {30,33,35,37,40,42,45}
+@attribute anode_space_ratio REAL
+@attribute chrome_content {90,95,100}
+@attribute band_type {band,noband}
+
+@data
+19910108,x126,tvguide,25503,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,northus,1911,55,46,0.2,17,78,0.75,20,13.1,1700,50.5,36.4,0,0,2.5,1,34,40,105,100,band
+19910109,x266,tvguide,25503,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,northus,?,55,46,0.3,15,80,0.75,20,6.6,1900,54.9,38.5,0,0,2.5,0.7,34,40,105,100,noband
+19910104,b7,modmat,47201,yes,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,9,catalog,northus,?,62,40,0.433,16,80,?,30,6.5,1850,53.8,39.8,0,0,2.8,0.9,40,40,103.87,100,noband
+19910104,t133,massey,39039,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,9,catalog,northus,1910,52,40,0.3,16,75,0.3125,30,5.6,1467,55.6,38.8,0,0,2.5,1.3,40,40,108.06,100,noband
+19910111,j34,kmart,37351,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,2,tabloid,?,1910,50,46,0.3,17,80,0.75,30,0,2100,57.5,42.5,5,0,2.3,0.6,35,40,106.67,100,noband
+19910104,t218,massey,38039,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,northus,1910,50,40,0.267,16.8,76,0.4375,28,8.6,1467,53.8,37.6,5,0,2.5,0.8,40,40,103.87,100,noband
+19910111,x249,roses,35751,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,tabloid,canadian,1911,50,46,0.3,16.5,75,0.75,30,0,2600,62.5,37.5,6,0,2.5,0.6,30,40,106.67,100,noband
+19910111,x788,roses,35751,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,9,tabloid,canadian,1911,50,46,0.2,16.5,75,0.75,28,0,2600,62.5,37.5,6,0,2.5,1.1,30,40,106.67,100,noband
+19910112,m372,modmat,47201,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,albert70,802,7,catalog,northus,1910,50,45,0.367,12,70,0.75,60,0,1650,60.2,39.8,1.5,0,3,1,40,40,103.22,100,band
+19910114,i320,childcraft,37000,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,2,catalog,northus,1911,65,43,0.333,16,75,1,32,22.7,1750,45.5,31.8,0,0,3,1,38,40,106.66,100,noband
+19910114,i337,childcraft,37000,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,9,catalog,northus,1910,65,43,0.2,16,68,0.75,30,15.5,1750,48.5,35.9,0,0,3,1,38,40,106.6,100,noband
+19910111,x352,hanovrhouse,35539,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,northus,1911,50,50,0.367,14,80,0.75,40,10.5,1700,52.6,36.8,0,0,2.5,1,38,40,105,100,band
+19910117,x67,hanovrhous,35539,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1911,50,50,0.3,15,70,1,30,10,1600,50,40,0,0,2.8,1,38,40,106.66,100,band
+19910125,x817,guideposts,23052,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1911,40,45,0.3,14.5,70,0.625,25,0,1500,59.5,40.5,0,0,2,1,40,40,100,100,band
+19910117,x273,hanovrhous,35539,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,northus,1911,50,43,0.267,16,75,1,20,15.8,1600,49.5,34.7,0,0,2.5,1,38,40,103.22,100,noband
+19910103,f108,modmat,47201,?,key,yes,benton,gallatin,coated,coated,no,line,no,motter70,813,9,catalog,northus,1911,?,45,0.233,15,87,1,?,0,1400,62.5,37.5,0,0,2.5,1,40,40,103.22,100,band
+19910129,f237,homeshop,38064,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter70,813,5,catalog,canadian,1911,30,45,0.2,14,65,?,?,0,1600,62.5,37.5,0,0,2.5,0.8,33,40,100,100,noband
+19910129,f267,homeshop,38064,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter70,813,1,catalog,canadian,1911,30,45,0.2,15.5,65,?,?,5.9,1600,58.8,35.3,0,0,2.5,1.8,33,40,100,100,noband
+19910123,s21,uscav,35521,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,canadian,1910,60,38,0.267,16.4,64,0.75,?,11,1400,54.9,34.1,0,0,2.5,1,32,40,103.22,100,noband
+19910123,f492,uscav,35521,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,canadian,1911,60,38,0.333,16.5,66,0.75,?,6.7,1400,56.2,37.1,0,0,1.1,1.4,32,40,103.22,100,noband
+19910130,x799,colortil,37571,no,key,yes,benton,gallatin,coated,coated,no,naptha,no,motter94,824,2,tabloid,canadian,1911,50,45,0.233,16,70,0.8125,30,0,2400,58.8,41.2,0,0,1.7,1,30,40,107.4,100,noband
+19910130,x823,colortil,35751,no,key,yes,benton,gallatin,coated,coated,no,naptha,yes,motter94,824,9,tabloid,canadian,1911,40,45,0.2,15,76,0.8125,30,0,2400,62.5,37.5,0,0,1,1,30,40,107.4,100,noband
+19910117,x163,wards,37340,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1911,30,43,0.2,16.3,70,0.8125,25,1.2,2200,58.1,40.7,4,0,2,1,30,40,96.875,100,noband
+19910127,o4,target,35816,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,spiegel,canadian,1911,40,41,0.2,15.8,72,1,30,0,2000,62.5,37.5,0,0,2.5,1,30,40,107.4,100,band
+19910131,e84,kmart,37352,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,9,tabloid,scandanavian,1911,40,42,0.2,14.5,74,1,25,8,2100,57.5,34.5,0,0,2.3,0.7,35,40,107.4,100,band
+19910201,e81,kmart,37352,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,9,tabloid,scandanavian,1911,45,42,0.2,14,70,1,20,8,1850,57.5,34.5,0,0,2,0.7,35,40,107.4,100,band
+19910130,e72,kmart,37352,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,9,tabloid,scandanavian,1911,50,45,0.3,15,76,1,30,8,2150,57.5,34.5,0,0,2.5,1,35,40,107.4,100,noband
+19910130,e310,kmart,37352,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,2,tabloid,scandanavian,1911,50,45,0.3,15.2,72,1,25,5.9,2150,58.8,35.3,0,0,2.5,1,35,40,107.4,100,noband
+19910201,x29,woolworth,37080,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,828,2,tabloid,canadian,1911,35,42,?,15,75,0.75,30,0,2100,58.8,41.2,0,0,2,0.8,30,40,107.4,100,band
+19910118,x292,ames,37157,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,828,2,tabloid,canadian,1910,30,45,0.233,17,70,0.75,35,0,2200,58.8,41.2,0,0,2.5,1,33,40,106.45,100,band
+19910206,j9,kmart,37352,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,2,tabloid,northus,1911,37.5,44,0.2,16,90,0.75,28,20,2050,45,35,0,0,2.4,0.8,35,40,107.4,100,noband
+19910206,j582,kmart,37352,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,9,tabloid,northus,1911,37.5,44,0.2,16.5,91,0.75,30,21.7,2050,43.5,34.8,0,0,2.7,0.8,35,40,107.4,100,noband
+19910206,x141,tvguide,25507,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,?,1911,45,44,0.267,14.1,78,0.625,22,7.6,1510,54.3,38,0,0,2.5,0.7,34,40,114.28,100,noband
+19910206,x818,tvguide,25507,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,?,1910,40,44,0.2,14,69,0.625,20,8.5,1510,53.2,38.3,2,0,2.5,0.9,34,40,110,100,noband
+19910208,v376,woolwrth,37080,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,828,2,tabloid,?,1911,40,47,0.333,17,78,0.75,35,0,2400,58.8,41.2,4,0,2.5,1,30,40,100,100,band
+19910211,m254,abbypress,27490,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,1,catalog,?,1911,30,42,0.2,15.4,64,0.875,?,0,1425,63,37,0,0,1,1.3,34,40,107.4,100,noband
+19910215,r5,target,35811,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,spiegel,canadian,1910,45,38,?,15,80,0.625,30,7,1600,58.1,34.9,0,0,2.5,1.5,30,40,103.22,100,band
+19910113,j33,belks,35334,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,tabloid,?,1911,40,43,0.267,16,96,1,28,0,1500,58.8,41.2,2,0,3,0.8,40,40,103.12,100,noband
+19910213,j43,belks,35334,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,9,tabloid,northus,1911,32.5,43,0.2,15,82,1,31,7.6,1500,54.3,38,4,0,2.5,1,40,40,103.12,100,noband
+19910212,i357,sears,37869,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,9,catalog,northus,1911,37.5,44,0.3,15,85,0.75,34,0,1400,62.5,37.5,0,0,2.8,1,28,40,103.12,100,noband
+19910212,i353,sears,37869,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,2,catalog,northus,1910,35,44,0.3,16,80,1,32,7,1400,58.1,34.9,0,0,3,1,28,40,103.12,100,noband
+19910211,m254,abbypress,27490,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,1,catalog,northus,1911,30,42,0.2,15.4,64,0.875,?,0,1425,61.7,38.3,0,0,1,1.3,34,40,107.4,100,noband
+19910214,x291,roses,35752,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1910,50,43,0.2,16,82,0.875,30,0,2270,55.6,44.4,12,0,2,1,30,40,103.22,100,noband
+19910214,x129,roses,35752,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1910,50,43,0.3,16.3,80,0.8125,30,0,2270,55.6,44.4,12,0,1.5,1.5,30,40,103.22,100,noband
+19910214,x297,jcpenny,35794,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,2,tabloid,northus,1911,60,43,0.267,15.8,57,0.75,24,1.2,1480,58.1,40.7,0,0,1.4,1.7,33,40,103.12,100,noband
+19910214,x146,jcpenny,35794,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,9,tabloid,northus,1911,52.5,43,0.233,16.6,58,0.75,20,7.9,1480,56.2,36,0,0,1.7,0.7,33,40,103.12,100,noband
+19910213,x129,roses,35752,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,?,1910,50,43,0.3,17,87,0.8125,35,0,2300,58.8,41.2,0,0,1.3,0.7,30,40,103.22,100,noband
+19910215,e303,cenpurch,37441,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,821,2,tabloid,canadian,1911,25,38,0.2,13,75,0.625,25,0,1600,57.5,42.5,0,0,2.5,0.85,30,40,103.12,100,noband
+19910215,e68,cenpurch,37441,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,821,7,tabloid,canadian,1911,25,38,0.233,14,70,0.625,25,0,1600,58.8,41.2,5,0,1.7,0.9,30,40,103.12,100,noband
+19910221,j42,kmart,37354,no,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,9,tabloid,scandanavian,1911,40,46,0.333,15.9,78,0.5,34,2.4,2000,61,36.6,0,0,2.4,1.3,35,40,103.22,100,noband
+19910223,x53,belk,35335,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,827,2,tabloid,northus,1911,45,41,0.333,17,78,0.75,16,14.1,1100,50.5,35.4,0,0,2.5,1,50,40,96.97,100,band
+19910223,x821,belk,37335,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,827,2,tabloid,northus,1911,47.5,41,0.233,16.5,72,0.75,20,14.1,1300,50.5,35.4,4,0,2.5,1,50,40,96.97,100,band
+19910220,x118,toysrus,35870,no,key,no,benton,gallatin,coated,coated,no,line,no,motter94,824,2,tabloid,canadian,1910,40,46,0.2,15,68,0.75,28,0,1700,58.8,41.2,0,0,1,1,33,40,103.22,100,noband
+19910220,x826,toysrus,35870,no,key,no,benton,gallatin,coated,coated,no,line,no,motter94,824,9,tabloid,canadian,1911,40,46,0.267,16.5,68,0.875,25,0,1700,58.8,41.2,0,0,1,1,33,40,103.125,100,noband
+19910216,r23,target,35811,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,spiegel,canadian,1911,40,35,0.233,18,85,0.625,30,0,2000,62.5,37.5,0,0,2.5,0.9,30,40,103.125,100,noband
+19910213,x291,roses,35752,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1910,50,43,0.2,17,84,?,35,0,2300,55.6,44.4,0,0,2,0.8,30,40,103.22,100,noband
+19910215,i354,sears,37869,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,albert70,802,7,catalog,northus,1911,35,38,0.4,12,62,0.75,46,4.7,1400,58.8,36.5,0,0,2.0,1,28,40,103.125,100,noband
+19910215,i358,sears,37869,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,albert70,802,2,catalog,northus,1911,35,38,0.433,16,70,0.75,50,0,1400,62.5,37.5,0,0,2.8,1.5,28,40,103.125,100,noband
+19910220,x760,tvguide,25509,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1911,50,46,0.2,14.6,60,0.625,25,10.5,1750,52.6,36.8,2,0,2.4,0.8,28,40,96.97,100,band
+19910304,e26,kmart,37386,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,827,2,tabloid,southus,1910,40,47,0.333,24.5,78,0.875,30,8.8,2100,54.9,36.3,16,0,2.3,1,40,40,100,100,band
+19910303,e84,kmart,37386,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,827,9,tabloid,southus,?,40,47,0.35,14.43,76,0.75,16,7.2,2000,51.5,41.2,1,0,2.7,1.4,40,40,100,100,band
+19910301,e69,kmart,37386,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,827,2,tabloid,southus,1910,40,39,0.233,15,77,0.75,20,9.4,2000,52.1,38.5,0,0,2.5,1,40,40,103.22,100,noband
+19910301,e77,kmart,37386,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,827,9,tabloid,southus,1910,40,39,0.2,15,79,0.75,20,11.8,2000,49,39.2,0,0,2.5,1,40,40,103.22,100,noband
+19910309,e83,kmart,37386,?,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,827,2,tabloid,southus,1911,?,43,0.267,14.2,68,0.75,18,0,2000,62.5,37.5,0,0,2.5,1.2,40,40,106.45,100,band
+19910306,e67,kmart,37386,?,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,827,2,tabloid,southus,1910,?,48,0.233,14,80,0.75,30,0,2000,62.5,37.5,0,0,?,?,40,40,109.67,100,band
+19910311,e83,kmart,27386,?,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,827,2,tabloid,southus,1911,?,40,0.267,16.4,72,1,26,0,2000,62.5,37.5,0,0,2.5,1,40,40,106.45,100,band
+19910311,x791,kmart,37386,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,824,9,tabloid,southus,1911,40,40,0.35,18.5,85,0.5625,30,0,1900,62.5,37.5,4,0,1.8,1.4,40,40,106.45,100,band
+19910227,e90,kmart,37254,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,821,7,tabloid,?,1911,42.5,41,0.3,14,70,0.625,20,2.3,1750,57.5,40,4,0,2.5,0.7,35,40,96.97,100,noband
+19910302,x271,eckerd,35457,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,9,tabloid,canadian,1910,35,39,0.2,16.2,84,1,30,0,2100,62.5,37.5,4,0,2,0.9,30,40,94.117,100,noband
+19910307,f308,modmat,47202,no,key,yes,benton,gallatin,coated,uncoated,no,line,yes,motter70,813,9,catalog,northus,1910,35,45,0.3,14.1,65,1,?,0,1500,59.5,40.5,0,0,2.6,1,40,40,109.67,100,noband
+19910308,t281,modmat,47202,no,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,albert70,802,2,catalog,northus,1910,50,43,0.333,14.02,68,0.75,56,7.4,1800,53.2,39.4,0,0.5,3,1.3,40,40,109.67,100,noband
+19910307,f067,modmat,47202,no,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,northus,1910,67.5,45,0.2,15.5,80,0.5,34,16.3,1683,43.5,40.2,6,0,2.5,1,40,40,109.67,100,noband
+19910310,x405,ames,37163,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,821,2,tabloid,canadian,1910,55,37,0.267,16,75,0.625,20,5.6,1850,55.6,38.9,0,0,0.8,0.75,33,40,109.67,100,noband
+19910227,e91,kmart,37354,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,821,2,tabloid,?,1911,42.5,41,0.2,14,80,0.625,20,7.4,1750,53.2,39.4,0,0,2.1,0.9,35,40,96.97,100,noband
+19910307,f615,modmat,47202,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,1910,52.5,45,0.2,15.3,72,0.75,?,12.4,1600,51.5,36.1,0,0,2.5,1,40,40,109.67,100,noband
+19910307,f510,modmat,47202,no,key,yes,benton,gallatin,coated,uncoated,no,line,yes,motter70,813,10,catalog,northus,1910,35,45,0.2,15.2,63,1,?,0,1500,59.5,40.5,0,0,2.3,0.9,40,40,109.67,100,noband
+19910307,f670,modmat,47202,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,northus,1910,52.5,45,0.233,16,68,0.75,?,0,1600,58.8,41.2,4,0,2.3,0.8,40,40,109.67,100,noband
+19910317,e310,kmart,37355,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,9,tabloid,?,1910,49,43,0.35,14.5,74,0.75,23,9.1,1900,56.8,34.1,2,0,0.7,0.2,35,40,103.22,100,band
+19910314,f670,modmat,47202,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,northus,1910,52.5,37,0.233,14,73,0.75,?,9.6,1600,53.2,37.2,0,0,2.3,1,40,40,109.67,100,noband
+19910309,m402,modmat,47202,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,9,catalog,northus,1910,52.5,43,0.267,15.1,76,0.5,31,6.6,1650,54.9,38.5,0,0,2.5,1.5,40,40,109.67,100,noband
+19910316,x18,kmart,37355,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,828,9,tabloid,scandanavian,1910,40,44,0.2,16.1,78,0.9375,30,5.6,1800,55.6,38.9,0,0,2,1,35,40,103.22,100,noband
+19910314,f615,modmat,47202,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,?,52.5,37,0.2,15,66,0.75,?,13.3,1600,55.6,42.2,0,0,2.4,0.8,40,40,100,100,noband
+19910318,f310,kmart,37355,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,2,tabloid,?,1910,40,43,0.35,16.5,72,0.625,20,9.1,2000,56.8,34.1,4,0,2.5,0.5,35,40,103.22,100,noband
+19910318,f72,kmart,37355,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,9,tabloid,?,1910,40,43,0.35,16.1,70,0.625,20,11.1,2000,55.6,33.3,4,0,1.8,0.9,35,40,103.22,100,noband
+19910319,x308,roses,35753,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1910,40,43,0.267,16,80,0.5625,30,5.6,1900,55.6,38.9,0,0,2.2,1.3,30,40,103.22,100,noband
+19910319,x720,tvguide,25513,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1911,45,45,?,14.7,75,0.625,30,15,1734,50,35,2,0,1.5,0.6,34,40,103.22,100,band
+19910322,g404,jcp,38051,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,2,tabloid,?,?,60,49,0.333,14.9,77,0.75,27,0,1650,58.8,41.2,0,0,2.5,0.7,33,40,103.33,100,noband
+19910325,x798,tvguide,25514,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,?,1910,55,49,0.267,12.5,70,0.625,30,5.6,1750,55.6,38.9,0,0,2.5,0.9,34,40,106.66,100,band
+19910320,x160,tvguide,25513,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,?,1911,45,45,?,15.1,75,0.625,20,15,1750,50,35,0,0,1.6,0.9,34,40,103.22,100,noband
+19910322,g416,jcp,38051,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,9,tabloid,?,1910,55,49,0.2,15.6,74,0.75,24,0,1650,58.8,41.2,0,0,2.5,1.7,33,40,103.33,100,noband
+19910323,x350,kmart,37355,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,2,tabloid,?,1911,40,49,0.233,15.3,74,1,34,0,2000,62.5,37.5,0,0,2.2,1,35,40,100,100,noband
+19910323,x264,kmart,37355,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,9,tabloid,?,1911,40,49,0.233,16.8,78,0.9375,30,0,2000,62.5,37.5,0,0,2.4,0.9,35,40,100,100,noband
+19910402,x838,tvguide,25515,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1911,42.5,46,0.3,14,77,0.625,42,15.8,1850,49.5,34.6,8,0,1.5,0.8,34,40,100,100,band
+19910404,x89,woolworth,37081,no,key,no,benton,gallatin,coated,coated,no,line,yes,motter94,828,1,tabloid,canadian,1911,35,44,0.2,15.5,100,0.875,30,0,2200,53.2,46.8,0,0,0,0,30,40,100,100,band
+19910330,x102,belk,35534,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,827,2,tabloid,northus,1910,42,44,0.3,15,80,1.25,20,16.7,1300,49,34.3,0,0,2.5,0.2,40,40,110,100,noband
+19910330,x830,belk,35534,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,827,9,tabloid,northus,1910,45,44,0.3,15.5,75,1.25,20,14.1,1300,50.5,35.4,0,0,2.5,1.5,40,40,110,100,noband
+19910405,x118,roses,35754,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1910,50,43,0.3,16,70,0.8125,30,3.4,2400,56.8,39.8,0,0,2.5,0.8,30,40,103.125,100,noband
+19910405,x35,roses,35754,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1910,47,43,0.267,16,80,0.5625,30,9.1,2400,50.5,40.4,0,0,2.5,1.1,30,40,103.125,100,noband
+19910327,x390,colortile,37572,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1911,35,48,0.233,16,76,0.8125,30,8.9,1900,49.5,41.6,0,0,2.5,1.2,30,40,103.22,100,noband
+19910327,x754,colortile,37572,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1911,35,48,0.233,16,86,0.5625,30,16.1,1900,44.6,39.3,0,0,2.5,1.5,30,40,103.22,100,noband
+19910402,o2,target,35814,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,2,spiegel,canadian,1911,35,43,0.233,14,75,1.25,20,7.6,?,54.3,38,0,0,2.5,2,33,40,106.66,100,noband
+19910402,3,target,35814,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,9,spiegel,canadian,1911,37.5,43,0.233,14,80,1.25,20,6.25,?,52.1,41.7,0,0,3,1.5,33,40,106.66,100,noband
+19910406,f103,bestprod,37822,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter70,813,1,catalog,northus,1910,40,44,0.2,15,68,0.75,?,0,1750,58.8,41.2,0,0,2.7,0.7,35,40,103.125,100,noband
+19910406,s180,bestprod,37822,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter70,813,5,catalog,northus,1910,40,44,0.233,15.5,68,0.75,?,5.6,1750,55.6,38.9,0,0,1.5,0.5,35,40,103.125,100,noband
+19910511,o8,target,35816,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,spiegel,canadian,1910,47.5,68,0.4,14,78,0.75,22,0,1900,62.5,37.5,0,0,2.1,1.7,33,40,103.125,100,band
+19910501,g608,eckerd,35458,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,816,2,tabloid,canadian,1910,40,60,0.233,15,78,1,28,0,2380,60,40,3,0,2.5,1,30,40,106.66,100,band
+19910502,f416,modmat,47203,yes,key,yes,benton,gallatin,coated,coated,no,line,no,motter70,813,9,catalog,northus,1910,55,55,0.3,16.3,100,1,?,0,1650,58.8,41.2,0,0,?,?,40,40,106.66,100,band
+19910502,r14,target,35816,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,spiegel,canadian,1910,40,55,0.433,15.5,92,0.75,22,9.6,1550,53.2,37.2,1,0,2.9,1.3,33,40,106.66,100,band
+19910503,r14,target,35816,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,spiegel,canadian,1910,40,52,?,16,86,0.75,26,9.6,1975,53.2,37.2,1,0,2.9,1.3,33,40,100,100,band
+19910503,x249,guideposts,23055,yes,key,yes,benton,gallatin,uncoated,cover,no,line,yes,motter94,821,7,tabloid,?,1910,42.5,52,0.4,13.9,76,0.625,25,0,1800,50,50,0,0,2.5,0.9,40,40,106.66,100,band
+19910507,x817,tvguide,25520,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,canadian,1910,50,56,0.267,15.2,76,0.625,25,3.4,1760,56.8,39.8,2,0,2.5,0.8,34,40,103.125,100,band
+19910508,x746,tvguide,25520,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1910,45,57,0.267,14,76,0.75,20,3.4,1800,56.2,40.4,2,0,2,0.8,34,40,103.125,100,band
+19910517,x195,toysrus,35982,no,key,no,benton,gallatin,coated,coated,no,line,no,motter94,824,2,tabloid,canadian,1910,47,67,0.4,16,74,0.8125,38,0,1900,58.8,41.2,2,0,2.5,1.1,33,40,103.125,100,noband
+19910517,x405,toysrus,35872,no,key,no,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1910,47,67,0.333,16,82,0.5625,30,1.5,1900,50.5,34.3,0,0,2.5,1.1,33,40,103.125,100,noband
+19910505,m337,modmat,47203,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,northus,1910,50,52,0.3,17,69,0.75,?,0,1700,58.8,41.2,0,0,2.2,0.9,40,40,106.66,100,noband
+19910507,t32,modmat,47203,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1910,50,55,0.233,13.34,74,0.625,?,4.8,1635,59.5,35.7,1,0,3,2,40,40,100,100,noband
+19910507,m410,modmat,47203,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,northus,1910,50,55,0.233,13.86,70,0.625,47,10.2,1635,51,38.8,0,0,3,1,40,40,100,100,noband
+19910505,e510,modmat,47203,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,1910,50,52,0.267,15.6,71,0.75,?,20.6,1700,46.7,32.7,0,0,2.5,0.6,40,40,106.66,100,noband
+19910409,g108,ames,37168,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,canadian,1911,30,63,0.3,13,94,1,29,0,1800,56.2,43.8,0,0,2.5,1,30,40,110,100,band
+19910415,g145,wards,37333,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,canadian,1911,50,60,0.267,13.6,86,1.125,28,0,1500,64.1,35.9,0,0,2.5,1,33,40,106.45,100,band
+19910416,x356,tvguide,25517,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1911,55,53,0.3,14.2,72,0.625,25,22.7,1750,45.5,31.8,1,0,2.4,0.9,34,40,103.125,100,band
+19910426,g95,wards,37333,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,2,tabloid,canadian,1910,35,56,0.3,15.3,80,0.75,20,0,1900,76.9,23.1,0,0,2.5,1.25,33,40,106.66,100,band
+19910426,x802,hanhouse,37994,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1911,55,56,0.233,15,84,0.625,25,16.7,1850,52.1,31.3,4,0,2,0.6,34,40,103.125,100,band
+19910422,x779,tvguide,25513,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1910,55,49,0.2,15,78,0.625,20,17.1,1900,47.6,35.2,0,0,2.5,0.85,34,40,106.45,100,band
+19910426,t380,modmat,47203,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,2,catalog,northus,1910,50,50,0.2,15.7,90,0.75,50,0,1420,62.5,37.5,0,0,3,1.35,40,40,106.45,100,noband
+19910426,f146,modmat,47203,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,7,catalog,northus,1910,50,50,0.2,15.5,74,0.75,58,4.8,1420,59.5,35.7,3,0,3,1,40,40,106.45,100,noband
+19910428,x9,toysrus,35871,no,key,no,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1911,35,56,0.233,16,82,0.5625,28,5.6,2100,56.2,38.2,0,0,1.7,0.4,30,40,103.125,100,noband
+19910428,x21,toysrus,35871,no,key,no,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1911,35,56,0.2,15,80,0.8125,40,8.6,2100,53.8,37.6,8,0,1.7,1,30,40,100,100,noband
+19910419,x220,ames,37169,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1911,40,50,0.2,16,68,0.8125,30,0,2400,58.8,41.2,8,0,2.5,1.5,33,40,103.125,100,noband
+19910419,x147,ames,47169,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1911,40,50,0.233,16,70,0.5625,30,0,2400,58.8,41.2,8,0,1.5,0.5,33,40,103.125,100,noband
+19910415,e92,kmart,32360,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,2,tabloid,?,1910,?,59,0.233,14.2,80,1,20,5.6,?,55.6,38.9,0,0,2,2.5,33,40,106.45,100,noband
+19910415,e85,kmart,32360,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,9,tabloid,?,1911,37.5,59,0.233,16,75,0.75,20,4.3,?,54.3,41.3,0,0,2.5,1.5,33,40,106.45,100,noband
+19910409,f685,bestprod,37822,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,9,catalog,northus,1911,40,54,0.2,15.8,76,0.5,38,5.6,1736,55.6,38.9,0,0,2.5,1.5,35,40,103.125,100,noband
+19910409,f569,bestprod,37822,no,key,yes,benton,gallatin,uncoated,cover,no,line,yes,woodhoe70,816,2,catalog,northus,1911,40,54,0.2,15.4,78,0.5,34,5.7,1736,56.8,36.9,0,0,2.5,1.1,35,40,103.125,100,noband
+19910426,x139,hanhouse,37994,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,2,tabloid,northus,1911,55,45,0.267,15.5,79,0.625,20,16.7,1850,54.3,34.3,4,0,2.5,1,34,40,100,100,noband
+19910430,x12,tvguide,25519,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1910,52,64,0.4,15.5,82,0.625,30,0,1800,71.4,28.6,4,0,2.5,0.9,34,40,103.125,100,band
+19910423,g518,eckerd,35458,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,816,9,tabloid,canadian,1910,40,56,0.233,16.5,79,0.5,28,0,2300,60.2,39.8,0,0,2.5,1.5,30,40,106.45,100,band
+19910605,x116,eckerd,35460,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1910,45,54,0.333,15.5,76,0.8125,30,5.6,2250,55.6,38.9,2,0,2.5,1.3,30,40,106.45,100,noband
+19910604,x818,kmart,37365,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,828,2,tabloid,scandanavian,1910,47.5,68,0.4,16,80,0.75,30,0,2250,58.8,41.2,0,0,1.5,1,35,40,106.45,100,noband
+19910604,x346,kmart,37365,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,828,9,tabloid,scandanavian,1910,47.5,68,0.35,16,80,0.75,30,0,2250,52.1,47.9,0,0,1.5,0.75,35,40,106.45,100,noband
+19910605,x103,eckerd,35460,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1910,45,54,0.367,15.5,74,0.5625,40,10.5,2250,52.6,36.8,2,0,2.5,1.8,30,40,106.45,100,noband
+19910603,e74,kmart,37365,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,motter94,827,2,tabloid,canadian,1911,37.5,70,0.333,14.9,64,0.75,28,3.4,1500,57.5,39.1,0,0,2.5,1,40,40,106.89,100,noband
+19910603,e86,kmart,37365,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,9,tabloid,canadian,1911,37.5,70,0.4,15,65,0.75,25,5.4,1500,54.3,40.2,0,0,2.3,0.9,40,40,106.66,100,noband
+19910529,x396,wards,37338,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1911,47.5,60,0.4,14.5,74,0.8125,20,8.6,1600,53.8,37.6,0,0,2,1.5,35,40,110,100,noband
+19910524,x155,roses,37758,no,key,yes,?,gallatin,coated,coated,no,line,yes,motter94,828,9,tabloid,canadian,1910,40,62,0.3,16,84,0.9375,28,0,2200,58.8,41.2,4,0,2.5,0.6,30,40,106.45,100,noband
+19910524,x29,roses,35758,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,2,tabloid,canadian,1910,40,62,0.267,16,84,0.9375,32,0,2200,58.8,41.2,4,0,1.4,1,30,40,106.45,100,noband
+19910430,g518,eckerd,35458,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,tabloid,canadian,1910,40,64,0.2,15.5,85,1,26,0,2400,58.8,41.2,0,0,2.5,1,30,40,103.125,100,noband
+19910430,g608,eckerd,35458,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,tabloid,canadian,1910,40,64,0.233,15,82,0.75,31,0,2400,60,40,3,0,2.5,1,30,40,106.66,100,noband
+19910531,m337,modmat,47203,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1910,50,69,0.367,17,82,0.75,50,0,1700,62.5,37.5,0,0,3,1,40,40,106.45,100,band
+19910529,x381,wards,37338,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,824,9,tabloid,canadian,1911,50,60,0.4,16,76,0.5625,28,5.6,1600,55.6,38.9,0,0,1,0.5,35,40,110,100,noband
+19910524,j582,hills,37915,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,?,1910,50,62,0.4,15.4,98,0.75,25,10.6,1750,48.1,41.3,0,0,2.8,1.3,33,40,110,100,noband
+19910524,j62,hills,37915,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,tabloid,?,1911,50,62,0.4,14.9,96,0.75,26,11,1950,50,39,0,0,2.8,0.8,33,40,110,100,noband
+19910528,f510,modmat,47203,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,1910,50,68,0.367,13.4,70,?,?,20.4,1700,46.3,33.3,0,0,2.5,1,40,40,106.45,100,band
+19910604,y216,kmart,37305,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,9,tabloid,scandanavian,1911,35,68,0.4,15.1,90,0.875,30,6,1500,59.5,34.5,1,0,2.5,1,35,40,106.89,100,band
+19910610,g089,wards,37501,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,tabloid,?,1910,?,56,0.3,16.02,84,0.25,30,5.3,2244,52.6,42.1,5,0,3,0.8,30,40,110,100,noband
+19910610,g572,wards,37501,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,tabloid,?,?,32.5,56,0.367,15.03,79,0.3125,28,5.3,2244,52.6,42.1,0,0,1.8,0.5,30,40,106.45,100,noband
+19910611,x390,ames,37177,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,2,tabloid,canadian,1910,40,56,0.3,17,82,0.75,30,0,2550,52.6,47.4,0,0,2,1,33,40,103.22,100,noband
+19910611,x831,wards,37177,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,9,tabloid,canadian,1910,30,56,0.283,17,72,0.75,30,0,2550,52.6,47.4,0,0,2,1,33,40,103.22,100,noband
+19910614,g78,wards,37501,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,canadian,1910,30,69,0.3,16,98,0.75,35,0,2050,62.5,37.5,0,0,2.75,1,33,40,100,100,noband
+19910614,x158,roses,35759,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,tabloid,canadian,1910,45,69,0.267,15.6,72,0.75,21,5.6,2426,55.6,38.9,0,0,2.85,1.1,30,40,103.22,100,noband
+19910614,x804,roses,37579,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,9,tabloid,canadian,1910,45,69,0.267,16.1,76,0.75,22,5.6,2426,55.6,38.9,0,0,2.7,0.7,30,40,103.22,100,noband
+19910614,g69,wards,37501,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,9,tabloid,canadian,1910,32.5,69,0.2,15.5,94,0.75,30,0.5,2050,52.6,42.1,0,0,2.5,1,33,40,100,100,noband
+19910627,x820,wards,37502,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,824,2,tabloid,canadian,1910,?,66,0.2,15,82,0.8125,30,7,1900,58.1,34.9,5,0,2.5,0.9,30,40,103.125,100,band
+19910626,i343,massey,37938,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,816,9,catalog,northus,1910,45,65,0.3,16.3,78,0.75,32,3.4,1700,56.8,39.8,4,0,2.5,1,34,40,106.45,100,band
+19910622,r2,sheplers,35528,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,spiegel,northus,1910,40,68,0.3,14,88,0.75,32,0,1742,60,40,3,0,2.5,1,40,40,103.125,100,band
+19910619,x760,wards,37199,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1910,40,64,0.2,16.5,82,0.5625,30,2.3,1900,57.5,40.2,0,0,1.3,0.8,30,40,106.45,100,band
+19910618,i383,childcraft,37003,yes,key,yes,benton,gallatin,uncoated,cover,no,line,yes,woodhoe70,815,2,catalog,northus,1910,40,65,0.267,16.2,79,0.625,30,0,1500,62.5,37.5,4,0,2.5,1,38,40,106.45,100,band
+19910617,t176,hanoverhouse,37990,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,1910,50,66,0.233,16,87,1,?,11.1,1530,55.6,33.3,0,0,2.5,1,34,40,100,100,band
+19910609,y255,kmart,37365,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,9,tabloid,northus,1911,35,62,0.4,14.5,94,1,35,0,1900,63.3,36.7,0,0,2.5,1,35,40,106.89,100,band
+19910609,x253,eckerd,35460,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,824,2,tabloid,canadian,1910,40,62,?,16,80,0.8125,40,0,2250,62.5,37.5,0,0,2.5,0.7,30,40,110,100,band
+19910607,aa11,kmart,37365,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,9,tabloid,northus,1910,42.5,58,0.4,15,76,1,20,5.4,2000,54.3,40.2,0,0,2.5,1,35,40,103.33,100,band
+19910707,m362,modmat,47204,yes,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,9,catalog,northus,1910,50,64,0.233,18,64,1,?,0,1300,62.5,37.5,0,0,3,1,40,40,106.45,100,band
+19910707,f26,modmat,47204,yes,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,10,catalog,?,1910,50,64,0.2,16,86,0.75,?,0,1300,58.8,41.1,0,0,2.5,1,40,40,106.45,100,band
+19910629,i820,massey,37938,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,canadian,1910,60,66,0.2,14.5,85,0.25,?,0,?,62.2,37.8,0,0,2.5,1,34,40,106.45,100,band
+19910706,x367,wards,37505,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,824,9,tabloid,canadian,1910,40,64,0.233,15.4,88,0.5625,24,4.4,1835,55.5,40,2,0,2,1.3,30,40,106.45,100,noband
+19910706,x793,wards,37505,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,824,2,tabloid,canadian,1910,40,64,0.2,16,76,0.8125,23,4.8,1835,59.5,35.7,3,0,2,0.7,30,40,106.45,100,noband
+19900514,f679,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,9,catalog,northus,1910,47.5,63,0.3,16.4,84,0.5,27,20.7,1800,41.3,38,5,0,2.6,0.3,40,33,96.7,100,band
+19900509,f242,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,woodhoe70,816,9,catalog,northus,1910,50,50,0.3,14.5,84,0.25,24,20.7,1500,41.3,38,0,0,3.0,0.6,40,33,103.3,100,band
+19900511,m260,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,1910,50,48,0.233,13,80,1.0,?,18.9,1700,47.2,34,0,0,2.7,0.6,40,33,100,100,band
+19900518,i331,austads,34402,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,woodhoe70,815,9,catalog,northus,1911,52,54,0.5,16,82,0.875,22,15.8,900,49.5,34.7,0,0,2.5,1.0,50,40,96.7,100,band
+19900414,o21,target,34545,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,827,2,spiegel,canadian,1910,40,41,0.233,14,79,0.75,20,0,1530,61.7,38.3,5,0,3.1,1.8,33,33,96.9,100,noband
+19900418,j68,wards,36053,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,tabloid,canadian,1910,45,42,0.233,15,76,0.75,30,0,2220,58.8,41.2,0,0,2.5,1,30,35,100,100,noband
+19900418,j42,wards,36053,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,canadian,1910,45,42,0.233,16,84,0.625,28,0,2220,54.3,45.7,0,0,2.5,1,30,35,100,100,noband
+19900606,f331,natlwildlife,36859,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,7,catalog,northus,1911,55,54,0.267,15,70,0.625,60,3.4,1600,56.8,39.8,0,0,1,0.4,45,40,103.3,100,noband
+19900606,f571,natlwildlife,36859,yes,key,yes,benton,gallatin,uncoated,cover,no,line,no,albert70,802,2,catalog,northus,1911,57.5,54,0.267,15.5,80,0.625,55,0,1600,62.5,37.5,0,0,3,0.5,45,40,103.3,100,noband
+19900507,m93,modmat,47103,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,9,catalog,northus,1910,40,54,0.233,15.59,89,1,?,1.2,1700,58.1,40.7,0,0,2.5,0.6,40,33,103.3,100,noband
+19900409,g467,eckerd,34683,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,northus,1910,40,38,0.3,16,92,0.625,25,1.1,1900,53.8,45.2,0,0,2.5,1.0,30,33,100.0,100,noband
+19900524,f227,jamesway,36648,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,1,catalog,canadian,1911,50,60,0.3,14,75,0.625,33,0,2000,65.2,34.8,0,0,0,0,35,40,96.9,100,band
+19900425,g496,burdines,34664,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,woodhoe70,816,9,tabloid,northus,1910,45,49,0.2,16,72,0.375,38,15,1650,50,35,0,0,2.5,0.2,38,33,96.9,100,band
+19900418,f329,exxon,36858,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,northus,1910,60,43,0.367,15,94,1,?,9.5,1500,52.6,37.9,0,4,2.5,1,40,35,100,100,band
+19900409,x203,tvguide,25416,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1911,47.5,41,0.333,18,74,0.5,30,17.7,1900,44.2,38.1,2,0,2.5,1,40,33,100,100,band
+19900417,t313,exxon,36858,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,2,catalog,northus,1910,47.5,52,0.267,14.3,98,0.75,55,11.7,1600,53.2,35.1,0,0,3,1,40,33,100,100,band
+19900606,r4,target,34546,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,spiegel,canadian,1911,37.5,54,0.3,14.5,80,1,20,10.9,2400,54.3,34.8,0,0,2.5,0.4,30,40,103.3,100,noband
+19900606,r15,target,34546,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,spiegel,canadian,1911,52.5,54,0.267,14.6,82,?,32,10.5,2400,52.6,36.8,0,0,2.5,0.5,30,40,100,100,noband
+19900517,x400,wards,36054,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,tabloid,canadian,1910,45,55,0.3,15,75,0.75,25,0,2300,59.8,40.2,0,0,2,2.3,30,33,96.6,100,noband
+19900426,o6,target,34545,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,motter94,827,9,tabloid,canadian,1910,40,48,0.3,15,82,1,35,0,1720,59.3,40.7,0,0,1.5,1.5,32,33,100,100,noband
+19900426,o14,target,34545,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,motter94,827,2,tabloid,canadian,1910,40,48,0.333,15,75,1,30,0,1720,61.7,38.3,0,0,2.5,3,33,33,103.2,100,noband
+19900505,t244,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1910,50,52,0.2,14,80,0.75,60,4.4,1700,54.9,40.7,0,0,2.5,1,40,33,100,100,band
+19900507,m260,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,1910,55,54,0.233,13.23,79,1,?,18.9,1700,47.2,34,0,0,2.0,0.6,40,33,100,100,noband
+19900507,t383,modmat,47103,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,10,catalog,northus,1910,40,54,0.267,14.42,87,1,?,4.5,1700,56.2,39.3,0,0,2.5,1,40,33,96.8,100,noband
+19900507,t78,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,2,catalog,northus,1910,72.5,54,0.2,14.5,82,0.75,50,2.2,1900,56.7,41.6,0,0,3,0.9,40,33,100,100,noband
+19900507,m4,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,northus,1910,47.5,54,0.2,16.08,69,1,?,3.3,1700,55.5,41.1,0,0,2.5,0.9,40,30,103.3,100,noband
+19900510,f672,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,northus,1910,60,50,0.3,15,72,0.75,30,15.9,1700,44.2,39.8,1,0,3,0.5,40,33,100,100,band
+19900517,x776,toysrus,34752,no,key,no,benton,gallatin,coated,coated,yes,line,yes,motter94,824,9,tabloid,canadian,1910,50,48,0.333,15.8,70,?,30,0,1900,58.8,41.2,5,0,2.5,1.2,30,33,100,100,noband
+19900517,x713,toysrus,34752,no,key,no,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,northus,1910,50,48,0.233,15.5,68,0.8125,30,0,1900,57.4,42.6,10,0,1.5,1,30,33,100,100,noband
+19900507,m432,homeshopping,36928,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,catalog,canadian,1910,40,54,0.233,15,80,0.75,28,0,1800,58.8,41.2,0,0,2.5,1.2,30,33,100,100,noband
+19900507,m257,homeshopping,36928,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,catalog,canadian,1910,40,54,0.3,15,88,0.75,28,0,1800,58.8,41.2,0,0,2.5,1.2,30,33,100,100,noband
+19900606,x138,tvguide,25424,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1911,40,54,0.333,14.1,80,?,20,24.8,1850,41.3,33.9,3,0,2.5,0.8,40,40,103.3,100,noband
+19900603,f670,ntlwildlife,36859,yes,key,yes,benton,gallatin,uncoated,cover,no,line,no,albert70,802,2,catalog,northus,?,50,65,?,17,100,0.625,52,5.6,1650,55.5,38.9,0,0,3,0.6,45,?,?,100,band
+19900617,x787,hanoverhouse,34093,yes,key,yes,benton,gallatin,uncoated,cover,no,line,no,motter94,821,7,tabloid,northus,1910,52.5,62,0.433,14.5,95,0.75,20,0,1950,58.8,41.2,0,0,2,1,38,35,100,100,band
+19900602,f590,natlwildlife,36859,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,northus,1910,50,56,0.2,14.3,105,0.75,70,0,1600,55.5,44.5,0,0,3,1,45,35,100,100,band
+19900608,f19,jamesway,36649,no,key,yes,benton,gallatin,coated,coated,no,line,?,motter70,813,6,catalog,scandanavian,1911,47.5,62,0.333,15,84,?,?,5.6,?,56.2,38.2,0,0,2.5,1,35,40,96.7,100,noband
+19900608,f89,jamesway,36649,no,key,yes,benton,gallatin,coated,coated,no,line,?,motter70,813,1,catalog,scandanavian,1911,47.5,62,?,15,80,?,?,5.6,?,56.2,38.2,0,0,2.5,1,35,40,96.9,100,noband
+19900615,r17,target,34547,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,spiegel,canadian,1910,30,58,0.433,15.9,81,0.625,30,0,2150,62.5,37.5,10,0,2.5,1,30,35,90,100,noband
+19900615,r29,target,34547,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,spiegel,canadian,1910,30,58,0.333,16.3,78,0.625,30,0,2150,58.8,41.2,10,0,2.5,1,30,35,90,100,noband
+19900612,x423,wards,36894,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1910,30,51,0.3,16,70,0.8125,20,0,2250,58.8,41.2,0,0,1.5,0.6,30,35,103.3,100,noband
+19900612,x414,wards,36894,no,key,yes,benton,gallatin,coated,coated,yes,line,yes,motter94,824,9,tabloid,canadian,1910,30,51,0.333,16,76,0.875,25,19.1,2250,42.7,38.2,3,0,1.2,0.5,30,35,103.3,100,noband
+19900615,x84,wards,36057,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,9,tabloid,canadian,1910,30,58,0.467,15,98,0.75,30,0,2300,58.8,41.2,6,0,2.25,1,30,35,100,100,noband
+19900615,x96,wards,36057,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,tabloid,canadian,1910,30,58,0.467,15,96,0.75,30,0,2300,58.8,41.2,6,0,3,0.75,30,35,100,100,noband
+19900606,g407,childworld,36024,yes,key,yes,benton,gallatin,coated,uncoated,no,line,no,woodhoe70,815,9,tabloid,canadian,1910,52.5,54,0.433,16.3,90,0.75,38,0,1800,62.5,38.5,0,0,2.9,1.1,33,35,100,100,noband
+19900606,g150,childworld,36024,yes,key,yes,benton,gallatin,coated,uncoated,no,line,no,woodhoe70,815,2,tabloid,canadian,1910,55.5,54,0.233,15,82,0.75,38,0,1800,58.8,41.2,0,0,2,1,33,35,100,100,noband
+19900606,x777,tvguide,25424,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,motter94,821,2,tabloid,northus,?,40,54,?,14.6,85,?,20,21.7,1850,43.5,34.8,0,0,2.5,0.8,40,?,?,100,noband
+19900614,b6,downs,34397,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,mideuropean,1910,50,53,0.3,16,65,0.75,?,15.8,1300,49.5,34.7,0,0,2.5,1,28,35,93.5,100,noband
+19900614,f85,downs,34397,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,6,catalog,mideuropean,1910,50,53,0.3,16.5,90,0.75,?,11.3,1300,51.5,37.1,0,0,2.5,0.7,28,35,100,100,noband
+19900621,i301,global,36846,yes,key,yes,benton,gallatin,uncoated,cover,no,line,yes,albert70,802,7,catalog,northus,1910,50,59,0.367,13,92,0.625,49,0,1300,58.8,41.2,0,0,3,1.1,40,35,100,100,band
+19900622,f135,casualliving,38025,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,815,9,catalog,northus,1910,57.5,55,0.333,14,86,0.75,30,13,1700,50,37,0,0,2.9,0.9,34,35,100,100,noband
+19900622,t178,casualliving,38025,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,815,2,catalog,northus,1910,55,55,0.3,13,86,0.75,28,13.7,1700,49,37.3,0,0,3,0.8,34,35,100,100,noband
+19900611,f257,campingworld,36874,?,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,catalog,canadian,?,?,60,?,15.5,80,?,30,13,1750,54.3,32.6,0,0,2.75,1,33,?,?,100,noband
+19900611,f170,campingworld,37874,?,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,catalog,canadian,?,?,60,?,15,78,0.625,34,15,1750,50,35,0,0,2.5,1,33,?,?,100,noband
+19900622,f77,childcraft,36911,yes,key,yes,benton,gallatin,uncoated,cover,no,line,no,motter70,813,6,catalog,northus,1910,50,59,0.4,15,90,0.75,?,0,1500,58.8,41.2,0,0,2.5,1,40,35,100,100,band
+19900626,x95,tvguide,25427,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1910,55,49,0.233,15.6,80,1,30,35.8,1950,41.7,22.5,1,0,2.7,1,40,37,100,100,band
+19900625,m254,oldvillageshop,34092,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,2,catalog,?,1910,65,49,0.333,13.5,82,0.625,30,0,1350,68.2,31.8,1,0,2.5,1,38,37,103.2,100,band
+19900622,i347,globalequp,36846,no,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,northus,1910,65,65,0.4,14,100,0.75,40,7.0,1200,58.1,34.9,0,0,2.5,1,40,35,100,100,band
+19900625,x116,wards,36058,no,key,yes,benton,gallatin,coated,coated,no,line,?,motter94,824,6,tabloid,canadian,1911,50,58,0.3,16,?,0.875,24,0,2200,58.8,41.2,0,0,1.2,0.6,30,42,93.75,100,noband
+19900625,m45,oldvillageshop,34092,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,815,9,catalog,?,1910,65,58,0.4,15,74,0.625,32,0,1800,57.5,42.5,1,0,2.5,1,38,37,103.2,100,band
+19900625,x273,wards,36058,no,key,yes,benton,gallatin,coated,coated,no,line,?,motter94,824,2,tabloid,canadian,1911,50,58,0.333,15.5,75,0.8125,24,0,2200,58.8,41.2,0,0,1.5,0.6,30,42,100,100,noband
+19900702,j6,yieldhouse,34367,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,9,tabloid,northus,1911,62.5,47,0.167,17,75,0.75,30,14.3,1700,47.6,38.1,0,0,3,0.5,40,40,96.9,100,band
+19900706,x135,ames,34583,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,9,tabloid,canadian,1911,40,47,0.2,15,75,0.75,25,0,2100,61.1,38.9,0,0,2.4,1.1,33,40,96.9,100,noband
+19900705,x151,tvguide,25428,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,northus,1911,45,47,0.2,14,80,0.75,20,18.0,1800,45,37,0,0,2.5,0.8,40,40,96.9,100,noband
+19900330,x750,guideposts,23040,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,?,?,50,59,0.333,14.5,71,0.625,20,11.1,1650,55.5,33.3,0,0,2.5,1,40,?,?,100,band
+19900707,t245,massey,36784,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,2,catalog,northus,1910,60,58,0.333,15.1,93,1,25,0,1650,56.1,33.9,0,0,2.5,1,40,35,100,100,band
+19900708,f374,massey,36784,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,815,2,catalog,northus,1910,50,58,0.367,13.5,100,0.75,35,0,1750,55.5,44.5,3,0,2.7,0.5,40,35,100,100,band
+19900710,b181,modmat,47104,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,2,catalog,northus,1910,40,56,0.3,16.5,80,?,45,20.3,1400,44.2,35.5,0,0,3,0.6,40,35,100,100,noband
+19900710,m332,modmat,47104,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,7,catalog,northus,1911,30,56,0.433,16,70,?,60,21.8,1400,45.4,32.8,0,0,3,0.9,40,40,96.8,100,noband
+19900710,t234,massey,36784,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,woodhoe70,815,9,catalog,northus,1910,37.5,56,0.3,14,82,0.625,28,0,1700,58.8,41.2,2,0,2.5,0.5,40,35,100,100,noband
+19900710,m39,modmat,47104,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,motter70,813,5,catalog,northus,1911,50,56,0.333,14.6,74,0.75,?,7.5,1400,53.8,38.7,0,4,2.4,0.8,40,40,96.8,100,noband
+19900710,f450,modmat,47104,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,motter70,813,1,catalog,northus,1911,57.5,56,0.5,13.8,73,0.75,?,4.4,1400,52.7,42.9,0,0,2,0.5,40,40,96.8,100,noband
+19900706,x281,ames,34583,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,tabloid,canadian,1911,45,55,0.2,14,73,0.75,30,0,2100,61.1,38.9,0,0,2.5,0.8,33,40,96.8,100,band
+19900710,x346,hills,34714,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1911,30,56,0.2,14.7,87,0.875,20,0,2150,58.8,41.2,12,0,1.5,0.6,30,40,96.8,100,noband
+19900710,x235,hills,34714,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1910,40,56,0.333,15.3,86,0.8125,32,0,2150,58.8,41.2,12,0,2.2,0.8,30,35,100,100,noband
+19900710,b125,modmat,47104,yes,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,10,catalog,northus,1911,55,56,0.4,15,87,0.75,?,0,1250,62.5,37.5,0,0,2.5,1,40,40,96.8,100,noband
+19900710,t280,modmat,47104,yes,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,9,catalog,northus,1911,55,56,0.4,15,93,0.75,?,0,1250,62.5,37.5,0,0,2.5,1,40,40,96.8,100,noband
+19900726,t8,rei,36644,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,no,woodhoe70,816,2,catalog,northus,1911,60,56,0.3,16,87,0.625,26,10.5,1450,50.5,39,3,0,3,1.3,40,40,93.75,100,band
+19900727,f257,rei,36644,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,northus,1910,60,53,0.3,18,103,0.625,50,22.1,1600,41,36.9,0,0,3,0.7,40,35,105.2,100,noband
+19900726,f261,rei,36644,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1910,57.5,53,0.367,14.5,70,0.625,58,20.2,1600,42,37.8,3,0,3,1,40,35,105.2,100,noband
+19900723,f264,uscav,35683,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1911,62.5,61,0.3,14,85,0.75,50,3.5,1660,56.8,39.7,2,0,3,1,32,40,93.75,100,noband
+19900723,f294,uscav,35683,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,northus,1910,65,61,0.367,14.8,80,0.375,45,19.5,1660,42.4,38.1,0,0,3,1,32,35,105.2,100,noband
+19900723,x232,eckerds,34685,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,2,tabloid,canadian,1911,50,61,0.267,14.2,88,1,29,0,2350,52.6,47.4,?,0,2.5,1.1,30,40,93.75,100,noband
+19900723,x750,eckerds,34685,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,10,tabloid,canadian,1910,50,61,0.333,13,72,1,41,0,2350,58.8,41.2,?,0,2,1,30,35,105.2,100,noband
+19900723,x351,roses,34894,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,821,2,tabloid,canadian,1910,45,61,0.4,14,78,0.75,20,25.6,2100,42.7,31.7,0,0,2.5,0.8,30,35,105.2,100,noband
+19900723,x25,roses,34894,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,821,7,tabloid,canadian,1910,50,61,0.333,13.1,70,0.75,25,21.7,2100,41.7,36.6,5,0,2.5,0.8,30,35,105.2,100,noband
+19900620,o7,target,34547,no,key,yes,benton,gallatin,coated,coated,no,line,?,motter94,827,2,spiegel,canadian,1910,32.5,54,0.267,15.5,78,1,25,0,1900,58.8,41.2,10,0,2.5,0.5,30,35,93.3,100,noband
+19900620,o15,target,34547,no,key,yes,benton,gallatin,coated,coated,no,line,?,motter94,827,9,spiegel,canadian,1910,32.5,54,0.5,15.5,78,1,25,0,1900,58.8,41.2,10,0,1.4,0.8,30,35,103.2,100,noband
+19900719,x753,wards,36066,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,9,tabloid,canadian,1911,40,54,0.2,15,72,0.75,35,0,2500,58.5,41.5,0,0,2.1,1.1,30,40,100,100,noband
+19900719,x823,wards,36066,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,tabloid,canadian,1911,40,54,0.367,15,78,0.75,20,0,2500,61.1,38.9,0,0,2.5,0.7,30,40,100,100,noband
+19900718,x60,wards,36066,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1910,45,54,0.2,15,80,0.8125,20,0,2000,58.8,41.2,0,0,1.5,0.6,33,35,111.1,100,noband
+19900806,j40,walmart,34493,?,key,yes,benton,gallatin,coated,uncoated,no,line,no,woodhoe70,816,9,tabloid,?,1910,?,51,0.167,16,75,0.5,30,0,1800,58.8,41.2,0,0,2.1,1,30,35,100,100,band
+19900730,x153,roses,34896,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,2,tabloid,northus,1910,40,54,0.4,15.2,88,0.875,?,5.9,2300,49.5,44.6,8,0,2.5,1,33,35,111.1,100,noband
+19900730,x272,roses,34896,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,9,tabloid,northus,1910,40,54,0.333,14.7,90,0.875,?,0,2300,52.6,47.4,4,0,3,1.1,33,35,111.1,100,noband
+19900730,f131,downs,23050,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,northus,1910,57.5,54,0.367,16.2,79,0.5,23,19,1500,47.6,33.4,5,0,3,1,32,35,93.3,100,noband
+19900727,f76,rei,36644,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,northus,1910,60,53,0.333,16.5,88,0.75,55,22.1,1550,41,36.9,0,0,3,0.8,40,35,105.1,100,noband
+19900730,f383,downs,23050,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,9,catalog,northus,1910,55,54,0.3,15.8,79,0.5,30,12.4,1500,51.5,36.1,0,0,3,0.5,32,35,93.3,100,noband
+19900727,f374,rei,36644,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1910,60,53,0.3,14.7,70,0.75,50,20.2,1550,42,37.8,3,0,3,1,40,35,111.1,100,noband
+19900801,j15,wards,36882,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,tabloid,canadian,1910,45,53,0.3,15.2,78,1,?,13.3,2150,51,35.7,2,0,2.5,1.1,30,35,111.1,100,noband
+19900811,j38,wards,36882,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,tabloid,canadian,1910,35,53,0.267,14.7,80,1,?,5.5,2150,55.6,38.9,0,0,2.5,0.4,30,35,111.1,100,noband
+19900804,j60,walmart,34483,no,key,yes,benton,gallatin,coated,uncoated,no,line,yes,woodhoe70,816,2,tabloid,?,1910,35,55,0.5,15,70,0.5,32,0,1950,58.8,41.2,0,0,2.5,1.3,30,35,100,100,band
+19900805,j60,walmart,34493,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,816,2,tabloid,?,1910,35,55,0.233,15,70,0.5,35,0,2000,58.8,41.2,0,0,2.5,1.5,30,35,100,100,band
+19900811,j40,walmart,34493,?,key,yes,benton,gallatin,coated,uncoated,no,line,no,woodhoe70,816,9,tabloid,northus,1910,?,54,0.333,17,94,0.25,26,0,1900,56.8,43.2,0,0,2.5,0.9,30,35,100,100,noband
+19900811,j45,walmart,34493,no,key,yes,benton,gallatin,coated,uncoated,no,line,no,woodhoe70,816,2,tabloid,northus,1911,?,54,0.2,14,80,0.3125,34,3.4,1900,56.8,39.8,0,0,2.5,1.3,30,40,106.7,100,noband
+19900807,x315,ames,34585,no,key,yes,?,gallatin,coated,coated,no,line,yes,motter94,828,2,tabloid,canadian,1910,30,50,0.2,15.6,84,1,?,0,2400,58.8,41.2,4,0,2.5,0.9,33,35,96.8,100,noband
+19900807,x766,ames,34585,no,key,yes,?,gallatin,coated,coated,no,line,yes,motter94,828,9,tabloid,canadian,1910,30,50,0.333,15.8,92,1,?,0,2400,58.5,41.2,2,0,3,1.4,33,35,96.8,100,noband
+19900810,w717,sheplers,36776,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,albert70,802,7,catalog,northus,1910,45,50,0.2,14.5,70,0.75,42,5.3,1700,52.6,42.1,0,0,3,0.8,40,45,100,100,noband
+19900810,w516,sheplers,36776,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,albert70,802,2,spiegel,northus,1910,40,50,0.267,13.5,75,0.75,45,0,1700,58.8,41.2,0,0,3,0.6,40,35,100,100,noband
+19900809,x35,tvguide,25433,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1910,50,50,0.2,16.2,75,0.75,25,3.3,1850,54.9,41.8,2,0,2.7,0.9,40,35,100,100,noband
+19900813,f633,dunns,38016,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,mideuropean,1910,45,54,0.333,14.8,70,0.75,50,13,1420,54.3,32.6,0,0,3,0.9,28,35,106.9,100,noband
+19900813,m200,dunns,38016,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,mideuropean,1910,45,54,0.233,14.3,67,0.75,45,12.3,1420,51.5,36.1,0,0,3,0.6,28,35,106.9,100,noband
+19900812,r15,target,34549,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,2,spiegel,canadian,1911,45,54,0.267,14,90,0.75,30,0,2000,58.8,41.2,0,0,3,1,33,40,103.3,100,noband
+19900812,x65,mervyns,34175,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,821,7,tabloid,?,1910,30,54,0.233,15.8,68,0.75,25,6.4,2000,53.2,40.4,4,0,2.3,0.8,35,35,106.9,100,noband
+19900813,x333,walmart,34493,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,?,1910,30,54,0.5,13.6,70,0.8125,30,0,2000,58.8,41.2,0,0,2.3,0.9,30,35,100,100,noband
+19900812,x282,mervyns,34175,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,821,2,tabloid,?,1910,30,54,0.333,16.8,71,0.75,25,18,2000,45,36.9,0,0,2.5,0.9,35,35,106.9,100,noband
+19900813,x184,walmart,34493,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,?,1910,30,54,0.167,14.6,70,0.8125,30,0,2000,58.8,41.2,0,0,1.5,0.6,30,35,106.9,100,noband
+19900814,r22,target,34549,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,spiegel,canadian,1910,45,54,0.167,18,90,0.5,26,8.3,1875,52.1,39.6,0,0,3,1,33,35,106.9,100,noband
+19900812,r23,target,34549,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,spiegel,canadian,1910,45,54,0.367,15,100,0.75,33,2.3,2000,56.8,40.9,0,0,2.75,0.9,33,35,106.9,100,noband
+19900819,f236,dunns,38016,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,?,1910,45,56,0.3,15.5,78,0.75,?,11.1,1350,55.5,33.3,0,0,2.2,0.9,28,35,100,100,noband
+19900819,f38,dunns,38016,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,?,1911,45,56,0.233,16,64,0.75,?,11.1,1350,55.5,33.3,0,0,2.5,0.5,28,40,103.3,100,noband
+19900818,x91,lazarus,34154,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,828,2,tabloid,?,1910,45,56,0.333,14.9,85,1,30,17.3,1600,48.1,34.6,0,0,2.8,1,40,35,100,100,noband
+19900818,x132,lazarus,34154,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,828,10,tabloid,canadian,1910,30,56,0.367,14.7,83,1,30,10.8,1600,53.8,35.5,0,6,2.6,1.2,40,35,100,100,noband
+19900820,x377,ames,34585,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,2,tabloid,canadian,1910,57.5,57,0.367,15.3,84,1,30,19,2400,47.6,33.3,0,0,3,1,33,40,93.75,100,noband
+19900820,x129,ames,34585,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,10,tabloid,canadian,1910,57.5,57,?,14.2,78,1,30,10.5,2400,52.6,36.8,0,0,2.5,1,33,40,93.75,100,noband
+19900830,t204,galls,38061,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,?,woodhoe70,815,1,spiegel,northus,1911,47.5,49,0.367,15,84,0.75,28,2.2,1600,54.3,43.5,0,0,3,0.9,34,30,108.1,100,band
+19900831,x197,tvguide,25437,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1911,57.5,51,0.333,15.2,70,0.625,25,11.1,1850,50.5,38.4,3,0,2.5,0.8,34,30,100,100,noband
+19900831,x138,tvguide,25437,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,2,tabloid,northus,1911,57.5,51,0.267,15.6,81,0.75,25,9.8,1850,49,41.2,0,0,2.7,0.6,34,30,100,100,noband
+19900825,x727,ames,38013,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,824,2,tabloid,?,1910,40,55,0.533,15.4,80,0.8125,30,10.2,2400,51,38.8,0,0,1.7,0.7,30,45,93.75,100,noband
+19900825,x60,ames,38013,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,824,9,tabloid,?,1910,45,55,0.3,16.1,82,0.75,30,0,2400,58.8,41.2,0,0,2,0.8,30,45,93.75,100,noband
+19900824,f192,competitivedge,34399,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,1911,40,54,0.3,15,70,?,?,10,?,50,40,0,0,2.5,0.8,60,30,100,100,noband
+19900824,m254,competitivedge,34399,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,northus,1910,42.5,54,0.3,15,70,?,?,13.4,1500,48.1,38.5,2,0,2.5,1,60,45,93.75,100,noband
+19900821,i353,austads,34066,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,canadian,1910,52.5,55,0.333,14,70,0.625,55,7.9,1600,57.5,34.44,4,0,3,0.8,40,45,93.75,100,noband
+19900821,i346,austads,34066,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,2,catalog,canadian,1910,52.5,55,0.433,14,80,?,55,9.9,1600,49.5,40.6,0,0,3,0.5,40,45,93.75,100,noband
+19900921,r6,target,34551,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,1,spiegel,canadian,1910,35,72,0.367,15.2,72,1,36,0,2200,65.2,34.8,0,0,2.5,1,30,40,93.6,90,band
+19900921,r6,target,34551,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,1,spiegel,canadian,1910,35,56,0.267,15,70,1,33,0,2350,65.2,34.8,0,0,2.5,1,30,40,93.75,90,band
+19900920,g657,colortile,34749,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,816,2,tabloid,canadian,?,?,46,?,16,72,0.5,32,0,1673,58.8,41.2,0,0,2.5,1.5,30,?,?,?,band
+19900913,r7,target,34551,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,1,spiegel,canadian,1910,40,60,0.2,15.5,73,0.75,28,0,1850,65.2,34.8,0,0,2.8,1,30,40,100,90,band
+19900909,f126,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1911,60,50,0.233,14.5,70,0.75,45,15.6,1650,45.8,38.5,2,0,2.5,1,40,40,100,100,noband
+19900909,f159,modmat,47105,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,816,2,catalog,northus,1910,60,50,0.267,14.9,88,0.375,32,10.3,1700,51.5,38.1,5,0,3,1.3,40,40,103.3,100,noband
+19900909,f337,modmat,47103,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,northus,1910,60,50,0.3,14.5,60,0.75,40,19,1650,47.6,33.3,0,0,2.5,1,40,40,103.3,100,noband
+19900909,f679,modmat,47105,yes,key,yes,uddeholm,gallatin,uncoated,uncoated,no,line,no,woodhoe70,816,9,catalog,northus,1910,65,50,0.267,15,86,0.25,28,10.5,1700,52.6,36.8,2,0,2.5,0.6,40,40,103.3,100,noband
+19900910,m103,modmat,47105,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,northus,1911,55,47,0.367,13,70,?,?,14.1,1600,50.5,35.3,0,0,2.5,0.5,40,35,106.25,100,noband
+19900910,m309,modmat,47105,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,1911,65,47,0.367,12,68,?,?,0,1600,58.8,41.2,0,0,2.8,0.8,40,35,106.25,100,noband
+19900910,t284,modmat,47105,yes,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,10,catalog,northus,1911,55,47,0.233,15.5,74,?,?,0,1600,62.5,37.5,0,0,2.5,1,40,35,106.25,100,noband
+19900910,t333,modmat,47105,yes,key,yes,benton,gallatin,coated,coated,no,line,yes,motter70,813,9,catalog,northus,1910,55,47,0.2,14,71,?,?,0,1600,62.5,37.5,0,0,2.5,0.7,40,40,90.3,100,noband
+19900915,f679,modmat,47105,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,9,catalog,northus,1910,65,60,0.267,14.5,80,0.25,38,15.8,1900,49.5,34.6,0,0,2.9,0.7,40,40,103.3,100,noband
+19900915,f159,modmat,47105,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,northus,1910,60,60,0.267,14,76,0.375,30,10.3,1900,51.5,38.1,5,0,2.6,1.1,40,40,103.3,100,noband
+19900924,r6,target,34551,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,1,spiegel,canadian,1910,40,49,0.267,14,82,0.625,30,0,2150,65.2,34.8,1,0,2.5,0.9,30,40,93.75,90,band
+19901002,g55,kmart,36197,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,woodhoe70,815,1,tabloid,northus,1910,55,50,0.133,14,80,0.625,32,8,2000,60,32,0,0,2.5,0.9,35,40,93.55,90,band
+19901002,g55,kmart,36197,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,1,tabloid,northus,1910,55,48,0.367,14.5,76,0.5,30,8,2000,60,32,0,0,2.5,1,35,40,93.55,90,band
+19901003,x753,tvguide,25441,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1910,55,50,0.267,17,89,1,22,10.4,1650,52.1,37.5,0.75,0,2.5,1.1,34,40,93.55,90,band
+19901002,g150,kmart,36197,no,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,tabloid,mideuropean,1911,55,50,0.2,17,78,0.25,32,9.7,1900,52.2,38.1,0,0,3,0.9,35,40,96.97,90,band
+19901001,x271,toysrus,34754,no,key,no,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1910,42.5,48,0.2,16,70,0.8125,35,0,2050,66.7,33.3,2,0,1.7,1,30,40,93.55,90,noband
+19901001,x251,toysrus,34754,no,key,no,benton,gallatin,coated,coated,no,line,no,motter94,824,9,tabloid,canadian,1910,42.5,48,0.2,15,76,0.875,30,3.6,2050,60.2,36.2,0,0,2.5,1,30,40,93.55,90,noband
+19900926,x326,walmart,36578,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,827,9,tabloid,mideuropean,1911,35,48,0.233,14.5,76,0.75,20,0,2225,62.5,37.5,4,0,2.7,1.2,33,40,106.25,90,noband
+19900926,x206,walmart,36578,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,827,2,tabloid,mideuropean,1911,35,48,0.3,14.5,74,0.75,20,0,2225,62.5,37.5,4,0,2,1.2,33,40,106.25,90,noband
+19900926,r9,target,34551,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,spiegel,canadian,1910,30,48,0.233,15,88,0.75,35,7.7,?,57.7,34.6,0,0,2.8,0.8,30,40,100,90,noband
+19900926,x820,tvguide,25440,yes,key,yes,?,gallatin,uncoated,uncoated,no,line,no,motter94,821,2,tabloid,northus,1911,47.5,49,0.433,14.5,88,0.625,25,34.5,2000,43.5,22,0,0,2.5,0.7,40,40,96.97,90,noband
+19900924,f337,modmat,47105,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,1,catalog,northus,1911,60,48,0.367,14,76,1,?,5.6,1600,55.6,38.8,0,0,2.5,0.7,40,40,96.97,90,noband
+19900924,f126,modmat,47105,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter70,813,5,catalog,northus,1911,60,48,0.4,16,72,1,?,15.2,1600,44.6,40.2,0,4,2.1,0.7,40,40,96.97,90,noband
+19901006,g71,kmart,36197,no,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,816,9,tabloid,northus,1911,47.5,52,0.3,15.2,76,0.75,30,17.5,1700,48.7,33.8,0,0,2.5,0.8,35,40,114.3,100,band
+19901007,m74,casliving,38059,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,7,catalog,northus,1911,42.5,52,0.333,16.8,80,0.625,40,0,1700,54.3,45.7,3,0,3,1,34,40,107.4,100,noband
+19901007,g67,kmart,36197,no,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,9,tabloid,mideuropean,1911,47.5,53,0.3,15,72,0.75,25,22.0,1500,45.9,32.1,0,0,2.5,0.8,35,40,114.3,100,band
+19901004,g84,kmart,36197,no,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,2,tabloid,mideuropean,1911,47.5,58,0.333,14,85,0.75,28,16.5,1800,48.5,35.0,0,0,2.5,0.5,35,40,114.3,100,band
+19901001,g150,kmart,36197,no,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,tabloid,mideuropean,1910,55,48,0.233,18,76,0.25,24,10,1600,60,30,0,0,3,0.9,35,40,93.55,90,band
+19901005,x828,brendls,38218,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,821,7,tabloid,canadian,1911,30,52,0.333,16.5,80,0.625,40,0,1800,58.1,41.9,1,0,2.5,0.4,35,40,107.4,100,band
+19901007,m65,casliving,38059,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,northus,1910,42.5,52,0.233,18,70,0.625,45,0,1700,58.8,41.2,0,0,3,0.7,34,40,103.125,100,noband
+19901010,x367,tvguide,25443,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1911,47.5,54,0.3,14,65,0.625,25,16.1,1500,44.6,39.3,4,0,2.5,1,34,40,114.29,100,band
+19901017,t178,servmerch,38240,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,albert70,802,7,catalog,mideuropean,1911,60,46,0.333,?,80,0.625,50,12.4,1391,51.5,36.1,2,0,2.7,1,38.5,40,114.29,100,noband
+19901017,t200,servmerch,38240,yes,key,yes,benton,gallatin,uncoated,uncoated,no,xylol,yes,albert70,802,2,catalog,mideuropean,1911,60,46,0.333,?,70,0.625,50,19,1391,47.6,33.3,0,0,2.7,0.7,38.5,40,114.29,100,noband
+19901010,r34,target,34522,no,key,yes,benton,gallatin,coated,uncoated,no,line,yes,woodhoe70,816,9,spiegel,northus,1911,35,50,0.3,14,74,0.25,28,0,2500,58.8,41.2,0,0,2.5,0.7,30,40,114.29,100,noband
+19901010,r15,target,34522,no,key,yes,benton,gallatin,coated,uncoated,no,line,yes,woodhoe70,816,2,spiegel,northus,1911,40,50,0.3,13,74,0.25,25,0,2500,58.8,41.2,2,0,2.5,0.5,30,40,114.29,100,noband
+19901008,x420,ames,34587,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,827,2,tabloid,canadian,1911,30,53,0.333,14,85,0.75,30,15,2290,50,35,0,0,2.0,1.5,33,40,110.7,100,noband
+19901008,x389,ames,34587,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,827,9,tabloid,canadian,1911,30,53,0.3,15,80,0.75,30,15,2290,50,35,0,0,2.5,1,33,40,110.7,100,noband
+19901014,x37,toysrus,34756,no,key,no,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1911,30,54,0.333,16.3,80,0.8125,30,0,2100,60,40,3,0,2.5,1.2,30,40,114.29,100,noband
+19901014,x771,toysrus,34756,no,key,no,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,canadian,1911,30,54,?,14.9,72,1.25,30,3.6,2100,60.2,36.1,1.5,0,2.5,1.2,30,40,114.29,100,noband
+19901027,g465,woolwrth,34996,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,tabloid,?,1910,35,43,0.367,13,75,0.75,?,0,2000,62.5,37.5,0,0,2.5,1.1,30,40,100,100,band
+19901101,x185,tvguide,25445,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1910,52.5,43,0.267,15,71,0.75,28,7.4,1500,53.2,39.4,0,0,2.5,1,34,40,98.3,100,band
+19901102,x199,kmart,36165,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,828,2,tabloid,northus,1910,65,43,0.2,16,78,0.75,30,12,2100,46.3,41.7,0,0,2,1,40,40,100,100,band
+19901031,x251,kmart,36165,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,828,9,tabloid,northus,1910,65,42,0.233,17.5,100,1.125,25,17.5,2250,48.5,34,0,0,2.5,1,40,40,100,100,noband
+19901031,x199,kmart,36165,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,828,2,tabloid,northus,1910,65,42,0.2,17,80,1,22,15,2250,50,35,1,0,2.5,1,40,40,100,100,noband
+19901102,g519,ames,34588,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,tabloid,canadian,1910,37.5,43,0.2,16,76,0.9375,?,0,2180,62.5,37.5,2,0,2.9,1.2,33,40,96.77,100,band
+19901023,g459,wards,36059,?,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,canadian,?,?,42,?,16.1,73,0.625,30,0,2000,61.9,38.1,0,0,2.8,1,30,?,?,?,band
+19901027,g465,woolworth,34996,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,tabloid,?,1910,35,43,0.367,13,75,0.75,?,0,2000,62.5,37.5,0,0,2.5,1.1,30,40,100,100,band
+19901030,g3,woolworth,34996,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,tabloid,?,1910,35,42,0.3,15.9,78,0.375,32,0,2150,62.5,37.5,0,0,1.7,0.9,30,40,101.67,100,band
+19901031,g98,ames,34588,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,2,tabloid,canadian,1910,40,43,0.233,15.5,85,0.75,25,4.7,2000,58.1,37.2,0,0,2.5,1,33,40,96.77,100,band
+19901102,g625,ames,34588,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,canadian,1910,40,43,0.267,17.2,78,0.9375,?,1,2180,58.3,40.7,2,0,2.4,0.8,33,40,96.77,100,band
+19901107,x129,tvguide,25466,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1910,50,43,0.267,17,72,0.625,30,14.3,1600,47.6,38.1,0,0,2.5,1,34,40,96.77,100,band
+19901114,x243,tvguide,25477,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1911,50,42,0.2,17,73,0.4375,20,18.5,1800,46.3,35.1,2,0,2.5,1,34,40,100,100,band
+19901108,t281,modmat,47106,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,2,catalog,canadian,1910,40,43,0.2,13.5,76,0.75,52,4.4,1726,55,40.6,0,0,3,1,40,40,96.77,100,noband
+19901105,g81,hills,34716,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,9,tabloid,northus,1910,40,43,0.267,16.4,79,0.3125,35,0.5,2400,59.5,40,0.5,0,2.6,1.1,35,40,96.77,100,noband
+19901109,g81,hills,34716,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,woodhoe70,816,9,tabloid,northus,1910,40,51,0.233,15,70,0.25,24,0.5,0,59.5,40,0,0,3,1,35,40,100,100,band
+19901108,g462,woolworth,34997,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,1,tabloid,canadian,1910,32.5,43,0.2,13,80,0.75,28,0,1500,62.5,37.5,0,0,0,0,30,40,100,100,band
+19901105,g108,hills,34716,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,2,tabloid,northus,1910,40,43,0.233,15.6,81,0.5,34,0,2400,62.5,37.5,5,0,?,0.9,35,40,96.77,100,noband
+19901107,g640,hills,34716,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,7,tabloid,northus,1910,37.5,43,0.2,15.8,80,0.5,32,0,2400,62.5,37.5,5,0,2.5,0.9,35,40,96.77,100,noband
+19901105,o28,target,34553,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,spiegel,canadian,1910,45,42,0.267,14.9,75,1,25,10.5,1660,52.6,36.9,0,0,2.5,1,30,40,101.67,100,noband
+19901105,o21,target,34553,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,9,spiegel,canadian,1910,45,42,0.2,14,80,?,20,7.6,?,54.3,38.1,0,0,?,?,30,40,101.67,100,noband
+19901107,x127,kmart,36166,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,motter94,828,2,tabloid,northus,1910,45,43,0.2,16,80,0.75,30,3.1,2200,51,45.9,0,0,2.5,1.3,35,40,103.33,100,noband
+19901107,x374,kmart,36166,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,motter94,828,9,tabloid,northus,1910,50,43,0.2,15.5,72,0.75,30,5.1,2200,50.6,44.3,0,0,2.5,1.3,35,40,96.77,100,noband
+19901106,f601,modmat,47106,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1910,40,45,0.233,13.6,90,0.75,45,0,1386,62.5,37.5,0,0,3,0.7,40,40,96.77,100,band
+19901113,f601,modmat,47106,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1910,40,42,0.2,15,65,0.75,55,0,1650,62.5,37.5,0,0,2.5,1,40,40,96.77,100,band
+19901117,x795,brendls,34442,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,7,tabloid,northus,1910,50,43,0.267,14,74,0.625,20,2.2,1800,56.2,41.6,0,0,3,1,38,40,96.875,100,band
+19901114,g604,woolworth,34997,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,tabloid,canadian,1910,50,47,0.2,16.2,74,0.75,28,10.8,2000,53.4,35.8,0,0,2.5,1.3,30,40,100,100,band
+19901115,g5,woolworth,34997,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,canadian,1910,50,47,0.267,16,92,0.75,35,0,1800,68,32,1,0,2.6,1.2,30,40,100,100,band
+19901125,w357,toysrus,34759,no,key,no,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,1,spiegel,canadian,1910,32.5,47,0.267,16.1,88,0.3125,28,0,2189,62.5,37.5,0,0,2.4,0.8,30,40,100,100,noband
+19901125,w364,toysrus,34759,no,key,no,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,spiegel,canadian,1910,32.5,47,0.2,20,79,0.3125,29,0,2189,58.1,41.9,5,0,2.5,1.25,30,40,100,100,noband
+19901119,g60,jcp,34781,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,2,tabloid,northus,1910,70,43,0.3,18.1,78,0.5,28,14.4,2125,48.1,37.5,5,0,3,0.9,33,40,100,100,noband
+19901119,g412,jcp,34781,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,9,tabloid,northus,1910,70,43,0.233,16,77,0.8175,28,15.9,2125,46.5,37.6,3,0,1.75,0.6,33,40,100,100,noband
+19901125,w406,toysrus,34759,no,key,no,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,spiegel,canadian,1910,40,47,0.2,16.53,78,0.8125,24,0,2189,58.8,41.2,0,0,2,0.8,30,40,100,100,noband
+19901116,g628,woolworth,34997,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,canadian,1910,32.5,45,0.233,14,94,0.625,25,0,1800,66.7,33.3,0,0,2.1,1,30,40,100,100,band
+19901124,w395,toysrus,34259,no,key,no,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,1,spiegel,canadian,1911,40,47,0.267,15,88,0.5,34,0,1700,62.5,37.5,0,0,0,0,30,40,100,100,band
+19901120,t281,modmat,47106,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,2,catalog,northus,1911,40,46,0.3,15,70,0.75,50,0,1800,53.9,46.1,0,0,2.5,1,40,40,100,100,band
+19901121,f601,modmat,47106,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1911,40,50,0.233,14,70,0.75,45,0,1800,60.2,39.8,0,0,2.5,1,40,40,100,100,band
+19901114,x760,tvguide,25447,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,motter94,821,2,tabloid,northus,1911,45,41,0.2,15,78,0.75,20,14.6,1800,48.5,36.9,0,0,2.5,1,34,40,100,100,noband
+19901115,o1,target,34554,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,2,spiegel,northus,1910,45,42,0.2,14,75,1,20,11.2,1800,51,37.8,8,0,2.5,1,35,40,100,100,noband
+19901115,o14,target,34554,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,827,9,spiegel,northus,1911,45,42,0.333,14,75,1,20,0,1800,58.9,41.1,8,0,3,2,35,40,100,100,noband
+19901113,x770,kmart,36167,no,key,?,benton,gallatin,uncoated,coated,no,line,yes,motter94,828,2,tabloid,scandanavian,1910,45,41,0.333,15.8,78,1,40,0,2300,62.5,37.5,4,0,2.5,1.4,35,40,100,100,noband
+19901113,x766,kmart,36167,no,key,?,benton,gallatin,uncoated,coated,no,line,yes,motter94,828,9,tabloid,scandanavian,1910,45,41,0.2,14.6,74,1,32,21,2300,47.6,31.4,4,0,2.5,1.1,35,40,96.77,100,noband
+19901206,x001,tvguide,25450,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1910,45,42,0.4,14.8,72,0.625,20,0,1800,58.8,41.2,0,0,2.5,0.9,34,40,106.25,100,noband
+19901206,g81,lurias,36805,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,9,tabloid,mideuropean,1910,50,42,0.267,16,88,0.75,33,11.5,1650,52.1,36.4,0,0,2.5,1,38,40,106.25,100,noband
+19901206,g5,lurias,36805,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,815,2,tabloid,mideuropean,1910,50,42,0.3,17,88,0.75,30,0,1600,62.5,27.5,5,0,2.6,1,38,40,106.25,100,band
+19901206,g5,lurias,36805,yes,key,yes,benton,gallatin,uncoated,cover,no,line,yes,woodhoe70,815,2,tabloid,mideuropean,1910,50,42,0.233,15,90,1,35,0,1650,55.5,44.5,0,0,2.5,1,38,40,100,100,band
+19901206,x019,tvguide,25450,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,northus,?,50,42,0.367,15.5,73,0.625,20,3.6,1800,60.2,36.2,0,0,2.5,0.9,34,40,106.25,100,noband
+19901208,t351,austads,38120,yes,key,yes,?,gallatin,uncoated,cover,no,line,yes,woodhoe70,815,2,catalog,northus,1910,45,43,0.3,20,84,0.625,33,?,1200,?,?,0,0,2.5,0.5,40,40,106.25,100,band
+19901209,x304,eckerds,34692,no,key,yes,benton,gallatin,coated,uncoated,no,line,no,motter94,824,2,tabloid,canadian,1910,45,42,0.3,15,70,0.8125,40,0,1500,58.8,41.2,3,0,2,1,30,40,100,100,band
+19901209,w30,sheplers,35001,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,9,spiegel,northus,1910,40,42,0.2,12.7,84,0.5,32,0,1750,62.5,37.5,0,0,2.5,0.9,40,40,100,100,noband
+19901209,x220,guideposts,23048,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,?,1910,40,42,0.333,15.5,64,0.625,20,10.5,1550,52.6,36.9,0,0,2,0.6,40,40,106.25,100,noband
+19901209,x809,guideposts,23048,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,?,1910,40,42,0.333,16,78,0.625,20,0,1550,62.5,37.5,0,0,2.5,1,40,40,106.25,100,noband
+19901209,m208,abbeypress,27490,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,albert70,802,2,catalog,northus,1910,32,42,0.233,16,70,0.625,46,0,1350,60.2,39.8,0,0,3,1,34,40,100,100,noband
+19901209,f466,abbeypress,27490,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,albert70,802,7,catalog,northus,1910,32,42,0.233,16,70,0.625,48,0,1350,63.9,36.1,0,0,3,1,34,40,100,100,noband
+19901219,x295,tvguide,25452,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1910,67.5,50,0.167,16.5,73,0.875,20,18.1,1800,47.6,34.3,0,0,2.5,0.8,34,40,110.71,100,band
+19901222,i010,austads,38121,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,9,catalog,canadian,1911,45,60,0.3,16,88,0.75,33,0,1500,56.8,43.2,0,0,2.9,1.1,40,40,103.22,100,band
+19901209,w785,sheplers,35001,yes,key,yes,benton,gallatin,uncoated,cover,no,line,no,woodhoe70,816,2,spiegel,northus,1910,42,42,0.267,14.5,78,1,28,0,1800,61.7,38.3,0,0,2.5,2,40,40,100,100,band
+19901211,i349,austads,38121,yes,key,yes,benton,gallatin,uncoated,cover,no,line,no,woodhoe70,815,2,catalog,canadian,1910,45,40,0.3,16,89,0.625,22,0,1300,60,40,1,0,2.5,1,40,40,106.45,100,band
+19901212,i317,austads,38121,yes,key,yes,benton,gallatin,uncoated,cover,no,line,no,woodhoe70,815,2,catalog,canadian,1910,45,42,0.267,14,89,0.75,26,0,1450,58.8,41.2,1,0,2.5,1,40,40,103.22,100,band
+19901215,f219,downs,35525,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,815,9,catalog,northus,1910,40,54,0.3,14.8,87,?,29,0,1000,58.8,41.2,0,0,2.9,1,40,40,106.45,100,band
+19901212,i331,austads,38121,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,815,9,catalog,canadian,1910,45,42,0.367,16,83,0.625,30,0,1950,58.8,41.2,0,0,2.5,1,40,40,106.45,100,band
+19901215,f121,hanoverhse,34099,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,northus,1910,45,41,0.267,13.3,70,0.75,50,0,1700,60.2,39.8,0,0,3,0.8,38,40,117.85,100,noband
+19901215,f133,hanoverhse,34099,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,northus,1910,45,41,0.267,13.3,70,0.75,50,0,1700,63.9,36.1,0,0,3,0.7,38,40,117.85,100,noband
+19901209,w30,sheplers,35001,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,816,9,spiegel,northus,?,35,42,0.2,15.5,80,1,26,0,1800,62.5,37.5,3,0,2.5,2,40,40,100,100,noband
+19901219,x837,tvguide,25452,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,northus,1910,65,50,0.2,15.1,75,0.625,20,19,1800,47.6,33.4,0,0,2.7,0.6,34,40,110.71,100,noband
+19901212,x819,tvguide,25451,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,northus,1910,55,40,0.3,15.1,69,0.625,20,19.5,1450,44.2,36.3,0,0,2.5,0.9,34,40,106.45,100,noband
+19901230,b125,modmat,48201,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,2,catalog,northus,1911,62,52,0.433,15,78,0.75,28,5.9,1400,58.8,35.3,4,0,2.5,0.8,40,40,103.22,100,band
+19901210,r32,target,34556,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,spiegel,canadian,1910,37.5,42,0.2,16,70,0.375,28,0,2400,58.8,41.2,3,0,3,0.8,30,40,106.45,100,band
+19901215,f372,downs,35525,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,2,catalog,northus,1910,40,54,0.267,22.2,77,0.625,32,6.25,1000,56.25,37.5,0,0,3,1.2,40,40,106.45,100,band
+19901212,r1,target,34556,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,spiegel,canadian,1910,37.5,40,0.2,14,80,0.25,24,0,2400,58.8,41.2,2,0,2.5,0.8,30,40,106.45,100,noband
+19901218,r3,target,34556,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,spiegel,canadian,1910,37.5,50,?,15.5,95,0.625,26,0,2350,62.5,37.5,1,0,2.6,0.6,30,40,106.45,100,noband
+19901214,r9,target,34556,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,spiegel,canadian,1910,37.5,41,?,15,80,0.5,30,0,2398,58.8,41.2,9,0,2.5,0.7,30,40,106.45,100,noband
+19901211,x342,ames,34590,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,9,tabloid,canadian,1910,50,40,0.3,15,72,0.75,30,0,2233,58.8,41.2,8,0,1.5,1,33,40,106.45,100,noband
+19901211,x242,ames,34590,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,827,2,tabloid,canadian,1910,50,40,0.233,15,88,0.75,30,0,2233,58.8,41.2,8,0,3,1,33,40,106.45,100,noband
+19901214,x221,eckerds,34693,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,2,tabloid,canadian,?,45,41,0.2,16.1,74,1,30,0,1800,62.5,37.5,1,0,2.5,1.2,30,40,106.45,100,noband
+19901214,x108,eckerds,34693,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,9,tabloid,canadian,1910,50,41,0.2,15.7,80,1,43,0,1800,62.5,37.5,1,0,2.5,1.5,30,40,106.45,100,noband
+19901218,x80,eckerds,34694,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,canadian,1910,30,41,0.333,15.5,74,0.8125,30,2.5,1900,58,39.5,4.5,0,1.9,1.3,30,40,114.28,100,noband
+19901218,f482,downs,35525,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,815,2,catalog,northus,1910,40,41,0.267,15.5,76,0.75,28,3.6,1750,60.2,36.1,4,0,3,1,40,40,117.85,100,noband
+19901230,x388,tvguide,25502,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,northus,1911,52,52,0.267,16,78,0.75,30,14.1,1250,50.5,53.4,0,0,3,0.9,34,40,103.22,100,band
+19910810,i309,childcraft,37001,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,?,1911,45,62,0.233,15,76,0.75,50,0,1500,58.8,41.2,0,0,3,1.2,38,40,103.225,100,band
+19910815,x381,eckerds,35462,no,key,yes,benton,gallatin,coated,coated,no,line,no,motter94,824,2,tabloid,?,?,40,58,0.2,17,75,0.05625,30,0,1900,58.8,41.2,0,0,2.6,1.4,30,40,103.225,100,band
+19910829,i303,childcraft,37001,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,7,catalog,?,1910,60,60,0.233,15,80,0.75,56,14.3,1380,47.6,38.1,0,0,3,1,38,40,106.4,100,noband
+19910712,t368,abbey,24780,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,9,catalog,?,1911,47.5,65,0.2,14,80,0.5,27,11.5,1725,52.1,36.4,3,0,3,0.9,34,40,103.125,100,noband
+19910804,y270,kmart,37371,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,woodhoe70,816,2,tabloid,?,1910,40,58,0.2,15.5,84,0.375,25,9.0,2000,52.8,38.2,5,0,3,1.1,35,40,103.125,100,noband
+19910804,y228,kmart,37371,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,9,tabloid,?,1910,40,58,0.267,15,80,0.1875,?,3.2,2000,53.8,43,0,0,2.5,1,35,40,103.125,100,noband
+19910712,m254,abbey,24780,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,2,catalog,?,1911,47.5,65,0.2,15.7,87,0.25,?,5.6,1725,55.6,38.9,3,0,3,0.85,34,40,103.125,100,noband
+19910719,r15,target,88231,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,spiegel,?,1910,40,62,0.2,13.7,91,0.375,32,5.6,2300,55.6,38.9,2,0,2.5,1,33,40,100,100,noband
+19910719,r43,target,88231,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,spiegel,?,1910,40,62,0.2,14.9,80,0.5,28,3.4,2303,56.8,39.8,2,0,2.5,0.6,33,40,100,100,noband
+19910727,x742,ames,37182,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,821,2,tabloid,?,1911,45,58,0.2,15,75,0.625,20,10.5,2100,52.6,36.8,0,0,2.5,0.7,33,40,103.125,100,noband
+19910727,x823,ames,37182,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,821,7,tabloid,?,1911,45,58,0.2,15,72,0.625,25,10.5,2100,52.6,36.8,5,0,2.5,0.8,33,40,103.125,100,noband
+19910718,x197,tvguide,25530,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,?,1910,42,58,0.233,16,78,0.5,25,0,1800,58.8,41.2,5,0,2.5,1,34,40,103.125,100,noband
+19911124,f25,bestprod,37970,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,albert70,802,2,catalog,?,1910,27.5,41,0.267,17.58,80,0.75,50,3.4,1490,56.8,39.8,0,0,3,1,35,40,103.125,100,noband
+19911124,f169,bestprod,37970,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,albert70,802,7,catalog,?,1911,35,41,0.267,16.66,78,0.75,50,7.6,1490,54.3,38,0,0,3,1,35,40,106.7,100,noband
+19910829,i325,childcraft,37001,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,2,catalog,?,1910,60,60,0.2,15,80,0.75,50,10.4,1380,47.2,42.5,0,0,3,1,38,40,106.5,100,noband
+19910807,f629,abbey,24780,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,albert70,802,2,catalog,?,1910,40,60,0.2,15,80,0.625,50,0,1400,58.8,41.2,0,0,3,0.6,34,40,103.1,100,noband
+19910807,f321,abbey,24780,?,key,yes,benton,gallatin,uncoated,coated,no,line,yes,albert70,802,7,catalog,?,1910,?,60,0.2,15,80,0.625,50,6.6,1400,54.9,38.5,6,0,3,1.1,34,40,103.1,100,noband
+19910817,r18,sheplers,35529,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,2,spiegel,?,1910,45,58,0.2,17,72,0.75,?,3.2,1470,53.8,43,0,0,3,1,34,40,100,100,noband
+19910903,x408,toysrus,35874,no,key,no,benton,gallatin,coated,coated,no,line,no,motter94,824,2,tabloid,?,1910,40,62,0.3,16.1,82,0.812,30,5.7,1800,56.8,37.5,10,0,0.7,0.5,30,40,106.5,100,noband
+19910903,x264,toysrus,35874,no,key,no,benton,gallatin,coated,coated,no,line,no,motter94,824,9,tabloid,?,1911,40,62,0.233,16.1,78,0.5625,25,5.5,1800,55,39.5,0,0,1.6,1.5,30,40,103.23,100,noband
+19910729,x201,wards,37508,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,?,1910,45,57,0.233,15,88,0.5625,30,10.4,1900,52.1,37.5,0,0,2.5,1.8,30,40,100,100,noband
+19910818,x57,wards,37513,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,?,1911,40,59,0.3,16.4,85,0.8125,30,0,1900,58.8,41.2,10,0,2,0.8,30,40,96.88,100,noband
+19910730,x799,roses,35761,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,2,tabloid,?,1910,35,59,0.2,16.1,82,?,28,0,2500,58.8,41.2,0,0,2.5,1.3,30,40,100,100,noband
+19910730,x753,roses,35761,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,828,9,tabloid,?,1910,35,59,0.2,16.1,84,?,30,0,2500,55,45,0,0,2.5,1.1,30,40,100,100,noband
+19911211,w90,gurney,37018,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,spiegel,?,1911,42.5,47,0.2,16.2,78,0.75,30,0,2100,56.2,43.8,0,0,2.5,1.2,33,40,110,100,band
+19910809,t365,adco,39200,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,815,2,catalog,?,1910,40,68,0.2,14.8,90,1,30,0,1440,58.8,41.2,0,0,2.5,1,40,40,103.13,100,band
+19910806,y270,kmart,37371,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,816,2,tabloid,?,1910,40,60,0.2,15,85,1,25,6.9,2100,54,39.1,0,0,2.5,1.2,35,40,103.13,100,band
+19910924,t117,hanoverhouse,39027,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,?,1911,50,65,?,16,80,0.5,28,12.5,1550,50,37.5,0,0,2.5,1.5,34,40,106.45,100,band
+19910923,t312,hanoverhouse,39027,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,woodhoe70,816,9,catalog,?,1910,50,60,0.267,16,78,0.5,28,4.5,1520,53,42,0,0,2.5,1.5,34,40,106.2,100,band
+19910915,g48,ames,37189,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,2,tabloid,?,1910,40,63,0.233,15.8,80,0.75,30,10.5,2000,52.6,36.9,0,0,3,1,33,40,109.7,100,band
+19910802,t195,wards,37510,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,815,9,catalog,?,1910,40,60,0.2,14.5,85,1,35,0,1250,58.8,41.2,2.5,0,1.5,1,30,40,100,100,band
+19910719,f601,bestprod,37964,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,woodhoe70,815,2,catalog,?,1910,40,69,0.2,14.5,76,0.625,22,0,1250,58.8,41.2,1,0,2.5,1,35,40,100,100,band
+19910729,f98,wards,37510,no,key,yes,benton,gallatin,coated,coated,no,line,no,woodhoe70,815,2,catalog,?,1910,45,61,0.2,14,98,0.75,30,0,1600,58.8,41.2,2,0,2.4,0.9,30,40,100,100,band
+19910729,i357,bestprod,37965,no,key,yes,benton,gallatin,uncoated,coated,no,line,no,woodhoe70,816,9,catalog,?,1910,55,61,0.283,21,78,1,28,0,1500,58.8,41.2,3,0,2.5,0.7,35,40,100,100,band
+19911209,w92,gurney,37018,no,key,yes,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,9,spiegel,?,1911,42.5,52,0.2,16,82,0.75,30,0,2150,58.8,41.2,0,0,2.5,1,33,40,110,100,band
+19920105,i365,childcraft,34250,yes,key,yes,benton,gallatin,uncoated,cover,no,line,no,woodhoe70,816,2,catalog,?,1911,50,47,0.2,15,80,0.625,28,0,1750,59,41,0,0,1,1,38,40,91.89,100,band
+19920115,i49,modmat,47301,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,?,1910,?,44,0.2,14.3,78,0.25,32,0,1650,56.8,43.2,3,0,2.5,2.5,40,40,100,100,band
+19920114,i49,modmat,47301,no,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,?,1911,?,43,0.2,15.2,78,0.75,32,8.2,1500,51,40.8,2,0,2.7,1.8,40,40,106.25,100,band
+19920110,i49,modmat,47301,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,woodhoe70,816,2,catalog,?,1911,55,44,0.2,15,70,0.625,28,8.2,1700,51,40.8,0,0,2.5,2,40,40,100,100,band
+19911104,g634,toysrus,35880,no,key,no,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,catalog,?,1910,40,38,?,16.5,85,0.625,30,4.3,1900,53.2,42.5,0,0,3,1,30,40,103.13,100,band
+19911103,g634,toysrus,35880,no,key,no,benton,gallatin,coated,coated,no,line,?,woodhoe70,816,2,tabloid,?,1910,40,40,?,15.7,85,0.3125,27,4.3,2050,53.2,42.5,1,0,2.5,1.5,30,40,103.13,100,band
+19911102,g69,toysrus,35880,no,key,no,benton,gallatin,coated,coated,no,line,yes,woodhoe70,816,2,tabloid,?,1911,40,40,0.3,14.9,75,0.625,28,4.3,2000,53.2,42.5,4,0,2.5,1.5,30,40,117.86,100,band
+19911203,x768,tvguide,25550,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,7,tabloid,?,1911,40,47,0.2,14.5,85,0.75,25,10.5,1850,52.6,36.9,2,0,0,0,34,40,110,100,band
+19910920,x13,burdines,37068,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,821,2,tabloid,?,1911,40,49,0.3,17,75,0.625,30,0,1600,58.8,41.2,0,0,2.5,0.65,33,40,109.6,100,band
+19910822,r30,sheplers,35529,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,7,spiegel,?,1911,47.5,58,0.217,13.1,70,?,55,10,1660,50,40,0,0,2.9,1,34,40,96.88,100,band
+19920220,g407,kidsrus,29442,yes,key,yes,benton,gallatin,uncoated,cover,no,line,yes,woodhoe70,816,2,tabloid,?,1910,50,40,0.2,15.2,78,1,24,0,1850,58.8,41.2,0,0,2.9,1.1,40,40,103.13,100,band
+19910724,f620,uscav,35522,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,2,catalog,?,1911,40,65,0.2,15,80,0.625,50,10.4,1640,47.2,42.4,1,0,3,1.5,32,40,103.13,100,band
+19910917,x160,colortile,37575,no,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,2,tabloid,?,1910,30,?,0.3,17,78,0.8125,30,0,1700,58.8,41.2,0,0,2.5,1.2,30,40,106.25,100,band
+19920205,x7,colortile,34272,yes,key,yes,benton,gallatin,coated,coated,no,line,yes,motter94,824,9,tabloid,?,1910,30,40,0.2,14,73,0.5625,30,0,1800,58.8,41.2,0,0,0,0,30,40,100,100,band
+19910810,i324,childcraft,37001,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,7,catalog,?,1911,50,62,0.267,11.2,80,?,50,0,1570,58.8,41.2,0,0,3,1,38,40,103.23,100,band
+19910817,r6,sheplers,35529,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,albert70,802,7,spiegel,?,1910,45,63,0.267,15,80,0.75,50,0,1470,58.8,41.2,2,0,3,1,34,40,100,100,band
+19910724,m374,uscav,35522,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,no,albert70,802,7,catalog,?,1911,37.5,65,0.2,16,80,0.625,50,6.6,1640,54.9,38.5,3,0,3,1,32,40,103.13,100,band
+19920208,aa1,kmart,34514,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,821,7,tabloid,?,1910,40,39,0.2,15,83,0.625,30,0,2000,58.1,41.9,1,0,2.5,0.6,35,40,100,100,band
+19920207,aa17,kmart,34514,no,key,yes,benton,gallatin,uncoated,coated,no,line,yes,motter94,821,7,tabloid,?,1911,40,39,0.2,15,72,0.375,30,0,2000,58.1,41.9,1,0,2.5,0.3,35,40,109.9,100,band
+19910730,x139,tvguide,25532,yes,key,yes,benton,gallatin,uncoated,uncoated,no,line,yes,motter94,821,2,tabloid,?,1910,40,59,0.25,15,80,0.75,40,13.3,1750,51,35.7,0,0,2.2,0.7,34,40,100,100,band
+19920408,t233,bestprod,37998,no,key,?,?,gallatin,uncoated,coated,no,?,?,woodhoe70,815,2,?,?,1910,30,50,0.233,16.1,79,0.625,25,?,1400,?,?,?,?,2.5,1,?,40,106,100,band
+19920402,x216,guideposts,23233,yes,key,?,?,gallatin,uncoated,coated,no,?,yes,motter94,821,7,?,?,1911,40,40,0.3,14.5,72,0.625,34,?,1620,?,?,?,?,2.5,1.3,?,40,102,100,band
+19920317,aa43,kmart,34518,no,key,?,?,gallatin,uncoated,coated,no,?,no,motter94,821,7,?,?,1911,45,36,?,14,76,0.625,20,?,1700,?,?,?,?,2,0.9,?,40,100,100,band
+19920402,j29,penney,34014,no,key,?,?,gallatin,uncoated,coated,no,?,?,woodhoe70,816,9,tabloid,?,1910,40,40,0.3,15.5,75,0.75,25,?,1100,?,?,?,?,2.5,1,?,40,102.941,100,band
+19920405,x129,woolworth,34227,no,key,?,?,gallatin,coated,coated,no,?,yes,motter94,824,9,tabloid,?,1910,35,42,0.2,15,78,0.5625,40,?,1750,?,?,?,?,2.3,1,?,40,103,100,band
+19920416,g648,roses,36423,no,key,?,?,gallatin,coated,coated,no,?,yes,woodhoe70,815,2,tabloid,?,1910,55,51,0.25,16.4,78,0.5,29,?,1800,?,?,?,?,1.5,1,?,40,100,100,band
+19920326,x66,roses,34294,no,key,?,?,gallatin,coated,coated,no,?,yes,motter94,821,2,tabloid,?,1910,35,48,0.267,16,72,0.75,20,?,1650,?,?,?,?,1.5,1.1,?,40,83.33,100,band
+19920320,g38,roses,34293,no,key,?,?,gallatin,coated,coated,no,?,yes,woodhoe70,816,2,tabloid,?,1910,47.5,50,0.2,17,70,0.5,30,?,2000,?,?,?,?,2.2,0.7,?,40,103.225,100,band
+19920515,x13,toysrus,34156,no,key,?,?,gallatin,coated,coated,no,?,yes,motter94,824,10,tabloid,?,1911,40,52,?,13.5,85,0.75,30,?,1900,?,?,?,?,0,0,?,40,94.4,100,band
+19920523,o5,target,34453,no,key,?,?,gallatin,uncoated,coated,no,?,yes,motter94,827,2,spiegel,?,1911,47.5,53,0.233,17,80,0.625,20,?,1850,?,?,?,?,2,1.5,?,40,105.7,100,band
+19920529,r38,target,34453,no,key,?,?,gallatin,uncoated,coated,no,?,yes,woodhoe70,816,9,spiegel,?,1910,50,56,0.3,15,80,0.1875,26,?,1950,?,?,?,?,2.5,1.5,?,40,102.857,100,band
+19920530,x36,cvs,34763,yes,key,?,?,gallatin,uncoated,uncoated,no,?,?,motter94,824,2,tabloid,?,1911,55,56,0.3,21,80,0.875,35,?,1650,?,?,?,?,2.1,0.6,?,40,100,100,band
+19920531,x196,cvs,34763,yes,key,?,?,gallatin,uncoated,uncoated,no,?,yes,motter94,824,2,tabloid,?,1910,55,54,0.3,17.5,82,0.8125,28,?,1600,?,?,?,?,2.5,1,?,40,102.94,100,band
+19920603,x292,toysrus,34157,no,key,?,?,gallatin,uncoated,uncoated,no,?,yes,motter94,824,2,tabloid,?,1910,40,57,0.3,16,86,0.8125,30,?,1700,?,?,?,?,2.5,1,?,40,102.94,100,band
+19920610,r25,target,34465,no,key,?,?,gallatin,coated,coated,no,?,yes,woodhoe70,816,1,spiegel,?,1910,35,56,0.267,15.1,81,0.75,32,?,2000,?,?,?,?,2.5,1,?,40,102.94,100,band
+19920705,aa40,kmart,34527,?,key,?,?,gallatin,uncoated,coated,no,?,yes,motter94,821,7,spiegel,?,1910,50,66,0.3,14.8,80,0.625,30,?,1840,?,?,?,?,2.5,1,?,40,100,100,band
+19920709,i347,modmat,47304,yes,key,?,?,gallatin,uncoated,uncoated,no,?,yes,woodhoe70,815,9,catalog,?,1911,50,67,0.3,14.5,86,0.75,22,?,1300,?,?,?,?,2.5,2,?,40,102.77,100,band
+19920808,1351,homeshop,36567,?,key,?,?,gallatin,coated,coated,no,?,no,albert70,816,2,catalog,?,1910,?,62,0.333,14.5,84,?,23,?,1200,?,?,?,?,2.5,?,?,40,103.22,100,band
+19920822,aa28,kmart,34533,?,key,?,?,gallatin,super,uncoated,no,?,yes,motter94,821,2,tabloid,?,1910,?,63,0.233,15.5,79,0.625,35,?,1760,?,?,?,?,2.4,1,?,40,106.25,100,band
+19920826,f131,hanoverhouse,34905,?,key,?,?,gallatin,coated,coated,no,?,yes,albert70,816,9,catalog,?,1910,?,67,0.300,15.1,80,0.75,28,?,1780,?,?,?,?,2.5,1,?,40,106.25,100,band
+19920911,aa58,kmart,34534,?,key,?,?,gallatin,super,uncoated,no,?,yes,motter94,821,7,spiegel,?,1911,?,50,0.333,15.7,82,?,30,?,1850,?,?,?,?,?,?,?,40,103.22,100,band
+19920915,aa45,kmart,34534,?,key,?,?,gallatin,super,uncoated,no,?,yes,motter94,821,7,spiegel,?,1911,?,60,0.300,15,82,0.5,22,?,1800,?,?,?,?,2.5,1,?,40,96.8,100,band
+19920918,aa29,kmart,34534,?,key,?,?,gallatin,super,uncoated,no,?,yes,motter94,821,7,spiegel,?,1911,?,60,0.267,14.8,80,.625,25,?,1850,?,?,?,?,2.5,1,?,40,96.9,100,band
+19920920,aa43,kmart,34534,?,key,?,?,gallatin,super,uncoated,no,?,yes,motter94,821,7,spiegel,?,?,?,56,0.300,14.1,82,0.625,40,?,1800,?,?,?,?,2.5,0.9,?,40,96.9,100,band
+19920712,i366,homeshopping,36568,?,key,?,?,gallatin,super,uncoated,no,?,?,albert70,816,2,catalog,?,1911,?,56,0.367,15.1,78,0.5,29,?,1320,?,?,?,?,2.5,?,?,40,96.9,100,band
+19921001,t31,bestprod,36054,?,key,?,?,gallatin,super,uncoated,no,?,yes,albert70,816,2,catalog,?,1911,?,47,0.200,15.0,85,0.5,24,?,1470,?,?,?,?,1.8,1.7,?,40,96.9,100,band
+19921004,aa067,venture,24780,?,key,?,?,gallatin,super,uncoated,no,?,yes,motter94,821,7,tabloid,?,1911,?,55,0.367,15.5,76,0.75,30,?,1750,?,?,?,?,2.5,1.2,?,40,96.9,100,band
+19921125,i25,homeshop,36569,?,key,?,?,gallatin,super,cover,no,?,yes,albert70,816,2,catalog,?,1910,?,53,0.300,14.2,72,1,28,?,1600,?,?,?,?,2.7,1.5,?,40,106.1,100,band
+19921129,i400,homeshop,36569,?,key,?,?,gallatin,super,cover,no,?,yes,albert70,816,2,catalog,?,1910,?,39,0.300,15.1,71,0.625,30,?,1700,?,?,?,?,2.5,1.5,?,40,106.1,100,band
+19930113,i305,modmat,47401,?,key,?,?,gallatin,coated,coated,no,?,yes,albert70,816,2,catalog,?,1911,?,46,0.300,17,80,0.25,25,?,1700,?,?,?,?,2.5,1.5,?,30,117.7,95,band
+19930205,r32,target,35502,?,key,?,?,gallatin,super,uncoated,?,?,yes,albert70,815,2,spiegel,?,1910,?,35,0.300,16.2,88,0.500,28,?,1750,?,?,?,?,2.3,1.0,?,40,106,100,band
+19930217,w368,jfk,35986,?,key,?,?,gallatin,coated,coated,?,?,yes,woodhoe70,802,7,spiegel,?,1910,?,40,0.333,14.5,70,0.75,60,?,1250,?,?,?,?,2,1.5,?,40,112.5,100,band
+19930219,t30,colorfulimage,37046,?,key,?,?,gallatin,coated,coated,?,?,yes,woodhoe70,802,7,catalog,?,1911,?,39,0.300,16,72,0.75,50,?,1350,?,?,?,?,2.5,2.2,?,40,106.6,95,band
+19930227,m337,bestprod,35831,?,key,?,?,gallatin,super,cover,?,?,yes,albert70,815,2,catalog,?,1911,?,40,0.300,16.5,84,0.625,26,?,1565,?,?,?,?,2.5,1,?,40,106.6,95,band
+19930309,aa56,kmart,85725,?,key,?,?,gallatin,super,uncoated,?,?,yes,motter94,821,7,tabloid,?,1910,?,44,.200,16.22,74,0.75,30,?,2200,?,?,?,?,2.8,.8,?,40,106.6,95,band
+19930407,g433,toysrus,35661,?,key,?,?,gallatin,uncoated,uncoated,?,?,yes,albert70,816,2,tabloid,?,1910,?,47,0.233,16.5,86,0.25,?,?,1750,?,?,?,?,2.1,2.1,?,40,109.6,95,band
+19930421,x799,eckerds,37392,?,key,?,?,gallatin,uncoated,uncoated,?,?,yes,motter94,824,2,tabloid,?,1910,?,45,0.200,17,84,0.8125,27,?,1865,?,?,?,?,1.5,0.7,?,40,109.1,95,band
+19930514,i46,modmat,47403,?,key,?,?,gallatin,coated,coated,?,?,yes,albert70,816,2,catalog,?,1911,?,52,0.200,16,75,0.3125,25,?,1500,?,?,?,?,2.5,0.6,?,40,109.1,100,band
+19930624,y209,kmart,85741,?,key,?,?,gallatin,uncoated,uncoated,?,?,?,albert70,816,2,tabloid,?,1911,?,?,0.300,15,80,0.5,30,?,2020,?,?,?,?,2.9,0.5,?,40,110.3,100,band
+19930906,e302,kmart,85750,?,key,?,?,gallatin,super,uncoated,?,?,yes,motter94,827,2,tabloid,?,1911,?,54,0.300,16.5,88,0.75,25,?,1850,?,?,?,?,3.0,2.0,?,40,107.14,95,band
+19930908,i311,modmat,47405,?,key,?,?,gallatin,coated,coated,?,?,yes,albert70,815,2,catalog,?,1911,?,56,0.300,14,91,1.125,27,?,1650,?,?,?,?,3.0,1.5,?,40,100,95,band
+19930915,t26,toysrus,37191,?,key,?,?,gallatin,coated,coated,?,?,yes,albert70,815,2,catalog,?,1911,?,50,0.200,16.5,74,0.625,34,?,1750,?,?,?,?,2.6,1.0,?,40,103.125,95,band
+19930916,t26,homeshop,35069,?,key,?,?,gallatin,coated,coated,?,?,yes,albert70,816,9,catalog,?,1911,?,56,0.200,17,75,0.750,25,?,1600,?,?,?,?,2.0,1.0,?,40,103.125,95,band
+19930928,m272,toysrus,37191,?,key,?,?,gallatin,coated,coated,?,?,yes,albert70,815,9,catalog,?,1910,?,55,0.200,17,95,0.625,27,?,1600,?,?,?,?,2.5,1,?,40,106.25,100,band
+19931008,ee304,jcp,35425,?,key,?,?,gallatin,super,uncoated,?,?,yes,motter94,821,7,tabloid,?,1911,?,54,0.267,15.5,80,0.75,40,?,2000,?,?,?,?,1.8,1.3,?,40,107.14,?,band
+19940904,x255,walmart,71331,?,key,?,?,gallatin,super,uncoated,?,?,?,motter94,824,2,tabloid,?,1911,?,54,?,15.5,78,0.8125,30,?,2100,?,?,?,?,1.2,1.0,?,40,97.05,100,band
+19941004,aa97,kmart,85813,?,key,?,?,gallatin,super,coated,?,?,yes,motter94,828,2,tabloid,?,1910,?,53,?,17,73,0.75,35,?,2100,?,?,?,?,2.6,1.3,?,40,113.3,100,band
+19941001,e78,eckerd,38240,?,key,?,?,gallatin,uncoated,uncoated,?,?,no,motter94,828,2,tabloid,?,1911,?,?,?,16,83,?,28,?,2400,?,?,?,?,2.5,1.0,?,40,112.5,100,band
+19940927,e38,eckerd,38240,?,key,?,?,gallatin,uncoated,uncoated,?,?,yes,motter94,828,9,tabloid,?,1911,?,60,?,14.9,76,1,30,?,2500,?,?,?,?,0.5,0.5,?,40,112.5,100,band
+19941007,aa7,kmart,85813,?,key,?,?,gallatin,super,uncoated,?,?,?,motter94,827,2,tabloid,?,1910,?,56,0.300,18.3,80,1,32,?,1900,?,?,?,?,?,?,?,40,110,100,band
+19941005,aa66,kmart,85813,?,key,?,?,gallatin,super,uncoated,?,?,?,motter94,827,9,tabloid,?,1910,?,52,?,18,82,1,25,?,1880,?,?,?,?,1,1,?,40,112.5,100,band
+19941009,j44,best,38064,?,key,?,?,gallatin,super,coated,?,?,yes,albert70,815,1,tabloid,?,1910,?,?,0.200,16.1,76,0.500,34,?,2100,?,?,?,?,0,0,?,40,110,100,band
+19941009,aa58,kmart,85814,?,key,?,?,gallatin,super,coated,?,?,?,motter94,827,2,tabloid,?,1910,?,?,0.300,16.5,70,1,34,?,1903,?,?,?,?,2.7,2.8,?,40,108,100,band
+19941010,aa70,kmart,85814,?,key,?,?,gallatin,super,uncoated,?,?,?,motter94,828,2,tabloid,?,1910,?,46,0.267,16.4,76,1,34,?,1903,?,?,?,?,1.5,2.3,?,40,108,100,band
+19941010,j70,best,38064,?,key,?,?,gallatin,super,uncoated,?,?,yes,albert70,815,1,tabloid,?,1910,?,46,0.200,14.2,75,0.75,25,?,2050,?,?,?,?,2.5,1,?,40,108.1,100,band
+
+
+
+
+
+
+
+
+

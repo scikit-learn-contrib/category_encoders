@@ -1,0 +1,94 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: ers.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-ers
+
+@attribute col_1 {16/93,16/94,17/93,17/94,18/93,18/94,19/93,19/94,20/93,20/94,21/93,21/94,22/93,22/94,23/93,23/94,24/93,24/94,25/93,25/94,26/93,26/94,27/93,27/94,28/93,28/94,29/93,29/94}
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+@attribute col_5 INTEGER
+@attribute col_6 INTEGER
+@attribute col_7 {0,1}
+@attribute col_8 {0,1}
+@attribute col_9 {0,1}
+@attribute col_10 {0,1}
+@attribute col_11 {0,1}
+@attribute col_12 {0,1}
+
+@data
+16/93,2298,38,31,39,31,0,0,0,0,0,0
+17/93,1709,41,27,41,30,0,0,0,0,1,0
+18/93,2395,33,26,38,24,0,0,0,0,0,0
+19/93,2486,29,19,36,21,0,0,1,0,0,0
+20/93,1849,40,19,43,27,0,0,1,0,0,0
+21/93,1842,44,30,43,29,0,0,1,0,0,0
+22/93,2100,46,40,53,41,1,0,1,0,0,0
+23/93,1752,47,35,46,40,0,0,0,0,0,0
+24/93,1776,53,34,55,38,1,0,0,0,1,0
+25/93,1812,38,32,43,31,0,0,1,0,0,0
+26/93,1842,35,21,35,25,0,0,1,0,0,0
+27/93,1674,39,27,44,31,1,1,1,0,0,0
+28/93,1692,34,28,40,27,0,0,1,0,0,0
+29/93,1879,46,28,41,23,0,0,1,0,0,0
+16/94,6375,17,9,15,3,0,0,0,1,1,1
+17/94,8827,35,15,47,12,1,1,0,1,0,0
+18/94,7218,30,32,35,4,1,0,1,1,0,0
+19/94,8810,10,4,10,-2,0,0,1,1,0,1
+20/94,7841,15,6,15,0,1,1,1,1,0,1
+21/94,7745,24,12,21,6,0,0,1,1,0,1
+22/94,6454,33,19,32,15,0,0,0,1,0,0
+23/94,4619,32,18,32,18,0,0,0,1,1,0
+24/94,6476,48,30,49,31,0,0,1,1,0,0
+25/94,4692,38,32,42,32,0,0,1,1,0,0
+26/94,3638,26,23,32,5,1,1,1,1,0,0
+27/94,8947,29,14,31,0,0,0,1,1,0,1
+28/94,6564,48,34,55,31,1,1,1,1,0,0
+29/94,5613,31,40,36,36,1,1,0,1,0,0

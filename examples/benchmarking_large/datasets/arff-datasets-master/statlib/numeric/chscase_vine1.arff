@@ -1,0 +1,116 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: vine1.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-vine1
+
+@attribute col_1 INTEGER
+@attribute col_2 REAL
+@attribute col_3 REAL
+@attribute col_4 REAL
+@attribute col_5 REAL
+@attribute col_6 REAL
+@attribute col_7 REAL
+@attribute col_8 REAL
+@attribute col_9 REAL
+@attribute col_10 REAL
+
+@data
+1,5.00,5.0,2.0,4.5,1.5,1.5,1.0,5.0,9.5
+2,10.00,5.0,5.0,9.0,4.0,4.0,3.0,8.0,,17.5
+3,11.00,,11.0,4.0,9.0,6.0,6.0,3.0,,11.0,,18.0
+4,11.25,,10.0,5.0,9.5,7.0,5.0,3.0,9.0,,20.0
+5,11.00,7.0,4.0,,10.0,7.0,6.0,5.0,9.5,,20.5
+6,11.00,,13.0,3.0,7.0,,10.0,5.0,3.5,,10.0,,20.0
+7,9.00,,10.5,2.5,7.5,7.0,5.0,3.0,,12.0,,19.0
+8,9.00,,10.0,2.0,7.0,7.0,6.0,4.5,,10.0,,21.0
+9,9.00,,13.0,2.0,8.0,,10.0,8.0,5.0,,11.5,,19.0
+10,9.00,,12.0,2.0,7.0,7.0,5.0,5.0,,10.0,,26.0
+11,6.00,,10.0,3.0,7.0,6.0,8.0,6.0,,11.0,,20.0
+12,7.00,9.0,2.5,5.0,7.0,7.0,5.0,,10.0,,23.0
+13,5.00,,11.0,2.0,5.0,9.0,,10.0,4.0,,10.5,,22.0
+14,7.00,7.0,3.0,4.0,9.0,9.0,6.0,,10.0,,20.0
+15,10.00,8.0,3.0,3.0,8.0,9.0,5.0,,11.0,,20.0
+16,13.00,,10.5,3.0,4.0,,12.0,9.0,6.5,,11.0,,24.0
+17,5.50,,10.0,4.0,4.0,,13.0,7.0,4.0,,11.5,,23.0
+18,10.50,,11.5,5.0,4.0,,15.0,7.0,6.0,,12.0,,23.0
+19,9.00,9.0,6.0,4.5,,17.0,7.0,3.0,,12.5,,20.0
+20,6.00,,11.0,8.0,3.5,,20.0,7.0,6.0,,13.0,,21.0
+21,8.00,,13.0,7.0,6.0,,16.0,8.0,5.0,,11.0,,23.0
+22,15.00,,15.0,,11.0,5.0,,17.0,9.0,8.0,,11.0,,23.0
+23,13.00,,14.0,9.0,6.0,,15.0,7.0,4.5,,11.0,,22.0
+24,14.00,,17.0,,10.0,6.0,,12.0,8.0,4.0,,13.0,,22.0
+25,15.00,,16.0,,10.0,5.0,,13.0,8.0,4.0,,11.0,,21.0
+26,14.50,,14.0,,11.0,7.0,,13.0,8.0,6.5,,13.0,,20.0
+27,14.00,,11.0,,14.0,6.0,,18.0,8.0,4.0,,12.0,,18.0
+28,14.00,,16.0,,15.0,5.0,,20.0,8.0,5.0,,14.0,,21.0
+29,15.00,,12.0,,12.0,3.0,,16.0,7.0,3.0,,10.0,,16.0
+30,16.00,,11.5,,10.0,5.0,,16.0,7.0,5.5,,13.0,,16.0
+31,13.00,,11.0,,12.0,4.0,,16.0,,10.0,3.0,8.0,,15.0
+32,12.00,,13.0,,13.0,4.5,,16.0,8.0,2.0,7.5,,16.0
+33,9.00,,12.0,9.5,4.0,,15.0,7.0,2.0,8.0,,15.0
+34,11.50,,12.0,8.0,4.0,,11.0,7.0,2.0,8.0,,15.0
+35,9.50,,13.0,8.0,4.0,,11.0,,11.0,2.0,7.0,,17.0
+36,12.00,9.0,9.0,4.0,,11.0,,11.0,3.0,,10.0,,17.0
+37,13.00,,15.0,,11.0,6.0,8.5,,12.0,2.0,7.0,,21.0
+38,13.50,,12.0,,13.0,6.0,,10.0,,10.0,2.0,,10.0,,17.0
+39,15.00,7.0,,16.0,4.0,6.0,,11.0,2.0,8.0,,20.0
+40,15.50,7.0,,18.0,3.0,,10.0,,11.0,2.0,,10.0,,16.0
+41,14.00,,10.0,,12.0,3.5,8.0,,11.0,2.0,9.0,,20.0
+42,14.00,5.0,,15.0,8.0,8.0,8.5,1.5,,10.0,,15.0
+43,10.00,3.5,,14.0,6.0,6.0,,10.0,1.5,8.0,,17.0
+44,13.00,5.0,,20.0,4.5,8.0,9.0,1.5,,11.0,,17.0
+45,11.00,,14.0,,14.0,6.0,6.0,,11.0,1.0,,10.0,,20.0
+46,8.50,,13.0,7.0,4.5,6.0,7.0,1.0,7.0,,15.0
+47,7.50,,19.0,7.5,4.0,7.0,5.0,1.0,5.0,,14.0
+48,6.00,,11.5,4.0,3.0,3.0,3.0,1.0,7.0,,12.0
+49,5.00,,10.0,5.0,3.0,3.0,3.0,0.5,8.0,,11.0
+50,4.00,6.0,3.0,2.0,2.0,1.5,0.5,6.0,,11.0
+51,3.00,6.5,1.5,1.0,2.0,1.0,0.0,7.5,8.5
+52,2.00,5.0,0.5,0.5,2.0,0.0,0.0,2.5,2.5

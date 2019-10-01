@@ -1,0 +1,39 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Florida_population
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Florida_population
+
+@attribute YEAR INTEGER
+@attribute POPULATION INTEGER
+
+@data
+1830,34730
+1840,54477
+1850,87445
+1860,140424
+1870,187748
+1880,269493
+1890,391422
+1900,528542
+1910,752619
+1920,968470
+1930,1468211
+1940,1897414
+1950,2771305
+1960,4951560
+1970,6791418
+1980,9747197
+1990,12937926

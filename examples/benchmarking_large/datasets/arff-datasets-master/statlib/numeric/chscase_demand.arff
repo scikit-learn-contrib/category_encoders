@@ -1,0 +1,92 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: demand.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-demand
+
+@attribute col_1 INTEGER
+@attribute col_2 REAL
+@attribute col_3 REAL
+@attribute col_5 INTEGER
+@attribute col_6 REAL
+@attribute col_7 REAL
+@attribute col_8 REAL
+@attribute col_9 REAL
+@attribute col_10 REAL
+@attribute col_11 REAL
+@attribute col_12 REAL
+
+@data
+60,129.7,0.925,,6036,1.045,0.836,0.810,0.444,0.331,0.302,3600
+61,131.3,0.914,,6113,1.045,0.869,0.846,0.448,0.335,0.307,3721
+62,137.1,0.919,,6271,1.041,0.948,0.874,0.457,0.338,0.314,3844
+63,141.6,0.918,,6378,1.035,0.960,0.885,0.463,0.343,0.320,3969
+64,148.8,0.914,,6727,1.032,1.001,0.901,0.470,0.347,0.325,4096
+65,155.9,0.949,,7027,1.009,0.994,0.919,0.471,0.353,0.332,4225
+66,164.9,0.970,,7280,0.991,0.970,0.952,0.475,0.366,0.342,4356
+67,171.0,1.000,,7513,1.000,1.000,1.000,0.483,0.375,0.353,4489
+68,183.4,1.014,,7728,1.028,1.028,1.046,0.501,0.390,0.368,4624
+69,195.8,1.047,,7891,1.044,1.031,1.127,0.514,0.409,0.386,4761
+70,207.4,1.056,,8134,1.076,1.043,1.285,0.527,0.427,0.407,4900
+71,218.3,1.063,,8322,1.120,1.102,1.377,0.547,0.442,0.431,5041
+72,226.8,1.076,,8562,1.110,1.105,1.434,0.555,0.458,0.451,5184
+73,237.9,1.181,,9042,1.111,1.176,1.448,0.566,0.497,0.474,5329
+74,225.8,1.599,,8867,1.175,1.226,1.480,0.604,0.572,0.513,5476
+75,232.4,1.708,,8944,1.276,1.464,1.586,0.659,0.615,0.556,5625
+76,241.7,1.779,,9175,1.357,1.679,1.742,0.695,0.638,0.598,5776
+77,249.2,1.882,,9381,1.429,1.828,1.824,0.727,0.671,0.648,5929
+78,261.3,1.963,,9735,1.538,1.865,1.878,0.769,0.719,0.698,6084
+79,248.9,2.656,,9829,1.660,2.010,2.003,0.821,0.800,0.756,6241
+80,226.8,3.691,,9722,1.793,2.081,2.516,0.892,0.894,0.839,6400
+81,225.6,4.109,,9769,1.902,2.569,3.120,0.957,0.969,0.926,6561
+82,228.8,3.894,,9725,1.976,2.964,3.460,1.000,1.000,1.000,6724
+83,239.6,3.764,,9930,2.026,3.297,3.626,1.041,1.021,1.062,6889
+84,244.7,3.707,10421,2.085,3.757,3.852,1.038,1.050,1.117,7056
+85,245.8,3.738,10563,2.152,3.797,4.028,1.045,1.075,1.173,7225
+86,269.4,2.921,10780,2.240,3.632,4.264,1.053,1.069,1.224,7396

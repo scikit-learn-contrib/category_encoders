@@ -1,0 +1,338 @@
+% 1. Title: Hepatitis Domain
+% 
+% 2. Sources:
+%      (a) unknown
+%      (b) Donor: G.Gong  (Carnegie-Mellon University) via 
+%                    Bojan Cestnik
+%                    Jozef Stefan Institute
+%                    Jamova 39
+%                    61000 Ljubljana
+%                    Yugoslavia (tel.: (38)(+61) 214-399 ext.287) }
+%      (c) Date: November, 1988
+% 
+% 3. Past Usage:
+%     1. Diaconis,P. & Efron,B. (1983).  Computer-Intensive Methods in 
+%        Statistics.  Scientific American, Volume 248.
+%        -- Gail Gong reported a 80% classfication accuracy
+%     2. Cestnik,G., Konenenko,I, & Bratko,I. (1987). Assistant-86: A
+%        Knowledge-Elicitation Tool for Sophisticated Users.  In I.Bratko
+%        & N.Lavrac (Eds.) Progress in Machine Learning, 31-45, Sigma Press.
+%        -- Assistant-86: 83% accuracy
+% 
+% 4. Relevant Information:
+%     Please ask Gail Gong for further information on this database.
+% 
+% 5. Number of Instances: 155
+% 
+% 6. Number of Attributes: 20 (including the class attribute)
+% 
+% 7. Attribute information: 
+%      1. Class: DIE, LIVE
+%      2. AGE: 10, 20, 30, 40, 50, 60, 70, 80
+%      3. SEX: male, female
+%      4. STEROID: no, yes
+%      5. ANTIVIRALS: no, yes
+%      6. FATIGUE: no, yes
+%      7. MALAISE: no, yes
+%      8. ANOREXIA: no, yes
+%      9. LIVER BIG: no, yes
+%     10. LIVER FIRM: no, yes
+%     11. SPLEEN PALPABLE: no, yes
+%     12. SPIDERS: no, yes
+%     13. ASCITES: no, yes
+%     14. VARICES: no, yes
+%     15. BILIRUBIN: 0.39, 0.80, 1.20, 2.00, 3.00, 4.00
+%         -- see the note below
+%     16. ALK PHOSPHATE: 33, 80, 120, 160, 200, 250
+%     17. SGOT: 13, 100, 200, 300, 400, 500, 
+%     18. ALBUMIN: 2.1, 3.0, 3.8, 4.5, 5.0, 6.0
+%     19. PROTIME: 10, 20, 30, 40, 50, 60, 70, 80, 90
+%     20. HISTOLOGY: no, yes
+% 
+%     The BILIRUBIN attribute appears to be continuously-valued.  I checked
+%     this with the donater, Bojan Cestnik, who replied:
+% 
+%       About the hepatitis database and BILIRUBIN problem I would like to say
+%       the following: BILIRUBIN is continuous attribute (= the number of it's
+%       "values" in the ASDOHEPA.DAT file is negative!!!); "values" are quoted
+%       because when speaking about the continuous attribute there is no such 
+%       thing as all possible values. However, they represent so called
+%       "boundary" values; according to these "boundary" values the attribute
+%       can be discretized. At the same time, because of the continious
+%       attribute, one can perform some other test since the continuous
+%       information is preserved. I hope that these lines have at least roughly 
+%       answered your question. 
+% 
+% 8. Missing Attribute Values: (indicated by "?")
+%      Attribute Number:    Number of Missing Values:
+%                     1:    0
+%                     2:    0
+%                     3:    0
+%                     4:    1
+%                     5:    0
+%                     6:    1
+%                     7:    1
+%                     8:    1
+%                     9:    10
+%                    10:    11
+%                    11:    5
+%                    12:    5
+%                    13:    5
+%                    14:    5
+%                    15:    6
+%                    16:    29
+%                    17:    4
+%                    18:    16
+%                    19:    67
+%                    20:    0
+% 
+% 9. Class Distribution:
+%      DIE: 32
+%     LIVE: 123
+% 
+% 
+%
+%
+%
+%
+% Relabeled values in attribute SEX
+%    From: 2                       To: male                
+%    From: 1                       To: female              
+%
+%
+% Relabeled values in attribute STEROID
+%    From: 1                       To: no                  
+%    From: 2                       To: yes                 
+%
+%
+% Relabeled values in attribute ANTIVIRALS
+%    From: 2                       To: no                  
+%    From: 1                       To: yes                 
+%
+%
+% Relabeled values in attribute FATIGUE
+%    From: 2                       To: no                  
+%    From: 1                       To: yes                 
+%
+%
+% Relabeled values in attribute MALAISE
+%    From: 2                       To: no                  
+%    From: 1                       To: yes                 
+%
+%
+% Relabeled values in attribute ANOREXIA
+%    From: 2                       To: no                  
+%    From: 1                       To: yes                 
+%
+%
+% Relabeled values in attribute LIVER_BIG
+%    From: 1                       To: no                  
+%    From: 2                       To: yes                 
+%
+%
+% Relabeled values in attribute LIVER_FIRM
+%    From: 2                       To: no                  
+%    From: 1                       To: yes                 
+%
+%
+% Relabeled values in attribute SPLEEN_PALPABLE
+%    From: 2                       To: no                  
+%    From: 1                       To: yes                 
+%
+%
+% Relabeled values in attribute SPIDERS
+%    From: 2                       To: no                  
+%    From: 1                       To: yes                 
+%
+%
+% Relabeled values in attribute ASCITES
+%    From: 2                       To: no                  
+%    From: 1                       To: yes                 
+%
+%
+% Relabeled values in attribute VARICES
+%    From: 2                       To: no                  
+%    From: 1                       To: yes                 
+%
+%
+% Relabeled values in attribute HISTOLOGY
+%    From: 1                       To: no                  
+%    From: 2                       To: yes                 
+%
+@relation hepatitis
+@attribute AGE integer
+@attribute SEX { male, female}
+@attribute STEROID { no, yes}
+@attribute ANTIVIRALS { no, yes}
+@attribute FATIGUE { no, yes}
+@attribute MALAISE { no, yes}
+@attribute ANOREXIA { no, yes}
+@attribute LIVER_BIG { no, yes}
+@attribute LIVER_FIRM { no, yes}
+@attribute SPLEEN_PALPABLE { no, yes}
+@attribute SPIDERS { no, yes}
+@attribute ASCITES { no, yes}
+@attribute VARICES { no, yes}
+@attribute BILIRUBIN real
+@attribute ALK_PHOSPHATE integer
+@attribute SGOT integer
+@attribute ALBUMIN real
+@attribute PROTIME integer
+@attribute HISTOLOGY { no, yes}
+@attribute Class { DIE, LIVE}
+@data
+30,male,no,no,no,no,no,no,no,no,no,no,no,1,85,18,4,?,no,LIVE
+50,female,no,no,yes,no,no,no,no,no,no,no,no,0.9,135,42,3.5,?,no,LIVE
+78,female,yes,no,yes,no,no,yes,no,no,no,no,no,0.7,96,32,4,?,no,LIVE
+31,female,?,yes,no,no,no,yes,no,no,no,no,no,0.7,46,52,4,80,no,LIVE
+34,female,yes,no,no,no,no,yes,no,no,no,no,no,1,?,200,4,?,no,LIVE
+34,female,yes,no,no,no,no,yes,no,no,no,no,no,0.9,95,28,4,75,no,LIVE
+51,female,no,no,yes,no,yes,yes,no,yes,yes,no,no,?,?,?,?,?,no,DIE
+23,female,yes,no,no,no,no,yes,no,no,no,no,no,1,?,?,?,?,no,LIVE
+39,female,yes,no,yes,no,no,yes,yes,no,no,no,no,0.7,?,48,4.4,?,no,LIVE
+30,female,yes,no,no,no,no,yes,no,no,no,no,no,1,?,120,3.9,?,no,LIVE
+39,female,no,yes,no,no,no,no,yes,no,no,no,no,1.3,78,30,4.4,85,no,LIVE
+32,female,yes,yes,yes,no,no,yes,yes,no,yes,no,no,1,59,249,3.7,54,no,LIVE
+41,female,yes,yes,yes,no,no,yes,yes,no,no,no,no,0.9,81,60,3.9,52,no,LIVE
+30,female,yes,no,yes,no,no,yes,yes,no,no,no,no,2.2,57,144,4.9,78,no,LIVE
+47,female,no,yes,no,no,no,yes,no,no,no,no,no,?,?,60,?,?,no,LIVE
+38,female,no,no,yes,yes,yes,yes,no,no,no,yes,no,2,72,89,2.9,46,no,LIVE
+66,female,yes,no,yes,no,no,yes,no,no,no,no,no,1.2,102,53,4.3,?,no,LIVE
+40,female,no,no,yes,no,no,yes,yes,no,no,no,no,0.6,62,166,4,63,no,LIVE
+38,female,yes,no,no,no,no,yes,no,no,no,no,no,0.7,53,42,4.1,85,yes,LIVE
+38,female,no,yes,no,no,no,no,yes,no,no,no,no,0.7,70,28,4.2,62,no,LIVE
+22,male,yes,yes,yes,no,no,yes,no,no,no,no,no,0.9,48,20,4.2,64,no,LIVE
+27,female,yes,no,yes,yes,yes,no,yes,yes,yes,no,no,1.2,133,98,4.1,39,no,LIVE
+31,female,yes,no,no,no,no,yes,no,no,no,no,no,1,85,20,4,100,no,LIVE
+42,female,yes,no,no,no,no,yes,no,no,no,no,no,0.9,60,63,4.7,47,no,LIVE
+25,male,no,yes,no,no,no,yes,no,no,no,no,no,0.4,45,18,4.3,70,no,LIVE
+27,female,no,no,yes,yes,no,yes,no,no,no,no,no,0.8,95,46,3.8,100,no,LIVE
+49,female,no,yes,yes,yes,yes,yes,yes,no,yes,no,no,0.6,85,48,3.7,?,no,LIVE
+58,male,yes,no,yes,no,no,yes,yes,no,yes,no,no,1.4,175,55,2.7,36,no,LIVE
+61,female,no,no,yes,no,no,no,yes,no,no,no,no,1.3,78,25,3.8,100,no,LIVE
+51,female,no,yes,yes,yes,no,yes,no,no,no,no,no,1,78,58,4.6,52,no,LIVE
+39,female,no,yes,yes,yes,no,yes,yes,no,no,no,no,2.3,280,98,3.8,40,no,DIE
+62,female,no,no,yes,yes,no,?,?,no,no,no,no,1,?,60,?,?,no,DIE
+41,male,yes,yes,yes,yes,yes,yes,no,no,no,no,no,0.7,81,53,5,74,no,LIVE
+26,male,no,no,no,no,no,yes,yes,no,no,no,no,0.5,135,29,3.8,60,no,LIVE
+35,female,yes,no,yes,no,no,yes,no,no,no,no,no,0.9,58,92,4.3,73,no,LIVE
+37,female,yes,no,yes,no,no,yes,no,no,yes,no,no,0.6,67,28,4.2,?,no,DIE
+23,female,yes,no,yes,yes,yes,yes,no,yes,no,no,no,1.3,194,150,4.1,90,no,LIVE
+20,male,no,no,yes,yes,yes,no,yes,yes,yes,no,no,2.3,150,68,3.9,?,no,LIVE
+42,female,no,no,no,no,no,yes,no,no,no,no,no,1,85,14,4,100,no,LIVE
+65,female,yes,no,yes,yes,no,yes,yes,yes,yes,yes,no,0.3,180,53,2.9,74,yes,LIVE
+52,female,no,yes,no,no,no,yes,no,no,no,no,no,0.7,75,55,4,21,no,LIVE
+23,female,yes,no,no,no,no,?,?,?,?,?,?,4.6,56,16,4.6,?,no,LIVE
+33,female,yes,no,no,no,no,yes,no,no,no,no,no,1,46,90,4.4,60,no,LIVE
+56,female,no,no,yes,no,no,yes,no,no,no,no,no,0.7,71,18,4.4,100,no,LIVE
+34,female,yes,no,no,no,no,yes,no,no,no,no,no,?,?,86,?,?,no,LIVE
+28,female,yes,no,yes,yes,no,yes,no,no,no,no,no,0.7,74,110,4.4,?,no,LIVE
+37,female,no,no,no,no,no,yes,yes,no,yes,no,no,0.6,80,80,3.8,?,no,LIVE
+28,male,yes,no,yes,yes,no,yes,yes,no,no,no,no,1.8,191,420,3.3,46,no,LIVE
+36,female,no,no,no,no,no,yes,no,yes,no,no,no,0.8,85,44,4.2,85,no,LIVE
+38,female,yes,yes,yes,yes,yes,yes,no,no,yes,no,no,0.7,125,65,4.2,77,no,LIVE
+39,female,no,no,no,no,no,yes,no,no,no,no,no,0.9,85,60,4,?,no,LIVE
+39,female,yes,no,no,no,no,yes,no,no,no,no,no,1,85,20,4,?,no,LIVE
+44,female,yes,no,no,no,no,yes,no,no,no,no,no,0.6,110,145,4.4,70,no,LIVE
+40,female,yes,yes,yes,no,no,yes,yes,yes,no,no,no,1.2,85,31,4,100,no,LIVE
+30,female,yes,no,yes,no,no,yes,no,no,no,no,no,0.7,50,78,4.2,74,no,LIVE
+37,female,no,no,yes,yes,yes,yes,no,no,no,no,no,0.8,92,59,?,?,no,LIVE
+34,female,no,no,?,?,?,?,?,?,?,?,?,?,?,?,?,?,no,LIVE
+30,female,yes,yes,no,no,no,yes,no,no,no,no,no,0.7,52,38,3.9,52,no,LIVE
+64,female,yes,yes,yes,yes,no,no,yes,no,no,no,no,1,80,38,4.3,74,no,LIVE
+45,male,no,no,yes,yes,no,yes,no,yes,no,no,no,1,85,75,?,?,no,LIVE
+37,female,yes,no,no,no,no,yes,no,no,no,no,no,0.7,26,58,4.5,100,no,LIVE
+32,female,yes,no,no,no,no,yes,no,no,no,no,no,0.7,102,64,4,90,no,LIVE
+32,female,yes,no,yes,yes,yes,yes,no,no,yes,no,yes,3.5,215,54,3.4,29,no,LIVE
+36,female,no,no,no,no,no,no,yes,yes,no,no,no,0.7,164,44,3.1,41,no,LIVE
+49,female,yes,no,yes,yes,no,yes,no,no,no,no,no,0.8,103,43,3.5,66,no,LIVE
+27,female,yes,no,no,no,no,yes,no,no,no,no,no,0.8,?,38,4.2,?,no,LIVE
+56,female,no,no,no,no,no,yes,no,no,no,no,no,0.7,62,33,3,?,no,LIVE
+57,female,yes,no,yes,yes,yes,yes,no,no,yes,yes,no,4.1,?,48,2.6,73,no,DIE
+39,female,yes,no,yes,no,no,yes,no,no,no,no,no,1,34,15,4,54,no,LIVE
+44,female,no,no,yes,yes,no,yes,no,no,no,no,no,1.6,68,68,3.7,?,no,LIVE
+24,female,yes,no,no,no,no,yes,no,no,no,no,no,0.8,82,39,4.3,?,no,LIVE
+34,female,no,no,yes,yes,no,no,yes,no,yes,no,no,2.8,127,182,?,?,no,DIE
+51,female,yes,no,yes,yes,yes,?,?,?,?,?,?,0.9,76,271,4.4,?,no,LIVE
+36,female,no,no,yes,yes,yes,yes,yes,no,no,no,no,1,?,45,4,57,no,LIVE
+50,female,yes,no,no,no,no,yes,no,no,no,no,no,1.5,100,100,5.3,?,no,LIVE
+32,female,no,yes,yes,yes,no,yes,no,no,no,no,no,1,55,45,4.1,56,no,LIVE
+58,female,yes,no,yes,no,no,no,yes,yes,yes,no,no,2,167,242,3.3,?,no,DIE
+34,male,no,yes,no,no,no,yes,yes,no,no,no,no,0.6,30,24,4,76,no,LIVE
+34,female,no,no,yes,no,no,no,yes,no,yes,no,no,1,72,46,4.4,57,no,LIVE
+28,female,yes,no,no,no,no,yes,no,no,no,no,no,0.7,85,31,4.9,?,no,LIVE
+23,female,yes,no,yes,yes,yes,yes,no,no,no,no,no,0.8,?,14,4.8,?,no,LIVE
+36,female,yes,no,no,no,no,yes,no,no,no,no,no,0.7,62,224,4.2,100,no,LIVE
+30,female,no,no,no,no,no,yes,no,no,no,no,no,0.7,100,31,4,100,no,LIVE
+67,male,no,no,yes,yes,no,yes,no,?,?,?,?,1.5,179,69,2.9,?,no,LIVE
+62,male,yes,no,yes,yes,no,yes,yes,no,yes,no,no,1.3,141,156,3.9,58,no,LIVE
+28,female,no,no,yes,yes,yes,yes,yes,no,no,no,no,1.6,44,123,4,46,no,LIVE
+44,female,no,no,yes,yes,no,yes,no,yes,no,no,yes,0.9,135,55,?,41,yes,DIE
+30,female,yes,no,yes,yes,yes,yes,yes,no,yes,yes,yes,2.5,165,64,2.8,?,yes,DIE
+38,female,no,no,yes,yes,yes,yes,yes,no,yes,yes,yes,1.2,118,16,2.8,?,yes,DIE
+38,female,no,no,yes,yes,yes,no,yes,no,no,no,no,0.6,76,18,4.4,84,yes,LIVE
+50,male,no,no,yes,no,no,no,yes,yes,yes,no,no,0.9,230,117,3.4,41,yes,LIVE
+42,female,no,no,yes,yes,yes,yes,no,yes,yes,no,yes,4.6,?,55,3.3,?,yes,DIE
+33,female,yes,no,no,no,no,?,?,no,no,no,no,1,?,60,4,?,yes,LIVE
+52,female,no,no,no,no,no,yes,no,no,no,no,no,1.5,?,69,2.9,?,yes,LIVE
+59,female,no,no,yes,yes,no,yes,yes,yes,yes,no,no,1.5,107,157,3.6,38,yes,DIE
+40,female,no,yes,yes,yes,yes,no,yes,no,no,no,no,0.6,40,69,4.2,67,yes,LIVE
+30,female,no,no,yes,yes,no,yes,yes,no,yes,no,no,0.8,147,128,3.9,100,yes,LIVE
+44,female,no,no,yes,yes,no,no,yes,no,yes,no,no,3,114,65,3.5,?,yes,LIVE
+47,female,yes,no,no,no,no,yes,no,no,yes,no,yes,2,84,23,4.2,66,yes,DIE
+60,female,no,no,yes,no,no,no,yes,yes,yes,no,no,?,?,40,?,?,yes,LIVE
+48,female,no,no,yes,yes,no,yes,yes,no,yes,yes,yes,4.8,123,157,2.7,31,yes,DIE
+22,female,yes,no,no,no,no,yes,no,no,no,no,no,0.7,?,24,?,?,yes,LIVE
+27,female,no,no,yes,no,no,yes,yes,no,no,no,no,2.4,168,227,3,66,yes,LIVE
+51,female,no,no,yes,yes,yes,yes,yes,yes,yes,no,yes,4.6,215,269,3.9,51,yes,LIVE
+47,female,yes,no,yes,yes,no,yes,yes,no,no,yes,yes,1.7,86,20,2.1,46,yes,DIE
+25,female,yes,no,no,no,no,yes,no,no,no,no,no,0.6,?,34,6.4,?,yes,LIVE
+35,female,no,no,yes,no,no,?,?,yes,yes,yes,no,1.5,138,58,2.6,?,yes,DIE
+45,female,no,no,yes,yes,yes,yes,no,no,no,no,no,2.3,?,648,?,?,yes,LIVE
+54,female,no,yes,no,no,no,no,yes,no,no,no,no,1,155,225,3.6,67,yes,LIVE
+33,female,no,no,yes,yes,no,yes,no,no,no,yes,no,0.7,63,80,3,31,yes,DIE
+7,female,yes,no,no,no,no,yes,yes,yes,no,no,no,0.7,256,25,4.2,?,yes,LIVE
+42,female,no,yes,yes,yes,no,yes,no,no,yes,no,no,0.5,62,68,3.8,29,yes,DIE
+52,female,no,no,yes,no,no,yes,no,no,no,no,no,1,85,30,4,?,yes,LIVE
+45,female,no,no,yes,no,no,yes,yes,yes,no,no,no,1.2,81,65,3,?,no,LIVE
+36,female,no,no,no,no,no,yes,no,no,no,no,no,1.1,141,75,3.3,?,yes,LIVE
+69,male,yes,no,yes,no,no,yes,no,no,no,no,no,3.2,119,136,?,?,yes,LIVE
+24,female,no,no,yes,no,no,yes,no,no,no,no,no,1,?,34,4.1,?,yes,LIVE
+50,female,yes,no,no,no,no,yes,no,no,no,no,no,1,139,81,3.9,62,yes,LIVE
+61,female,no,no,yes,yes,no,?,?,no,yes,no,no,?,?,?,?,?,yes,DIE
+54,female,yes,no,yes,no,no,no,yes,no,no,no,no,3.2,85,28,3.8,?,yes,LIVE
+56,female,no,no,yes,yes,yes,no,yes,no,yes,no,no,2.9,90,153,4,?,yes,DIE
+20,female,no,no,yes,yes,yes,yes,no,no,yes,yes,no,1,160,118,2.9,23,yes,LIVE
+42,female,yes,no,no,no,no,yes,no,yes,no,no,no,1.5,85,40,?,?,yes,LIVE
+37,female,no,no,yes,no,no,yes,no,no,yes,no,no,0.9,?,231,4.3,?,yes,LIVE
+50,female,yes,no,no,no,no,yes,yes,yes,yes,no,no,1,85,75,4,72,yes,LIVE
+34,male,yes,no,yes,yes,yes,no,yes,no,yes,no,no,0.7,70,24,4.1,100,yes,LIVE
+28,female,yes,no,yes,yes,yes,?,?,no,yes,yes,no,1,?,20,4,?,yes,LIVE
+50,female,yes,no,yes,no,no,yes,yes,yes,no,yes,yes,2.8,155,75,2.4,32,yes,DIE
+54,female,no,no,yes,yes,no,yes,no,no,no,yes,no,1.2,85,92,3.1,66,yes,LIVE
+57,female,no,no,yes,yes,no,yes,no,no,yes,yes,no,4.6,82,55,3.3,30,yes,DIE
+54,female,yes,no,no,no,no,yes,no,no,no,no,no,1,85,30,4.5,0,yes,LIVE
+31,female,no,no,yes,yes,yes,yes,no,yes,no,no,no,8,?,101,2.2,?,yes,DIE
+48,female,yes,no,yes,yes,yes,yes,yes,no,yes,no,no,2,158,278,3.8,?,yes,LIVE
+72,female,yes,yes,yes,no,no,yes,yes,no,no,no,no,1,115,52,3.4,50,yes,LIVE
+38,female,no,no,no,no,no,yes,yes,no,no,no,no,0.4,243,49,3.8,90,yes,DIE
+25,female,yes,no,yes,no,no,no,yes,yes,yes,yes,yes,1.3,181,181,4.5,57,yes,LIVE
+51,female,yes,no,no,no,no,no,yes,no,yes,no,no,0.8,?,33,4.5,?,yes,LIVE
+38,female,yes,no,no,no,no,yes,yes,no,yes,no,yes,1.6,130,140,3.5,56,yes,LIVE
+47,female,yes,no,yes,yes,no,yes,yes,no,yes,yes,yes,1,166,30,2.6,31,yes,DIE
+45,female,yes,yes,no,no,no,yes,no,no,no,no,no,1.3,85,44,4.2,85,yes,LIVE
+36,female,no,no,yes,yes,yes,no,yes,no,yes,no,yes,1.7,295,60,2.7,?,yes,LIVE
+54,female,no,no,yes,yes,no,?,?,yes,no,yes,no,3.9,120,28,3.5,43,yes,DIE
+51,female,yes,no,yes,no,no,yes,yes,yes,yes,no,yes,1,?,20,3,63,yes,LIVE
+49,female,no,no,yes,yes,no,yes,no,yes,yes,no,no,1.4,85,70,3.5,35,yes,DIE
+45,female,yes,no,yes,yes,yes,yes,no,no,yes,yes,no,1.9,?,114,2.4,?,yes,DIE
+31,female,no,no,yes,no,no,yes,no,no,no,no,no,1.2,75,173,4.2,54,yes,LIVE
+41,female,yes,no,yes,no,no,yes,yes,yes,yes,no,yes,4.2,65,120,3.4,?,yes,DIE
+70,female,no,no,yes,yes,yes,?,?,?,?,?,?,1.7,109,528,2.8,35,yes,DIE
+20,female,no,no,no,no,no,yes,?,no,no,no,no,0.9,89,152,4,?,yes,LIVE
+36,female,yes,no,no,no,no,yes,no,no,no,no,no,0.6,120,30,4,?,yes,LIVE
+46,female,yes,no,yes,yes,yes,yes,no,no,yes,yes,yes,7.6,?,242,3.3,50,yes,DIE
+44,female,yes,no,yes,no,no,yes,yes,no,no,no,no,0.9,126,142,4.3,?,yes,LIVE
+61,female,no,no,yes,yes,no,no,yes,no,yes,no,no,0.8,75,20,4.1,?,yes,LIVE
+53,male,no,no,yes,no,no,yes,no,yes,yes,no,yes,1.5,81,19,4.1,48,yes,LIVE
+43,female,yes,no,yes,no,no,yes,no,yes,yes,yes,no,1.2,100,19,3.1,42,yes,DIE

@@ -1,0 +1,50 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: 4
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-winterolympic
+
+@attribute Year INTEGER
+@attribute Location {Albertville,Calgary,Cortina_DAmpezzo,Garmisch-Partenkirchen,Grenoble,Innsbruck,Lake_Placid,Lillehammer,Nagano,Oslo,Sapporo,Sarajevo,Sqaw_Valley,St._Moritz}
+@attribute Country {Austria,Canada,France,Germany,Italy,Japan,Norway,Switzerland,United_States,Yugoslavia}
+@attribute Medals INTEGER
+@attribute Previous_medals INTEGER
+
+@data
+1932,Lake_Placid,United_States,12,6
+1936,Garmisch-Partenkirchen,Germany,6,2
+1948,St._Moritz,Switzerland,10,3
+1952,Oslo,Norway,16,10
+1956,Cortina_DAmpezzo,Italy,3,2
+1960,Sqaw_Valley,United_States,10,7
+1964,Innsbruck,Austria,12,6
+1968,Grenoble,France,9,7
+1972,Sapporo,Japan,3,0
+1976,Innsbruck,Austria,6,5
+1980,Lake_Placid,United_States,12,10
+1984,Sarajevo,Yugoslavia,1,0
+1988,Calgary,Canada,5,4
+1992,Albertville,France,9,2
+1994,Lillehammer,Norway,26,20
+1998,Nagano,Japan,10,5

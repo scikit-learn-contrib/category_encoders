@@ -1,0 +1,80 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: last
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-uklottery
+
+@attribute Number INTEGER
+@attribute Times_chosen INTEGER
+
+@data
+1,61
+2,70
+3,62
+4,53
+5,64
+6,49
+7,57
+8,59
+9,71
+10,58
+11,63
+12,62
+13,45
+14,67
+15,57
+16,48
+17,62
+18,51
+19,40
+20,55
+21,50
+22,56
+23,62
+24,54
+25,78
+26,58
+27,69
+28,71
+29,61
+30,56
+31,68
+32,57
+33,62
+34,53
+35,52
+36,60
+37,49
+38,75
+39,41
+40,60
+41,56
+42,57
+43,68
+44,71
+45,67
+46,60
+47,69
+48,58
+49,60

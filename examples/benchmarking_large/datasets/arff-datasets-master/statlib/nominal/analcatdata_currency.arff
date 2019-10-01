@@ -1,0 +1,64 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: last
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-currency
+
+@attribute Country {Australia,Brazil,Canada,Chile,Colombia,Costa_Rica,Czech_Republic,Dominican_Republic,Ecuador,Egypt,Guatemala,Hungary,India,Indonesia,Korea,Malaysia,Mexico,Morocco,Pakistan,Paraguay,Peru,Philippines,Poland,Russia,Singapore,Slovenia,Thailand,Turkey,United_Kingdom,United_States,Venezuela}
+@attribute Income_level {High,Low,Middle}
+@attribute Debt_service_ratio REAL
+@attribute Currency_rating {(1)_AAA,(2)_AA,(3)_A,(4)_BBB,(5)_BB,(6)_B,(7)_CCC}
+
+@data
+Australia,High,10.1,(2)_AA
+Brazil,Middle,31,(5)_BB
+Canada,High,0,(2)_AA
+Chile,Middle,15.8,(3)_A
+Colombia,Middle,26.7,(5)_BB
+Costa_Rica,Middle,7.4,(5)_BB
+Czech_Republic,Middle,8.9,(3)_A
+Dominican_Republic,Middle,6.7,(5)_BB
+Ecuador,Middle,25.5,(7)_CCC
+Egypt,Middle,7.2,(4)_BBB
+Guatemala,Middle,8,(5)_BB
+Hungary,Middle,12.9,(3)_A
+India,Low,19,(5)_BB
+Indonesia,Low,40,(7)_CCC
+Korea,Middle,23,(4)_BBB
+Malaysia,Middle,4.7,(4)_BBB
+Mexico,Middle,11,(4)_BBB
+Morocco,Middle,20.8,(5)_BB
+Pakistan,Low,26.1,(6)_B
+Paraguay,Middle,8,(6)_B
+Peru,Middle,24.6,(5)_BB
+Philippines,Middle,12.2,(5)_BB
+Poland,Middle,14.8,(4)_BBB
+Russia,Middle,9.6,(6)_B
+Singapore,High,0,(1)_AAA
+Slovenia,High,9.1,(3)_A
+Thailand,Low,14.9,(4)_BBB
+Turkey,Middle,35.7,(6)_B
+United_Kingdom,High,0,(1)_AAA
+United_States,High,0,(1)_AAA
+Venezuela,Middle,15.2,(6)_B

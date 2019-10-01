@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="PostgreSQL - PredictorFactory@localhost" uuid="e0aeb8f2-f05d-4f1a-a31e-460d3afad564">
+      <database-info product="PostgreSQL" version="11.2" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.2.5" family="POSTGRES" exact-version="11.2">
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
+      <secret-storage>master_key</secret-storage>
+      <user-name>jan</user-name>
+      <introspection-schemas>PredictorFactory:predictor_factory</introspection-schemas>
+    </data-source>
+  </component>
+</project>

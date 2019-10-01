@@ -1,0 +1,113 @@
+% This file is a text file giving details about the time series analysed 
+% in 'The Analysis of Time Series' by Chris Chatfield. 
+% The 5th edn was published in 1996 and the 6th edn in 2003.
+% The series are listed separately at the author's home web site at
+% www.bath.ac.uk/~mascc/  and via the CRC Press web site at
+% www.crcpress.com
+% An individual series can readily be abstracted from this file.
+% 
+%
+% Figure 1.3 - The Chatfield-Prothero data for Company X.
+% Monthly sales for January 1965 to November 1971.
+% From Series A, 1973, p. 295-.
+% Includes the last 6 observations from the follow-up paper replying to 
+% the Box and Jenkins paper - see p. 251 of Series A 1973.
+%
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chatfield-Figure_1.3
+
+@attribute col_1 INTEGER
+
+@data
+154
+96
+73
+49
+36
+59
+95
+169
+210
+278
+298
+245
+200
+118
+90
+79
+78
+91
+167
+169
+289
+347
+375
+203
+223
+104
+107
+85
+75
+99
+135
+211
+335
+460
+488
+326
+346
+261
+224
+141
+148
+145
+223
+272
+445
+560
+612
+467
+518
+404
+300
+210
+196
+186
+247
+343
+464
+680
+711
+610
+613
+392
+273
+322
+189
+257
+324
+404
+677
+858
+895
+664
+628
+308
+324
+248
+272
+260
+304
+390
+614
+783
+872

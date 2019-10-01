@@ -1,0 +1,67 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/case2001.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-case2001
+
+@attribute age INTEGER
+@attribute male {0,1}
+@attribute survival {0,1}
+
+@data
+23,1,0
+40,0,1
+40,1,1
+30,1,0
+28,1,0
+40,1,0
+45,0,0
+62,1,0
+65,1,0
+45,0,0
+25,0,0
+28,1,1
+28,1,0
+23,1,0
+22,0,1
+23,0,1
+28,1,1
+15,0,1
+47,0,0
+57,1,0
+20,0,1
+18,1,1
+25,1,0
+60,1,0
+25,1,1
+20,1,1
+32,1,1
+32,0,1
+24,0,1
+30,1,1
+15,1,0
+50,0,0
+21,0,1
+25,1,0
+46,1,1
+32,0,1
+30,1,0
+25,1,0
+25,1,0
+25,1,0
+30,1,0
+35,1,0
+23,1,1
+24,1,0
+25,0,1

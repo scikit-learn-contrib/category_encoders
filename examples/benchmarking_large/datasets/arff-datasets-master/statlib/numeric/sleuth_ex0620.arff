@@ -1,0 +1,62 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex0620.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex0620
+
+@attribute volume INTEGER
+@attribute code {1,2,3,4,5}
+
+@data
+12,1
+105,1
+105,1
+118,1
+119,1
+161,1
+20,2
+37,2
+103,2
+129,2
+135,2
+140,2
+161,2
+175,2
+179,2
+209,2
+1,3
+7,3
+12,3
+15,3
+18,3
+18,3
+23,3
+26,3
+29,3
+32,3
+34,3
+39,3
+41,3
+46,3
+66,3
+86,3
+128,3
+142,3
+193,3
+12,4
+10,5
+19,5
+29,5
+105,5
+155,5

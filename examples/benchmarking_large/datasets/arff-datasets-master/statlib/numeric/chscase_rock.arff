@@ -1,0 +1,107 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: rock.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-rock
+
+@attribute col_1 {100_Pure_Love,Action,All_I_Wanna_Do,Always,Always_In_My_Heart,Another_Night,Any_Time;_Any_Place,Anytime_You_Need_A_Friend,At_Your_Best(You_Are_Love),Back_and_Forth,Body_and_Soul,Bop_Gun(One_Nation),Can_You_Feel_The_Love_Tonight,Circle_of_Life,Closer,Crazy,Do_You_Wanna_Get_Funky,Dont_Turn_Around,Fantastic_Voyage,Far_Behind,Flava_In_Ya_Ear,Funkdafied,I_Miss_You,I_Swear,Id_Give_Anything,If_You_Go,Ill_Make_Love_To_You,Letitgo,Love_Is_All_Around,Lucky_One,Nappy_Heads,Never_Lie,Nuttin_But_Love,Romatic_Call,Shine,Stay(I_Missed_You),Stroke_You_Up,Summer_Bunnies,The_Way_She_Loves_Me,This_DJ,When_Can_I_See_You,Wild_Night,You_Mean_The_World_To_Me,Your_Bodys_Callin}
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+@attribute col_5 INTEGER
+@attribute col_6 INTEGER
+@attribute col_7 {1,10,11,13,14,15,16,17,18,19,2,20,21,23,27,3,4,5,6,6_-10,7,8,9}
+@attribute col_8 {-1,-2,-3,-4,-4_-14,-5,-6,-7,-8,0,1,13,15,2,27,3,5,6,7,8}
+@attribute col_9 INTEGER
+
+@data
+100_Pure_Love,26,31,16,18,17,14,-1,5
+Action,43,42,4,43,45,8,2,-1
+All_I_Wanna_Do,40,61,2,7,15,5,8,21
+Always,65,57,19,33,31,20,-2,-8
+Always_In_My_Heart,32,29,10,42,34,14,-8,-3
+Another_Night,69,76,1,35,42,3,7,7
+Any_Time;_Any_Place,33,28,15,21,13,17,-8,-5
+Anytime_You_Need_A_Friend,61,52,14,15,12,17,-3,-9
+At_Your_Best(You_Are_Love),13,76,1,38,37,5,-1,63
+Back_and_Forth,29,22,20,17,18,19,1,-7
+Body_and_Soul,27,44,2,65,68,2,3,17
+Bop_Gun(One_Nation),16,21,7,41,49,5,8,5
+Can_You_Feel_The_Love_Tonight,14,12,15,4,3,17,-1,-2
+Circle_of_Life,34,48,2,49,76,1,27,14
+Closer,35,41,14,58,71,2,13,6
+Crazy,45,37,15,29,22,14,-7,-8
+Do_You_Wanna_Get_Funky,23,30,6,52,52,7,0,7
+Dont_Turn_Around,25,20,17,5,5,21,0,-5
+Fantastic_Voyage,4,2,15,13,11,13,-2,-2
+Far_Behind,53,50,2,34,35,9,1,-3
+Flava_In_Ya_Ear,12,16,5,61,76,1,15,4
+Funkdafied,6,5,15,26,21,14,-5,-1
+I_Miss_You,18,13,18,25,27,15,2,-5
+I_Swear,8,6,18,12,9,21,-3,-2
+Id_Give_Anything,19,18,4,63,53,6_-10,-1
+Ill_Make_Love_To_You,1,1,4,1,2,5,1,0
+If_You_Go,51,49,17,8,6,19,-2,-2
+Letitgo,52,53,3,40,43,4,3,1
+Love_Is_All_Around,58,67,3,46,46,8,0,9
+Lucky_One,60,66,3,22,30,5,8,6
+Nappy_Heads,37,39,9,74,74,5,0,2
+Never_Lie,10,11,6,54,60,3,6,1
+Nuttin_But_Love,28,32,9,45,47,6,2,4
+Romatic_Call,36,43,4,66,73,2,7,7
+Shine,21,17,16,9,8,18,-1,-4
+Stay(I_Missed_You),3,3,15,2,1,20,-1,0
+Stroke_You_Up,2,4,7,16,23,7,7,2
+Summer_Bunnies,41,47,3,68,62,3,-6,6
+The_Way_She_Loves_Me,38,36,6,24,20,10,-4,-2
+This_DJ,5,7,7,20,25,11,5,2
+When_Can_I_See_You,11,10,11,6,7,13,1,-1
+Wild_Night,7,8,12,3,4,16,1,1
+You_Mean_The_World_To_Me,63,54,23,14,10,23,-4,-9
+Your_Bodys_Callin,47,33,16,44,40,27,-4_-14

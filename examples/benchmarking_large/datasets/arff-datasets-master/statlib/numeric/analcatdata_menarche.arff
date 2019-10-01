@@ -1,0 +1,57 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: 2
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-menarche
+
+@attribute Age REAL
+@attribute Menstruating INTEGER
+@attribute Total INTEGER
+
+@data
+9.21,0,376
+10.21,0,200
+10.58,0,93
+10.83,2,120
+11.08,2,90
+11.33,5,88
+11.58,10,105
+11.83,17,111
+12.06,16,100
+12.33,29,93
+12.58,39,100
+12.83,51,108
+13.08,47,99
+13.33,67,106
+13.58,81,105
+13.83,88,117
+14.08,79,98
+14.33,90,97
+14.58,113,120
+14.83,95,102
+15.08,117,122
+15.33,107,111
+15.58,92,94
+15.83,112,114
+17.58,1049,1049

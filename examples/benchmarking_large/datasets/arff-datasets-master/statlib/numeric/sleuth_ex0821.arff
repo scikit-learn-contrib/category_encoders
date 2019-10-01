@@ -1,0 +1,37 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex0821.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex0821
+
+@attribute area {1,10,100,1000}
+@attribute species INTEGER
+
+@data
+1,14
+1,50
+1,55
+1,34
+1,40
+1,57
+10,43
+10,103
+10,33
+10,53
+10,50
+100,110
+100,70
+100,119
+100,60
+1000,145

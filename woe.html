@@ -170,60 +170,76 @@
 <dt id="category_encoders.woe.WOEEncoder">
 <em class="property">class </em><code class="descclassname">category_encoders.woe.</code><code class="descname">WOEEncoder</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>cols=None</em>, <em>drop_invariant=False</em>, <em>return_df=True</em>, <em>handle_unknown='value'</em>, <em>handle_missing='value'</em>, <em>random_state=None</em>, <em>randomized=False</em>, <em>sigma=0.05</em>, <em>regularization=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/woe.html#WOEEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.woe.WOEEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Weight of Evidence coding for categorical features.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of the output. 0 for none.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>verbose: int</strong></dt>
+<dd><p class="first last">integer indicating verbosity of the output. 0 for none.</p>
 </dd>
-<dt><strong>cols: list</strong></dt><dd><p>a list of columns to encode, if None, all string columns will be encoded.</p>
+<dt><strong>cols: list</strong></dt>
+<dd><p class="first last">a list of columns to encode, if None, all string columns will be encoded.</p>
 </dd>
-<dt><strong>drop_invariant: bool</strong></dt><dd><p>boolean for whether or not to drop columns with 0 variance.</p>
+<dt><strong>drop_invariant: bool</strong></dt>
+<dd><p class="first last">boolean for whether or not to drop columns with 0 variance.</p>
 </dd>
-<dt><strong>return_df: bool</strong></dt><dd><p>boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</p>
+<dt><strong>return_df: bool</strong></dt>
+<dd><p class="first last">boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</p>
 </dd>
-<dt><strong>handle_unknown: str</strong></dt><dd><p>options are ‘return_nan’, ‘error’ and ‘value’, defaults to ‘value’, which will assume WOE=0.</p>
+<dt><strong>handle_missing: str</strong></dt>
+<dd><p class="first last">options are ‘return_nan’, ‘error’ and ‘value’, defaults to ‘value’, which will assume WOE=0.</p>
 </dd>
-<dt><strong>randomized: bool,</strong></dt><dd><p>adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).</p>
+<dt><strong>handle_unknown: str</strong></dt>
+<dd><p class="first last">options are ‘return_nan’, ‘error’ and ‘value’, defaults to ‘value’, which will assume WOE=0.</p>
 </dd>
-<dt><strong>sigma: float</strong></dt><dd><p>standard deviation (spread or “width”) of the normal distribution.</p>
+<dt><strong>randomized: bool,</strong></dt>
+<dd><p class="first last">adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).</p>
 </dd>
-<dt><strong>regularization: float</strong></dt><dd><p>the purpose of regularization is mostly to prevent division by zero.
+<dt><strong>sigma: float</strong></dt>
+<dd><p class="first last">standard deviation (spread or “width”) of the normal distribution.</p>
+</dd>
+<dt><strong>regularization: float</strong></dt>
+<dd><p class="first last">the purpose of regularization is mostly to prevent division by zero.
 When regularization is 0, you may encounter division by zero.</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">References</p>
-<dl class="citation">
-<dt class="label" id="ra54881acb8a4-1"><span class="brackets">Ra54881acb8a4-1</span></dt>
-<dd><p>Weight of Evidence (WOE) and Information Value Explained, from</p>
-</dd>
-</dl>
+<table class="docutils citation" frame="void" id="ra54881acb8a4-1" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[Ra54881acb8a4-1]</td><td>Weight of Evidence (WOE) and Information Value Explained, from</td></tr>
+</tbody>
+</table>
 <p><a class="reference external" href="https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html">https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html</a></p>
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-center">
+<table border="1" class="longtable docutils">
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
+<col width="10%" />
+<col width="90%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.fit" title="category_encoders.woe.WOEEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y, \*\*kwargs)</p></td>
-<td><p>Fit encoder according to X and binary y.</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#category_encoders.woe.WOEEncoder.fit" title="category_encoders.woe.WOEEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self,&nbsp;X,&nbsp;y,&nbsp;\*\*kwargs)</td>
+<td>Fit encoder according to X and binary y.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.fit_transform" title="category_encoders.woe.WOEEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(self, X[, y])</p></td>
-<td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
+<tr class="row-even"><td><a class="reference internal" href="#category_encoders.woe.WOEEncoder.fit_transform" title="category_encoders.woe.WOEEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(self,&nbsp;X[,&nbsp;y])</td>
+<td>Encoders that utilize the target must make sure that the training data are transformed with:</td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_feature_names" title="category_encoders.woe.WOEEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>(self)</p></td>
-<td><p>Returns the names of all transformed / added columns.</p></td>
+<tr class="row-odd"><td><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_feature_names" title="category_encoders.woe.WOEEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>(self)</td>
+<td>Returns the names of all transformed / added columns.</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
-<td><p>Get parameters for this estimator.</p></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[,&nbsp;deep])</td>
+<td>Get parameters for this estimator.</td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, \*\*params)</p></td>
-<td><p>Set the parameters of this estimator.</p></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self,&nbsp;\*\*params)</td>
+<td>Set the parameters of this estimator.</td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.transform" title="category_encoders.woe.WOEEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X[, y, override_return_df])</p></td>
-<td><p>Perform the transformation to new categorical data.</p></td>
+<tr class="row-even"><td><a class="reference internal" href="#category_encoders.woe.WOEEncoder.transform" title="category_encoders.woe.WOEEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self,&nbsp;X[,&nbsp;y,&nbsp;override_return_df])</td>
+<td>Perform the transformation to new categorical data.</td>
 </tr>
 </tbody>
 </table>
@@ -231,33 +247,40 @@ When regularization is 0, you may encounter division by zero.</p>
 <dt id="category_encoders.woe.WOEEncoder.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>self</em>, <em>X</em>, <em>y</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/woe.html#WOEEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.woe.WOEEncoder.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit encoder according to X and binary y.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd><p>Training vectors, where n_samples is the number of samples
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd><p class="first last">Training vectors, where n_samples is the number of samples
 and n_features is the number of features.</p>
 </dd>
-<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples]</span></dt><dd><p>Binary target values.</p>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples]</span></dt>
+<dd><p class="first last">Binary target values.</p>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>self</strong><span class="classifier">encoder</span></dt><dd><p>Returns self.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>self</strong> <span class="classifier-delimiter">:</span> <span class="classifier">encoder</span></dt>
+<dd><p class="first last">Returns self.</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="category_encoders.woe.WOEEncoder.fit_transform">
 <code class="descname">fit_transform</code><span class="sig-paren">(</span><em>self</em>, <em>X</em>, <em>y=None</em>, <em>**fit_params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/woe.html#WOEEncoder.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.woe.WOEEncoder.fit_transform" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Encoders that utilize the target must make sure that the training data are transformed with:</dt><dd><p>transform(X, y)</p>
-</dd>
-<dt>and not with:</dt><dd><p>transform(X)</p>
-</dd>
+<dd><dl class="docutils">
+<dt>Encoders that utilize the target must make sure that the training data are transformed with:</dt>
+<dd>transform(X, y)</dd>
+<dt>and not with:</dt>
+<dd>transform(X)</dd>
 </dl>
 </dd></dl>
 
@@ -265,15 +288,20 @@ and n_features is the number of features.</p>
 <dt id="category_encoders.woe.WOEEncoder.get_feature_names">
 <code class="descname">get_feature_names</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/woe.html#WOEEncoder.get_feature_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.woe.WOEEncoder.get_feature_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the names of all transformed / added columns.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><dl class="simple">
-<dt>feature_names: list</dt><dd><p>A list with all feature names transformed or added.
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt>feature_names: list</dt>
+<dd><p class="first last">A list with all feature names transformed or added.
 Note: potentially dropped features are not included!</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -281,21 +309,28 @@ Note: potentially dropped features are not included!</p>
 <code class="descname">transform</code><span class="sig-paren">(</span><em>self</em>, <em>X</em>, <em>y=None</em>, <em>override_return_df=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/woe.html#WOEEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.woe.WOEEncoder.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform the transformation to new categorical data. When the data are used for model training,
 it is important to also pass the target in order to apply leave one out.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd></dd>
-<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples] when transform by leave one out</span></dt><dd><p>None, when transform without target information (such as transform test set)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>X</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples, n_features]</span></dt>
+<dd></dd>
+<dt><strong>y</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array-like, shape = [n_samples] when transform by leave one out</span></dt>
+<dd><p class="first last">None, when transform without target information (such as transform test set)</p>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>p</strong><span class="classifier">array, shape = [n_samples, n_numeric + N]</span></dt><dd><p>Transformed values with encoding applied.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>p</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array, shape = [n_samples, n_numeric + N]</span></dt>
+<dd><p class="first last">Transformed values with encoding applied.</p>
 </dd>
 </dl>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>

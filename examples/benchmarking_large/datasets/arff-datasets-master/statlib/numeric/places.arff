@@ -1,0 +1,420 @@
+% This dataset is taken from the Places Rated Almanac, by Richard
+% Boyer and David Savageau, copyrighted and published by Rand McNally.
+% This book order (SBN) number is 0-528-88008-X, and it retails for
+% $14.95 .  The data are reproduced by kind permission of the
+% publisher, and with the request that the copyright notice of Rand
+% McNally, and the names of the authors appear in any paper or
+% presentation using these data.
+% 
+% The nine rating criteria used by Places Rated Almanac are:
+% Climate & Terrain
+% Housing
+% Health Care & Environment
+% Crime
+% Transportation
+% Education
+% The Arts
+% Recreation
+% Economics
+% 
+% For all but two of the above criteria, the higher the score, the
+% better.  For Housing and Crime, the lower the score the better.
+% 
+% The scores are computed using the following component statistics for
+% each criterion (see the Places Rated Almanac for details):
+% 
+% Climate & Terrain: very hot and very cold months, seasonal
+% temperature variation, heating- and cooling-degree days, freezing
+% days, zero-degree days, ninety-degree days.
+% 
+% Housing: utility bills, property taxes, mortgage payments.
+% 
+% Health Care & Environment: per capita physicians, teaching hospitals,
+% medical schools, cardiac rehabilitation centers, comprehensive cancer
+% treatment centers, hospices, insurance/hospitalization costs index,
+% flouridation of drinking water, air pollution.
+% 
+% Crime: violent crime rate, property crime rate.
+% 
+% Transportation: daily commute, public transportation, Interstate
+% highways, air service, passenger rail service.
+% 
+% Education: pupil/teacher ratio in the public K-12 system, effort
+% index in K-12, accademic options in higher education.
+% 
+% The Arts: museums, fine arts and public radio stations, public
+% television stations, universities offering a degree or degrees in the
+% arts, symphony orchestras, theatres, opera companies, dance
+% companies, public libraries.
+% 
+% Recreation: good restaurants, public golf courses, certified lanes
+% for tenpin bowling, movie theatres, zoos, aquariums, family theme
+% parks, sanctioned automobile race tracks, pari-mutuel betting
+% attractions, major- and minor- league professional sports teams, NCAA
+% Division I football and basketball teams, miles of ocean or Great
+% Lakes coastline, inland water, national forests, national parks, or
+% national wildlife refuges, Consolidated Metropolitan Statistical Area
+% access.
+% 
+% Economics: average household income adjusted for taxes and living
+% costs, income growth, job growth.
+% 
+% 
+% The data are recorded in two ASCII files, PLACES.DAT, and
+% PLACES.KEY .  The first file contains 329 observations, 9 columns
+% plus an index column.  The index stands for the location.  PLACES.KEY
+% gives the index in the first column and the associated name of the
+% place in the second column.  All data analysis can be done with
+% numeric variables and the index, as read in from PLACES.DAT .
+% Alternatively, the numerical key can be replaced by the alphabetic
+% name, as given by PLACES.KEY .
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation places
+
+@attribute Climate_and_Terrain INTEGER
+@attribute Housing INTEGER
+@attribute Health_Care_and_Environment INTEGER
+@attribute Crime INTEGER
+@attribute Transportation INTEGER
+@attribute Education INTEGER
+@attribute The_Arts INTEGER
+@attribute Recreation INTEGER
+@attribute Economics INTEGER
+@attribute Place {Abilene_TX,Akron_OH,Albany-Schenectady-Troy_NY,Albany_GA,Albuquerque_NM,Alexandria_LA,Allentown_Bethlehem_PA-NJ,Alton_Granite_City_IL,Altoona_PA,Amarillo_TX,Anaheim-Santa_Ana_CA,Anchorage_AK,Anderson_IN,Anderson_SC,Ann_Arbor_MI,Anniston_AL,Appleton-Oshkosh-Neenah_WI,Asheville_NC,Athens_GA,Atlanta_GA,Atlantic_City_NJ,Augusta_GA-SC,Aurora-Elgin_IL,Austin_TX,Bakersfield_CA,Baltimore_MD,Bangor_ME,Baton_Rouge_LA,Battle_Creek_MI,Beaumont-Port_Arthur_TX,Beaver_County_PA,Bellingham_WA,Benton_Harbor_MI,Bergen-Passaic_NJ,Billings_MT,Biloxi-Gulfport_MS,Binghampton_NY,Birmingham_AL,Bismarck_ND,Bloomington-Normal_IL,Bloomington_IN,Boise_City_ID,Boston_MA,Boulder-Longmont_CO,Bradenton_FL,Brazoria_TX,Bremerton_WA,Bridgeport-Milford_CT,Bristol_CT,Brockton_MA,Brownsville-Harlington_TX,Bryan-College_Station_TX,Buffalo_NY,Burlington_NC,Burlington_VT,Canton_OH,Casper_WY,Cedar_Rapids_IA,Champaign-Urbana-Rantoul_IL,Charleston_SC,Charleston_WV,Charlotte-Gastonia-Rock_Hill_NC-SC,Charlottesville_VA,Chattanooga_TN-GA,Chicago_IL,Chico_CA,Cincinnati_OH-KY-IN,Clarksville-Hopkinsville_TN-KY,Cleveland_OH,Colorado_Springs_CO,Columbia_MO,Columbia_SC,Columbus_GA-AL,Columbus_OH,Corpus_Christi_TX,Cumberland_MD-WV,Dallas_TX,Danbury_CT,Danville_VA,Davenport-Rock_Island-Moline_IA-IL,Dayton-Springfield_OH,Daytona_Beach_FL,Decatur_IL,Denver_CO,Des_Moines_IA,Detroit_MI,Dothgan_AL,Dubuque_IA,Duluth_MN-WI,East_St._Louis-Belleville_IL,Eau_Claire_WI,El_Paso_TX,Elkhart-Goshen_IN,Elmira_NY,Enid_OK,Erie_PA,Eugene-Springfield_OR,Evansville_IN-KY,Fall_River_MA-RI,Fargo-Moorhead_ND-MN,Fayetteville_NC,Fayettteville-Sprindale_AR,Fitchburg-Leominster_MA,Flint_MI,Florence_AL,Florence_SC,Fort_Collins-Lover=land_CO,Fort_Lauderdale-Hollywood-Pompano_Beach_FL,Fort_Myers_FL,Fort_Pierce_FL,Fort_Smith_AR-OK,Fort_Walton_Beach_FL,Fort_Wayne_IN,Forth-Arlington_TX,Fresno_CA,Gadsden_AL,Gainesville_FL,Galveston-Texas_City_TX,Gary-Hammond_IN,Glens_Falls_NY,Grand_Forks_ND,Grand_Rapids_MI,Great_Falls_MT,Greeley_CO,Green_Bay_WI,Greensboro-Winston-Salem-High_Point_NC,Greenville-Spartanburg_SC,Hagerstown_MD,Hamilton-Middletown_OH,Harrisburg-Lebanon-Carlisle_PA,Hartford_CT,Hickory_NC,Honolulu_HI,Houma-Thibodaux_LA,Houston_TX,Huntington-Ashland_WV-KY-OH,Huntsville_AL,Indianapolis_IN,Iowa_City_IA,Jackson_MI,Jackson_MS,Jacksonville_FL,Jacksonville_NC,Janesville-Beloit_WI,Jersey_City_NJ,Johnson_City-Kingsport-Bristol_TN-VA,Johnstown_PA,Joliet_IL,Joplin_MO,Kalamazoo_MI,Kankakee_IL,Kansas_City_KS,Kansas_City_MO,Kenosha_WI,Kileen-Temple_TX,Knoxville_TN,Kokomo_IN,La_Crosse_WI,Lafayette_IN,Lafayette_LA,Lake_Charles_LA,Lake_County_IL,Lakeland-Winter_Haven_FL,Lancaster_PA,Lansing-East_Lansing_MI,Laredo_TX,Las_Cruces_NM,Las_Vegas_NV,Lawrence-Haverhill_MA-NH,Lawrence_KS,Lawton_OK,Lewiston-Auburn_ME,Lexington-Fayette_KY,Lima_OH,Lincoln_NE,Little_Rock_North_Little_Rock_AR,Longview-Marshall_TX,Lorain-Elyria_OH,Los_Angeles_Long_Beach_CA,Louisville_KY-IN,Lowell_MA-NH,Lubbock_TX,Lynchburg_VA,Macon_Warner_Robbins_GA,Madison_WI,Manchester_NH,Mansfield_OH,Materbury_CT,McAllen-Edinburg-Mission_TX,Medford_OR,Melbourne-Titusville-Palm_Bay_FL,Memphis_TN-AR-MS,Miami-Hialeah_FL,Middlesex-Somerset_Hunterdon_NJ,Middletown_CT,Midland_TX,Milwaukee_WI,Minneapolis-St._Paul_MN-WI,Mobile_AL,Modesto_CA,Monmouth-Ocean_NJ,Monroe_LA,Montgomery_AL,Muncie_IN,Muskegon_MI,Nashua_NH,Nashville_TN,Nassua-Suffolk_NY,New_Bedsford_MA,New_Britain_CT,New_Haven-Meriden_CT,New_London-Norwich_CT-RI,New_Orleans_LA,New_York_NY,Newark_NJ,Niagara_Falls_NY,Norfolk-Virginia_Beach-Newport_News_VA,Norwalk_CT,Oakland_CA,Ocala_FL,Odessa_TX,Oklahoma_City_OK,Olympia_WA,Omaha_NE-IA,Orange_County_NY,Orlando_FL,Owensboro_KY,Oxnard-Ventura_CA,Panama_City_FL,Parkerburg-Marietta_WV-OH,Pascagoula_MS,Pawtucket-Woonsocket-Attleboro_RI-MA,Pensacola_FL,Peoria_IL,Philadelphia_PA-NJ,Phoenix_AZ,Pine_Bluff_AR,Pittsburgh_PA,Pittsfield_MA,Portland_ME,Portland_OR,Portsmouth-Dover-Rochester_NH-ME,Poughkeepsie_NY,Providence_RI,Provo-Orem_UT,Pueblo_CO,Racine_WI,Raleigh-Durham_NC,Reading_PA,Redding_CA,Reno_NV,Richland-Kinnewick-Pasco_WA,Richmond-Petersburg_VA,Riverside-San_Bernardino_CA,Roanoke_VA,Rochester_MN,Rochester_NY,Rockford_IL,Sacramento_CA,Saginaw-Bay_City-Midland_MI,Salem-Glouster_MA,Salem_OR,Salinas-Seaside-Monterey_CA,Salt_Lake_City-Ogden_UT,San_Angelo_TX,San_Antonio_TX,San_Diego_CA,San_Francisco_CA,San_Jose_CA,Santa_Barbara-Santa_Maria-Lompoc_CA,Santa_Cruz_CA,Santa_Rosa-Petaluma_CA,Sarasota_FL,Savannah_GA,Scranton-Wilkes_Barre_PA,Seattle_WA,Sharon_PA,Sheboygan_WI,Sherman-Denison_TX,Shreveport_LA,Sioux_City_IA-NE,Sioux_Falls_SD,South_Bend-Mishawaka_IN,Spokane_WA,Springfield_IL,Springfield_MA,Springfield_MO,St._Cloud_MN,St._Joseph_MO,St._Louis_MO-IL,Stamford_CT,State_College_PA,Steubenville-Weirton_OH-WV,Stockton_CA,Syracuse_NY,Tacoma_WA,Tallahassee_FL,Tampa-St._Petersburg-Clearwater_FL,Terre_Haute_IN,Texarkana_TX-Texarkana_AR,Toledo_OH,Topeka_KS,Trenton_NJ,Tulsa_OK,Tuscaloosa_AL,Tuscon_AZ,Tyler_TX,Utica-Rome_NY,Vallejo-Fairfield-Napa_CA,Vancouver_WA,Victoria_TX,Vineland-Millville-Bridgeton_NJ,Visalia-Tulare-Porterville_CA,Waco_TX,Washington_DC-MD-VA,Waterloo-Cedar_Falls_IA,Wausau_WI,West_Palm_Beach-Boca_Raton-Delray_Beach_FL,Wheeling_WV-OH,Wichita_Falls_TX,Wichita_KS,Williamsport_PA,Wilmington_DE-NJ-MD,Wilmington_NC,Worcester_MA,Yakima_WA,York_PA,Youngstown-Warren_OH,Yuba_City_CA}
+
+@data
+521,6200,237,923,4031,2757,996,1405,7633,Abilene_TX
+575,8138,1656,886,4883,2438,5564,2632,4350,Akron_OH
+468,7339,618,970,2531,2560,237,859,5250,Albany_GA
+476,7908,1431,610,6883,3399,4655,1617,5864,Albany-Schenectady-Troy_NY
+659,8393,1853,1483,6558,3026,4496,2612,5727,Albuquerque_NM
+520,5819,640,727,2444,2972,334,1018,5254,Alexandria_LA
+559,8288,621,514,2881,3144,2333,1117,5097,Allentown_Bethlehem_PA-NJ
+537,6487,965,706,4975,2945,1487,1280,5795,Alton_Granite_City_IL
+561,6191,432,399,4246,2778,256,1210,4230,Altoona_PA
+609,6546,669,1073,4902,2852,1235,1109,6241,Amarillo_TX
+885,16047,2025,983,3954,2843,5632,3156,6220,Anaheim-Santa_Ana_CA
+195,12175,601,1223,5091,2414,2346,3000,7668,Anchorage_AK
+530,5704,580,878,2865,2469,430,838,3370,Anderson_IN
+591,5725,820,975,2707,2772,169,613,4262,Anderson_SC
+546,11014,2508,1067,3433,3346,7559,2288,4579,Ann_Arbor_MI
+560,5530,598,1125,3051,2189,268,1165,4730,Anniston_AL
+396,7877,833,525,3298,2844,1166,2315,5275,Appleton-Oshkosh-Neenah_WI
+694,6722,1204,566,5086,2990,1391,1542,5196,Asheville_NC
+601,6691,605,933,1866,2646,3546,1001,5193,Athens_GA
+696,8316,3195,1308,8409,3057,7559,1362,6315,Atlanta_GA
+615,11074,637,1878,3556,2929,621,2711,8107,Atlantic_City_NJ
+534,6292,1798,872,2523,2915,1047,913,5431,Augusta_GA-SC
+474,10384,1203,821,3943,2208,3857,1800,5097,Aurora-Elgin_IL
+435,8831,782,1049,3670,3063,5355,1063,7439,Austin_TX
+560,8068,420,1561,3725,2564,1222,1568,6056,Bakersfield_CA
+567,9148,3562,1730,7405,3471,9788,2925,5503,Baltimore_MD
+451,7277,780,651,5613,2934,1995,2148,5172,Bangor_ME
+427,8083,342,1565,3329,2635,4237,1413,6308,Baton_Rouge_LA
+527,6342,900,1031,4652,2483,354,1648,4008,Battle_Creek_MI
+423,6288,616,1313,2782,2745,1795,1813,6019,Beaumont-Port_Arthur_TX
+586,7866,861,310,2960,2535,1284,1480,3119,Beaver_County_PA
+772,8329,240,825,3776,2778,1302,3200,4247,Bellingham_WA
+566,6761,570,1190,2989,2545,79,1477,3635,Benton_Harbor_MI
+559,14607,2661,857,3511,3653,9304,1918,6016,Bergen-Passaic_NJ
+452,8315,479,810,6285,3008,778,2046,5913,Billings_MT
+584,6458,441,810,2516,2592,679,2106,5801,Biloxi-Gulfport_MS
+550,8257,1007,415,4529,3052,1599,1722,5614,Binghampton_NY
+612,6811,1692,1123,5177,2851,3958,1234,4843,Birmingham_AL
+149,8365,804,413,4303,2686,1211,1630,6019,Bismarck_ND
+558,7056,731,657,1746,2873,2152,1990,4829,Bloomington_IN
+487,8654,815,673,5889,2854,1470,1605,5863,Bloomington-Normal_IL
+592,8221,453,880,6575,2391,2385,1672,4633,Boise_City_ID
+623,11609,5301,1215,6801,3479,21042,3066,6363,Boston_MA
+459,11914,962,1088,7108,2587,3663,4012,7127,Boulder-Longmont_CO
+440,8242,333,1093,3805,2712,154,1349,7437,Bradenton_FL
+423,8394,438,768,2391,2718,1506,1512,6020,Brazoria_TX
+808,9060,310,651,1670,2544,382,1973,5671,Bremerton_WA
+648,13429,2550,943,3197,3029,8368,1913,7197,Bridgeport-Milford_CT
+516,10041,975,545,4495,2628,514,777,6527,Bristol_CT
+575,8263,916,1336,3810,2729,2001,1217,6900,Brockton_MA
+440,5376,91,974,3119,2413,162,3000,4968,Brownsville-Harlington_TX
+383,8228,640,1016,2530,2973,2002,1413,8040,Bryan-College_Station_TX
+571,8064,2465,971,5384,3121,8567,2441,5047,Buffalo_NY
+637,6179,994,707,1910,2519,131,701,5680,Burlington_NC
+383,9673,1809,494,7146,3323,1741,3357,6726,Burlington_VT
+575,7332,443,650,4279,2754,989,1157,4847,Canton_OH
+401,9839,345,989,4410,2453,303,1435,6303,Casper_WY
+434,7774,837,714,5270,2619,904,1501,5009,Cedar_Rapids_IA
+525,8627,672,1022,7447,3147,2203,1700,5485,Champaign-Urbana-Rantoul_IL
+569,7402,1463,1495,4207,3164,2993,2561,5153,Charleston_SC
+627,7789,708,721,5470,2894,2605,844,5257,Charleston_WV
+644,7169,999,1273,6099,3031,4313,1236,5671,Charlotte-Gastonia-Rock_Hill_NC-SC
+618,9531,1348,756,6041,3489,1422,1704,6055,Charlottesville_VA
+576,6189,564,946,3401,2415,2483,1238,4487,Chattanooga_TN-GA
+514,10913,5766,1034,7742,3486,24846,2856,5205,Chicago_IL
+603,8587,243,947,4067,3126,1647,1543,5307,Chico_CA
+584,8143,2138,978,5748,2918,9688,2451,5270,Cincinnati_OH-KY-IN
+544,6007,446,736,2226,2654,111,2219,4880,Clarksville-Hopkinsville_TN-KY
+579,9168,3167,1138,7333,2972,12679,3300,4879,Cleveland_OH
+526,8509,721,1086,3389,2754,1749,2375,7699,Colorado_Springs_CO
+541,7702,1951,1065,3893,2377,2882,1331,5147,Columbia_MO
+526,7519,1421,1524,5859,2908,2489,1484,5279,Columbia_SC
+517,5817,833,820,2995,2665,1861,1214,4812,Columbus_GA-AL
+558,8093,1837,1092,4364,2928,6648,2020,5165,Columbus_OH
+362,6929,458,1335,3626,2840,1992,2037,6690,Corpus_Christi_TX
+591,6054,760,337,3709,3363,373,1036,4741,Cumberland_MD-WV
+544,9318,2825,1529,6213,3269,10438,2310,7710,Dallas_TX
+569,14420,2350,548,2715,3029,7415,1572,7060,Danbury_CT
+545,5709,593,379,3161,2943,85,501,4491,Danville_VA
+440,8083,1113,834,3907,2901,1017,1920,4997,Davenport-Rock_Island-Moline_IA-IL
+544,7635,2253,1151,4775,2772,6935,1122,4532,Dayton-Springfield_OH
+561,7203,723,1347,4117,2612,809,3967,6592,Daytona_Beach_FL
+480,7395,732,897,3867,2683,298,1222,4274,Decatur_IL
+521,10789,2533,1365,8145,3145,8477,2324,7164,Denver_CO
+444,8028,1256,1044,5521,2613,1857,1802,5346,Des_Moines_IA
+536,8525,4142,1587,4808,3064,10389,2483,3904,Detroit_MI
+336,5708,593,930,2232,2230,117,714,5453,Dothgan_AL
+419,7993,640,571,3668,2701,340,1587,3949,Dubuque_IA
+193,6040,1159,488,5205,2619,2377,3107,3922,Duluth_MN-WI
+537,6501,444,1096,6539,2630,904,1610,6113,East_St._Louis-Belleville_IL
+257,7078,798,433,3197,2960,1807,1397,5348,Eau_Claire_WI
+592,7343,528,1323,3705,2479,3800,1101,5080,El_Paso_TX
+521,6573,596,524,4168,2537,353,1023,4214,Elkhart-Goshen_IN
+467,7078,562,582,3324,3000,1048,1600,4813,Elmira_NY
+461,6829,626,845,2312,2764,215,1200,8268,Enid_OK
+605,7715,529,635,5754,2641,2032,1340,4299,Erie_PA
+741,9370,539,874,5293,3118,2631,3400,3045,Eugene-Springfield_OR
+550,6743,783,864,3496,2797,1876,1622,5206,Evansville_IN-KY
+643,9017,900,861,4602,2439,749,2005,4884,Fall_River_MA-RI
+148,8168,920,503,6325,2506,2111,1414,5594,Fargo-Moorhead_ND-MN
+561,6274,872,1150,4402,3051,844,709,5255,Fayetteville_NC
+549,6686,594,545,3581,2334,1915,1695,4631,Fayettteville-Sprindale_AR
+507,8252,655,655,2244,2799,270,790,5098,Fitchburg-Leominster_MA
+540,7204,724,1671,4912,2511,2163,1355,3724,Flint_MI
+546,5962,607,516,1454,2427,1021,994,4492,Florence_AL
+552,6508,818,1334,4963,3109,628,800,4842,Florence_SC
+490,9951,731,744,2637,2413,1609,4200,6631,Fort_Collins-Lover=land_CO
+572,10810,1252,1536,4186,2734,2027,2455,7136,Fort_Lauderdale-Hollywood-Pompano_Beach_FL
+342,9298,546,787,4583,2729,380,4005,7166,Fort_Myers_FL
+602,8842,527,1422,2143,3154,368,2058,7973,Fort_Pierce_FL
+482,5784,466,663,3092,2927,145,1736,4849,Fort_Smith_AR-OK
+536,7554,484,544,2886,2809,87,2092,6342,Fort_Walton_Beach_FL
+509,6733,1060,710,5416,2772,2846,1711,4195,Fort_Wayne_IN
+528,7956,1038,1348,4472,2627,6466,2366,6862,Forth-Arlington_TX
+559,9291,369,1483,4388,2407,3596,2984,5746,Fresno_CA
+526,5382,622,749,2174,2299,153,300,4220,Gadsden_AL
+402,7388,1731,1658,3527,3094,3335,1237,5739,Gainesville_FL
+727,7767,1437,1213,3423,2809,1756,3000,6026,Galveston-Texas_City_TX
+483,7641,1364,996,5855,2526,4115,1940,3826,Gary-Hammond_IN
+476,7120,43,568,2241,2674,603,1883,5166,Glens_Falls_NY
+105,7898,1109,401,5587,2721,1921,1304,5646,Grand_Forks_ND
+513,7780,1274,952,3454,2705,3255,1909,4848,Grand_Rapids_MI
+410,7143,667,792,3747,2737,401,2176,4697,Great_Falls_MT
+490,8218,706,994,1641,2854,1254,739,5443,Greeley_CO
+367,8401,916,583,3793,2622,2547,1925,5650,Green_Bay_WI
+626,7064,1694,967,4453,3090,4188,1651,5204,Greensboro-Winston-Salem-High_Point_NC
+655,6336,1260,1185,3950,3236,2569,1410,5012,Greenville-Spartanburg_SC
+568,7763,818,627,3431,2990,825,1491,4477,Hagerstown_MD
+542,8227,1135,892,3338,2747,2316,1604,4618,Hamilton-Middletown_OH
+556,7891,2087,629,6164,3224,3083,1532,5322,Harrisburg-Lebanon-Carlisle_PA
+516,11652,2521,1279,7120,3628,3616,1790,6307,Hartford_CT
+623,6760,1006,765,2703,2726,188,797,4728,Hickory_NC
+717,17021,1298,891,5911,2502,7168,3703,5187,Honolulu_HI
+427,7094,583,400,1145,1995,725,2700,6662,Houma-Thibodaux_LA
+424,9760,2467,1499,4626,3271,11073,1825,7464,Houston_TX
+636,6632,875,665,4001,2525,2195,840,4383,Huntington-Ashland_WV-KY-OH
+600,6283,685,924,2661,2257,1921,1075,6412,Huntsville_AL
+557,7012,2243,1000,5804,2690,6348,1906,5082,Indianapolis_IN
+434,9429,2437,830,2770,2842,2255,1506,5165,Iowa_City_IA
+518,6794,679,1021,4800,2654,323,1933,3822,Jackson_MI
+412,7245,1792,1091,4917,3130,3209,1427,5186,Jackson_MS
+457,6626,1181,1211,5611,3048,2162,2884,6139,Jacksonville_FL
+564,6111,740,967,1780,2646,567,1177,6386,Jacksonville_NC
+466,7447,700,858,3092,2532,1092,1615,4371,Janesville-Beloit_WI
+601,8810,1759,1434,4982,2574,7420,1001,4889,Jersey_City_NJ
+663,6119,1152,424,2532,2925,1925,2155,4903,Johnson_City-Kingsport-Bristol_TN-VA
+547,6524,731,353,4343,2691,666,903,4181,Johnstown_PA
+479,9327,1058,837,4645,2868,3177,1636,4631,Joliet_IL
+580,5159,500,628,2335,2871,80,801,5324,Joplin_MO
+527,7919,1043,1120,5419,2896,2071,2163,4794,Kalamazoo_MI
+483,7230,609,976,3444,2855,75,1119,5579,Kankakee_IL
+549,8126,1711,1142,5006,3028,1167,1045,6166,Kansas_City_KS
+549,7076,1939,1468,5869,2949,5553,2043,4865,Kansas_City_MO
+496,8516,1067,911,4473,2918,3844,2224,5176,Kenosha_WI
+365,6463,398,733,2862,3167,920,931,6331,Kileen-Temple_TX
+670,6692,960,622,4273,2761,3309,2514,5537,Knoxville_TN
+512,6616,596,413,1817,2904,285,1000,3429,Kokomo_IN
+352,8310,686,676,6096,3027,1466,1953,5648,La_Crosse_WI
+494,7778,655,465,4956,2945,2235,1814,4333,Lafayette_IN
+429,8572,548,1030,5268,2305,1772,1734,9702,Lafayette_LA
+469,6921,314,1093,3549,2336,1456,1855,5872,Lake_Charles_LA
+514,13282,1237,822,3422,2607,3746,2435,5755,Lake_County_IL
+307,6680,323,1373,3412,2998,309,2513,5594,Lakeland-Winter_Haven_FL
+559,8631,1111,413,3908,3097,1015,1147,5120,Lancaster_PA
+480,7907,1371,894,5557,2891,4206,1609,4747,Lansing-East_Lansing_MI
+424,6152,465,1050,3322,2827,150,702,5264,Laredo_TX
+552,6962,588,1457,2989,2736,2804,1609,5341,Las_Cruces_NM
+556,9906,412,1913,5900,2241,1586,3996,6035,Las_Vegas_NV
+513,7497,621,1018,2931,2700,3150,1752,4573,Lawrence_KS
+548,10414,1202,909,3575,2479,2111,1879,6527,Lawrence-Haverhill_MA-NH
+479,5850,477,1156,2366,2375,1280,1757,6105,Lawton_OK
+490,6876,759,764,2941,2694,736,1853,4444,Lewiston-Auburn_ME
+635,8340,1860,1055,4080,2861,3596,1403,6245,Lexington-Fayette_KY
+522,6986,741,855,4084,2629,1352,1428,4313,Lima_OH
+398,8256,775,789,5618,2878,4523,1804,4908,Lincoln_NE
+497,7270,1861,1328,4186,2581,2180,1462,5273,Little_Rock_North_Little_Rock_AR
+500,6608,509,976,2680,2816,334,834,6898,Longview-Marshall_TX
+579,8309,1105,609,3629,2582,2565,1602,3301,Lorain-Elyria_OH
+885,13868,5153,1960,4345,3195,23567,3948,5316,Los_Angeles_Long_Beach_CA
+616,6812,2111,937,5420,3028,4916,1942,5402,Louisville_KY-IN
+526,9640,1083,819,3820,2479,3057,1129,6651,Lowell_MA-NH
+604,6990,900,1608,4158,2545,3402,1702,5923,Lubbock_TX
+642,6934,732,643,4909,2803,1079,1439,4926,Lynchburg_VA
+447,6235,593,783,3144,2651,1435,1204,5659,Macon_Warner_Robbins_GA
+378,9897,2168,779,6084,3047,5123,1944,5448,Madison_WI
+404,9860,737,633,4595,2728,475,837,7101,Manchester_NH
+558,6881,303,1072,2876,2871,554,1133,4386,Mansfield_OH
+238,5345,372,836,2117,2644,1231,1059,5739,McAllen-Edinburg-Mission_TX
+611,9008,256,728,3512,2797,1856,1416,3692,Medford_OR
+582,8721,517,1039,2560,2814,437,3800,7089,Melbourne-Titusville-Palm_Bay_FL
+514,7015,2043,1488,6247,2804,4486,1994,5160,Memphis_TN-AR-MS
+634,10267,2314,2459,5202,2879,4837,4300,5840,Miami-Hialeah_FL
+559,12135,2589,691,4198,3539,8058,1596,6324,Middlesex-Somerset_Hunterdon_NJ
+593,11652,884,646,4636,3128,730,1682,6307,Middletown_CT
+603,8672,97,1166,5310,2416,438,1502,9980,Midland_TX
+460,10176,3053,826,4945,3044,8766,2902,4982,Milwaukee_WI
+293,9559,3934,906,5606,3013,11714,2158,5843,Minneapolis-St._Paul_MN-WI
+442,6704,1469,1511,3345,2779,1764,2164,4565,Mobile_AL
+639,8630,347,1154,2000,2616,631,833,5107,Modesto_CA
+615,11660,2482,819,2690,2787,7563,3544,6154,Monmouth-Ocean_NJ
+455,6190,331,957,3606,2453,1528,1541,5537,Monroe_LA
+483,6754,832,815,3509,2388,1374,1112,4892,Montgomery_AL
+530,5800,949,783,4325,2965,2498,1428,3980,Muncie_IN
+580,6391,699,1537,3353,2630,529,2666,3708,Muskegon_MI
+538,10757,853,452,3320,2728,2122,1523,6962,Nashua_NH
+600,7800,1850,984,5030,2763,4342,1849,5938,Nashville_TN
+656,11138,3919,566,2119,3234,8640,3705,7371,Nassua-Suffolk_NY
+643,8087,519,1012,3219,2439,766,1450,4937,New_Bedsford_MA
+516,10509,1245,903,4900,3128,1360,1217,6470,New_Britain_CT
+583,11460,2068,893,5938,3495,7852,1604,5478,New_Haven-Meriden_CT
+583,10218,556,633,4505,3244,1164,2281,6672,New_London-Norwich_CT-RI
+498,8515,2586,1604,4579,2995,7978,3500,6453,New_Orleans_LA
+638,13358,7850,2498,8625,2984,56745,3579,5338,New_York_NY
+601,14220,4106,1461,3514,3362,14224,1818,5690,Newark_NJ
+554,7686,507,775,5561,2538,966,1873,4463,Niagara_Falls_NY
+632,8568,1932,997,3215,3014,7087,2964,5866,Norfolk-Virginia_Beach-Newport_News_VA
+648,20151,2530,625,3536,3029,7273,2268,6432,Norwalk_CT
+910,13135,2362,1533,6430,2646,6162,2394,5457,Oakland_CA
+333,6750,489,1327,3798,2864,266,3095,7060,Ocala_FL
+603,6689,384,1698,1944,2721,259,900,7565,Odessa_TX
+554,7186,1623,1297,4459,2908,4843,1742,8119,Oklahoma_City_OK
+726,8263,338,752,4083,2625,708,1451,4912,Olympia_WA
+440,7128,2559,1008,5806,3069,3787,1977,5853,Omaha_NE-IA
+509,10173,1574,804,3299,2754,6987,1866,5822,Orange_County_NY
+457,8196,765,1671,5887,2976,2681,2881,7413,Orlando_FL
+524,6760,812,568,2273,2491,804,852,6062,Owensboro_KY
+890,14000,1106,791,2238,2155,2769,2135,5514,Oxnard-Ventura_CA
+536,6373,201,1344,2778,2500,755,2089,6083,Panama_City_FL
+617,6657,665,488,4399,2503,91,1148,5187,Parkerburg-Marietta_WV-OH
+584,6248,593,591,1750,1701,155,1956,4491,Pascagoula_MS
+586,9462,1117,744,4738,3058,480,1513,5154,Pawtucket-Woonsocket-Attleboro_RI-MA
+536,6479,563,1472,2918,2914,1954,2160,6029,Pensacola_FL
+491,8388,1184,921,2967,2452,2294,1688,4073,Peoria_IL
+630,8310,5158,1059,5903,3781,17270,1979,5638,Philadelphia_PA-NJ
+536,8921,1584,1268,4729,2942,4573,2472,6415,Phoenix_AZ
+463,5674,617,1169,1671,2554,373,793,4247,Pine_Bluff_AR
+586,8099,3413,687,5616,3544,11069,2145,5261,Pittsburgh_PA
+482,7807,694,638,3759,3264,228,1420,5483,Pittsfield_MA
+483,8100,834,823,5185,2973,2351,3366,6186,Portland_ME
+768,9912,1590,1504,5947,3343,5160,2532,4535,Portland_OR
+469,9966,596,475,2321,3026,165,1390,8367,Portsmouth-Dover-Rochester_NH-ME
+488,9981,355,633,4166,2898,785,1670,6746,Poughkeepsie_NY
+586,9274,2467,998,5474,3558,6152,2263,5154,Providence_RI
+500,9321,198,485,4546,2618,1985,3300,3459,Provo-Orem_UT
+497,6637,468,1181,3501,2653,1307,1619,4646,Pueblo_CO
+496,8943,931,1055,3558,2732,1171,2016,4415,Racine_WI
+647,8230,3476,981,6544,3455,5730,1606,6405,Raleigh-Durham_NC
+614,7614,1154,522,3120,3028,1108,1549,5587,Reading_PA
+664,8584,274,892,5727,2471,845,2424,4459,Redding_CA
+535,12449,615,1116,6767,2529,2210,2386,5677,Reno_NV
+664,8461,300,779,4714,1728,529,1204,5326,Richland-Kinnewick-Pasco_WA
+585,8343,2448,1076,6680,2940,5697,1943,5870,Richmond-Petersburg_VA
+615,9754,2201,1475,3141,2596,5327,1918,4923,Riverside-San_Bernardino_CA
+652,7476,1036,784,3872,2723,1263,2036,5287,Roanoke_VA
+308,9193,2966,437,4399,2134,769,1503,6099,Rochester_MN
+536,8609,1969,894,5165,3582,6956,2659,6304,Rochester_NY
+466,7584,969,1156,2987,2680,1026,933,4592,Rockford_IL
+576,9855,1027,1363,5097,2793,4483,2306,5309,Sacramento_CA
+515,7368,1022,1068,3186,2772,1708,2059,3709,Saginaw-Bay_City-Midland_MI
+195,7235,603,343,4565,2502,1871,1572,5488,St._Cloud_MN
+475,5589,223,969,2689,2927,879,1265,5991,St._Joseph_MO
+537,7605,2850,1306,7119,3530,8896,2243,5800,St._Louis_MO-IL
+716,8378,749,1014,4732,3278,691,1873,3835,Salem_OR
+644,11622,1232,490,3459,2729,3276,2234,6309,Salem-Glouster_MA
+843,13838,352,1107,4160,2439,1004,3179,5656,Salinas-Seaside-Monterey_CA
+541,9466,1631,969,6228,2340,5528,3900,4942,Salt_Lake_City-Ogden_UT
+488,6321,236,1032,2938,2707,1301,1136,7720,San_Angelo_TX
+398,6898,1337,1197,5387,2938,4295,1509,6873,San_Antonio_TX
+903,14465,2416,1099,5489,2794,8818,3347,5489,San_Diego_CA
+910,17158,3726,1619,8299,3371,14226,4600,6063,San_Francisco_CA
+850,16048,2117,1065,5224,2709,6446,1964,7270,San_Jose_CA
+855,15547,532,1026,5662,2719,2684,3300,5821,Santa_Barbara-Santa_Maria-Lompoc_CA
+843,14303,1035,964,5010,2611,3748,1703,5335,Santa_Cruz_CA
+732,12931,1052,912,3313,2722,3457,2255,5703,Santa_Rosa-Petaluma_CA
+391,9560,801,939,3742,2626,817,2535,7715,Sarasota_FL
+542,6896,1084,1614,5958,2456,2262,2237,5591,Savannah_GA
+575,6697,1219,372,3683,3230,1832,1386,4907,Scranton-Wilkes_Barre_PA
+808,10183,2715,1170,6634,2710,9577,4800,5901,Seattle_WA
+570,6697,700,384,2017,3022,52,1100,4055,Sharon_PA
+442,8121,593,450,3458,2557,268,1316,4765,Sheboygan_WI
+524,5722,394,1035,1922,2652,68,937,6213,Sherman-Denison_TX
+508,6534,1445,1197,4401,2858,2826,1389,6585,Shreveport_LA
+385,6528,846,759,4316,2673,1393,1359,4648,Sioux_City_IA-NE
+276,7983,1041,556,6271,2651,465,1324,5204,Sioux_Falls_SD
+545,5938,830,1038,5634,2874,2672,1819,5056,South_Bend-Mishawaka_IN
+574,6927,497,869,5534,2774,2988,1517,4722,Spokane_WA
+524,7882,1877,1225,6172,3078,1983,1536,5384,Springfield_IL
+453,8039,710,1212,6159,3525,3466,1514,5289,Springfield_MA
+544,6343,577,892,3828,2709,1634,1737,5932,Springfield_MO
+648,23640,2610,835,3110,3029,7865,1729,6158,Stamford_CT
+575,8405,612,540,2740,3169,1271,1200,4677,State_College_PA
+542,6578,505,418,1532,2672,147,1460,3744,Steubenville-Weirton_OH-WV
+625,8474,342,1395,4427,2155,1579,1630,5672,Stockton_CA
+548,7670,1040,689,6951,3144,5080,2851,4474,Syracuse_NY
+808,7770,539,1162,4730,2546,4297,4000,4887,Tacoma_WA
+404,8029,370,1161,5530,2790,2181,1936,6021,Tallahassee_FL
+440,7442,1189,1493,5588,3044,5040,2943,7256,Tampa-St._Petersburg-Clearwater_FL
+557,5527,453,630,3550,3012,1226,1401,4353,Terre_Haute_IN
+467,5717,343,822,2537,2899,63,669,4772,Texarkana_TX-Texarkana_AR
+518,7767,1738,998,5323,2852,4389,1952,4534,Toledo_OH
+501,7110,1148,999,5348,2795,1632,1141,5464,Topeka_KS
+636,10616,1372,1181,4786,3311,5029,1646,5772,Trenton_NJ
+589,8548,1259,1400,4397,2685,4889,3131,6147,Tuscon_AZ
+530,7498,1581,1080,3758,2628,4248,2024,7115,Tulsa_OK
+470,6464,674,1014,4723,2390,1432,1090,4900,Tuscaloosa_AL
+500,7298,672,955,3460,3283,404,631,7327,Tyler_TX
+548,6744,391,400,4592,2970,858,1750,5226,Utica-Rome_NY
+821,10503,1079,964,4153,2498,2962,1559,5819,Vallejo-Fairfield-Napa_CA
+768,9015,517,752,3817,2332,1557,1464,4571,Vancouver_WA
+336,7143,260,1092,2407,2696,87,1410,7599,Victoria_TX
+615,7295,807,1135,4133,2747,2097,1474,5023,Vineland-Millville-Bridgeton_NJ
+543,7778,210,1132,3094,2128,511,2800,5563,Visalia-Tulare-Porterville_CA
+412,6106,538,1166,3018,2867,1141,1248,6259,Waco_TX
+631,13724,4361,1317,8236,3635,21701,1578,6072,Washington_DC-MD-VA
+569,10024,1218,789,2434,2995,318,946,5656,Materbury_CT
+347,7881,925,700,3351,2889,3000,1900,4407,Waterloo-Cedar_Falls_IA
+308,7642,818,442,3496,2749,761,1654,4300,Wausau_WI
+509,10512,375,1783,5201,3224,2888,3772,7992,West_Palm_Beach-Boca_Raton-Delray_Beach_FL
+542,6576,791,308,2450,3002,422,1271,4740,Wheeling_WV-OH
+494,7061,806,1164,3933,2981,2987,1508,6036,Wichita_KS
+456,6404,549,1179,2793,2747,599,1126,6805,Wichita_Falls_TX
+558,7284,860,464,3097,2906,196,726,3288,Williamsport_PA
+597,7927,1445,1115,4532,3112,4545,1923,6174,Wilmington_DE-NJ-MD
+564,6858,1099,1423,2904,2876,1077,2668,5390,Wilmington_NC
+562,8715,1805,680,3643,3299,1784,910,5040,Worcester_MA
+535,6440,317,1106,3731,2491,996,2140,4986,Yakima_WA
+540,8371,713,440,2267,2903,1022,842,4946,York_PA
+570,7021,1097,938,3374,2920,2797,1327,3894,Youngstown-Warren_OH
+608,7875,212,1179,2768,2387,122,918,4694,Yuba_City_CA

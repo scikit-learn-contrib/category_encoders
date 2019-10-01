@@ -1,0 +1,62 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/case1102.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-case1102
+
+@attribute brain INTEGER
+@attribute liver INTEGER
+@attribute time REAL
+@attribute treat {BD,NS}
+@attribute days {9,10,11}
+@attribute sex {F,M}
+@attribute weight INTEGER
+@attribute loss REAL
+@attribute tumor INTEGER
+
+@data
+41081,1456164,.5,BD,10,F,239,5.9,221
+44286,1602171,.5,BD,10,F,225,4,246
+102926,1601936,.5,BD,10,F,224,-4.9,61
+25927,1776411,.5,BD,10,F,184,9.8,168
+42643,1351184,.5,BD,10,F,250,6,164
+31342,1790863,.5,NS,10,F,196,7.7,260
+22815,1633386,.5,NS,10,F,200,.5,27
+16629,1618757,.5,NS,10,F,273,4,308
+22315,1567602,.5,NS,10,F,216,2.8,93
+77961,1060057,3,BD,10,F,267,2.6,73
+73178,715581,3,BD,10,F,263,1.1,25
+76167,620145,3,BD,10,F,228,0,133
+123730,1068423,3,BD,9,F,261,3.4,203
+25569,721436,3,NS,9,F,253,5.9,159
+33803,1019352,3,NS,10,F,234,.1,264
+24512,667785,3,NS,10,F,238,.8,34
+50545,961097,3,NS,9,F,230,7,146
+50690,1220677,3,NS,10,F,207,1.5,212
+84616,48815,24,BD,10,F,254,3.9,155
+55153,16885,24,BD,10,M,256,-4.7,190
+48829,22395,24,BD,10,M,247,-2.8,101
+89454,83504,24,BD,11,F,198,4.2,214
+37928,20323,24,NS,10,F,237,2.5,224
+12816,15985,24,NS,10,M,293,3.1,151
+23734,25895,24,NS,10,M,288,9.7,285
+31097,33224,24,NS,11,F,236,5.9,380
+35395,4142,72,BD,11,F,251,4.1,39
+18270,2364,72,BD,10,F,223,4,153
+5625,1979,72,BD,10,M,298,12.8,164
+7497,1659,72,BD,10,M,260,7.3,364
+6250,928,72,NS,10,M,272,11,484
+11519,2423,72,NS,11,F,226,2.2,168
+3184,1608,72,NS,10,M,249,-4.4,191
+1334,3242,72,NS,10,F,240,6.7,159

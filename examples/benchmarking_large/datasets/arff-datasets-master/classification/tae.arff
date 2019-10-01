@@ -1,0 +1,206 @@
+% 1. Title: Teaching Assistant Evaluation
+% 
+% 2. Sources:
+%    (a) Collector: Wei-Yin Loh (Department of Statistics, UW-Madison)
+%    (b) Donor:     Tjen-Sien Lim (limt@stat.wisc.edu)
+%    (b) Date:      June 7, 1997
+% 
+% 3. Past Usage:
+%    1. Loh, W.-Y. & Shih, Y.-S. (1997). Split Selection Methods for 
+%       Classification Trees, Statistica Sinica 7: 815-840.
+%    2. Lim, T.-S., Loh, W.-Y. & Shih, Y.-S. (1999). A Comparison of
+%       Prediction Accuracy, Complexity, and Training Time of
+%       Thirty-three Old and New Classification Algorithms. Machine
+%       Learning. Forthcoming.
+%       (ftp://ftp.stat.wisc.edu/pub/loh/treeprogs/quest1.7/mach1317.pdf or
+%       (http://www.stat.wisc.edu/~limt/mach1317.pdf)
+% 
+% 4. Relevant Information:
+%    The data consist of evaluations of teaching performance over three
+%    regular semesters and two summer semesters of 151 teaching assistant
+%    (TA) assignments at the Statistics Department of the University of
+%    Wisconsin-Madison. The scores were divided into 3 roughly equal-sized
+%    categories ("low", "medium", and "high") to form the class variable.
+% 
+% 5. Number of Instances: 151
+% 
+% 6. Number of Attributes: 6 (including the class attribute)
+% 
+% 7. Attribute Information:
+%   
+%    1. Whether of not the TA is a native English speaker (binary)
+%       1=English speaker, 2=non-English speaker
+%    2. Course instructor (categorical, 25 categories)
+%    3. Course (categorical, 26 categories)
+%    4. Summer or regular semester (binary) 1=Summer, 2=Regular
+%    5. Class size (numerical)
+%    6. Class attribute (categorical) 1=Low, 2=Medium, 3=High
+% 
+% 8. Missing Attribute Values: None
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: last
+%
+
+@relation tae
+
+@attribute Whether_of_not_the_TA_is_a_native_English_speaker {1,2}
+@attribute Course_instructor INTEGER
+@attribute Course INTEGER
+@attribute Summer_or_regular_semester {1,2}
+@attribute Class_size INTEGER
+@attribute Class_attribute {1,2,3}
+
+@data
+1,23,3,1,19,3
+2,15,3,1,17,3
+1,23,3,2,49,3
+1,5,2,2,33,3
+2,7,11,2,55,3
+2,23,3,1,20,3
+2,9,5,2,19,3
+2,10,3,2,27,3
+1,22,3,1,58,3
+2,15,3,1,20,3
+2,10,22,2,9,3
+2,13,1,2,30,3
+2,18,21,2,29,3
+2,6,17,2,39,3
+2,6,17,2,42,2
+2,6,17,2,43,2
+2,7,11,2,10,2
+2,22,3,2,46,2
+2,13,3,1,10,2
+2,7,25,2,42,2
+2,25,7,2,27,2
+2,25,7,2,23,2
+2,2,9,2,31,2
+2,1,15,1,22,2
+2,15,13,2,37,2
+2,7,11,2,13,2
+2,8,3,2,24,2
+2,14,15,2,38,2
+2,21,2,2,42,1
+2,22,3,2,28,1
+2,11,1,2,51,1
+2,18,5,2,19,1
+2,13,1,2,31,1
+1,13,3,1,13,1
+2,5,2,2,37,1
+2,16,8,2,36,1
+2,4,16,2,21,1
+2,5,2,2,48,1
+2,14,15,2,38,1
+1,23,3,1,19,3
+2,15,3,1,17,3
+1,23,3,2,49,3
+1,5,2,2,33,3
+2,7,11,2,55,3
+2,23,3,1,20,3
+2,9,5,2,19,3
+2,10,3,2,27,3
+1,22,3,2,58,3
+2,15,3,1,20,3
+2,10,22,2,9,3
+2,13,1,2,30,3
+2,18,21,2,29,3
+2,6,17,2,39,3
+2,6,17,2,42,2
+2,6,17,2,43,2
+2,7,11,2,10,2
+2,22,3,2,46,2
+2,13,3,1,10,2
+2,7,25,2,42,2
+2,25,7,2,27,2
+2,25,7,2,23,2
+2,2,9,2,31,2
+2,1,15,1,22,2
+2,15,13,2,37,2
+2,7,11,2,13,2
+2,8,3,2,24,2
+2,14,15,2,38,2
+2,21,2,2,42,1
+2,22,3,2,28,1
+2,11,1,2,51,1
+2,18,5,2,19,1
+2,13,1,2,31,1
+1,13,3,1,13,1
+2,5,2,2,37,1
+2,16,8,2,36,1
+2,4,16,2,21,1
+2,5,2,2,48,1
+2,14,15,2,38,1
+1,23,3,1,25,3
+1,13,3,1,17,3
+2,16,19,2,11,3
+2,9,2,2,39,3
+2,13,3,1,11,3
+2,18,21,2,19,3
+1,22,3,2,45,3
+2,7,11,1,20,3
+2,23,3,1,20,3
+1,23,3,1,20,3
+1,23,3,2,38,3
+2,14,22,2,17,3
+1,17,17,2,19,3
+2,9,5,2,24,3
+2,18,25,2,25,3
+1,17,17,2,31,3
+2,1,15,2,31,3
+2,1,8,2,18,2
+1,11,16,2,22,2
+1,22,13,2,27,2
+2,9,2,2,14,2
+2,13,1,2,20,2
+1,6,17,2,35,2
+2,23,3,1,20,2
+1,23,3,1,20,2
+2,6,17,2,37,2
+1,22,3,2,15,2
+2,20,2,2,25,2
+2,23,3,2,10,2
+2,20,2,2,14,1
+1,23,3,2,38,1
+2,13,1,2,29,1
+2,10,3,2,19,1
+2,7,11,2,30,1
+1,14,15,2,32,1
+2,8,3,2,27,1
+2,12,7,2,34,1
+2,8,7,2,23,1
+2,15,1,2,66,1
+2,23,3,2,12,1
+2,2,9,2,29,1
+2,15,1,2,19,1
+2,20,2,2,3,1
+2,13,14,2,17,3
+2,9,6,2,7,3
+1,10,3,2,21,3
+2,14,15,2,36,3
+1,13,1,2,54,3
+1,8,3,2,29,3
+2,20,2,2,45,3
+2,22,1,2,11,2
+2,18,12,2,16,2
+2,20,15,2,18,2
+1,17,18,2,44,2
+2,14,23,2,17,2
+2,24,26,2,21,2
+2,9,24,2,20,2
+2,12,8,2,24,2
+2,9,6,2,5,2
+2,22,1,2,42,2
+2,7,11,2,30,1
+2,10,3,2,19,1
+2,23,3,2,11,1
+2,17,18,2,29,1
+2,16,20,2,15,1
+2,3,2,2,37,1
+2,19,4,2,10,1
+2,23,3,2,24,1
+2,3,2,2,26,1
+2,10,3,2,12,1
+1,18,7,2,48,1
+2,22,1,2,51,1
+2,2,10,2,27,1

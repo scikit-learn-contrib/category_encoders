@@ -1,0 +1,141 @@
+% Data from which conclusions  were  drawn  in  the  article  "Sleep  in 
+% Mammals: Ecological and Constitutional Correlates" by Allison, T.  and 
+% Cicchetti, D. (1976), _Science_, November 12, vol. 194,  pp.  732-734. 
+% Includes brain and body  weight,  life  span,  gestation  time,  time 
+% sleeping, and predation and danger indices for 62 mammals.
+% 
+% 
+% 
+% Variables below (from left to right) for Mammals Data Set:
+% 
+% species of animal
+% 
+% body weight in kg
+% 
+% brain weight in g
+% 
+% slow wave ("nondreaming") sleep (hrs/day)
+% 
+% paradoxical ("dreaming") sleep (hrs/day)
+% 
+% total sleep (hrs/day)  (sum of slow wave and paradoxical sleep)
+% 
+% maximum life span (years)
+% 
+% gestation time (days)
+% 
+% predation index (1-5)
+%                 1 = minimum (least likely to be preyed upon)
+%                 5 = maximum (most likely to be preyed upon)
+% 
+% sleep exposure index (1-5)
+%                 1 = least exposed (e.g. animal sleeps in a 
+%                     well-protected den)
+%                 5 = most exposed
+% 
+% overall danger index (1-5)
+%                 (based on the above two indices and other information)
+%                 1 = least danger (from other animals)
+%                 5 = most danger (from other animals)
+% 
+% 
+% 
+% For more details, see
+% 
+% Allison, Truett and Cicchetti, Domenic V. (1976), "Sleep  in  Mammals: 
+% Ecological and Constitutional  Correlates",  _Science_,  November  12, 
+% vol. 194, pp. 732-734.
+% 
+% 
+% 
+% The above data set can be freely used for non-commercial purposes  and 
+% can be freely distributed (permission in  writing  obtained  from  Dr. 
+% Truett Allison).
+% 
+% Submitted by Roger Johnson
+% rwjohnso@silver.sdsmt.edu
+% 
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleep
+
+@attribute species {African_elephant,African_giant_pouched_rat,Arctic_Fox,Arctic_ground_squirrel,Asian_elephant,Baboon,Big_brown_bat,Brazilian_tapir,Cat,Chimpanzee,Chinchilla,Cow,Desert_hedgehog,Donkey,Eastern_American_mole,Echidna,European_hedgehog,Galago,Genet,Giant_armadillo,Giraffe,Goat,Golden_hamster,Gorilla,Gray_seal,Gray_wolf,Ground_squirrel,Guinea_pig,Horse,Jaguar,Kangaroo,Lesser_short-tailed_shrew,Little_brown_bat,Man,Mole_rat,Mountain_beaver,Mouse,Musk_shrew,N_American_opossum,Nine-banded_armadillo,Okapi,Owl_monkey,Patas_monkey,Phanlanger,Pig,Rabbit,Raccoon,Rat,Red_fox,Rhesus_monkey,Rock_hyrax_(Hetero_b),Rock_hyrax_(Procavia_hab),Roe_deer,Sheep,Slow_loris,Star_nosed_mole,Tenrec,Tree_hyrax,Tree_shrew,Vervet,Water_opossum,Yellow-bellied_marmot}
+@attribute body_weight REAL
+@attribute brain_weight REAL
+@attribute slow_wave REAL
+@attribute paradoxical REAL
+@attribute total_sleep REAL
+@attribute maximum_life_span REAL
+@attribute gestation_time REAL
+@attribute predation_index INTEGER
+@attribute sleep_exposure_index INTEGER
+@attribute overall_danger_index INTEGER
+
+@data
+African_elephant,6654.000,5712.000,?,?,3.3,38.6,645.0,3,5,3
+African_giant_pouched_rat,1.000,6.600,6.3,2.0,8.3,4.5,42.0,3,1,3
+Arctic_Fox,3.385,44.500,?,?,12.5,14.0,60.0,1,1,1
+Arctic_ground_squirrel,.920,5.700,?,?,16.5,?,25.0,5,2,3
+Asian_elephant,2547.000,4603.000,2.1,1.8,3.9,69.0,624.0,3,5,4
+Baboon,10.550,179.500,9.1,.7,9.8,27.0,180.0,4,4,4
+Big_brown_bat,.023,.300,15.8,3.9,19.7,19.0,35.0,1,1,1
+Brazilian_tapir,160.000,169.000,5.2,1.0,6.2,30.4,392.0,4,5,4
+Cat,3.300,25.600,10.9,3.6,14.5,28.0,63.0,1,2,1
+Chimpanzee,52.160,440.000,8.3,1.4,9.7,50.0,230.0,1,1,1
+Chinchilla,.425,6.400,11.0,1.5,12.5,7.0,112.0,5,4,4
+Cow,465.000,423.000,3.2,.7,3.9,30.0,281.0,5,5,5
+Desert_hedgehog,.550,2.400,7.6,2.7,10.3,?,?,2,1,2
+Donkey,187.100,419.000,?,?,3.1,40.0,365.0,5,5,5
+Eastern_American_mole,.075,1.200,6.3,2.1,8.4,3.5,42.0,1,1,1
+Echidna,3.000,25.000,8.6,.0,8.6,50.0,28.0,2,2,2
+European_hedgehog,.785,3.500,6.6,4.1,10.7,6.0,42.0,2,2,2
+Galago,.200,5.000,9.5,1.2,10.7,10.4,120.0,2,2,2
+Genet,1.410,17.500,4.8,1.3,6.1,34.0,?,1,2,1
+Giant_armadillo,60.000,81.000,12.0,6.1,18.1,7.0,?,1,1,1
+Giraffe,529.000,680.000,?,.3,?,28.0,400.0,5,5,5
+Goat,27.660,115.000,3.3,.5,3.8,20.0,148.0,5,5,5
+Golden_hamster,.120,1.000,11.0,3.4,14.4,3.9,16.0,3,1,2
+Gorilla,207.000,406.000,?,?,12.0,39.3,252.0,1,4,1
+Gray_seal,85.000,325.000,4.7,1.5,6.2,41.0,310.0,1,3,1
+Gray_wolf,36.330,119.500,?,?,13.0,16.2,63.0,1,1,1
+Ground_squirrel,.101,4.000,10.4,3.4,13.8,9.0,28.0,5,1,3
+Guinea_pig,1.040,5.500,7.4,.8,8.2,7.6,68.0,5,3,4
+Horse,521.000,655.000,2.1,.8,2.9,46.0,336.0,5,5,5
+Jaguar,100.000,157.000,?,?,10.8,22.4,100.0,1,1,1
+Kangaroo,35.000,56.000,?,?,?,16.3,33.0,3,5,4
+Lesser_short-tailed_shrew,.005,.140,7.7,1.4,9.1,2.6,21.5,5,2,4
+Little_brown_bat,.010,.250,17.9,2.0,19.9,24.0,50.0,1,1,1
+Man,62.000,1320.000,6.1,1.9,8.0,100.0,267.0,1,1,1
+Mole_rat,.122,3.000,8.2,2.4,10.6,?,30.0,2,1,1
+Mountain_beaver,1.350,8.100,8.4,2.8,11.2,?,45.0,3,1,3
+Mouse,.023,.400,11.9,1.3,13.2,3.2,19.0,4,1,3
+Musk_shrew,.048,.330,10.8,2.0,12.8,2.0,30.0,4,1,3
+N_American_opossum,1.700,6.300,13.8,5.6,19.4,5.0,12.0,2,1,1
+Nine-banded_armadillo,3.500,10.800,14.3,3.1,17.4,6.5,120.0,2,1,1
+Okapi,250.000,490.000,?,1.0,?,23.6,440.0,5,5,5
+Owl_monkey,.480,15.500,15.2,1.8,17.0,12.0,140.0,2,2,2
+Patas_monkey,10.000,115.000,10.0,.9,10.9,20.2,170.0,4,4,4
+Phanlanger,1.620,11.400,11.9,1.8,13.7,13.0,17.0,2,1,2
+Pig,192.000,180.000,6.5,1.9,8.4,27.0,115.0,4,4,4
+Rabbit,2.500,12.100,7.5,.9,8.4,18.0,31.0,5,5,5
+Raccoon,4.288,39.200,?,?,12.5,13.7,63.0,2,2,2
+Rat,.280,1.900,10.6,2.6,13.2,4.7,21.0,3,1,3
+Red_fox,4.235,50.400,7.4,2.4,9.8,9.8,52.0,1,1,1
+Rhesus_monkey,6.800,179.000,8.4,1.2,9.6,29.0,164.0,2,3,2
+Rock_hyrax_(Hetero_b),.750,12.300,5.7,.9,6.6,7.0,225.0,2,2,2
+Rock_hyrax_(Procavia_hab),3.600,21.000,4.9,.5,5.4,6.0,225.0,3,2,3
+Roe_deer,14.830,98.200,?,?,2.6,17.0,150.0,5,5,5
+Sheep,55.500,175.000,3.2,.6,3.8,20.0,151.0,5,5,5
+Slow_loris,1.400,12.500,?,?,11.0,12.7,90.0,2,2,2
+Star_nosed_mole,.060,1.000,8.1,2.2,10.3,3.5,?,3,1,2
+Tenrec,.900,2.600,11.0,2.3,13.3,4.5,60.0,2,1,2
+Tree_hyrax,2.000,12.300,4.9,.5,5.4,7.5,200.0,3,1,3
+Tree_shrew,.104,2.500,13.2,2.6,15.8,2.3,46.0,3,2,2
+Vervet,4.190,58.000,9.7,.6,10.3,24.0,210.0,4,3,4
+Water_opossum,3.500,3.900,12.8,6.6,19.4,3.0,14.0,2,1,1
+Yellow-bellied_marmot,4.050,17.000,?,?,?,13.0,38.0,3,1,1

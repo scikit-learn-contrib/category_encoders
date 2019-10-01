@@ -1,0 +1,88 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: last
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-hurricanes
+
+@attribute Year INTEGER
+@attribute Count {0,1,2,3,4,5,6,7}
+
+@data
+1944,3
+1945,2
+1946,1
+1947,2
+1948,4
+1949,3
+1950,7
+1951,2
+1952,3
+1953,3
+1954,2
+1955,5
+1956,2
+1957,2
+1958,4
+1959,2
+1960,2
+1961,6
+1962,0
+1963,2
+1964,5
+1965,1
+1966,3
+1967,1
+1968,0
+1969,3
+1970,2
+1971,1
+1972,0
+1973,1
+1974,2
+1975,3
+1976,2
+1977,1
+1978,2
+1979,2
+1980,2
+1981,3
+1982,1
+1983,1
+1984,1
+1985,3
+1986,0
+1987,1
+1988,3
+1989,2
+1990,1
+1991,2
+1992,1
+1993,1
+1994,0
+1995,5
+1996,6
+1997,1
+1998,3
+1999,5
+2000,3

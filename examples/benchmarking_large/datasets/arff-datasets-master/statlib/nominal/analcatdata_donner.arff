@@ -1,0 +1,61 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: 1
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-donner
+
+@attribute Survived {No,Yes}
+@attribute Gender {Female,Male}
+@attribute Age {0-9,10-19,20-29,30-39,40-49,50-59,60-69}
+@attribute Count {0,1,2,3,4,7,8,9}
+
+@data
+Yes,Male,0-9,9
+No,Male,0-9,7
+Yes,Female,0-9,9
+No,Female,0-9,4
+Yes,Male,10-19,7
+No,Male,10-19,3
+Yes,Female,10-19,9
+No,Female,10-19,0
+Yes,Male,20-29,1
+No,Male,20-29,8
+Yes,Female,20-29,4
+No,Female,20-29,1
+Yes,Male,30-39,4
+No,Male,30-39,7
+Yes,Female,30-39,2
+No,Female,30-39,1
+Yes,Male,40-49,1
+No,Male,40-49,0
+Yes,Female,40-49,1
+No,Female,40-49,3
+Yes,Male,50-59,1
+No,Male,50-59,2
+Yes,Female,50-59,0
+No,Female,50-59,0
+Yes,Male,60-69,0
+No,Male,60-69,2
+Yes,Female,60-69,0
+No,Female,60-69,0

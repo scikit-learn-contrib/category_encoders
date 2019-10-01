@@ -1,0 +1,36 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex0428.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex0428
+
+@attribute cross REAL
+@attribute self REAL
+
+@data
+23.5,17.375
+12,20.375
+21,20
+22,20
+19.125,18.375
+21.5,18.625
+22.125,18.625
+20.375,15.25
+18.25,16.5
+21.625,18
+23.25,16.25
+21,18
+22.125,12.75
+23,15.5
+12,18
