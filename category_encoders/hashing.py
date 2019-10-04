@@ -94,7 +94,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     ----------
     .. [1] Feature Hashing for Large Scale Multitask Learning, from
     https://alex.smola.org/papers/2009/Weinbergeretal09.pdf
-    .. [2] Don’t be tricked by the Hashing Trick, from
+    .. [2] Don't be tricked by the Hashing Trick, from
     https://booking.ai/dont-be-tricked-by-the-hashing-trick-192a6aae3087
 
     """
