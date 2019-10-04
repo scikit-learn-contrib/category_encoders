@@ -566,7 +566,6 @@ class TestEncoders(TestCase):
                 self.assertRaises(TypeError, enc.fit_transform, X)
 
     def test_missing_values(self):
-
         # by default, treat missing values as another valid value
         x_placeholder = pd.Series(['a', 'b', 'b', 'c', 'c'])
         x_nan = pd.Series(['a', 'b', 'b', np.NaN, np.NaN])
@@ -587,4 +586,69 @@ class TestEncoders(TestCase):
 
                 pd.testing.assert_frame_equal(result_placeholder, result_nan)
                 self.assertTrue(sum(sum(np.array(result_placeholder) - np.array(result_float))) == 0)
-                
+
+    def test_metamorphic(self):
+        # When we only slightly alter the input data or an irrelevant argument, the output should remain unchanged.
+        x1 = ['A', 'B', 'B']  # Baseline
+        x2 = ['Apple', 'Banana', 'Banana']  # Different strings, but with the same alphabetic ordering
+        x3 = pd.DataFrame(data={'x': ['A', 'B', 'B']})  # DataFrame
+        x4 = pd.Series(['A', 'B', 'B'], dtype='category')  # Series with category data type
+        x5 = np.array(['A', 'B', 'B'])  # Numpy
+        x6 = [np.NaN, 'B', 'B']  # Missing value
+        x7 = ['Z', 'Y', 'Y']  # Different strings, reversed alphabetic ordering (it works because we look at the order of appearance, not at alphabetic order)
+
+        y = [1, 1, 0]
+
+        for encoder_name in (
+                set(encoders.__all__) - {'HashingEncoder'}):  # Hashing encoder is, by definition, not invariant to data changes
+            with self.subTest(encoder_name=encoder_name):
+                enc1 = getattr(encoders, encoder_name)()
+                result1 = enc1.fit_transform(x1, y)
+
+                enc2 = getattr(encoders, encoder_name)()
+                result2 = enc2.fit_transform(x2, y)
+                self.assertTrue(result1.equals(result2))
+
+                enc3 = getattr(encoders, encoder_name)()
+                result3 = enc3.fit_transform(x3, y)
+                self.assertTrue((result1.values == result3.values).all())
+
+                enc4 = getattr(encoders, encoder_name)()
+                result4 = enc4.fit_transform(x4, y)
+                self.assertTrue((result1.values == result4.values).all())
+
+                enc5 = getattr(encoders, encoder_name)()
+                result5 = enc5.fit_transform(x5, y)
+                self.assertTrue((result1.values == result5.values).all())
+
+                enc6 = getattr(encoders, encoder_name)()
+                result6 = enc6.fit_transform(x6, y)
+                self.assertTrue((result1.values == result6.values).all())
+
+                enc7 = getattr(encoders, encoder_name)()
+                result7 = enc7.fit_transform(x7, y)
+                self.assertTrue((result1.values == result7.values).all())
+
+                # Arguments
+                enc9 = getattr(encoders, encoder_name)(return_df=False)
+                result9 = enc9.fit_transform(x1, y)
+                self.assertTrue((result1.values == result9).all())
+
+                enc10 = getattr(encoders, encoder_name)(verbose=True)
+                result10 = enc10.fit_transform(x1, y)
+                self.assertTrue((result1.values == result10.values).all())
+
+                # Note: If the encoder does not support these arguments/argument values, it is OK/expected to fail.
+                # Note: The indicator approach is not tested because it adds columns -> the encoders that support it are expected to fail.
+
+                # enc11 = getattr(encoders, encoder_name)(handle_unknown='return_nan', handle_missing='return_nan')  # Quite a few algorithms fail here because of handle_missing
+                # result11 = enc11.fit_transform(x1, y)
+                # self.assertTrue((result1.values == result11.values).all(), 'The data do not contain any missing or new value -> the result should be unchanged.')
+
+                enc12 = getattr(encoders, encoder_name)(handle_unknown='value', handle_missing='value')
+                result12 = enc12.fit_transform(x1, y)
+                self.assertTrue((result1.values == result12.values).all(), 'The data do not contain any missing or new value -> the result should be unchanged.')
+
+                # enc13 = getattr(encoders, encoder_name)(handle_unknown='error', handle_missing='error', cols=['x'])  # Quite a few algorithms fail here because of handle_missing
+                # result13 = enc13.fit_transform(x3, y)
+                # self.assertTrue((result1.values == result13.values).all(), 'The data do not contain any missing or new value -> the result should be unchanged.')

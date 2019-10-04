@@ -49,6 +49,9 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         For example, 4C8T CPU with 100,000 samples makes max_sample=25,000,
         6C12T CPU with 100,000 samples makes max_sample=16,666.
         It is not recommended to set it larger than the default value.
+    n_components: int
+        how many bits to use to represent the feature. By default we use 8 bits.
+        For high-cardinality features, consider using up-to 32 bits.
 
     Example
     -------
@@ -91,6 +94,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     ----------
     .. [1] Feature Hashing for Large Scale Multitask Learning, from
     https://alex.smola.org/papers/2009/Weinbergeretal09.pdf
+    .. [2] Don’t be tricked by the Hashing Trick, from
+    https://booking.ai/dont-be-tricked-by-the-hashing-trick-192a6aae3087
 
     """
 
