@@ -7,6 +7,7 @@ import category_encoders.utils as util
 import multiprocessing
 import pandas as pd
 import math
+import platform
 
 __author__ = 'willmcginnis', 'LiuShulun'
 
@@ -21,6 +22,10 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     It's important to read about how max_process & max_sample work
     before setting them manually, inappropriate setting slows down encoding.
+
+    Default value of 'max_process' is 1 on Windows because multiprocessing might cause issues, see in :
+    https://github.com/scikit-learn-contrib/categorical-encoding/issues/215
+    https://docs.python.org/2/library/multiprocessing.html?highlight=process#windows
 
     Parameters
     ----------
@@ -101,12 +106,15 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
     def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
 
-        if max_process not in range(1, 64):
-            self.max_process = int(math.ceil(multiprocessing.cpu_count() / 2))
-            if self.max_process <= 1:
-                self.max_process = 1
-            elif self.max_process >= 64:
-                self.max_process = 64
+        if max_process not in range(1, 128):
+            if platform.system == 'Windows':
+                max_process = 1
+            else:
+                self.max_process = int(math.ceil(multiprocessing.cpu_count() / 2))
+                if self.max_process < 1:
+                    self.max_process = 1
+                elif self.max_process > 128:
+                    self.max_process = 128
         else:
             self.max_process = max_process
         self.max_sample = int(max_sample)
@@ -172,7 +180,8 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         return self
 
-    def __require_data(self, data_lock, new_start, done_index, hashing_parts, cols, process_index):
+    @staticmethod
+    def require_data(self, data_lock, new_start, done_index, hashing_parts, cols, process_index):
         if data_lock.acquire():
             if new_start.value:
                 end_index = 0
@@ -201,7 +210,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                     print("Process - " + str(process_index),
                           "done hashing data : " + str(start_index) + "~" + str(end_index))
                 if end_index < self.data_lines:
-                    self.__require_data(data_lock, new_start, done_index, hashing_parts, cols=cols, process_index=process_index)
+                    self.require_data(self, data_lock, new_start, done_index, hashing_parts, cols=cols, process_index=process_index)
             else:
                 data_lock.release()
         else:
@@ -233,12 +242,12 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if self.auto_sample:
             self.max_sample = int(self.data_lines / self.max_process)
         if self.max_process == 1:
-            self.__require_data(data_lock, new_start, done_index, hashing_parts, cols=self.cols, process_index=1)
+            self.require_data(self, data_lock, new_start, done_index, hashing_parts, cols=self.cols, process_index=1)
         else:
             n_process = []
             for thread_index in range(self.max_process):
-                process = multiprocessing.Process(target=self.__require_data,
-                                                  args=(data_lock, new_start, done_index, hashing_parts, self.cols, thread_index + 1))
+                process = multiprocessing.Process(target=self.require_data,
+                                                  args=(self, data_lock, new_start, done_index, hashing_parts, self.cols, thread_index + 1))
                 process.daemon = True
                 n_process.append(process)
             for process in n_process:
