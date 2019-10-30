@@ -5,6 +5,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
+from sklearn.preprocessing import LabelEncoder
 
 __author__ = 'Jan Motl'
 
@@ -106,6 +107,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
         self.sigma = sigma
         self.feature_names = None
         self.a = a
+        self.le_ = None
 
     def fit(self, X, y, **kwargs):
         """Fit encoder according to X and y.
@@ -129,6 +131,10 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
 
         # unite the input into pandas types
         X = util.convert_input(X)
+        # encode the label into integers
+        self.le_ = LabelEncoder().fit(y)
+        y = self.le_.transform(y)
+        y = y.astype(int)
         y = util.convert_input_vector(y, X.index).astype(float)
 
         if X.shape[0] != y.shape[0]:
@@ -204,6 +210,10 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
 
         # if we are encoding the training data, we have to check the target
         if y is not None:
+            # Encode labels from string to float (if not already float)
+            if y.dtype != np.float64:
+                y = self.le_.transform(y)
+
             y = util.convert_input_vector(y, X.index).astype(float)
             if X.shape[0] != y.shape[0]:
                 raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
@@ -236,7 +246,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
         if y is None:
             raise(TypeError, 'fit_transform() missing argument: ''y''')
 
-        return self.fit(X, y, **fit_params).transform(X, y)
+        return self.fit(X, y.copy(deep=True), **fit_params).transform(X, y)
 
     def _fit(self, X_in, y, cols=None):
         X = X_in.copy(deep=True)
