@@ -286,7 +286,15 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             mapping_out = mapping
             for switch in mapping:
                 column = switch.get('col')
-                X[column] = X[column].map(switch['mapping'])
+                col_mapping = switch['mapping']
+                X[column] = X[column].map(col_mapping)
+
+                if util.is_category(X[column].dtype):
+                    if not isinstance(col_mapping, pd.Series):
+                        col_mapping = pd.Series(col_mapping)
+                    nan_identity = col_mapping.loc[col_mapping.index.isna()].values[0]
+                    X[column] = X[column].cat.add_categories(nan_identity)
+                    X[column] = X[column].fillna(nan_identity)
 
                 try:
                     X[column] = X[column].astype(int)
@@ -310,7 +318,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 nan_identity = np.nan
 
                 if util.is_category(X[col].dtype):
-                    categories = X[col].cat.categories
+                    categories = X[col].cat.categories.tolist()
+                    if X[col].isna().any():
+                        categories += [np.nan]
                 else:
                     categories = X[col].unique()
 

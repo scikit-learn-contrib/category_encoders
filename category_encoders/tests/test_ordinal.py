@@ -73,22 +73,27 @@ class TestOrdinalEncoder(TestCase):
         self.assertEqual(2, out['Categorical'][3])
 
     def test_handle_missing_have_nan_fit_time_expect_as_category(self):
-        train = pd.DataFrame({'city': ['chicago', np.nan]})
+        train = pd.DataFrame({'city': ['chicago', np.nan],
+                              'city_cat': pd.Categorical(['chicago', np.nan])})
 
         enc = encoders.OrdinalEncoder(handle_missing='value')
         out = enc.fit_transform(train)
 
         self.assertListEqual([1, 2], out['city'].tolist())
+        self.assertListEqual([1, 2], out['city_cat'].tolist())
 
     def test_handle_missing_have_nan_transform_time_expect_negative_2(self):
-        train = pd.DataFrame({'city': ['chicago', 'st louis']})
-        test = pd.DataFrame({'city': ['chicago', np.nan]})
+        train = pd.DataFrame({'city': ['chicago', 'st louis'],
+                              'city_cat': pd.Categorical(['chicago', 'st louis'])})
+        test = pd.DataFrame({'city': ['chicago', np.nan],
+                             'city_cat': pd.Categorical(['chicago', np.nan])})
 
         enc = encoders.OrdinalEncoder(handle_missing='value')
         enc.fit(train)
         out = enc.transform(test)
 
         self.assertListEqual([1, -2], out['city'].tolist())
+        self.assertListEqual([1, -2], out['city_cat'].tolist())
 
     def test_handle_unknown_have_new_value_expect_negative_1(self):
         train = pd.DataFrame({'city': ['chicago', 'st louis']})
