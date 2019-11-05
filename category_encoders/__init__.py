@@ -22,7 +22,6 @@ from category_encoders.woe import WOEEncoder
 from category_encoders.m_estimate import MEstimateEncoder
 from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.cat_boost import CatBoostEncoder
-from category_encoders.wrapper import MultiClassWrapper
 
 __version__ = '2.1.0'
 
@@ -43,6 +42,5 @@ __all__ = [
     'WOEEncoder',
     'MEstimateEncoder',
     'JamesSteinEncoder',
-    'CatBoostEncoder',
-    'MultiClassWrapper'
+    'CatBoostEncoder'
 ]

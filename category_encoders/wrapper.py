@@ -31,6 +31,7 @@ class MultiClassWrapper(BaseEstimator, TransformerMixin):
     >>> from category_encoders import *
     >>> import pandas as pd
     >>> from sklearn.datasets import load_boston
+    >>> from category_encoders.wrapper import MultiClassWrapper
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> y = (y/10).round().astype(int)  # we create 6 artificial classes
