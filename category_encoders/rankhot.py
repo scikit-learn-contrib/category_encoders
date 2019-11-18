@@ -33,7 +33,7 @@ class RankHotEncoder(BaseEstimator, TransformerMixin):
        >>> bunch = load_boston()
        >>> y = bunch.target
        >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-       >>> enc = OneHotEncoder(cols=['CHAS'], handle_unknown='ignore').fit(X, y)
+       >>> enc = RankHotEncoder(cols=['CHAS'], handle_unknown='ignore').fit(X)
        >>> numeric_dataset = enc.transform(X)
        >>> print(numeric_dataset.info())
     """
