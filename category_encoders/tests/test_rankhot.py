@@ -47,7 +47,7 @@ class TestRankHotEncoder(TestCase):
         enc.fit(train)
         t_f = enc.transform(test)
         inv_tf = enc.inverse_transform(t_f)
-        self.assertNotEqual(t_f.shape[1] - (train.shape[1] - 1), len(test.categorical.unique()), "All the extra values are displayed as None after inverse transform")
+        self.assertEqual(t_f.shape[1] - (train.shape[1] - 1), len(test.city.unique()), "All the extra values are displayed as None after inverse transform")
         self.assertTupleEqual(inv_tf.shape, train.shape)
 
     def test_invarient(self):
@@ -68,6 +68,6 @@ class TestRankHotEncoder(TestCase):
         t_f = enc.transform(X)
         inv_tf = enc.inverse_transform(t_f)
         self.assertEqual(len(enc.mapping), 7, "Find out encoded features from data set")
-        self.assertListEqual(X.shape, inv_tf.shape, "Check shape doesn't change")
+        self.assertTupleEqual(X.shape, inv_tf.shape, "Check shape doesn't change")
 
 
