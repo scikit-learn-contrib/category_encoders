@@ -220,7 +220,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
-        if not self.cols:
+        if not list(self.cols):
             return X
 
         X_out = self.ordinal_encoder.transform(X)
@@ -275,7 +275,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             else:
                 raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
-        if not self.cols:
+        if not list(self.cols):
             return X if self.return_df else X.values
 
         for switch in self.ordinal_encoder.mapping:

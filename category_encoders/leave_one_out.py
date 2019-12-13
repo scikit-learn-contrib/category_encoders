@@ -194,7 +194,7 @@ class LeaveOneOutEncoder(BaseEstimator, TransformerMixin):
             if X.shape[0] != y.shape[0]:
                 raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
-        if not self.cols:
+        if not list(self.cols):
             return X
         X = self.transform_leave_one_out(
             X, y,

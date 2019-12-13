@@ -198,7 +198,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 % (X.shape[1], self._dim,)
             )
 
-        if not self.cols:
+        if not list(self.cols):
             return X
 
         X, _ = self._transform_count_encode(X, y)

@@ -231,7 +231,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if self.X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (self.X.shape[1], self._dim, ))
 
-        if not self.cols:
+        if not list(self.cols):
             return self.X
 
         data_lock = multiprocessing.Manager().Lock()
@@ -299,7 +299,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
 
-        if not self.cols:
+        if not list(self.cols):
             return X
 
         X = self.hashing_trick(X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)

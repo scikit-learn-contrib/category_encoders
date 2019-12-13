@@ -245,7 +245,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             else:
                 raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
-        if not self.cols:
+        if not list(self.cols):
             return X if self.return_df else X.values
 
         if self.handle_unknown == 'value':

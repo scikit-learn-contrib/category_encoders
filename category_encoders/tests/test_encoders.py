@@ -652,3 +652,16 @@ class TestEncoders(TestCase):
                 # enc13 = getattr(encoders, encoder_name)(handle_unknown='error', handle_missing='error', cols=['x'])  # Quite a few algorithms fail here because of handle_missing
                 # result13 = enc13.fit_transform(x3, y)
                 # self.assertTrue((result1.values == result13.values).all(), 'The data do not contain any missing or new value -> the result should be unchanged.')
+
+    def test_pandas_index(self):
+        # see https://github.com/scikit-learn-contrib/categorical-encoding/pull/224
+        df = pd.DataFrame({
+            'hello': ['a', 'b', 'c'],
+            'world': [0, 1, 0]
+        }, columns=pd.Index(['hello', 'world']))
+        cols = df.select_dtypes(include='object').columns
+
+        for encoder_name in (set(encoders.__all__)):
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(cols=cols)
+                enc.fit_transform(df, df['world'])

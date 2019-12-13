@@ -254,7 +254,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Unexpected input dimension %d, expected %d' % (
                 X.shape[1], self._dim, ))
 
-        if not self.cols:
+        if not list(self.cols):
             return X if self.return_df else X.values
 
         X = self.ordinal_encoder.transform(X)
@@ -306,7 +306,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 raise ValueError('Unexpected input dimension %d, expected %d' % (
                     X.shape[1], self._dim, ))
 
-        if not self.cols:
+        if not list(self.cols):
             return X if self.return_df else X.values
 
         for switch in self.ordinal_encoder.mapping:
