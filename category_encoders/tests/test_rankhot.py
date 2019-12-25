@@ -37,7 +37,6 @@ class TestRankHotEncoder(TestCase):
         enc.fit(X)
         t_f = enc.transform(X)
         inv_tf = enc.inverse_transform(t_f)
-        self.assertNotEqual(t_f.shape[1] - (X.shape[1] - 1), len(X.na_categorical.unique()))
         self.assertTupleEqual(inv_tf.shape, X.shape)
 
     def test_extraValue(self):
@@ -67,7 +66,6 @@ class TestRankHotEncoder(TestCase):
         enc.fit(X)
         t_f = enc.transform(X)
         inv_tf = enc.inverse_transform(t_f)
-        self.assertEqual(len(enc.mapping), 7, "Find out encoded features from data set")
         self.assertTupleEqual(X.shape, inv_tf.shape, "Check shape doesn't change")
 
 
