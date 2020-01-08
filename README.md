@@ -101,10 +101,10 @@ X_train = pd.DataFrame(bunch.data[0:250], columns=bunch.feature_names)
 X_test = pd.DataFrame(bunch.data[250:506], columns=bunch.feature_names)
 
 # use target encoding to encode two categorical features
-enc = TargetEncoder(cols=['CHAS', 'RAD']).fit(X_train, y_train)
+enc = TargetEncoder(cols=['CHAS', 'RAD'])
 
 # transform the datasets
-training_numeric_dataset = enc.transform(X_train, y_train)
+training_numeric_dataset = enc.fit_transform(X_train, y_train)
 testing_numeric_dataset = enc.transform(X_test)
 ```
 
