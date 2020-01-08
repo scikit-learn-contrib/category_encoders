@@ -665,3 +665,33 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit_transform(df, df['world'])
+
+    def test_numbers_as_strings_with_numpy_output(self):
+        # see issue #229
+        X = np.array(['11', '12', '13', '14', '15'])
+        oe = encoders.OrdinalEncoder(return_df=False)
+        oe.fit(X)
+
+    def test_columns(self):
+        # Convert only selected columns. Leave the remaining string columns untouched.
+        oe = encoders.OrdinalEncoder(cols=['underscore'])
+        result = oe.fit_transform(X)
+        self.assertTrue(result['underscore'].min() == 1, 'should newly be a number')
+        self.assertTrue(result['unique_str'].min() == '0', 'should still be a string')
+
+        # If no selection is made, convert all (and only) object columns
+        oe = encoders.OrdinalEncoder()
+        result = oe.fit_transform(X)
+        self.assertTrue(result['unique_str'].min() == 1, 'should newly be a number')
+        self.assertTrue(result['invariant'].min() == 1, 'should newly be a number')
+        self.assertTrue(result['underscore'].min() == 1, 'should newly be a number')
+        self.assertTrue(result['none'].min() == 1, 'should newly be a number')
+        self.assertTrue(result['extra'].min() == 1, 'should newly be a number')
+        self.assertTrue(result['categorical'].min() == 1, 'should newly be a number')
+        self.assertTrue(result['na_categorical'].min() == 1, 'should newly be a number')
+        self.assertTrue(result['categorical_int'].min() == 1, 'should newly be a number')
+
+        self.assertTrue(result['float'].min() < 1, 'should still be a number and untouched')
+        self.assertTrue(result['float_edge'].min() < 1, 'should still be a number and untouched')
+        self.assertTrue(result['unique_int'].min() < 1, 'should still be a number and untouched')
+        self.assertTrue(result[321].min() < 1, 'should still be a number')
