@@ -16,20 +16,23 @@ Documentation: [http://contrib.scikit-learn.org/categorical-encoding/](http://co
 
 Encoding Methods
 ----------------
-
+__Unsupervised:__
  * Backward Difference Contrast [2][3]
  * BaseN [6]
  * Binary [5]
  * Count [10]
  * Hashing [1]
  * Helmert Contrast [2][3]
- * James-Stein Estimator [9]
- * LeaveOneOut [4]
- * M-estimator [7]
  * Ordinal [2][3]
  * One-Hot [2][3]
  * Polynomial Contrast [2][3]
  * Sum Contrast [2][3]
+
+__Supervised:__
+ * CatBoost [11]
+ * James-Stein Estimator [9]
+ * LeaveOneOut [4]
+ * M-estimator [7]
  * Target Encoding [7]
  * Weight of Evidence [8]
 
@@ -108,6 +111,8 @@ training_numeric_dataset = enc.fit_transform(X_train, y_train)
 testing_numeric_dataset = enc.transform(X_test)
 ```
 
+For the transformation of the _training_ data with the supervised methods, you should use `fit_transform()` method instead of `fit().transform()`, because these two methods _do not_ have to generate the same result. The difference can be observed with LeaveOneOut encoder, which performs a nested cross-validation for the _training_ data in `fit_transform()` method (to decrease over-fitting of the downstream model) but uses all the training data for scoring with `transform()` method (to get as accurate estimates as possible).
+
 Additional examples and benchmarks can be found in the `examples` directory.
 
 Contributing
@@ -128,5 +133,6 @@ References
  7. Daniele Miccii-Barreca (2001). A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. SIGKDD Explor. Newsl. 3, 1. From http://dx.doi.org/10.1145/507533.507538
  8. Weight of Evidence (WOE) and Information Value Explained. From https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html
  9. Empirical Bayes for multiple sample sizes. From http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/
- 10. Simple Count or Frequency Encoding. https://www.datacamp.com/community/tutorials/encoding-methodologies
+ 10. Simple Count or Frequency Encoding. From https://www.datacamp.com/community/tutorials/encoding-methodologies
+ 11. Transforming categorical features to numerical features. From https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
  
