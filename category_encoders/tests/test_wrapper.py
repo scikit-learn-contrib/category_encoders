@@ -78,7 +78,7 @@ class TestNestedCVWrapper(TestCase):
             ['a', 'b', 'a'],
         ])
         y = [1, 2, 3, 3, 3, 3]
-        wrapper = NestedCVWrapper(encoders.TargetEncoder())
+        wrapper = NestedCVWrapper(encoders.TargetEncoder(), cv=2)
         result = wrapper.fit_transform(x, y)
         th.verify_numeric(result)
 
@@ -91,7 +91,7 @@ class TestNestedCVWrapper(TestCase):
             ['a', 'b', 'a'],
         ], columns=['f1', 'f2', 'f3'])
         y = ['bee', 'cat', 'dog', 'dog', 'dog', 'dog']
-        wrapper = NestedCVWrapper(encoders.TargetEncoder())
+        wrapper = NestedCVWrapper(encoders.TargetEncoder(), cv=2)
         result2 = wrapper.fit_transform(x, y)
 
         self.assertTrue((result.values == result2.values).all(), 'The content should be the same regardless whether we pass Numpy or Pandas data type.')
