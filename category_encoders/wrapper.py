@@ -1,6 +1,7 @@
 import copy
 from category_encoders import utils
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.model_selection import StratifiedKFold
 import category_encoders as encoders
 import pandas as pd
 
@@ -124,3 +125,112 @@ class MultiClassWrapper(BaseEstimator, TransformerMixin):
         result = pd.concat((encoded[encoded.columns[~encoded.columns.isin(feature_encoder.cols)]], all_new_features), axis=1)
 
         return result
+
+
+class NestedCVWrapper(BaseEstimator, TransformerMixin):
+    """
+    Extend supervised encoders to perform nested cross validation to prevent target leakage
+
+    For a validation or a test set, supervised encoders can be used as follows::
+
+        encoder.fit(X_train, y_train)
+        X_valid_encoded = encoder.transform(X_valid)
+
+    However, when encoding the train data in the method above will introduce bias into the data.
+    Using out-of-fold encodings is an effective way to prevent target leakage. This is equivalent to::
+
+        X_train_encoded = np.zeros(X.shape)
+        for trn, val in kfold.split(X, y):
+            encoder.fit(X[trn], y[trn])
+            X_train_encoded[val] = encoder.transform(X[val])
+
+    This can be used in place of the "inner folds" as discussed here:
+    https://sebastianraschka.com/faq/docs/evaluate-a-model.html
+
+    See README.md for a list of supervised encoders
+
+
+    Parameters
+    ----------
+    feature_encoder: Object
+        an instance of a supervised encoder.
+
+    cv: int or sklearn cv Object
+        If an int is given, StratifiedKFold is used by default, where the int is the number of folds
+
+    shuffle: boolean, optional
+        Whether to shuffle each class’s samples before splitting into batches. Ignored if a CV method is provided
+
+    random_state: int, RandomState instance or None, optional, default=None
+        If int, random_state is the seed used by the random number generator. Ignored if a CV method is provided
+
+
+    Example
+    -------
+    >>> from category_encoders import *
+    >>> from sklearn.datasets import load_boston
+    >>> from sklearn.model_selection import GroupKFold, train_test_split
+    >>> bunch = load_boston()
+    >>> y = bunch.target
+    >>> # we create 6 artificial classes and a train/validation/test split
+    >>> y = (y/10).round().astype(int)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> X_train, X_test, y_train, _ = train_test_split(X, y)
+    >>> X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train)
+    >>> # Define the nested CV encoder for a supervised encoder
+    >>> enc_nested = NestedCVWrapper(TargetEncoder(cols=['CHAS', 'RAD']), random_state=42)
+    >>> # Encode the X data for train, valid & test
+    >>> X_train_enc, X_valid_enc, X_test_enc = enc_nested.fit_transform(X_train, y_train, X_test=(X_valid, X_test)
+    >>> print(X_train_enc.info()))
+    """
+
+    def __init__(self, feature_encoder, cv=5, shuffle=True, random_state=None):
+        self.feature_encoder = feature_encoder
+        self.__name__ = feature_encoder.__class__.__name__
+
+        if type(cv) == int:
+            self.cv = StratifiedKFold(n_splits=cv, shuffle=shuffle, random_state=random_state)
+        else:
+            self.cv = cv
+
+    def fit_transform(self, X, y=None, X_test=None, groups=None, **fit_params):
+        """
+        Creates unbiased encodings from a supervised encoder as well as infer encodings on a test set
+        :param X: array-like, shape = [n_samples, n_features]
+                  Training vectors for the supervised encoder, where n_samples is the number of samples
+                  and n_features is the number of features.
+        :param y: array-like, shape = [n_samples]
+                  Target values for the supervised encoder.
+        :param X_test: array-like, shape = [m_samples, n_features] or a tuple of array-likes (X_test, X_valid...)
+                       Vectors to be used for inference by an encoder (e.g. test or validation sets) trained on the
+                       full X & y sets. No nested folds are used here
+        :param groups: Groups to be passed to the cv method, e.g. for GroupKFold
+        :param fit_params:
+        :return:
+        """
+        X = utils.convert_input(X)
+        y = utils.convert_input(y)
+
+        out_of_fold = np.zeros(X.shape)
+
+        for fold_i, (trn_idx, oof_idx) in enumerate(self.cv.split(X, y, groups)):
+            feature_encoder = copy.deepcopy(self.feature_encoder)
+            feature_encoder.fit(X.iloc[trn_idx], y.iloc[trn_idx])
+            out_of_fold[oof_idx] = feature_encoder.transform(X.iloc[oof_idx])
+
+        out_of_fold = pd.DataFrame(out_of_fold, columns=X.columns)
+
+        if X_test is None:
+            return out_of_fold
+        else:
+            # Train the encoder on the full dataset and infer for test and validation sets
+            feature_encoder = copy.deepcopy(self.feature_encoder)
+            feature_encoder.fit(X, y)
+
+            if type(X_test) == tuple:
+                encoded_data = (out_of_fold, )
+                for dataset in X_test:
+                    encoded_data = encoded_data + (feature_encoder.transform(dataset), )
+                return encoded_data
+            else:
+                return out_of_fold, feature_encoder.transform(X_test)
