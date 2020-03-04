@@ -129,7 +129,7 @@ class MultiClassWrapper(BaseEstimator, TransformerMixin):
 
 class NestedCVWrapper(BaseEstimator, TransformerMixin):
     """
-    Extend supervised encoders to perform nested cross validation to prevent target leakage
+    Extend supervised encoders to perform nested cross validation and minimise prevent target leakage
 
     For a validation or a test set, supervised encoders can be used as follows::
 
@@ -206,7 +206,8 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
                        full X & y sets. No nested folds are used here
         :param groups: Groups to be passed to the cv method, e.g. for GroupKFold
         :param fit_params:
-        :return:
+        :return: array, shape = [n_samples, n_numeric + N]
+                 Transformed values with encoding applied. Returns multiple arrays if X_test is not None
         """
         X = utils.convert_input(X)
         y = utils.convert_input(y)
