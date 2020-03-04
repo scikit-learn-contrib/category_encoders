@@ -160,7 +160,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         If an int is given, StratifiedKFold is used by default, where the int is the number of folds
 
     shuffle: boolean, optional
-        Whether to shuffle each class’s samples before splitting into batches. Ignored if a CV method is provided
+        Whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided
 
     random_state: int, RandomState instance or None, optional, default=None
         If int, random_state is the seed used by the random number generator. Ignored if a CV method is provided
