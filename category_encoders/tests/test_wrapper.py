@@ -68,34 +68,6 @@ class TestMultiClassWrapper(TestCase):
 
 
 class TestNestedCVWrapper(TestCase):
-    def test_invariance_to_data_types(self):
-        x = np.array([
-            ['a', 'b', 'c'],
-            ['a', 'b', 'c'],
-            ['b', 'b', 'c'],
-            ['b', 'b', 'b'],
-            ['b', 'b', 'b'],
-            ['a', 'b', 'a'],
-        ])
-        y = [1, 2, 3, 3, 3, 3]
-        wrapper = NestedCVWrapper(encoders.TargetEncoder(), cv=2)
-        result = wrapper.fit_transform(x, y)
-        th.verify_numeric(result)
-
-        x = pd.DataFrame([
-            ['a', 'b', 'c'],
-            ['a', 'b', 'c'],
-            ['b', 'b', 'c'],
-            ['b', 'b', 'b'],
-            ['b', 'b', 'b'],
-            ['a', 'b', 'a'],
-        ], columns=['f1', 'f2', 'f3'])
-        y = ['bee', 'cat', 'dog', 'dog', 'dog', 'dog']
-        wrapper = NestedCVWrapper(encoders.TargetEncoder(), cv=2)
-        result2 = wrapper.fit_transform(x, y)
-
-        self.assertTrue((result.values == result2.values).all(), 'The content should be the same regardless whether we pass Numpy or Pandas data type.')
-
     def test_train_not_equal_to_valid(self):
         x = np.array([
             ['a', 'b', 'c'],
