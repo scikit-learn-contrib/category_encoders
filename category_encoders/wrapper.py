@@ -4,6 +4,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import StratifiedKFold
 import category_encoders as encoders
 import pandas as pd
+import numpy as np
 
 
 class MultiClassWrapper(BaseEstimator, TransformerMixin):
