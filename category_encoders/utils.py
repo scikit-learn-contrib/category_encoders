@@ -89,17 +89,19 @@ def convert_input_vector(y, index):
         return pd.Series([y], name='target', index=index)
     elif isinstance(y, list):
         if len(y)==0 or (len(y)>0 and not isinstance(y[0], list)): # empty list or a vector
-            return pd.Series(y, name='target', index=index)
+            return pd.Series(y, name='target', index=index, dtype=float)
         elif len(y)>0 and isinstance(y[0], list) and len(y[0])==1: # single row in a matrix
             flatten = lambda y: [item for sublist in y for item in sublist]
             return pd.Series(flatten(y), name='target', index=index)
+        elif len(y)==1 and len(y[0])==0 and isinstance(y[0], list): # single empty column in a matrix
+            return pd.Series(y[0], name='target', index=index, dtype=float)
         elif len(y)==1 and isinstance(y[0], list): # single column in a matrix
-            return pd.Series(y[0], name='target', index=index)
+            return pd.Series(y[0], name='target', index=index, dtype=type(y[0][0]))
         else:
             raise ValueError('Unexpected input shape')
     elif isinstance(y, pd.DataFrame):
         if len(list(y))==0: # empty DataFrame
-            return pd.Series(y, name='target')
+            return pd.Series(name='target', index=index, dtype=float)
         if len(list(y))==1: # a single column
             return y.iloc[:, 0]
         else:

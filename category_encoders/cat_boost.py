@@ -278,7 +278,7 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
             level_notunique = colmap['count'] > 1
 
             unique_train = colmap.index
-            unseen_values = pd.Series([x for x in X_in[col].unique() if x not in unique_train])
+            unseen_values = pd.Series([x for x in X_in[col].unique() if x not in unique_train], dtype=unique_train.dtype)
 
             is_nan = X_in[col].isnull()
             is_unknown_value = X_in[col].isin(unseen_values.dropna().astype(object))

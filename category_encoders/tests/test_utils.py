@@ -69,7 +69,7 @@ class TestUtils(TestCase):
         self.assertRaises(ValueError, convert_input_vector, ([[0, 1], [1, 0], [0, 1]]), index)
 
         # edge scenarios (it is ok to raise an exception but please, provide then a helpful exception text)
-        _ = convert_input_vector(pd.Series(), [])
+        _ = convert_input_vector(pd.Series(dtype=float), [])
         _ = convert_input_vector([], [])
         _ = convert_input_vector([[]], [])
         _ = convert_input_vector(pd.DataFrame(), [])
