@@ -320,12 +320,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
                 nan_identity = np.nan
 
-                if util.is_category(X[col].dtype):
-                    categories = X[col].cat.categories.tolist()
-                    if X[col].isna().any():
-                        categories += [np.nan]
-                else:
-                    categories = X[col].unique()
+                # Avoid using pandas category dtype meta-data, see #235
+                categories = X[col].unique().tolist()
+                if util.is_category(X[col].dtype) and X[col].isna().any():
+                    categories += [np.nan]
 
                 index = pd.Series(categories).fillna(nan_identity).unique()
 
