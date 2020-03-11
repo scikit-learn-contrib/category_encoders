@@ -106,6 +106,19 @@ class TestOrdinalEncoder(TestCase):
 
         self.assertEqual(expected, result)
 
+    def test_handle_unknown_have_new_value_expect_negative_1_categorical(self):
+        cities = ['st louis', 'chicago', 'los angeles']
+        train = pd.DataFrame({'city': pd.Categorical(cities[:-1], categories=cities)})
+        test = pd.DataFrame({'city': pd.Categorical(cities[1:], categories=cities)})
+
+        expected = [2.0, -1.0]
+
+        enc = encoders.OrdinalEncoder(handle_missing='return_nan')
+        enc.fit(train)
+        result = enc.transform(test)['city'].tolist()
+
+        self.assertEqual(expected, result)
+
     def test_custom_mapping(self):
         # See issue 193
         custom_mapping = [{'col': 'col1', 'mapping': {np.NaN: 0, 'a': 1, 'b': 2}},  # The mapping from the documentation
