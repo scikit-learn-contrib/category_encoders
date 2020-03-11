@@ -96,6 +96,7 @@ class TestOrdinalEncoder(TestCase):
         self.assertListEqual([1, -2], out['city_cat'].tolist())
 
     def test_handle_unknown_have_new_value_expect_negative_1(self):
+        # See #238
         train = pd.DataFrame({'city': ['chicago', 'st louis']})
         test = pd.DataFrame({'city': ['chicago', 'los angeles']})
         expected = [1.0, -1.0]
