@@ -194,6 +194,18 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         else:
             self.cv = cv
 
+    def fit(self, X, y, **kwargs):
+        """
+        Calls fit on the base feature_encoder without nested cross validation
+        """
+        self.feature_encoder.fit(X, y, **kwargs)
+
+    def transform(self, X):
+        """
+        Calls transform on the base feature_encoder without nested cross validation
+        """
+        return self.feature_encoder.transform(X)
+
     def fit_transform(self, X, y=None, X_test=None, groups=None, **fit_params):
         """
         Creates unbiased encodings from a supervised encoder as well as infer encodings on a test set
@@ -202,7 +214,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
                   and n_features is the number of features.
         :param y: array-like, shape = [n_samples]
                   Target values for the supervised encoder.
-        :param X_test: array-like, shape = [m_samples, n_features] or a tuple of array-likes (X_test, X_valid...)
+        :param X_test, optional: array-like, shape = [m_samples, n_features] or a tuple of array-likes (X_test, X_valid...)
                        Vectors to be used for inference by an encoder (e.g. test or validation sets) trained on the
                        full X & y sets. No nested folds are used here
         :param groups: Groups to be passed to the cv method, e.g. for GroupKFold
@@ -215,7 +227,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
 
         out_of_fold = np.zeros(X.shape)
 
-        for fold_i, (trn_idx, oof_idx) in enumerate(self.cv.split(X, y, groups)):
+        for trn_idx, oof_idx in self.cv.split(X, y, groups):
             feature_encoder = copy.deepcopy(self.feature_encoder)
             feature_encoder.fit(X.iloc[trn_idx], y.iloc[trn_idx])
             out_of_fold[oof_idx] = feature_encoder.transform(X.iloc[oof_idx])
