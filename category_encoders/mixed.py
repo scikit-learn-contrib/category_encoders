@@ -1,4 +1,6 @@
 """Generalized linear mixed model"""
+import warnings
+import re
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -7,7 +9,6 @@ from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 import statsmodels.formula.api as smf
 from statsmodels.genmod.bayes_mixed_glm import BinomialBayesMixedGLM as bgmm
-import re
 
 __author__ = 'Jan Motl'
 
@@ -272,19 +273,21 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
             values = switch.get('mapping')
 
             try:
-                if self.binary_classification:
-                    # Classification, returns (regularized) log odds per category as stored in vc_mean
-                    # Note: md.predict() returns: output = fe_mean + vcp_mean + vc_mean[category]
-                    md = bgmm.from_formula(target_name + ' ~ 1', {'a': '0 + C(' + str(col) + ')'}, data).fit_vb()
-                    index_names = [int(re.sub(r'C\(.*\)\[(.*)\]', r'\1', col)) for col in md.model.vc_names]
-                    estimate = pd.Series(md.vc_mean, index=index_names)
-                else:
-                    # Regression, returns (regularized) mean deviation of the observation's category from the global mean
-                    md = smf.mixedlm(target_name + ' ~ 1', data, groups=data[col]).fit()
-                    tmp = dict()
-                    for key, value in md.random_effects.items():
-                        tmp[key] = value[0]
-                    estimate = pd.Series(tmp)
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("ignore")
+                    if self.binary_classification:
+                        # Classification, returns (regularized) log odds per category as stored in vc_mean
+                        # Note: md.predict() returns: output = fe_mean + vcp_mean + vc_mean[category]
+                        md = bgmm.from_formula(target_name + ' ~ 1', {'a': '0 + C(' + str(col) + ')'}, data).fit_vb()
+                        index_names = [int(re.sub(r'C\(.*\)\[(.*)\]', r'\1', col)) for col in md.model.vc_names]
+                        estimate = pd.Series(md.vc_mean, index=index_names)
+                    else:
+                        # Regression, returns (regularized) mean deviation of the observation's category from the global mean
+                        md = smf.mixedlm(target_name + ' ~ 1', data, groups=data[col]).fit()
+                        tmp = dict()
+                        for key, value in md.random_effects.items():
+                            tmp[key] = value[0]
+                        estimate = pd.Series(tmp)
             except (np.linalg.LinAlgError):
                 # Singular matrix -> just return all zeros
                 estimate = pd.Series(np.zeros(len(values)), index=values)
