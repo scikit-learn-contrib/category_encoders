@@ -35,7 +35,7 @@ setup(
       'scipy>=1.0.0',
       'statsmodels>=0.8.0',
       'pandas>=0.21.1',
-      'patsy>=0.4.1',
+      'patsy>=0.5.0',
     ],
     author_email='will@pedalwrencher.com'
 )
