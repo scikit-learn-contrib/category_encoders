@@ -1,3 +1,10 @@
+v2.2.0
+======
+* Added generalized linear mixed model encoder
+* Added cross-validation wrapper
+* Added multi-class wrapper
+* Support for pandas >= 1.0.1
+
 v2.1.0
 ======
 

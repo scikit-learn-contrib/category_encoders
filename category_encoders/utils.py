@@ -109,6 +109,7 @@ def convert_input_vector(y, index):
     else:
         return pd.Series(y, name='target', index=index)  # this covers tuples and other directly convertible types
 
+
 def get_generated_cols(X_original, X_transformed, to_transform):
     """
     Returns a list of the generated/transformed columns.
