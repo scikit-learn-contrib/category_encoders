@@ -33,9 +33,9 @@ setup(
       'numpy>=1.14.0',
       'scikit-learn>=0.20.0',
       'scipy>=1.0.0',
-      'statsmodels>=0.8.0',
+      'statsmodels>=0.9.0',
       'pandas>=0.21.1',
-      'patsy>=0.5.0',
+      'patsy>=0.5.1',
     ],
     author_email='will@pedalwrencher.com'
 )
