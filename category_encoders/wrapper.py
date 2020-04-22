@@ -181,8 +181,8 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
     >>> # Define the nested CV encoder for a supervised encoder
     >>> enc_nested = NestedCVWrapper(TargetEncoder(cols=['CHAS', 'RAD']), random_state=42)
     >>> # Encode the X data for train, valid & test
-    >>> X_train_enc, X_valid_enc, X_test_enc = enc_nested.fit_transform(X_train, y_train, X_test=(X_valid, X_test)
-    >>> print(X_train_enc.info()))
+    >>> X_train_enc, X_valid_enc, X_test_enc = enc_nested.fit_transform(X_train, y_train, X_test=(X_valid, X_test))
+    >>> print(X_train_enc.info())
     """
 
     def __init__(self, feature_encoder, cv=5, shuffle=True, random_state=None):
