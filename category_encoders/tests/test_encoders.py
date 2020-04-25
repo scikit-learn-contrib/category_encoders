@@ -585,7 +585,7 @@ class TestEncoders(TestCase):
                 result_float = enc.fit_transform(x_float, y)
 
                 pd.testing.assert_frame_equal(result_placeholder, result_nan)
-                self.assertTrue(sum(sum(np.array(result_placeholder) - np.array(result_float))) == 0)
+                np.testing.assert_equal(result_placeholder.values, result_float.values)
 
     def test_metamorphic(self):
         # When we only slightly alter the input data or an irrelevant argument, the output should remain unchanged.

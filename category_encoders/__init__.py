@@ -22,7 +22,7 @@ from category_encoders.woe import WOEEncoder
 from category_encoders.m_estimate import MEstimateEncoder
 from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.cat_boost import CatBoostEncoder
-from category_encoders.mixed import MixedEncoder
+from category_encoders.glmm import GLMMEncoder
 
 __version__ = '2.2.0'
 
@@ -44,5 +44,5 @@ __all__ = [
     'MEstimateEncoder',
     'JamesSteinEncoder',
     'CatBoostEncoder',
-    'MixedEncoder'
+    'GLMMEncoder'
 ]

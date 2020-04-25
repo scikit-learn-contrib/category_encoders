@@ -13,7 +13,7 @@ from statsmodels.genmod.bayes_mixed_glm import BinomialBayesMixedGLM as bgmm
 __author__ = 'Jan Motl'
 
 
-class MixedEncoder(BaseEstimator, TransformerMixin):
+class GLMMEncoder(BaseEstimator, TransformerMixin):
     """Generalized linear mixed model.
 
     This is a supervised encoder similar to TargetEncoder or MEstimateEncoder, but there are some advantages:
@@ -61,7 +61,7 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
     >>> bunch = load_boston()
     >>> y = bunch.target > 22.5
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = MixedEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> enc = GLMMEncoder(cols=['CHAS', 'RAD']).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
@@ -272,15 +272,13 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
         else:
             binomial_target = self.binomial_target
 
-        # Since we use formulas, we have to be sure that the target name differs from the feature names.
-        # If formulas turn out to be brittle, see issue #242 for non-formula solutions.
-        target_name = self._get_unique_target_name(X)
-        data = X.copy()
-        data[target_name] = y
+        # The estimation does not have to converge -> at least converge to the same value.
+        np.random.seed(2001)
 
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
             values = switch.get('mapping')
+            data = self._rename_and_merge(X, y, col)
 
             try:
                 with warnings.catch_warnings():
@@ -288,12 +286,12 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
                     if binomial_target:
                         # Classification, returns (regularized) log odds per category as stored in vc_mean
                         # Note: md.predict() returns: output = fe_mean + vcp_mean + vc_mean[category]
-                        md = bgmm.from_formula(target_name + ' ~ 1', {'a': '0 + C(' + str(col) + ')'}, data).fit_vb()
-                        index_names = [int(re.sub(r'C\(.*\)\[(.*)\]', r'\1', col)) for col in md.model.vc_names]
+                        md = bgmm.from_formula('target ~ 1', {'a': '0 + C(feature)'}, data).fit_vb()
+                        index_names = [int(float(re.sub(r'C\(feature\)\[(\S+)\]', r'\1', col))) for col in md.model.vc_names]
                         estimate = pd.Series(md.vc_mean, index=index_names)
                     else:
                         # Regression, returns (regularized) mean deviation of the observation's category from the global mean
-                        md = smf.mixedlm(target_name + ' ~ 1', data, groups=data[col]).fit()
+                        md = smf.mixedlm('target ~ 1', data, groups=data[col]).fit()
                         tmp = dict()
                         for key, value in md.random_effects.items():
                             tmp[key] = value[0]
@@ -348,24 +346,15 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
         else:
             return self.feature_names
 
-    def _get_unique_target_name(self, X):
+    def _rename_and_merge(self, X, y, col):
         """
-        Returns a unique name for the target y, which is not in X.
-
-        The target name is set to 'target'. If there is a clash
-        between the target name and some feature in X, the target name
-        is repeatedly suffixed with underscore until the name is unique.
-
-        Arguments:
-            X: df
-                the DataFrame with all the features.
-
-        Output:
-            target_name: string
+        Statsmodels requires:
+            1) unique column names
+            2) non-numeric columns names
+        Solution: internally rename the columns.
         """
-        target_name = 'target'
+        merged = pd.DataFrame()
+        merged['feature'] = X[col]
+        merged['target'] = y
 
-        while target_name in X.columns:
-            target_name += '_'
-
-        return target_name
+        return merged

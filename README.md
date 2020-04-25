@@ -30,6 +30,7 @@ __Unsupervised:__
 
 __Supervised:__
  * CatBoost [11]
+ * Generalized Linear Mixed Model [12] 
  * James-Stein Estimator [9]
  * LeaveOneOut [4]
  * M-estimator [7]
@@ -113,6 +114,10 @@ testing_numeric_dataset = enc.transform(X_test)
 
 For the transformation of the _training_ data with the supervised methods, you should use `fit_transform()` method instead of `fit().transform()`, because these two methods _do not_ have to generate the same result. The difference can be observed with LeaveOneOut encoder, which performs a nested cross-validation for the _training_ data in `fit_transform()` method (to decrease over-fitting of the downstream model) but uses all the training data for scoring with `transform()` method (to get as accurate estimates as possible).
 
+Furthermore, you may benefit from following wrappers:
+ * MultiClassWrapper, which extends supervised encoders to support polynomial targets
+ * NestedCVWrapper, which helps to prevent overfitting  
+
 Additional examples and benchmarks can be found in the `examples` directory.
 
 Contributing
@@ -135,4 +140,5 @@ References
  9. Empirical Bayes for multiple sample sizes. From http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/
  10. Simple Count or Frequency Encoding. From https://www.datacamp.com/community/tutorials/encoding-methodologies
  11. Transforming categorical features to numerical features. From https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
+ 12. Andrew Gelman and Jennifer Hill (2006). Data Analysis Using Regression and Multilevel/Hierarchical Models. From https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf
  
