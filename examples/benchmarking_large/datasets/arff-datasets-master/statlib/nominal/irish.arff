@@ -1,0 +1,595 @@
+% 
+% 
+% 	Irish Educational Transitions Data
+% 
+%  Below are shown data on educational transitions for a sample of 500
+% Irish schoolchildren aged 11 in 1967. The data were collected by
+% Greaney and Kelleghan (1984), and reanalyzed by Raftery and Hout (1985, 1993).
+% 
+%   The data were also used, in a simplified form, as an example to illustrate
+% Bayesian model selection methods by Raftery (1988) and Kass and Raftery (1993).
+% In that simplified form, primary terminal leavers and cases with any missing
+% data were removed, leaving 441 cases. The Leaving Certificate variable
+% was used as the dependent variable in a logistic regression analysis.
+% 
+%  The variables shown are as follows:
+% 
+% 1. Sex: 1=male; 2=female.
+% 
+% 2. DVRT (Drumcondra Verbal Reasoning Test Score).
+% 
+% 3. Educational level attained:
+%  	  1		Primary terminal leaver
+%  	  2	 	Junior cycle incomplete: vocational school
+%  	  3		Junior cycle incomplete: secondary school
+%  	  4		Junior cycle terminal leaver: vocational school
+%  	  5		Junior cycle terminal leaver: secondary school
+%  	  6		Senior cycle incomplete: vocational school
+%  	  7		Senior cycle incomplete: secondary school
+%  	  8		Senior cycle terminal leaver: vocational school
+%  	  9		Senior cycle terminal leaver: secondary school
+%  	 10		3rd level incomplete
+%  	 11		3rd level complete
+% 
+% 4. Leaving Certificate. 1 if Leaving Certificate not taken; 2 if taken.
+% 
+% 5. Prestige score for father's occupation 
+%      (calculated by Raftery and Hout, 1985). 0 if missing.
+% 
+% 6. Type of school: 1=secondary; 2=vocational; 9=primary terminal leaver.
+% 
+% 	REFERENCES
+% 
+% Greaney, V. and Kelleghan, T. (1984). Equality of Opportunity in Irish
+%   Schools. Dublin: Educational Company.
+% 
+% Kass, R.E. and Raftery, A.E. (1993). Bayes factors and model uncertainty.
+%   Technical Report no. 254, Department of Statistics, University of Washington.
+%   Revised version to appear in Journal of the American Statistical 
+%   Association.
+% 
+% Raftery, A.E. (1988). Approximate Bayes factors for generalized linear models.
+%   Technical Report no. 121, Department of Statistics, University of Washington.
+% 
+% Raftery, A.E. and Hout, M. (1985). Does Irish education approach the
+%   meritocratic ideal? A logistic analysis. 
+%   Economic and Social Review, 16, 115-140.
+% 
+% Raftery, A.E. and Hout, M. (1993). Maximally maintained inequality:
+%   Expansion, reform and opportunity in Irish schools. 
+%   Sociology of Education, 66, 41-62.
+% 
+% 
+% 	OWNERSHIP STATEMENT
+% 
+% This data belongs to Vincent Greaney and Thomas Kelleghan, 
+% Educational Research Centre, St. Patrick's College, Drumcondra, 
+% Dublin 9, Ireland, who retain the copyright.
+% 
+% In the form given here, it may be used solely as an example for research 
+% on the development of statistical methods. For any other use of the data, 
+% permission must be obtained from the owners.  Subject to this statement, 
+% permission is hereby given to StatLib to distribute this data freely.
+% 
+% Submitted by Adrian Raftery (raftery@stat.washington.edu).
+% 
+% Copyright 1984 Vincent Greaney and Thomas Kelleghan.
+% 
+% 
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: 4
+%
+
+@relation irish
+
+@attribute Sex {female,male}
+@attribute DVRT INTEGER
+@attribute Educational_level {3rd_level_complete,3rd_level_incomplete,Junior_cycle_incomplete-secondary_school,Junior_cycle_incomplete-vocational_school,Junior_cycle_terminal_leaver-secondary_school,Junior_cycle_terminal_leaver-vocational_school,Primary_terminal_leaver,Senior_cycle_incomplete-secondary_school,Senior_cycle_incomplete-vocational_school,Senior_cycle_terminal_leaver-secondary_school}
+@attribute Leaving_Certificate {not_taken,taken}
+@attribute Prestige_score INTEGER
+@attribute Type_school {primary_terminal_leaver,secondary,vocational}
+
+@data
+male,113,Junior_cycle_incomplete-secondary_school,not_taken,28,secondary
+male,101,Primary_terminal_leaver,not_taken,28,primary_terminal_leaver
+male,110,Senior_cycle_terminal_leaver-secondary_school,taken,69,secondary
+male,121,Junior_cycle_terminal_leaver-secondary_school,not_taken,57,secondary
+male,82,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+male,85,Junior_cycle_terminal_leaver-vocational_school,not_taken,28,vocational
+male,84,Primary_terminal_leaver,not_taken,?,primary_terminal_leaver
+male,98,Junior_cycle_incomplete-vocational_school,not_taken,43,vocational
+male,92,Junior_cycle_terminal_leaver-vocational_school,not_taken,33,vocational
+male,90,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+male,88,Junior_cycle_terminal_leaver-vocational_school,not_taken,28,vocational
+male,84,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+male,114,3rd_level_complete,taken,18,secondary
+male,70,Junior_cycle_terminal_leaver-vocational_school,not_taken,57,vocational
+male,109,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+male,83,Junior_cycle_terminal_leaver-vocational_school,not_taken,43,vocational
+male,108,Junior_cycle_terminal_leaver-vocational_school,not_taken,69,vocational
+male,95,Junior_cycle_incomplete-secondary_school,not_taken,43,secondary
+male,90,Junior_cycle_terminal_leaver-vocational_school,not_taken,28,vocational
+male,107,Senior_cycle_terminal_leaver-secondary_school,taken,28,secondary
+male,86,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+male,70,Junior_cycle_incomplete-vocational_school,not_taken,43,vocational
+male,114,Senior_cycle_terminal_leaver-secondary_school,taken,?,secondary
+male,117,Senior_cycle_terminal_leaver-secondary_school,taken,42,secondary
+male,112,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+male,88,3rd_level_complete,taken,?,secondary
+male,106,3rd_level_complete,taken,42,secondary
+male,125,3rd_level_complete,taken,28,secondary
+male,94,Senior_cycle_terminal_leaver-secondary_school,taken,?,secondary
+male,103,Junior_cycle_terminal_leaver-secondary_school,not_taken,?,secondary
+male,123,Senior_cycle_terminal_leaver-secondary_school,taken,46,secondary
+male,100,Junior_cycle_terminal_leaver-vocational_school,not_taken,35,vocational
+male,90,Junior_cycle_incomplete-secondary_school,not_taken,27,secondary
+male,70,Junior_cycle_terminal_leaver-vocational_school,not_taken,51,vocational
+male,90,Junior_cycle_incomplete-secondary_school,not_taken,46,secondary
+male,99,Junior_cycle_incomplete-secondary_school,not_taken,?,secondary
+male,123,Junior_cycle_incomplete-secondary_school,not_taken,43,secondary
+male,127,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+male,124,Senior_cycle_terminal_leaver-secondary_school,taken,62,secondary
+male,110,Senior_cycle_incomplete-vocational_school,not_taken,27,vocational
+male,94,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+male,112,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+male,123,Senior_cycle_terminal_leaver-secondary_school,taken,35,secondary
+male,70,Junior_cycle_incomplete-secondary_school,not_taken,18,secondary
+male,102,Junior_cycle_terminal_leaver-vocational_school,not_taken,43,vocational
+male,126,3rd_level_complete,taken,27,secondary
+male,121,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+male,100,Junior_cycle_incomplete-vocational_school,not_taken,43,vocational
+male,85,Junior_cycle_incomplete-vocational_school,not_taken,31,vocational
+male,86,Junior_cycle_terminal_leaver-vocational_school,not_taken,31,vocational
+male,101,Junior_cycle_incomplete-vocational_school,not_taken,28,vocational
+male,91,Junior_cycle_terminal_leaver-secondary_school,not_taken,40,secondary
+male,113,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+male,103,Junior_cycle_terminal_leaver-vocational_school,not_taken,33,vocational
+male,117,Senior_cycle_incomplete-secondary_school,not_taken,18,secondary
+male,72,Junior_cycle_incomplete-vocational_school,not_taken,43,vocational
+male,70,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+male,112,Junior_cycle_incomplete-secondary_school,not_taken,18,secondary
+male,65,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+male,97,Junior_cycle_terminal_leaver-secondary_school,not_taken,35,secondary
+male,100,Junior_cycle_terminal_leaver-vocational_school,not_taken,43,vocational
+male,99,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+male,91,Junior_cycle_incomplete-vocational_school,not_taken,28,vocational
+male,107,?,not_taken,43,secondary
+male,94,Junior_cycle_incomplete-vocational_school,not_taken,43,vocational
+male,104,Junior_cycle_terminal_leaver-secondary_school,not_taken,36,secondary
+male,117,Senior_cycle_terminal_leaver-secondary_school,taken,?,secondary
+male,104,Junior_cycle_terminal_leaver-secondary_school,not_taken,43,secondary
+male,115,?,not_taken,66,secondary
+female,123,Senior_cycle_incomplete-secondary_school,not_taken,35,secondary
+female,103,Junior_cycle_terminal_leaver-secondary_school,not_taken,43,secondary
+female,109,Junior_cycle_terminal_leaver-vocational_school,not_taken,43,vocational
+female,99,Junior_cycle_terminal_leaver-secondary_school,not_taken,61,secondary
+female,100,3rd_level_complete,taken,47,secondary
+female,100,Junior_cycle_terminal_leaver-secondary_school,not_taken,62,secondary
+female,107,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+female,70,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+female,91,Junior_cycle_terminal_leaver-secondary_school,not_taken,30,secondary
+female,117,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+female,115,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+female,93,Junior_cycle_terminal_leaver-secondary_school,not_taken,43,secondary
+female,103,Senior_cycle_terminal_leaver-secondary_school,taken,30,secondary
+female,99,Junior_cycle_terminal_leaver-secondary_school,not_taken,57,secondary
+female,115,Junior_cycle_incomplete-secondary_school,not_taken,36,secondary
+female,104,Senior_cycle_terminal_leaver-secondary_school,taken,38,secondary
+female,116,Junior_cycle_terminal_leaver-secondary_school,not_taken,47,secondary
+female,94,Junior_cycle_incomplete-secondary_school,not_taken,51,secondary
+female,114,3rd_level_complete,taken,43,secondary
+female,113,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+female,106,Junior_cycle_incomplete-vocational_school,not_taken,?,vocational
+female,119,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+female,114,Senior_cycle_terminal_leaver-secondary_school,taken,48,secondary
+female,108,Senior_cycle_terminal_leaver-secondary_school,taken,27,secondary
+female,97,Junior_cycle_incomplete-secondary_school,not_taken,46,secondary
+female,83,Primary_terminal_leaver,not_taken,28,primary_terminal_leaver
+female,103,Junior_cycle_terminal_leaver-secondary_school,not_taken,43,secondary
+female,104,Junior_cycle_terminal_leaver-secondary_school,not_taken,64,secondary
+female,97,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+female,109,Junior_cycle_terminal_leaver-secondary_school,not_taken,69,secondary
+female,90,Junior_cycle_terminal_leaver-secondary_school,not_taken,33,secondary
+female,114,Junior_cycle_terminal_leaver-vocational_school,not_taken,28,vocational
+female,99,Junior_cycle_terminal_leaver-secondary_school,not_taken,38,secondary
+female,94,Senior_cycle_terminal_leaver-secondary_school,taken,35,secondary
+female,86,Junior_cycle_terminal_leaver-secondary_school,not_taken,28,secondary
+female,93,Senior_cycle_terminal_leaver-secondary_school,taken,35,secondary
+female,91,Junior_cycle_terminal_leaver-vocational_school,not_taken,28,vocational
+female,109,Senior_cycle_incomplete-secondary_school,not_taken,40,secondary
+female,91,Junior_cycle_terminal_leaver-secondary_school,not_taken,28,secondary
+female,106,Junior_cycle_terminal_leaver-vocational_school,not_taken,28,vocational
+female,109,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+female,111,Junior_cycle_terminal_leaver-secondary_school,not_taken,51,secondary
+female,111,Junior_cycle_terminal_leaver-secondary_school,not_taken,?,secondary
+female,106,Junior_cycle_terminal_leaver-vocational_school,not_taken,?,vocational
+female,86,Junior_cycle_terminal_leaver-vocational_school,not_taken,40,vocational
+female,107,Junior_cycle_incomplete-secondary_school,not_taken,18,secondary
+female,103,Primary_terminal_leaver,not_taken,28,primary_terminal_leaver
+female,100,Junior_cycle_incomplete-secondary_school,not_taken,18,secondary
+female,101,Junior_cycle_terminal_leaver-secondary_school,not_taken,38,secondary
+female,97,Junior_cycle_incomplete-vocational_school,not_taken,36,vocational
+female,105,Junior_cycle_terminal_leaver-vocational_school,not_taken,46,vocational
+female,98,Junior_cycle_incomplete-vocational_school,not_taken,37,vocational
+female,111,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+female,88,Junior_cycle_incomplete-secondary_school,not_taken,57,secondary
+female,123,Junior_cycle_terminal_leaver-secondary_school,not_taken,28,secondary
+female,98,Junior_cycle_terminal_leaver-secondary_school,not_taken,33,secondary
+female,94,Junior_cycle_terminal_leaver-vocational_school,not_taken,43,vocational
+female,109,Junior_cycle_terminal_leaver-secondary_school,not_taken,28,secondary
+female,70,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+female,75,Junior_cycle_incomplete-vocational_school,not_taken,33,vocational
+female,72,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,70,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+female,70,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+female,70,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+female,70,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+female,85,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+female,108,Junior_cycle_terminal_leaver-vocational_school,not_taken,28,vocational
+female,75,Junior_cycle_incomplete-vocational_school,not_taken,28,vocational
+female,104,Senior_cycle_terminal_leaver-secondary_school,taken,?,secondary
+female,103,Junior_cycle_terminal_leaver-secondary_school,not_taken,38,secondary
+female,122,3rd_level_complete,taken,38,secondary
+female,110,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+male,107,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+male,104,3rd_level_complete,taken,75,secondary
+male,70,Junior_cycle_terminal_leaver-secondary_school,not_taken,58,secondary
+male,116,?,not_taken,18,secondary
+male,103,Primary_terminal_leaver,not_taken,43,primary_terminal_leaver
+male,95,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+male,113,Junior_cycle_terminal_leaver-vocational_school,not_taken,?,vocational
+male,126,Junior_cycle_incomplete-vocational_school,not_taken,61,vocational
+male,118,Senior_cycle_terminal_leaver-secondary_school,taken,71,secondary
+male,115,Senior_cycle_terminal_leaver-secondary_school,taken,27,secondary
+male,89,Junior_cycle_incomplete-vocational_school,not_taken,43,vocational
+male,113,3rd_level_complete,taken,61,secondary
+male,85,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,95,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+male,109,3rd_level_complete,taken,57,secondary
+male,111,Senior_cycle_terminal_leaver-secondary_school,taken,69,secondary
+male,116,Senior_cycle_terminal_leaver-secondary_school,taken,75,secondary
+male,90,Senior_cycle_incomplete-vocational_school,not_taken,43,vocational
+male,90,Junior_cycle_incomplete-vocational_school,not_taken,28,vocational
+male,82,Primary_terminal_leaver,not_taken,31,primary_terminal_leaver
+male,84,?,not_taken,33,secondary
+male,117,Senior_cycle_incomplete-vocational_school,not_taken,28,vocational
+male,71,Senior_cycle_incomplete-vocational_school,not_taken,40,vocational
+male,104,3rd_level_incomplete,taken,69,secondary
+male,86,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+male,79,Junior_cycle_terminal_leaver-vocational_school,not_taken,46,vocational
+male,80,Junior_cycle_terminal_leaver-vocational_school,not_taken,65,vocational
+male,99,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+male,86,Junior_cycle_incomplete-vocational_school,not_taken,61,vocational
+male,116,3rd_level_complete,taken,18,secondary
+male,124,Senior_cycle_terminal_leaver-secondary_school,taken,65,secondary
+male,98,Primary_terminal_leaver,not_taken,28,primary_terminal_leaver
+male,101,Junior_cycle_terminal_leaver-secondary_school,not_taken,35,secondary
+male,87,Primary_terminal_leaver,not_taken,43,primary_terminal_leaver
+male,97,3rd_level_complete,taken,40,secondary
+male,120,3rd_level_complete,taken,43,secondary
+male,103,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+male,107,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+male,105,Senior_cycle_incomplete-secondary_school,not_taken,57,secondary
+male,99,Senior_cycle_terminal_leaver-secondary_school,taken,37,vocational
+male,103,Senior_cycle_terminal_leaver-secondary_school,taken,28,vocational
+male,101,Junior_cycle_incomplete-secondary_school,not_taken,28,secondary
+female,102,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+female,105,Senior_cycle_terminal_leaver-secondary_school,taken,18,vocational
+female,70,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+female,101,3rd_level_complete,taken,43,secondary
+female,90,Senior_cycle_terminal_leaver-secondary_school,taken,42,vocational
+female,85,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+female,104,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,87,Senior_cycle_terminal_leaver-secondary_school,taken,18,vocational
+female,85,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,102,Junior_cycle_terminal_leaver-vocational_school,not_taken,42,vocational
+female,94,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+female,93,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,99,3rd_level_complete,taken,37,secondary
+female,103,Senior_cycle_terminal_leaver-secondary_school,taken,38,secondary
+female,89,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+female,77,Primary_terminal_leaver,not_taken,?,primary_terminal_leaver
+female,92,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+female,109,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+female,91,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+female,109,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+female,105,Junior_cycle_incomplete-secondary_school,not_taken,57,secondary
+female,105,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,90,Junior_cycle_terminal_leaver-secondary_school,not_taken,69,secondary
+female,99,3rd_level_complete,taken,69,secondary
+female,110,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,88,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,101,Senior_cycle_terminal_leaver-secondary_school,taken,66,secondary
+female,91,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+female,78,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,118,3rd_level_complete,taken,65,secondary
+female,100,Primary_terminal_leaver,not_taken,28,primary_terminal_leaver
+female,100,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+female,85,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+female,106,3rd_level_complete,taken,61,secondary
+female,70,Junior_cycle_incomplete-vocational_school,not_taken,?,vocational
+female,97,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+female,86,Primary_terminal_leaver,not_taken,?,primary_terminal_leaver
+female,92,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+female,102,Primary_terminal_leaver,not_taken,38,primary_terminal_leaver
+female,86,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+female,78,Senior_cycle_terminal_leaver-secondary_school,taken,46,secondary
+female,100,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+male,104,Senior_cycle_terminal_leaver-secondary_school,taken,61,secondary
+male,70,Junior_cycle_terminal_leaver-secondary_school,not_taken,31,secondary
+male,107,Senior_cycle_terminal_leaver-secondary_school,taken,75,secondary
+male,114,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,103,Junior_cycle_incomplete-vocational_school,not_taken,31,vocational
+male,115,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+male,106,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+male,114,Senior_cycle_terminal_leaver-secondary_school,taken,61,secondary
+male,90,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+male,103,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,92,Junior_cycle_incomplete-secondary_school,not_taken,58,secondary
+male,113,3rd_level_complete,taken,37,secondary
+male,92,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+male,108,3rd_level_complete,taken,37,secondary
+male,96,Junior_cycle_incomplete-secondary_school,not_taken,18,secondary
+male,70,Junior_cycle_incomplete-secondary_school,not_taken,18,secondary
+male,112,Senior_cycle_terminal_leaver-secondary_school,taken,75,secondary
+male,106,Senior_cycle_terminal_leaver-secondary_school,taken,28,secondary
+male,91,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,96,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+male,70,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+male,109,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+male,74,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+male,99,Junior_cycle_incomplete-secondary_school,not_taken,43,secondary
+male,107,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,90,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+male,78,Junior_cycle_terminal_leaver-vocational_school,not_taken,31,vocational
+male,70,Primary_terminal_leaver,not_taken,37,primary_terminal_leaver
+male,88,Junior_cycle_incomplete-vocational_school,not_taken,58,vocational
+male,93,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+male,88,Junior_cycle_incomplete-vocational_school,not_taken,43,vocational
+male,108,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+male,101,3rd_level_complete,taken,57,secondary
+male,98,Junior_cycle_incomplete-vocational_school,not_taken,28,vocational
+male,103,Senior_cycle_terminal_leaver-secondary_school,taken,35,secondary
+male,73,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,109,?,not_taken,43,secondary
+male,102,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+male,93,Junior_cycle_incomplete-vocational_school,not_taken,37,vocational
+male,93,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+male,101,Senior_cycle_terminal_leaver-secondary_school,taken,61,secondary
+male,100,Senior_cycle_incomplete-vocational_school,not_taken,37,vocational
+male,70,Primary_terminal_leaver,not_taken,31,primary_terminal_leaver
+male,102,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+male,113,Junior_cycle_terminal_leaver-vocational_school,not_taken,28,vocational
+male,91,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+male,109,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+male,80,Primary_terminal_leaver,not_taken,58,primary_terminal_leaver
+male,118,Senior_cycle_terminal_leaver-secondary_school,taken,18,vocational
+male,70,Primary_terminal_leaver,not_taken,58,primary_terminal_leaver
+male,88,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+male,72,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+male,81,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+male,70,Junior_cycle_incomplete-vocational_school,not_taken,37,vocational
+male,97,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+male,87,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+male,99,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+male,81,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+male,84,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+male,90,Junior_cycle_incomplete-vocational_school,not_taken,58,vocational
+male,95,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,84,Junior_cycle_incomplete-vocational_school,not_taken,61,vocational
+male,104,Senior_cycle_incomplete-vocational_school,not_taken,40,vocational
+male,105,Junior_cycle_incomplete-vocational_school,not_taken,31,vocational
+male,107,Junior_cycle_incomplete-secondary_school,not_taken,58,secondary
+male,84,Junior_cycle_incomplete-vocational_school,not_taken,40,vocational
+male,108,Junior_cycle_terminal_leaver-vocational_school,not_taken,?,vocational
+male,70,Senior_cycle_incomplete-vocational_school,not_taken,18,vocational
+male,99,3rd_level_complete,taken,37,secondary
+male,87,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+male,81,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+male,103,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+male,114,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,101,Senior_cycle_terminal_leaver-secondary_school,taken,35,secondary
+male,70,Primary_terminal_leaver,not_taken,58,primary_terminal_leaver
+male,70,Junior_cycle_terminal_leaver-vocational_school,not_taken,?,vocational
+male,109,Senior_cycle_terminal_leaver-secondary_school,taken,?,secondary
+male,78,Senior_cycle_terminal_leaver-secondary_school,taken,58,vocational
+male,70,Primary_terminal_leaver,not_taken,37,primary_terminal_leaver
+male,70,Junior_cycle_terminal_leaver-vocational_school,not_taken,58,vocational
+male,104,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,86,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+male,99,Junior_cycle_terminal_leaver-vocational_school,not_taken,35,vocational
+male,98,Junior_cycle_terminal_leaver-vocational_school,not_taken,58,vocational
+male,118,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+male,76,Junior_cycle_incomplete-vocational_school,not_taken,?,vocational
+male,102,Junior_cycle_incomplete-secondary_school,not_taken,18,secondary
+male,106,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+male,108,Junior_cycle_terminal_leaver-vocational_school,not_taken,35,vocational
+male,110,Senior_cycle_incomplete-vocational_school,not_taken,37,vocational
+male,110,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+male,89,Senior_cycle_incomplete-vocational_school,not_taken,28,vocational
+male,83,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+male,96,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+male,113,3rd_level_complete,taken,65,secondary
+male,95,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,108,Junior_cycle_terminal_leaver-vocational_school,not_taken,38,vocational
+male,96,Junior_cycle_terminal_leaver-secondary_school,not_taken,28,secondary
+male,79,Senior_cycle_incomplete-secondary_school,not_taken,61,secondary
+female,99,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+female,107,3rd_level_complete,taken,37,secondary
+female,94,Junior_cycle_incomplete-vocational_school,not_taken,37,vocational
+female,88,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+female,82,Junior_cycle_terminal_leaver-secondary_school,not_taken,57,secondary
+female,100,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+female,102,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+female,111,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+female,111,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+female,94,Primary_terminal_leaver,not_taken,58,primary_terminal_leaver
+female,94,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,93,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+female,90,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+female,84,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+female,100,Junior_cycle_terminal_leaver-vocational_school,not_taken,27,vocational
+female,106,Senior_cycle_terminal_leaver-secondary_school,taken,51,secondary
+female,114,3rd_level_incomplete,taken,57,secondary
+female,101,Senior_cycle_terminal_leaver-secondary_school,taken,?,secondary
+female,115,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+female,108,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+female,117,3rd_level_complete,taken,51,secondary
+female,110,Junior_cycle_terminal_leaver-secondary_school,not_taken,28,secondary
+female,93,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+female,114,3rd_level_complete,taken,?,secondary
+female,72,Primary_terminal_leaver,not_taken,?,primary_terminal_leaver
+female,116,Senior_cycle_terminal_leaver-secondary_school,taken,?,secondary
+female,117,3rd_level_complete,taken,37,secondary
+female,102,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+female,84,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,94,Junior_cycle_incomplete-secondary_school,not_taken,28,secondary
+female,81,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,101,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+female,91,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,93,Senior_cycle_terminal_leaver-secondary_school,taken,38,secondary
+female,116,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,90,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+female,115,Senior_cycle_terminal_leaver-secondary_school,taken,35,secondary
+female,89,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+female,108,3rd_level_complete,taken,37,secondary
+female,100,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,86,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+female,84,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+female,90,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+female,103,3rd_level_complete,taken,28,secondary
+female,100,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+female,102,Senior_cycle_terminal_leaver-secondary_school,taken,43,secondary
+female,82,Junior_cycle_terminal_leaver-secondary_school,not_taken,35,secondary
+female,83,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+female,113,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,117,3rd_level_complete,taken,57,secondary
+female,111,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,100,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,91,3rd_level_complete,taken,58,secondary
+female,97,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+female,109,3rd_level_incomplete,taken,43,secondary
+female,100,Junior_cycle_incomplete-secondary_school,not_taken,37,secondary
+female,98,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+female,85,Senior_cycle_incomplete-secondary_school,not_taken,35,secondary
+female,91,Primary_terminal_leaver,not_taken,18,primary_terminal_leaver
+female,85,Junior_cycle_terminal_leaver-secondary_school,not_taken,31,secondary
+female,81,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,87,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,95,3rd_level_complete,taken,37,secondary
+female,102,Junior_cycle_incomplete-secondary_school,not_taken,37,secondary
+female,94,Primary_terminal_leaver,not_taken,38,primary_terminal_leaver
+female,89,Senior_cycle_incomplete-secondary_school,not_taken,37,secondary
+female,112,Junior_cycle_incomplete-vocational_school,not_taken,37,vocational
+female,118,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,70,Senior_cycle_incomplete-secondary_school,not_taken,37,secondary
+female,103,3rd_level_complete,taken,37,secondary
+female,90,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,97,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,104,Senior_cycle_incomplete-vocational_school,not_taken,37,vocational
+female,91,Junior_cycle_incomplete-vocational_school,not_taken,37,vocational
+female,94,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+female,107,Junior_cycle_incomplete-secondary_school,not_taken,57,secondary
+female,90,Junior_cycle_incomplete-secondary_school,not_taken,37,secondary
+female,70,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,97,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+female,104,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+female,96,Junior_cycle_terminal_leaver-secondary_school,not_taken,28,secondary
+female,81,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+female,114,Senior_cycle_terminal_leaver-secondary_school,taken,28,secondary
+female,106,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+female,105,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,92,Junior_cycle_incomplete-vocational_school,not_taken,28,vocational
+female,96,Senior_cycle_terminal_leaver-secondary_school,taken,38,secondary
+female,84,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+female,89,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+female,111,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+female,102,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+female,99,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+female,104,Junior_cycle_incomplete-secondary_school,not_taken,37,secondary
+female,70,Junior_cycle_terminal_leaver-vocational_school,not_taken,31,vocational
+female,70,Junior_cycle_terminal_leaver-vocational_school,not_taken,35,vocational
+female,90,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+female,104,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,102,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,86,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,73,Senior_cycle_terminal_leaver-secondary_school,taken,35,secondary
+female,81,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+female,93,Senior_cycle_terminal_leaver-secondary_school,taken,57,secondary
+female,111,Senior_cycle_incomplete-secondary_school,not_taken,37,secondary
+female,104,Junior_cycle_incomplete-secondary_school,not_taken,18,secondary
+female,105,Junior_cycle_terminal_leaver-secondary_school,not_taken,28,secondary
+female,73,Junior_cycle_terminal_leaver-secondary_school,not_taken,37,secondary
+female,85,Senior_cycle_terminal_leaver-secondary_school,taken,28,secondary
+female,107,3rd_level_complete,taken,61,secondary
+female,112,3rd_level_complete,taken,62,secondary
+male,127,3rd_level_complete,taken,40,secondary
+male,114,Junior_cycle_terminal_leaver-secondary_school,not_taken,66,secondary
+male,114,Senior_cycle_terminal_leaver-secondary_school,taken,71,secondary
+male,109,Junior_cycle_incomplete-vocational_school,not_taken,18,vocational
+male,93,Senior_cycle_terminal_leaver-secondary_school,taken,51,secondary
+female,114,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+female,100,Senior_cycle_terminal_leaver-secondary_school,taken,31,secondary
+female,92,Junior_cycle_incomplete-secondary_school,not_taken,18,secondary
+female,110,Senior_cycle_terminal_leaver-secondary_school,taken,61,secondary
+female,93,Junior_cycle_terminal_leaver-vocational_school,not_taken,37,vocational
+female,96,Junior_cycle_incomplete-vocational_school,not_taken,43,vocational
+male,120,?,not_taken,75,secondary
+male,114,3rd_level_complete,taken,75,secondary
+male,127,3rd_level_complete,taken,40,secondary
+male,106,Senior_cycle_terminal_leaver-secondary_school,taken,75,secondary
+male,110,Senior_cycle_terminal_leaver-secondary_school,taken,53,secondary
+male,92,Senior_cycle_incomplete-vocational_school,not_taken,38,vocational
+male,125,3rd_level_complete,taken,71,secondary
+male,108,Senior_cycle_terminal_leaver-secondary_school,taken,71,secondary
+female,112,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,93,Senior_cycle_terminal_leaver-secondary_school,taken,69,secondary
+female,114,Senior_cycle_terminal_leaver-secondary_school,taken,75,secondary
+female,104,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+female,92,Senior_cycle_terminal_leaver-secondary_school,taken,75,secondary
+female,104,Junior_cycle_terminal_leaver-secondary_school,not_taken,43,secondary
+female,109,Senior_cycle_terminal_leaver-secondary_school,taken,71,secondary
+female,109,3rd_level_complete,taken,40,secondary
+female,104,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+male,123,Senior_cycle_incomplete-vocational_school,not_taken,36,vocational
+male,125,3rd_level_complete,taken,31,secondary
+male,127,3rd_level_complete,taken,37,secondary
+male,129,3rd_level_complete,taken,43,secondary
+male,119,3rd_level_incomplete,taken,69,secondary
+male,125,Junior_cycle_terminal_leaver-vocational_school,not_taken,71,vocational
+male,121,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+male,124,Senior_cycle_terminal_leaver-secondary_school,taken,36,secondary
+male,125,Senior_cycle_terminal_leaver-secondary_school,taken,18,secondary
+male,129,Junior_cycle_terminal_leaver-secondary_school,not_taken,18,secondary
+male,122,Senior_cycle_terminal_leaver-secondary_school,taken,62,secondary
+male,121,3rd_level_incomplete,taken,37,secondary
+male,129,3rd_level_incomplete,taken,?,secondary
+male,122,Senior_cycle_terminal_leaver-secondary_school,taken,40,secondary
+male,126,Junior_cycle_terminal_leaver-vocational_school,not_taken,51,vocational
+male,122,3rd_level_complete,taken,35,secondary
+male,123,Senior_cycle_terminal_leaver-secondary_school,taken,65,secondary
+male,119,3rd_level_complete,taken,71,secondary
+female,120,3rd_level_complete,taken,40,secondary
+female,127,Junior_cycle_incomplete-vocational_school,not_taken,35,vocational
+female,127,Senior_cycle_terminal_leaver-secondary_school,taken,62,secondary
+female,120,Senior_cycle_terminal_leaver-secondary_school,taken,61,secondary
+female,127,Senior_cycle_terminal_leaver-secondary_school,taken,58,secondary
+female,123,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,120,3rd_level_complete,taken,37,secondary
+female,123,Senior_cycle_terminal_leaver-secondary_school,taken,37,secondary
+female,122,Junior_cycle_terminal_leaver-vocational_school,not_taken,18,vocational
+female,119,3rd_level_complete,taken,37,secondary
+male,130,Senior_cycle_incomplete-vocational_school,not_taken,?,vocational
+male,134,3rd_level_incomplete,taken,62,secondary
+male,136,3rd_level_complete,taken,61,secondary
+male,135,3rd_level_complete,taken,61,secondary
+male,140,3rd_level_complete,taken,71,secondary
+male,131,Senior_cycle_terminal_leaver-secondary_school,taken,30,secondary
+male,137,3rd_level_complete,taken,62,secondary
+male,136,3rd_level_complete,taken,18,secondary
+male,132,3rd_level_complete,taken,37,secondary
+female,135,3rd_level_complete,taken,62,secondary
+female,134,3rd_level_complete,taken,?,secondary

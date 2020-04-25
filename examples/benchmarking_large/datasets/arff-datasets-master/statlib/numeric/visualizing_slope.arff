@@ -1,0 +1,73 @@
+% This S dump contains 22 data sets from the
+% book Visualizing Data published by
+% Hobart Press (books@hobart.com).
+% The dump was created by data.dump()
+% and can be read back into S by data.restore().
+% The name of each S data set is the name of
+% the data set used in the book. To find the
+% description of the data set in the book look
+% under the entry - data, name - in the index.
+% For example, one data set is barley.
+% To find the description of barley, look
+% in the index under the entry - data, barley.
+%
+% File: ../data/visualizing/slope.csv
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation visualizing-slope
+
+@attribute error REAL
+@attribute percent INTEGER
+@attribute distance REAL
+@attribute resolution REAL
+
+@data
+18.90625,50,37.40523,5.010459
+16.33333,55,37.1523,4.50459
+19.4375,60,36.89979,3.999597
+17.44791,65,36.6478,3.495549
+17.03646,70,36.39627,2.99253
+14.59896,75,36.1453,2.490607
+11.63021,80,35.89493,1.989856
+9.13542,85,35.64516,1.49035
+7.58333,90,35.39608,0.992159
+6.041666,95,35.14767,0.4953526
+5.45833,100,34.9,0
+16.05728,50,30.07505,9.550089
+16.97396,55,29.5797,8.559379
+13.69792,60,29.08769,7.575369
+12.05729,65,28.59927,6.598566
+11.95833,70,28.11473,5.629449
+11.97396,75,27.63423,4.668479
+9.81771,80,27.15805,3.716089
+9.182291,85,26.68634,2.772684
+7.65625,90,26.21932,1.83864
+5.30729,95,25.75715,0.914303
+5.916666,100,25.29999,0
+8.244791,50,17.43569,15.87139
+9.213541,55,16.53969,14.07936
+9.47917,60,15.66512,12.33024
+9.026041,65,14.81283,10.62565
+8.13542,70,13.9834,8.96681
+5.96875,75,13.17728,7.354559
+6.322916,80,12.39471,5.78943
+6.40625,85,11.6358,4.271603
+6.078125,90,10.9005,2.801006
+4.80208,95,10.18866,1.377318
+3.104167,100,9.5,0
+5.78125,50,0.264824,19.47035
+6.34896,55,1.574486,16.85102
+7.99479,60,2.79645,14.40709
+7.97396,65,3.93522,12.12956
+6.57292,70,4.995754,10.00848
+6.479166,75,5.98323,8.03353
+6.90104,80,6.90282,6.19434
+7.11458,85,7.7596,4.48079
+6.63542,90,8.55839,2.883213
+5.77083,95,9.30376,1.392464
+3.36979,100,10,0

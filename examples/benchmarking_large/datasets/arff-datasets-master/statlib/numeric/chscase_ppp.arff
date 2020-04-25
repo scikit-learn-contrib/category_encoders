@@ -1,0 +1,103 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: ppp.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-ppp
+
+@attribute col_1 {Australia,Austria,Belgium,Canada,Chile,Colombia,Costa_Rica,Cyprus,Czechoslovakia,Denmark,Ecuador,Egypt,Finland,France,Germany,Ghana,Greece,Hungary,India,Indonesia,Iran,Ireland,Israel,Italy,Japan,Korea,Mexico,Morocco,Netherlands,New_Zealand,Norway,Panama,Philippines,Singapore,South_Africa,Spain,Sri_Lanka,Sweden,Switzerland,Thailand,Turkey,United_Kingdom,Uruguay,Venezuela}
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+@attribute col_5 INTEGER
+
+@data
+Australia,344697,-222615,362836,399243
+Austria,-284312,-1197250,-214455,-300037
+Belgium,-063888,-1149660,-217764,-445400
+Canada,091474,-314511,095945,-037619
+Chile,2752827,1277215,2702101,1264657
+Colombia,1858261,2522128,1709647,2069606
+Costa_Rica,1579292,1192314,1448453,1013828
+Cyprus,144333,-581180,008685,-139634
+Czechoslovakia,-102077,092350,-240715,-164527
+Denmark,049458,-1075610,123206,-180001
+Ecuador,2283059,4802549,1814339,3808751
+Egypt,1289455,2705180,901533,1595062
+Finland,025738,-966089,134951,-085196
+France,159568,-1001650,155156,-107543
+Germany,-280343,-1200000,-189497,-219218
+Ghana,3765431,3584377,3765242,3121122
+Greece,1065676,275455,1108797,990171
+Hungary,241913,463998,182156,646403
+India,491362,694463,244539,477629
+Indonesia,993846,1012818,820899,608801
+Iran,004492,-581019,1118060,1813681
+Ireland,193853,-894559,287998,-137732
+Israel,5413197,1073435,5421602,1769485
+Italy,404763,-932146,541199,135831
+Japan,-478494,-998505,-343752,-436550
+Korea,253347,-412822,296040,-095035
+Mexico,3610757,4786589,3551927,4922527
+Morocco,473297,-399072,339187,178159
+Netherlands,-218995,-1202110,-144490,-219218
+New_Zealand,466720,-376470,668496,355156
+Norway,120209,-634609,178928,207169
+Panama,000000,000000,-126530,-469940
+Philippines,806798,534709,907668,550364
+Singapore,-179143,-387604,-259469,-373536
+South_Africa,834927,298435,835791,1142170
+Spain,382773,-1023460,509510,-019617
+Sri_Lanka,1162342,777219,767709,853653
+Sweden,236330,-748164,301878,108788
+Switzerland,-413043,-1140510,-319965,-201475
+Thailand,151669,-119359,058023,184642
+Turkey,3464388,3217910,3224987,3706542
+United_Kingdom,146547,-649466,341740,223105
+Uruguay,4169817,4892574,4148201,5236151
+Venezuela,1595272,3666251,1352651,3020931

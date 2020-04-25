@@ -1,0 +1,159 @@
+% This S dump contains 22 data sets from the
+% book Visualizing Data published by
+% Hobart Press (books@hobart.com).
+% The dump was created by data.dump()
+% and can be read back into S by data.restore().
+% The name of each S data set is the name of
+% the data set used in the book. To find the
+% description of the data set in the book look
+% under the entry - data, name - in the index.
+% For example, one data set is barley.
+% To find the description of barley, look
+% in the index under the entry - data, barley.
+%
+% File: ../data/visualizing/ozone.csv
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation visualizing-ozone
+
+@attribute yonkers INTEGER
+@attribute stamford INTEGER
+
+@data
+47,66
+37,52
+45,49
+52,64
+51,68
+22,26
+27,86
+25,52
+55,75
+72,87
+132,188
+106,103
+42,82
+45,71
+80,103
+107,240
+21,31
+50,40
+31,47
+37,51
+19,31
+33,47
+22,14
+45,71
+36,61
+24,47
+88,196
+111,131
+117,173
+31,37
+37,47
+93,215
+106,230
+64,69
+83,98
+97,125
+79,94
+36,72
+51,72
+75,125
+104,143
+107,192
+68,122
+19,32
+67,114
+20,32
+35,23
+30,71
+31,38
+81,136
+119,169
+76,152
+108,201
+85,134
+96,206
+48,92
+60,101
+54,119
+71,124
+50,83
+37,60
+47,124
+71,142
+46,124
+41,64
+49,75
+59,103
+25,46
+45,68
+40,87
+13,27
+46,73
+62,59
+80,119
+39,64
+74,111
+66,80
+82,68
+47,24
+28,24
+44,82
+55,100
+34,55
+60,91
+70,87
+41,64
+96,170
+54,86
+100,202
+44,71
+44,85
+75,122
+86,155
+70,80
+53,71
+36,28
+117,212
+43,80
+27,24
+77,80
+75,169
+87,174
+47,141
+114,202
+66,113
+18,38
+25,38
+14,28
+27,52
+9,14
+16,38
+67,94
+74,89
+74,99
+75,150
+74,146
+42,113
+38,66
+23,38
+50,80
+34,80
+58,99
+35,71
+24,42
+27,52
+17,33
+21,38
+14,24
+32,61
+51,108
+15,38
+21,28

@@ -1,0 +1,48 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-anscombe
+
+@attribute X1 INTEGER
+@attribute Y1 REAL
+@attribute X2 INTEGER
+@attribute Y2 REAL
+@attribute X3 INTEGER
+@attribute Y3 REAL
+@attribute X4 INTEGER
+@attribute Y4 REAL
+
+@data
+10,8.04,10,9.14,10,7.46,8,6.58
+8,6.95,8,8.14,8,6.77,8,5.76
+13,7.58,13,8.74,13,12.74,8,7.71
+9,8.81,9,8.77,9,7.11,8,8.84
+11,8.33,11,9.26,11,7.81,8,8.47
+14,9.96,14,8.1,14,8.84,8,7.04
+6,7.24,6,6.13,6,6.08,8,5.25
+4,4.26,4,3.1,4,5.39,19,12.5
+12,10.84,12,9.13,12,8.15,8,5.56
+7,4.82,7,7.26,7,6.42,8,7.91
+5,5.68,5,4.74,5,5.73,8,6.89

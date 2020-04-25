@@ -1,0 +1,75 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: return.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-return
+
+@attribute col_1 INTEGER
+@attribute col_2 REAL
+@attribute col_3 REAL
+
+@data
+1976,10000.000,10000.000
+1977,9281.2618,9215.6490
+1978,9885.7197,9756.9082
+1979,11710.427,11517.425
+1980,15509.067,15193.239
+1981,14752.550,14402.241
+1982,17924.065,17422.847
+1983,21949.377,21132.846
+1984,23315.074,22446.111
+1985,30692.293,29454.943
+1986,36407.253,34774.475
+1987,38292.406,36410.597
+1988,44609.936,42316.969
+1989,58702.304,55589.213
+1990,56870.986,53741.335
+1991,74159.426,69982.908
+1992,79803.551,75178.046
+1993,87831.507,82613.237

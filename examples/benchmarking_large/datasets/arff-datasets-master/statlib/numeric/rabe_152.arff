@@ -1,0 +1,47 @@
+% This file contains data from Regression Analysis By Example, 2nd Edition,
+% by Samprit Chatterjee and Bertram Price, John Wiley, 1991.
+% Data sets have names of the form 'rabe.xxx' where xxx is the page number
+% in the book where the data occurs.
+% 
+% For additional information, Samprit Chatterjee can be reached using
+% "schatter@stern.nyu.edu".
+%
+% File: ../data/rabe/rabe.152
+%
+% Note: there were no information about the columns in the data set,
+%       hence automatically generated names
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation rabe-152
+
+@attribute col_1 INTEGER
+@attribute col_2 INTEGER
+@attribute col_3 REAL
+@attribute col_4 REAL
+
+@data
+1,19521,214.6,159.3
+2,19522,217.7,161.2
+3,19523,219.6,162.8
+4,19524,227.2,164.6
+5,19531,230.9,165.9
+6,19532,233.3,167.9
+7,19533,234.1,168.3
+8,19534,232.3,169.7
+9,19541,233.7,170.5
+10,19542,236.5,171.6
+11,19543,238.7,173.9
+12,19544,243.2,176.1
+13,19551,249.4,178.0
+14,19552,254.3,179.1
+15,19553,260.9,180.2
+16,19554,263.3,181.2
+17,19561,265.6,181.6
+18,19562,268.2,182.5
+19,19563,270.4,183.3
+20,19564,275.6,184.3

@@ -1,0 +1,109 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: health.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-health
+
+@attribute col_1 {Alabama,Alaska,Arizona,Arkansas,California,Colorado,Connecticut,Delaware,Florida,Georgia,Hawaii,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,Louisiana,Maine,Maryland,Massachusetts,Michigan,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New_Hampshire,New_Jersey,New_Mexico,New_York,North_Carolina,North_Dakota,Ohio,Oklahoma,Oregon,Pennslyvania,Rhode_Island,South_Carolina,South_Dakota,Tennessee,Texas,Utah,Vermont,Virginia,Washington,West_Virginia,Wisconsin,Wyoming}
+@attribute col_2 {_East_North_Central,_East_South_Central,_Middle_Atlantic,_Mountain,_North_East,_Pacific,_South_Atlantic,_West_North_Central,_West_South_Central}
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+@attribute col_5 INTEGER
+
+@data
+Alabama,_East_South_Central,5,1833,118
+Alaska,_Pacific,9,1801,82
+Arizona,_Mountain,8,1712,104
+Arkansas,_West_South_Central,6,1673,113
+California,_Pacific,9,1914,91
+Colorado,_Mountain,8,1807,93
+Connecticut,_North_East,1,2080,80
+Delaware,_South_Atlantic,3,2028,100
+Florida,_South_Atlantic,3,2037,108
+Georgia,_South_Atlantic,3,1884,108
+Hawaii,_Pacific,9,1889,89
+Idaho,_Mountain,8,1234,80
+Illinois,_East_North_Central,4,1840,88
+Indiana,_East_North_Central,4,1738,101
+Iowa,_West_North_Central,7,1657,95
+Kansas,_West_North_Central,7,1727,93
+Kentucky,_East_South_Central,5,1713,110
+Louisiana,_West_South_Central,6,1960,129
+Maine,_North_East,1,1592,92
+Maryland,_South_Atlantic,3,1918,87
+Massachusetts,_North_East,1,2402,105
+Michigan,_East_North_Central,4,1856,99
+Minnesota,_West_North_Central,7,1969,103
+Missouri,_West_North_Central,7,1983,111
+Mississippi,_East_South_Central,5,1440,108
+Montana,_Mountain,8,1440,90
+Nebraska,_West_North_Central,7,1754,98
+Nevada,_Mountain,8,1771,92
+New_Hampshire,_North_East,1,1735,83
+New_Jersey,_Middle_Atlantic,2,1887,74
+New_Mexico,_Mountain,8,1582,107
+New_York,_Middle_Atlantic,2,2134,95
+North_Carolina,_South_Atlantic,3,1631,98
+North_Dakota,_West_North_Central,7,2083,129
+Ohio,_East_North_Central,4,1859,104
+Oklahoma,_West_South_Central,6,1553,98
+Oregon,_Pacific,9,1573,89
+Pennslyvania,_Middle_Atlantic,2,2105,110
+Rhode_Island,_North_East,1,1916,87
+South_Carolina,_South_Atlantic,3,1558,101
+South_Dakota,_West_North_Central,7,1736,106
+Tennessee,_East_South_Central,5,2009,123
+Texas,_West_South_Central,6,1742,101
+Virginia,_South_Atlantic,3,1722,86
+Vermont,_North_East,1,1454,82
+Utah,_Mountain,8,1434,99
+Washington,_Pacific,9,1691,87
+Wisconsin,_East_North_Central,4,1762,98
+West_Virginia,_South_Atlantic,3,1832,129
+Wyoming,_Mountain,8,1301,76

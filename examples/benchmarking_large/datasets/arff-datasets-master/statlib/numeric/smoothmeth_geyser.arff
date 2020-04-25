@@ -1,0 +1,295 @@
+%                      File README
+%                      -----------
+% 
+% smoothmeth  A collection of the data sets used in the book "Smoothing
+%             Methods in Statistics," by Jeffrey S. Simonoff,
+%             Springer-Verlag, New York, 1996. Submitted by Jeff
+%             Simonoff (jsimonoff@stern.nyu.edu).
+% 
+% 
+% This submission consists of 37 files, plus this README file.
+% Each file represents a data set analyzed in the book.
+% The names of the files correspond to the names given in
+% the book. The data files are written in plain ASCII (character)
+% text. Missing values are represented by "M" in all data files.
+% 
+% Several of the files include an alphabetic (labeling) variable. It is
+% likely that these files would have to be input into a package using fixed,
+% rather than free, format. The relevant files, along with appropriate
+% Fortran format statements, are as follows:
+% 
+%    adptvisa.dat: (f10.4,4x,f7.4,3x,a20)
+% 
+%    airaccid.dat: (i3,3x,a34)
+% 
+%    basesal.dat : (f8.1,4x,a17)
+% 
+%    baskball.dat: (f7.4,4x,f6.4,3x,i3,4x,f5.2,3x,i2,3x,a17)
+% 
+%    cars93.dat  : (f5.1,2x,i2,2x,i2,3x,f3.1,2x,i3,3x,f4.1,2x,i4,2x,a21)
+% 
+%    elusage.dat : (i4,3x,f7.3,2x,a7)
+% 
+%    hckshoot.dat: (f7.3,4x,i1,4x,a20)
+% 
+%    jantemp.dat : (i6,3x,a30)
+% 
+%    marathon.dat: (f10.2,4x,a27)
+% 
+%    newscirc.dat: (f8.2,3x,f7.2,2x,a25)
+% 
+%    racial.dat  : (f7.4,4x,a32)
+% 
+%    safewatr.dat: (i5,3x,i3,3x,a26)
+% 
+%    schlvote.dat: (i3,4x,f5.2,2x,i8,4x,f4.1,5x,f5.2,2x,i7,2x,a25)
+% 
+% Description of data sources, and further information about the data sets,
+% can be found in the "Descriptions of the data sets" section of the book.
+% Pointing a World Wide Web browser to the URL
+% 
+%             http://www.stern.nyu.edu/SOR/SmoothMeth
+% 
+% will provide access to a site devoted to the book.
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the reference above).
+% 
+%
+% File: ../data/smoothmeth/geyser.dat
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation smoothmeth-geyser
+
+@attribute col_1 REAL
+@attribute col_2 INTEGER
+
+@data
+4.4,78
+3.9,74
+4.0,68
+4.0,76
+3.5,80
+4.1,84
+2.3,50
+4.7,93
+1.7,55
+4.9,76
+1.7,58
+4.6,74
+3.4,75
+4.3,80
+1.7,56
+3.9,80
+3.7,69
+3.1,57
+4.0,90
+1.8,42
+4.1,91
+1.8,51
+3.2,79
+1.9,53
+4.6,82
+2.0,51
+4.5,76
+3.9,82
+4.3,84
+2.3,53
+3.8,86
+1.9,51
+4.6,85
+1.8,45
+4.7,88
+1.8,51
+4.6,80
+1.9,49
+3.5,82
+4.0,75
+3.7,73
+3.7,67
+4.3,68
+3.6,86
+3.8,72
+3.8,75
+3.8,75
+2.5,66
+4.5,84
+4.1,70
+3.7,79
+3.8,60
+3.4,86
+4.0,71
+2.3,67
+4.4,81
+4.1,76
+4.3,83
+3.3,76
+2.0,55
+4.3,73
+2.9,56
+4.6,83
+1.9,57
+3.6,71
+3.7,72
+3.7,77
+1.8,55
+4.6,75
+3.5,73
+4.0,70
+3.7,83
+1.7,50
+4.6,95
+1.7,51
+4.0,82
+1.8,54
+4.4,83
+1.9,51
+4.6,80
+2.9,78
+3.5,81
+2.0,53
+4.3,89
+1.8,44
+4.1,78
+1.8,61
+4.7,73
+4.2,75
+3.9,73
+4.3,76
+1.8,55
+4.5,86
+2.0,48
+4.2,77
+4.4,73
+4.1,70
+4.1,88
+4.0,75
+4.1,83
+2.7,61
+4.6,78
+1.9,61
+4.5,81
+2.0,51
+4.8,80
+4.1,79
+4.1,82
+4.2,80
+4.5,76
+1.9,56
+4.7,82
+2.0,47
+4.7,76
+2.5,61
+4.3,75
+4.4,72
+4.4,74
+4.3,69
+4.6,78
+2.1,52
+4.8,91
+4.1,66
+4.0,71
+4.0,75
+4.4,81
+4.1,77
+4.3,74
+4.0,70
+3.9,83
+3.2,53
+4.5,82
+2.2,62
+4.7,73
+4.6,84
+2.2,58
+4.8,82
+4.3,77
+3.8,75
+4.0,77
+4.1,77
+1.8,53
+4.4,75
+4.0,78
+2.2,51
+5.1,81
+1.9,52
+5.0,76
+4.4,73
+4.5,84
+3.8,72
+4.3,89
+4.4,75
+2.2,57
+4.8,81
+1.9,49
+4.7,87
+1.8,43
+4.8,94
+2.0,45
+4.4,81
+2.5,59
+4.3,82
+4.4,80
+1.9,54
+4.7,75
+4.3,73
+2.2,57
+4.7,80
+2.3,51
+4.6,77
+3.3,66
+4.2,77
+2.9,60
+4.6,86
+3.3,62
+4.2,75
+2.6,67
+4.6,69
+3.7,84
+1.8,58
+4.7,90
+4.5,82
+4.5,71
+4.8,80
+2.0,51
+4.8,80
+1.9,62
+4.7,84
+2.0,51
+5.1,81
+4.3,83
+4.8,84
+3.0,72
+2.1,54
+4.6,75
+4.0,74
+2.2,51
+5.1,91
+2.9,60
+4.3,80
+2.1,54
+4.7,80
+4.5,70
+1.7,60
+4.2,86
+4.3,78
+1.7,51
+4.4,83
+4.2,76
+2.2,51
+4.7,90
+4.0,71
+1.8,49
+4.7,88
+1.8,52
+4.5,79
+2.1,61
+4.2,81
+2.1,48
+5.2,84
+2.0,63

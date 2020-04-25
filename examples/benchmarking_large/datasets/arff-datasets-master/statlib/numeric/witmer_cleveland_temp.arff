@@ -1,0 +1,76 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Cleveland_temp
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Cleveland_temp
+
+@attribute YEAR INTEGER
+@attribute AVE_TEMP REAL
+
+@data
+1934,50.9
+1935,50.1
+1936,50.3
+1937,50.4
+1938,52.7
+1939,52.3
+1940,49
+1941,51.8
+1942,50.7
+1943,49.6
+1944,51.1
+1945,50
+1946,52.5
+1947,50.2
+1948,50.7
+1949,52.9
+1950,49.7
+1951,50.5
+1952,52.1
+1953,53
+1954,52.3
+1955,52.3
+1956,50.9
+1957,51
+1958,49.4
+1959,51.8
+1960,48.1
+1961,49.7
+1962,49
+1963,47.4
+1964,49.8
+1965,49.9
+1966,48.5
+1967,49.7
+1968,48.6
+1969,49
+1970,49.9
+1971,49.8
+1972,48.5
+1973,52.6
+1974,50.1
+1975,50.5
+1976,48.6
+1977,49.3
+1978,49.2
+1979,49.2
+1980,48
+1981,49.1
+1982,50.1
+1983,51
+1984,49
+1985,49.4
+1986,50.8
+1987,51.4

@@ -1,0 +1,114 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: lischool.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-lischool
+
+@attribute col_1 {Baldwin,Bellmore,Bellmore-Merrick,Bethpage,Carle_Place,East_Meadow,East_Rockaway,East_Williston,Elmont,Farmingdale,Floral_Park,Franklin_Square,Freeport,Garden_City,Glen_Cove,Great_Neck,Hempstead,Herricks,Hewlett_Woodmere,Hicksville,Island_Park,Island_Trees,Jericho,Lawrence,Levittown,Locust_Valley,Long_Beach,Lynbrook,Malverne,Manhasset,Massapequa,Merrick,Mineola,New_Hyde_Park,North_Bellmore,North_Merrick,North_Shore,Oceanside,Oyster_Bay-East_Norwich,Plainedge,Plainview-Old_Bethpage,Port_Washington,Rockville_Centre,Roosevelt,Roslyn,Seaford,Sewanhaka,Syosset,Uniondale,Valley_Stream_13,Valley_Stream_24,Valley_Stream_30,Valley_Stream_Central,Wantagh,West_Hempstead,Westbury}
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+
+@data
+Baldwin,5,4658,3549
+Bellmore,19,950,912
+Bellmore-Merrick,19,4706,4470
+Bethpage,17,2460,2300
+Carle_Place,11,1439,1273
+East_Meadow,13,7446,6612
+East_Rockaway,6,1131,1063
+East_Williston,11,1377,1232
+Elmont,3,3301,1472
+Farmingdale,14,5400,4649
+Floral_Park,8,1544,1386
+Franklin_Square,3,1577,1395
+Freeport,1,6099,1713
+Garden_City,8,2977,2783
+Glen_Cove,18,2928,1730
+Great_Neck,10,5383,4370
+Hempstead,2,5418,21
+Herricks,11,3432,2416
+Hewlett_Woodmere,7,2803,2522
+Hicksville,17,4498,3580
+Island_Park,7,819,714
+Island_Trees,15,2117,1951
+Jericho,17,2033,1787
+Lawrence,4,3680,2693
+Levittown,15,6569,6174
+Locust_Valley,18,1917,1748
+Long_Beach,4,4149,2626
+Lynbrook,6,2517,2303
+Malverne,8,1817,728
+Manhasset,9,2253,1793
+Massapequa,12,6678,6517
+Merrick,19,1659,1605
+Mineola,11,2659,2191
+New_Hyde_Park,9,1282,1025
+North_Bellmore,13,1969,1825
+North_Merrick,13,1143,1048
+North_Shore,18,1985,1855
+Oceanside,7,5235,4858
+Oyster_Bay-East_Norwich,17,1287,1096
+Plainedge,14,2820,2693
+Plainview-Old_Bethpage,16,4239,4018
+Port_Washington,10,3676,2598
+Rockville_Centre,5,3170,2634
+Roosevelt,1,2975,8
+Roslyn,10,2468,2001
+Seaford,19,2280,2191
+Sewanhaka,3,6388,4343
+Syosset,16,5176,4415
+Uniondale,1,4811,437
+Valley_Stream_30,6,1199,974
+Valley_Stream_13,6,2003,1826
+Valley_Stream_24,6,906,782
+Valley_Stream_Central,6,3336,2842
+Wantagh,13,2703,2602
+West_Hempstead,8,2184,1799
+Westbury,2,2927,201

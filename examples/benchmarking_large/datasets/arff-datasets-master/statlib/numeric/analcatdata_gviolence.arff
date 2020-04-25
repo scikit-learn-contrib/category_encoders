@@ -1,0 +1,113 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-gviolence
+
+@attribute Title {101_Dalmations,A_Boy_Named_Charlie_Brown,A_Bugs_Life,A_Goofy_Movie,Aladdin,Alice_in_Wonderland,All_Dogs_Go_to_Heaven,All_Dogs_Go_to_Heaven_2,An_American_Tail,An_American_Tail:_Fievel_Goes_West,Anastasia,Arabian_Knight,Babes_in_Toyland,Balto,Bambi,Beauty_and_the_Beast,Cats_Dont_Dance,Charlottes_Web,Cinderella,Duck_Tales:_The_Movie,Dumbo,Fantasia,Fern_Gully:_The_Last_Rainforest,Fun_and_Fancy_Free,Gumby:_The_Movie,Happily_Ever_After,Hercules,Jetsons:_The_Movie,Kikis_Delivery_Service,Lady_and_the_Tramp,Little_Nemo:_Adventures_in_Slumberland,Mulan,My_Neighbor_Totoro,Oliver_and_Company,Once_Upon_a_Forest,Peter_Pan,Pinocchio,Pippi_Longstocking,Pocahontas,Quest_for_Camelot,Robin_Hood,Sleeping_Beauty,Snoopy_Come_Home,Snow_White_and_the_Seven_Dwarfs,The_Adventures_of_Ichabod_and_Mr._Toad,The_Aristocats,The_Care_Bears_Movie,The_Fox_and_the_Hound,The_Great_Mouse_Detective,The_Hunchback_of_Notre_Dame,The_Jungle_Book,The_King_and_I,The_Land_Before_Time,The_Last_Unicorn,The_Lion_King,The_Little_Mermaid,The_Many_Adventures_of_Winnie_the_Pooh,The_Nutcracker_Prince,The_Pagemaster,The_Pebble_and_the_Penguin,The_Princess_and_the_Goblin,The_Rescuers,The_Rescuers_Down_Under,The_Rugrats_Movie,The_Secret_of_NIMH,The_Swan_Princess,The_Swan_Princess_2,The_Sword_in_the_Stone,The_Three_Caballeros,The_Troll_in_Central_Park,Thumbelina,Tom_and_Jerry:_The_Movie,Toy_Story,Were_Back!_A_Dinosaurs_Story}
+@attribute Year INTEGER
+@attribute Length INTEGER
+@attribute Violence_time INTEGER
+@attribute Injuries INTEGER
+@attribute Fatal_injuries INTEGER
+@attribute Good/neutral_injuries INTEGER
+@attribute Good/neutral_fatalities INTEGER
+@attribute Bad_injuries INTEGER
+@attribute Bad_fatalities INTEGER
+
+@data
+Snow_White_and_the_Seven_Dwarfs,1937,5040,474,2,1,1,0,1,1
+Fantasia,1940,7200,307,1,1,1,1,0,0
+Pinocchio,1940,5280,432,1,0,1,0,0,0
+Dumbo,1941,3780,75,0,0,0,0,0,0
+Bambi,1942,4140,252,2,1,2,1,0,0
+The_Three_Caballeros,1945,4260,210,0,0,0,0,0,0
+Fun_and_Fancy_Free,1947,4380,552,0,0,0,0,0,0
+The_Adventures_of_Ichabod_and_Mr._Toad,1949,4080,527,0,0,0,0,0,0
+Cinderella,1950,4560,273,1,1,0,0,1,1
+Alice_in_Wonderland,1951,4440,316,0,0,0,0,0,0
+Peter_Pan,1953,4560,863,2,1,1,0,1,1
+Lady_and_the_Tramp,1955,4560,351,3,1,2,0,1,1
+Sleeping_Beauty,1959,4500,599,1,1,0,0,1,1
+101_Dalmations,1961,4740,492,0,0,0,0,0,0
+The_Sword_in_the_Stone,1963,4740,1012,0,0,0,0,0,0
+The_Jungle_Book,1967,4680,676,3,0,3,0,0,0
+A_Boy_Named_Charlie_Brown,1969,5100,109,0,0,0,0,0,0
+The_Aristocats,1970,4740,354,0,0,0,0,0,0
+Snoopy_Come_Home,1972,4800,500,1,0,1,0,0,0
+Charlottes_Web,1973,5640,164,0,0,0,0,0,0
+Robin_Hood,1973,4980,814,0,0,0,0,0,0
+The_Many_Adventures_of_Winnie_the_Pooh,1977,4980,65,0,0,0,0,0,0
+The_Rescuers,1977,4560,675,0,0,0,0,0,0
+The_Fox_and_the_Hound,1981,4980,717,3,1,2,1,1,0
+The_Last_Unicorn,1982,5100,743,5,3,3,1,2,2
+The_Secret_of_NIMH,1982,5200,522,4,3,3,2,1,1
+The_Care_Bears_Movie,1985,4680,471,0,0,0,0,0,0
+An_American_Tail,1986,4860,701,0,0,0,0,0,0
+The_Great_Mouse_Detective,1986,4380,798,2,2,0,0,2,2
+The_Land_Before_Time,1988,4140,484,3,2,1,1,2,1
+Oliver_and_Company,1988,4440,293,6,3,2,0,4,3
+All_Dogs_Go_to_Heaven,1989,5340,554,5,3,3,2,2,1
+Kikis_Delivery_Service,1989,6180,35,0,0,0,0,0,0
+The_Little_Mermaid,1989,4980,517,2,1,1,0,1,1
+Duck_Tales:_The_Movie,1990,4440,494,1,1,0,0,1,1
+Happily_Ever_After,1990,4440,1071,5,3,2,0,3,3
+Jetsons:_The_Movie,1990,4920,221,3,0,3,0,0,0
+The_Nutcracker_Prince,1990,4440,428,5,2,2,0,3,2
+The_Rescuers_Down_Under,1990,4620,673,1,1,0,0,1,1
+An_American_Tail:_Fievel_Goes_West,1991,4500,873,0,0,0,0,0,0
+Beauty_and_the_Beast,1991,5040,786,3,1,2,0,1,1
+The_Princess_and_the_Goblin,1991,4920,659,3,2,1,0,2,2
+Aladdin,1992,5400,968,1,1,1,1,0,0
+Fern_Gully:_The_Last_Rainforest,1992,4560,475,0,0,0,0,0,0
+Little_Nemo:_Adventures_in_Slumberland,1992,5100,578,3,2,1,0,2,2
+Tom_and_Jerry:_The_Movie,1992,5040,501,1,0,1,0,0,0
+My_Neighbor_Totoro,1993,5160,6,0,0,0,0,0,0
+Once_Upon_a_Forest,1993,4260,300,2,2,2,2,0,0
+Were_Back!_A_Dinosaurs_Story,1993,4260,479,0,0,0,0,0,0
+The_Lion_King,1994,5280,838,2,2,1,1,1,1
+The_Pagemaster,1994,4560,836,0,0,0,0,0,0
+The_Swan_Princess,1994,5400,788,9,2,8,1,1,1
+Thumbelina,1994,5160,410,1,0,1,0,0,0
+The_Troll_in_Central_Park,1994,4560,900,0,0,0,0,0,0
+Arabian_Knight,1995,4380,542,2,2,1,1,1,1
+Balto,1995,4680,338,1,0,0,0,1,0
+A_Goofy_Movie,1995,4680,127,0,0,0,0,0,0
+Gumby:_The_Movie,1995,5400,990,1,0,1,0,0,0
+The_Pebble_and_the_Penguin,1995,4440,1026,1,1,0,0,1,1
+Pocahontas,1995,4860,323,3,1,3,1,0,0
+Toy_Story,1995,4860,246,0,0,0,0,0,0
+All_Dogs_Go_to_Heaven_2,1996,4920,800,0,0,0,0,0,0
+The_Hunchback_of_Notre_Dame,1996,5400,1006,5,2,4,1,1,1
+Anastasia,1997,5640,630,3,2,1,0,2,2
+Babes_in_Toyland,1997,4440,704,3,1,2,0,1,1
+Cats_Dont_Dance,1997,4620,311,0,0,0,0,0,0
+Hercules,1997,5520,974,3,2,1,0,2,2
+Pippi_Longstocking,1997,4680,172,0,0,0,0,0,0
+The_Swan_Princess_2,1997,4320,932,3,2,1,0,2,2
+A_Bugs_Life,1998,5700,1098,3,1,2,0,1,1
+Mulan,1998,5280,986,5,2,3,0,2,2
+Quest_for_Camelot,1998,5160,1447,3,2,2,1,1,1
+The_Rugrats_Movie,1998,4860,492,0,0,0,0,0,0
+The_King_and_I,1999,5340,855,2,0,2,0,0,0

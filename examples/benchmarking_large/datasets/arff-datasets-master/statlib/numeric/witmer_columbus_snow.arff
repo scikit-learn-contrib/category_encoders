@@ -1,0 +1,40 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Columbus_snow
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Columbus_snow
+
+@attribute YEAR INTEGER
+@attribute SNOW REAL
+@attribute TEMP REAL
+
+@data
+1974,2.3,33.2
+1975,8.1,32.5
+1976,12.4,24.0
+1977,18.1,11.4
+1978,34.4,19.0
+1979,17.3,21.4
+1980,7.0,29.3
+1981,7.8,23.3
+1982,11.8,21.2
+1983,2.6,29.9
+1984,9.0,23.3
+1985,21.9,21.7
+1986,4.8,30.1
+1987,2.7,29.9
+1988,8.4,26.5
+1989,0.6,36.6
+1990,3.3,37.7

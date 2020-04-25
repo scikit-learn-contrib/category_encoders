@@ -1,0 +1,37 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/case2102.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-case2102
+
+@attribute morph {0,1}
+@attribute distance REAL
+@attribute placed {52,56,60,80,84,92}
+@attribute removed INTEGER
+
+@data
+0,0.0,56,17
+1,0.0,56,14
+0,7.2,80,28
+1,7.2,80,20
+0,24.1,52,18
+1,24.1,52,22
+0,30.2,60,9
+1,30.2,60,16
+0,36.4,60,16
+1,36.4,60,23
+0,41.5,84,20
+1,41.5,84,40
+0,51.2,92,24
+1,51.2,92,39

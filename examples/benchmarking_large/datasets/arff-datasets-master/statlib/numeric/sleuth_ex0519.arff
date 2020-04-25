@@ -1,0 +1,53 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex0519.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex0519
+
+@attribute protein INTEGER
+@attribute treatment {1,2,3,4,5,6}
+@attribute day {1,2,3,4,5}
+@attribute group {1,2,3,4,5,6,7,8,9,10}
+
+@data
+154,1,1,1
+177,1,1,1
+174,1,1,1
+164,2,2,2
+192,2,2,2
+159,2,2,2
+157,3,3,3
+159,3,3,3
+124,3,3,3
+160,4,4,4
+152,4,4,4
+141,4,4,4
+147,5,5,5
+152,5,5,5
+158,5,5,5
+157,6,1,6
+165,6,1,6
+150,6,1,6
+186,6,2,7
+206,6,2,7
+195,6,2,7
+192,6,3,8
+202,6,3,8
+216,6,3,8
+190,6,4,9
+187,6,4,9
+160,6,4,9
+191,6,5,10
+188,6,5,10
+199,6,5,10

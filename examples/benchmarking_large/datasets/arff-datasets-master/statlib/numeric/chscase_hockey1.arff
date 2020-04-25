@@ -1,0 +1,82 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: hockey1.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-hockey1
+
+@attribute col_1 {Boston_Bruins,Buffalo_Sabres,Calgary_Flames,Chicago_Blackhawks,Detroit_Red_Wings,Edmonton_Oilers,Hartford_Whalers,Los_Angeles_Kings,Minnesota_North_Stars,Montreal_Canadiens,New_Jersey_Devils,New_York_Islanders,New_York_Rangers,Ottawa_Senators,Philadelphia_Flyers,Pittsburgh_Penguins,Quebec_Nordiques,San_Jose_Sharks,St_Louis_Blues,Tampa_Bay_Lightning,Toronto_Maple_Leafs,Vancouver_Canucks,Washington_Capitals,Winnipeg_Jets}
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+
+@data
+Pittsburgh_Penguins,119,367,268
+Boston_Bruins,109,332,268
+Chicago_Blackhawks,106,279,230
+Quebec_Nordiques,104,351,300
+Detroit_Red_Wings,103,369,280
+Montreal_Canadiens,102,326,280
+Vancouver_Canucks,101,346,278
+Toronto_Maple_Leafs,99,288,241
+Calgary_Flames,97,322,282
+Washington_Capitals,93,325,286
+Los_Angeles_Kings,88,338,340
+New_York_Islanders,87,335,298
+Winnipeg_Jets,87,322,320
+New_Jersey_Devils,87,309,299
+Buffalo_Sabres,86,335,297
+St_Louis_Blues,85,282,278
+Philadelphia_Flyers,83,319,319
+Minnesota_North_Stars,82,272,293
+New_York_Rangers,79,304,308
+Edmonton_Oilers,60,242,337
+Hartford_Whalers,58,284,369
+Tampa_Bay_Lightning,53,245,332
+San_Jose_Sharks,24,218,414
+Ottawa_Senators,24,202,395

@@ -1,0 +1,83 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: 11
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-fraud
+
+@attribute AC1 {0,1}
+@attribute AC9 {0,1}
+@attribute AC16 {0,1}
+@attribute CL7 {0,1}
+@attribute CL11 {0,1}
+@attribute IJ2 {0,1}
+@attribute IJ3 {0,1}
+@attribute IJ4 {0,1}
+@attribute IJ6 {0,1}
+@attribute IJ12 {0,1}
+@attribute Fraud {0,1}
+@attribute Total {1,2,3,4,6,7,8,10,22}
+
+@data
+0,0,0,0,0,0,0,0,0,0,0,22
+0,0,0,0,0,0,0,0,0,1,0,1
+0,0,0,0,0,0,0,0,1,0,0,4
+0,0,0,0,0,0,0,1,0,0,0,2
+0,0,0,0,0,0,1,0,0,0,0,3
+0,0,0,0,0,1,0,0,0,0,0,10
+0,0,0,0,0,1,0,0,1,0,0,2
+0,0,0,0,0,1,1,0,0,0,0,4
+0,0,0,0,0,1,1,0,0,1,1,1
+0,0,0,0,0,1,1,0,1,0,1,4
+0,0,0,0,1,0,0,0,0,1,1,1
+0,0,0,0,1,1,1,0,1,0,0,1
+0,0,0,1,0,0,0,0,0,0,0,8
+0,0,0,1,0,0,0,1,1,0,0,1
+0,0,0,1,0,1,0,0,0,0,0,3
+0,0,0,1,0,1,0,0,1,0,0,1
+0,0,0,1,0,1,1,1,0,0,1,1
+0,0,0,1,1,0,0,0,0,0,0,1
+0,0,0,1,1,1,0,0,0,0,1,1
+0,0,0,1,1,1,1,1,1,0,1,1
+0,0,1,0,0,0,0,0,0,0,0,1
+0,0,1,0,0,1,0,0,1,0,1,1
+0,0,1,0,1,1,0,0,0,0,1,1
+0,1,0,0,1,0,1,0,0,0,0,1
+1,0,0,0,0,0,0,0,0,0,0,10
+1,0,0,0,0,0,0,0,1,0,0,2
+1,0,0,0,0,0,0,0,1,1,0,1
+1,0,0,0,0,1,0,0,0,0,0,8
+1,0,0,0,0,1,0,0,1,0,1,7
+1,0,0,0,1,0,0,0,0,0,0,1
+1,0,0,0,1,1,0,0,0,0,1,6
+1,0,0,0,1,1,0,0,0,1,0,1
+1,0,0,0,1,1,0,0,1,0,0,3
+1,0,0,1,0,0,0,0,0,0,0,3
+1,0,0,1,0,0,0,0,1,0,0,1
+1,0,0,1,0,0,0,1,0,0,0,1
+1,0,0,1,0,1,0,0,1,0,0,2
+1,0,0,1,1,0,0,0,1,0,0,1
+1,0,0,1,1,1,0,0,0,0,1,1
+1,0,0,1,1,1,0,0,0,1,1,1
+1,1,0,0,0,0,0,0,0,0,0,1
+1,1,0,0,0,1,0,0,1,0,1,1

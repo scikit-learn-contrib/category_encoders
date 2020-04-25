@@ -1,0 +1,103 @@
+% ____________________________________________________________________
+%         
+%                       Data Diskette for
+%                   CASE STUDIES IN BIOMETRY
+% 
+% By Nicholas Lange, Louise Ryan and Lynne Brillard, David Brillinger,
+% Loveday Conquest, Joel Greenhouse.
+% 
+% Published by John Wiley & Sons, Inc., copyright 1994.  
+% ____________________________________________________________________
+% 
+% You have obtained all of the data used by all of the authors in the
+% twenty-one chapters of Case Studies in Biometry.  
+% 
+% Each chapter contains either one or two data sets, except for Chapter 19,
+% which has seven data sets. Corresponding to each data set are ASCII files
+% with extensions ".dat" (the data), ".txt" (the data description file), and 
+% ".sas" (a simple SAS program to read the .dat file). 
+% 
+% For chapters containing only one data set, the file name prefix is 
+% "ch" followed by chapter number, and then the above extensions.
+% For instance, for Chapter 2 you will find files "ch2.dat",
+% "ch2.txt", and "ch2.sas".
+% 
+% For chapters containing two data sets, the letters "a" and "b" are
+% added after the chapter number. For instance, for Chapter 1, you will
+% find the files "ch1a.dat", "ch1a.txt", "ch1a.sas", "ch1b.dat",
+% "ch1b.txt", "ch1b.sas".
+% 
+% For chapter 19, there are seven data sets, ch19a.dat
+% through ch19g.dat.  Each one has the same format, but
+% refers to different subsets of the whole data
+% set.  Details are given in the single text file, ch19.txt.
+% 
+% Please note permissions and usage information included in
+% the .txt file for each subset.
+% _______________________________________________________________
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File: ch1b.dat
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% File specific Information:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CASE STUDIES IN BIOMETRY: Chapter 1.
+% 
+% Spatial Pattern Analysis to Detect Rare Disease Clusters
+% 
+% Lance A. Waller, Bruce W. Turnbull, Larry C. Clark, and Philip Nasca
+% 
+% The file ch1b.dat is the waste site file, and contains the 
+% following variables.  There are NO missing  values.
+% 
+% x: Real, x-coordinate of location of an inactive hazardous waste
+% site containing trichloroethylene (TCE).
+% 
+% y: Real, y-coordinate of location of an inactive hazardous waste
+% site containing trichloroethylene (TCE).
+% 
+% site: Integer, numerical label of waste site.
+%        Key:  Site  1:  Monarch Chemicals
+%              Site  2:  IBM Endicott
+%              Site  3:  Singer
+%              Site  4:  Nesco
+%              Site  5:  GE Auburn
+%              Site  6:  Solvent Savers
+%              Site  7:  Smith Corona
+%              Site  8:  Victory Plaza
+%              Site  9:  Hadco
+%              Site 10:  Morse Chain
+%              Site 11:  Groton
+% 
+% 
+% Note:  The authors give permission to use the  data freely for
+% noncommercial purposes.
+% 
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation csb-ch1b
+
+@attribute x REAL
+@attribute y REAL
+@attribute site INTEGER
+
+@data
+-0.14,-67.19,1
+-4.47,-67.65,2
+11.98,-71.61,3
+13.03,-75.34,4
+-46.60,24.43,5
+9.30,-5.82,6
+-19.04,-15.37,7
+-19.41,-67.39,8
+-17.97,-67.16,9
+-41.99,-30.90,10
+-30.37,-14.39,11
+
+

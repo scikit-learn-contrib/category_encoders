@@ -1,0 +1,149 @@
+% This S dump contains 22 data sets from the
+% book Visualizing Data published by
+% Hobart Press (books@hobart.com).
+% The dump was created by data.dump()
+% and can be read back into S by data.restore().
+% The name of each S data set is the name of
+% the data set used in the book. To find the
+% description of the data set in the book look
+% under the entry - data, name - in the index.
+% For example, one data set is barley.
+% To find the description of barley, look
+% in the index under the entry - data, barley.
+%
+% File: ../data/visualizing/barley.csv
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation visualizing-barley
+
+@attribute yield REAL
+@attribute variety {Glabron,Manchuria,No._457,No._462,No._475,Peatland,Svansota,Trebi,Velvet,Wisconsin_No._38}
+@attribute year {1931,1932}
+@attribute site {Crookston,Duluth,Grand_Rapids,Morris,University_Farm,Waseca}
+
+@data
+27,Manchuria,1931,University_Farm
+48.86667,Manchuria,1931,Waseca
+27.43334,Manchuria,1931,Morris
+39.93333,Manchuria,1931,Crookston
+32.96667,Manchuria,1931,Grand_Rapids
+28.96667,Manchuria,1931,Duluth
+43.06666,Glabron,1931,University_Farm
+55.2,Glabron,1931,Waseca
+28.76667,Glabron,1931,Morris
+38.13333,Glabron,1931,Crookston
+29.13333,Glabron,1931,Grand_Rapids
+29.66667,Glabron,1931,Duluth
+35.13333,Svansota,1931,University_Farm
+47.33333,Svansota,1931,Waseca
+25.76667,Svansota,1931,Morris
+40.46667,Svansota,1931,Crookston
+29.66667,Svansota,1931,Grand_Rapids
+25.7,Svansota,1931,Duluth
+39.9,Velvet,1931,University_Farm
+50.23333,Velvet,1931,Waseca
+26.13333,Velvet,1931,Morris
+41.33333,Velvet,1931,Crookston
+23.03333,Velvet,1931,Grand_Rapids
+26.3,Velvet,1931,Duluth
+36.56666,Trebi,1931,University_Farm
+63.8333,Trebi,1931,Waseca
+43.76667,Trebi,1931,Morris
+46.93333,Trebi,1931,Crookston
+29.76667,Trebi,1931,Grand_Rapids
+33.93333,Trebi,1931,Duluth
+43.26667,No._457,1931,University_Farm
+58.1,No._457,1931,Waseca
+28.7,No._457,1931,Morris
+45.66667,No._457,1931,Crookston
+32.16667,No._457,1931,Grand_Rapids
+33.6,No._457,1931,Duluth
+36.6,No._462,1931,University_Farm
+65.7667,No._462,1931,Waseca
+30.36667,No._462,1931,Morris
+48.56666,No._462,1931,Crookston
+24.93334,No._462,1931,Grand_Rapids
+28.1,No._462,1931,Duluth
+32.76667,Peatland,1931,University_Farm
+48.56666,Peatland,1931,Waseca
+29.86667,Peatland,1931,Morris
+41.6,Peatland,1931,Crookston
+34.7,Peatland,1931,Grand_Rapids
+32,Peatland,1931,Duluth
+24.66667,No._475,1931,University_Farm
+46.76667,No._475,1931,Waseca
+22.6,No._475,1931,Morris
+44.1,No._475,1931,Crookston
+19.7,No._475,1931,Grand_Rapids
+33.06666,No._475,1931,Duluth
+39.3,Wisconsin_No._38,1931,University_Farm
+58.8,Wisconsin_No._38,1931,Waseca
+29.46667,Wisconsin_No._38,1931,Morris
+49.86667,Wisconsin_No._38,1931,Crookston
+34.46667,Wisconsin_No._38,1931,Grand_Rapids
+31.6,Wisconsin_No._38,1931,Duluth
+26.9,Manchuria,1932,University_Farm
+33.46667,Manchuria,1932,Waseca
+34.36666,Manchuria,1932,Morris
+32.96667,Manchuria,1932,Crookston
+22.13333,Manchuria,1932,Grand_Rapids
+22.56667,Manchuria,1932,Duluth
+36.8,Glabron,1932,University_Farm
+37.73333,Glabron,1932,Waseca
+35.13333,Glabron,1932,Morris
+26.16667,Glabron,1932,Crookston
+14.43333,Glabron,1932,Grand_Rapids
+25.86667,Glabron,1932,Duluth
+27.43334,Svansota,1932,University_Farm
+38.5,Svansota,1932,Waseca
+35.03333,Svansota,1932,Morris
+20.63333,Svansota,1932,Crookston
+16.63333,Svansota,1932,Grand_Rapids
+22.23333,Svansota,1932,Duluth
+26.8,Velvet,1932,University_Farm
+37.4,Velvet,1932,Waseca
+38.83333,Velvet,1932,Morris
+32.06666,Velvet,1932,Crookston
+32.23333,Velvet,1932,Grand_Rapids
+22.46667,Velvet,1932,Duluth
+29.06667,Trebi,1932,University_Farm
+49.2333,Trebi,1932,Waseca
+46.63333,Trebi,1932,Morris
+41.83333,Trebi,1932,Crookston
+20.63333,Trebi,1932,Grand_Rapids
+30.6,Trebi,1932,Duluth
+26.43334,No._457,1932,University_Farm
+42.2,No._457,1932,Waseca
+43.53334,No._457,1932,Morris
+34.33333,No._457,1932,Crookston
+19.46667,No._457,1932,Grand_Rapids
+22.7,No._457,1932,Duluth
+25.56667,No._462,1932,University_Farm
+44.7,No._462,1932,Waseca
+47,No._462,1932,Morris
+30.53333,No._462,1932,Crookston
+19.9,No._462,1932,Grand_Rapids
+22.5,No._462,1932,Duluth
+28.06667,Peatland,1932,University_Farm
+36.03333,Peatland,1932,Waseca
+43.2,Peatland,1932,Morris
+25.23333,Peatland,1932,Crookston
+26.76667,Peatland,1932,Grand_Rapids
+31.36667,Peatland,1932,Duluth
+30,No._475,1932,University_Farm
+41.26667,No._475,1932,Waseca
+44.23333,No._475,1932,Morris
+32.13333,No._475,1932,Crookston
+15.23333,No._475,1932,Grand_Rapids
+27.36667,No._475,1932,Duluth
+38,Wisconsin_No._38,1932,University_Farm
+58.16667,Wisconsin_No._38,1932,Waseca
+47.16667,Wisconsin_No._38,1932,Morris
+35.9,Wisconsin_No._38,1932,Crookston
+20.66667,Wisconsin_No._38,1932,Grand_Rapids
+29.33333,Wisconsin_No._38,1932,Duluth

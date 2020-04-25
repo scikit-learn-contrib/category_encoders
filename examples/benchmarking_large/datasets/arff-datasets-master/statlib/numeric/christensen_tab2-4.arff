@@ -1,0 +1,98 @@
+% 
+% This contains viturally all of the data files
+% in "Analysis of Variance, Design, and Regression:
+% Applied Statistical Methods" by Ronald Christensen
+% (1996, Chapman and Hall).  The individual files 
+% correspond with tables in the book in a self 
+% explanitory manner (presuming you have the book to 
+% look at).  There are three files that correspond 
+% to data in exercises or examples.
+% 
+% The author retains no rights to these data.
+% 
+% Comments should be directed to:
+% Ronald Christensen
+% Dept. of Math and Statistics
+% University of New Mexico
+% Albq., NM 87131
+% e-mail: fletcher@math.unm.edu
+% 
+% More information about the book and alternative
+% access to the data can be obtained from  
+% the web at:  www.math.unm.edu/~fletcher
+% 
+%
+% File: ../data/christensen/tab2-4.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation christensen-tab2-4
+
+@attribute col_1 REAL
+
+@data
+4.781
+4.764
+4.777
+4.809
+4.761
+4.769
+4.795
+4.776
+4.765
+4.790
+4.792
+4.806
+4.769
+4.771
+4.785
+4.779
+4.758
+4.779
+4.792
+4.789
+4.805
+4.788
+4.764
+4.785
+4.779
+4.772
+4.768
+4.772
+4.810
+4.790
+4.775
+4.789
+4.801
+4.791
+4.799
+4.777
+4.772
+4.764
+4.785
+4.788
+4.779
+4.749
+4.791
+4.774
+4.783
+4.783
+4.797
+4.781
+4.782
+4.778
+4.808
+4.740
+4.790
+4.767
+4.791
+4.771
+4.775
+4.747

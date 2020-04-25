@@ -1,0 +1,112 @@
+% Tumor Recurrence data for patients with Bladder cancer
+%       Taken from Wei, Lin and Weissfeld, JASA 1989, p 1067.
+% Treatment group: 1=placebo  2=thiotepa
+% FU time and recurrence time are measured in months.
+% Initial size is measured in centimeters.
+% Initial number of 8 denotes 8 or more initial tumors.
+% Up to 4 recurrence times are recorded per patient.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation tumor
+
+@attribute Group {placebo,thiotepa}
+@attribute futime INTEGER
+@attribute number INTEGER
+@attribute size INTEGER
+@attribute recurrence INTEGER
+@attribute time_1 INTEGER
+@attribute time_2 INTEGER
+@attribute time_3 INTEGER
+
+@data
+placebo,0,1,1,?,?,?,?
+placebo,1,1,3,?,?,?,?
+placebo,4,2,1,?,?,?,?
+placebo,7,1,1,?,?,?,?
+placebo,10,5,1,?,?,?,?
+placebo,10,4,1,6,?,?,?
+placebo,14,1,1,?,?,?,?
+placebo,18,1,1,?,?,?,?
+placebo,18,1,3,5,?,?,?
+placebo,18,1,1,12,16,?,?
+placebo,23,3,3,?,?,?,?
+placebo,23,1,3,10,15,?,?
+placebo,23,1,1,3,16,23,?
+placebo,23,3,1,3,9,21,?
+placebo,24,2,3,7,10,16,24
+placebo,25,1,1,3,15,25,?
+placebo,26,1,2,?,?,?,?
+placebo,26,8,1,1,?,?,?
+placebo,26,1,4,2,26,?,?
+placebo,28,1,2,25,?,?,?
+placebo,29,1,4,?,?,?,?
+placebo,29,1,2,?,?,?,?
+placebo,29,4,1,?,?,?,?
+placebo,30,1,6,28,30,?,?
+placebo,30,1,5,2,17,22,?
+placebo,30,2,1,3,6,8,12
+placebo,31,1,3,12,15,24,?
+placebo,32,1,2,?,?,?,?
+placebo,34,2,1,?,?,?,?
+placebo,36,2,1,?,?,?,?
+placebo,36,3,1,29,?,?,?
+placebo,37,1,2,?,?,?,?
+placebo,40,4,1,9,17,22,24
+placebo,40,5,1,16,19,23,29
+placebo,41,1,2,?,?,?,?
+placebo,43,1,1,3,?,?,?
+placebo,43,2,6,6,?,?,?
+placebo,44,2,1,3,6,9,?
+placebo,45,1,1,9,11,20,26
+placebo,48,1,1,18,?,?,?
+placebo,49,1,3,?,?,?,?
+placebo,51,3,1,35,?,?,?
+placebo,53,1,7,17,?,?,?
+placebo,53,3,1,3,15,46,51
+placebo,59,1,1,?,?,?,?
+placebo,61,3,2,2,15,24,30
+placebo,64,1,3,5,14,19,27
+placebo,64,2,3,2,8,12,13
+thiotepa,1,1,3,?,?,?,?
+thiotepa,1,1,1,?,?,?,?
+thiotepa,5,8,1,5,?,?,?
+thiotepa,9,1,2,?,?,?,?
+thiotepa,10,1,1,?,?,?,?
+thiotepa,13,1,1,?,?,?,?
+thiotepa,14,2,6,3,?,?,?
+thiotepa,17,5,3,1,3,5,7
+thiotepa,18,5,1,?,?,?,?
+thiotepa,18,1,3,17,?,?,?
+thiotepa,19,5,1,2,?,?,?
+thiotepa,21,1,1,17,19,?,?
+thiotepa,22,1,1,?,?,?,?
+thiotepa,25,1,3,?,?,?,?
+thiotepa,25,1,5,?,?,?,?
+thiotepa,25,1,1,?,?,?,?
+thiotepa,26,1,1,6,12,13,?
+thiotepa,27,1,1,6,?,?,?
+thiotepa,29,2,1,2,?,?,?
+thiotepa,36,8,3,26,35,?,?
+thiotepa,38,1,1,?,?,?,?
+thiotepa,39,1,1,22,23,27,32
+thiotepa,39,6,1,4,16,23,27
+thiotepa,40,3,1,24,26,29,40
+thiotepa,41,3,2,?,?,?,?
+thiotepa,41,1,1,?,?,?,?
+thiotepa,43,1,1,1,27,?,?
+thiotepa,44,1,1,?,?,?,?
+thiotepa,44,6,1,2,20,23,27
+thiotepa,45,1,2,?,?,?,?
+thiotepa,46,1,4,2,?,?,?
+thiotepa,46,1,4,?,?,?,?
+thiotepa,49,3,3,?,?,?,?
+thiotepa,50,1,1,?,?,?,?
+thiotepa,50,4,1,4,24,47,?
+thiotepa,54,3,4,?,?,?,?
+thiotepa,54,2,1,38,?,?,?
+thiotepa,59,1,3,?,?,?,?

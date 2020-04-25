@@ -1,0 +1,245 @@
+%
+% !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%
+% Attributes 2,4, and 6 deleted. Midrange price treated as the class 
+% attribute.
+%
+% As used by Kilpatrick, D. & Cameron-Jones, M. (1998). Numeric prediction
+% using instance-based learning with encoding length selection. In Progress
+% in Connectionist-Based Information Systems. Singapore: Springer-Verlag.
+%
+% !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%
+% NAME:  1993 New Car Data
+% TYPE:  Sample  
+% SIZE:  93 observations, 26 variables
+% 
+% DESCRIPTIVE ABSTRACT:
+% Specifications are given for 93 new car models for the 1993 year.
+% Several measures are given to evaluate price, mpg ratings, engine size,
+% body size, and features.
+% 
+% SOURCES:
+% _Consumer Reports:  The 1993 Cars - Annual Auto Issue_ (April 1993), 
+% Yonkers, NY: Consumers Union.
+% _PACE New Car & Truck 1993 Buying Guide_ (1993), Milwaukee, WI: Pace
+% Publications Inc.
+% 
+% VARIABLE DESCRIPTIONS:
+% Line 1
+% Columns
+%  1 - 14  Manufacturer
+% 15 - 29  Model
+% 30 - 36  Type
+%              Small, Sporty, Compact, Midsize, Large - as defined in the
+%              _Consumer Reports_ article
+% 38 - 41  Minimum Price (in $1,000) - Price for basic version of this model
+% 43 - 46  Midrange Price (in $1,000) - Average of Min and Max prices
+% 48 - 51  Maximum Price (in $1,000) - Price for a premium version
+% 53 - 54  City MPG (miles per gallon by EPA rating)
+% 56 - 57  Highway MPG
+% 59 - 59  Air Bags standard
+%              0 = none, 1 = driver only, 2 = driver & passenger
+% 61 - 61  Drive train type
+%              0 = rear wheel drive
+%              1 = front wheel drive
+%              2 = all wheel drive
+% 63 - 63  Number of cylinders
+% 65 - 67  Engine size (liters)
+% 69 - 71  Horsepower (maximum)
+% 73 - 76  RPM (revs per minute at maximum horsepower)
+% 
+% Line 2
+% Columns
+%  1 -  4  Engine revolutions per mile (in highest gear)
+%  6 -  6  Manual transmission available
+%              0 = No, 1 = Yes
+%  8 - 11  Fuel tank capacity (gallons)
+% 13 - 13  Passenger capacity (persons)
+% 15 - 17  Length    (inches)
+% 19 - 21  Wheelbase (inches)
+% 23 - 24  Width     (inches)
+% 26 - 27  U-turn space (feet)
+% 29 - 32  Rear seat room (inches)
+% 34 - 35  Luggage capacity (cu. ft.)
+% 37 - 40  Weight (pounds)
+% 42 - 42  Domestic?
+%              0 = non-U.S. manufacturer, 1 = U.S. manufacturer
+% 
+% Values are aligned and delimited by blanks.
+% Missing values are denoted with *.
+% There are two data lines for each case.
+% 
+% SPECIAL NOTES:
+% The only missing values are for CYLINDERS in the rotary engine Mazda
+% RX-7, REAR SEAT room for the two-seaters (Corvette and RX-7), and
+% LUGGAGE capacity for the vans and two-seaters.
+% 
+% WEIGHT is taken from the _Consumer Reports_ data and includes a full
+% fuel tank, automatic transmission (if available), and air conditioning.
+% 
+% STORY BEHIND THE DATA:
+% Cars were selected at random from among 1993 passenger car models that
+% were listed in both the _Consumer Reports_ issue and the _PACE Buying
+% Guide_.  Pickup trucks and Sport/Utility vehicles were eliminated due
+% to incomplete information in the _Consumer Reports_ source.  Duplicate
+% models (e.g., Dodge Shadow and Plymouth Sundance) were listed at most
+% once.
+% 
+% A similar dataset for 1989 model cars appeared as one of the sample
+% datasets shipped with the _Student Edition of Execustat_ (PWS-KENT
+% 1990).
+% 
+% Further description can be found in the "Datasets and Stories" article
+% "1993 New Car Data" in the _Journal of Statistics Education_ (Lock 1993).
+% Send the message
+% 
+%      send jse/v1n1/datasets.lock
+% 
+% to the address archive@jse.stat.ncsu.edu
+% 
+% PEDAGOGICAL NOTES:
+% This is a multi-purpose dataset that can be used at many points in an
+% introductory course.  It includes many good numeric variables and
+% several options for dividing the cars up into groups.  Students tend to
+% be familiar with most of the variables (and specific car models).  They
+% can anticipate and pose explanations for many of the relationships to
+% be found in the data, although some surprises may be encountered.  One
+% can easily find examples of pairs of variables that demonstrate strong
+% or weak, positive or negative associations.  PRICE and MPG variables
+% tend to be popular choices as "dependent" variables.  Basic graphs will
+% often reveal unusual data values (like the price for a Mercedes-Benz).
+% 
+% REFERENCES:
+% Lock, R. H. (1993), "1993 New Car Data," _Journal of Statistics
+%    Education_, 1, No. 1.
+% _Student Edition of Execustat_ (1990), Boston, MA: PWS-KENT 
+%    Publishing Co.
+% 
+% SUBMITTED BY:
+% Robin H. Lock
+% Mathematics Department
+% St. Lawrence University
+% Canton, NY  13617
+% (315) 379-5960
+% rlock@stlawu.bitnet
+% 
+
+@relation 'auto93.names'
+@attribute Manufacturer { Acura, Audi, BMW, Buick, Cadillac, Chevrolet, Chrysler, Dodge, Eagle, Ford, Geo, Honda, Hyundai, Infiniti, Lexus, Lincoln, Mazda, Mercedes-Benz, Mercury, Mitsubishi, Nissan, Oldsmobile, Plymouth, Pontiac, Saab, Saturn, Subaru, Suzuki, Toyota, Volkswagen, Volvo}
+@attribute Type { Small, Midsize, Compact, Large, Sporty, Van}
+@attribute City_MPG real
+@attribute Highway_MPG real
+@attribute Air_Bags_standard { 0, 2, 1}
+@attribute Drive_train_type { 1, 0, 2}
+@attribute Number_of_cylinders real
+@attribute Engine_size real
+@attribute Horsepower real
+@attribute RPM real
+@attribute Engine_revolutions_per_mile real
+@attribute Manual_transmission_available { 1, 0}
+@attribute Fuel_tank_capacity real
+@attribute Passenger_capacity real
+@attribute Length real
+@attribute Wheelbase real
+@attribute Width real
+@attribute U-turn_space real
+@attribute Rear_seat_room real
+@attribute Luggage_capacity real
+@attribute Weight real
+@attribute Domestic { 0, 1}
+@attribute class real
+@data
+Acura,Small,25,31,0,1,4,1.8,140,6300,2890,1,13.2,5,177,102,68,37,26.5,11,2705,0,15.9
+Acura,Midsize,18,25,2,1,6,3.2,200,5500,2335,1,18,5,195,115,71,38,30,15,3560,0,33.9
+Audi,Compact,20,26,1,1,6,2.8,172,5500,2280,1,16.9,5,180,102,67,37,28,14,3375,0,29.1
+Audi,Midsize,19,26,2,1,6,2.8,172,5500,2535,1,21.1,6,193,106,70,37,31,17,3405,0,37.7
+BMW,Midsize,22,30,1,0,4,3.5,208,5700,2545,1,21.1,4,186,109,69,39,27,13,3640,0,30
+Buick,Midsize,22,31,1,1,4,2.2,110,5200,2565,0,16.4,6,189,105,69,41,28,16,2880,1,15.7
+Buick,Large,19,28,1,1,6,3.8,170,4800,1570,0,18,6,200,111,74,42,30.5,17,3470,1,20.8
+Buick,Large,16,25,1,0,6,5.7,180,4000,1320,0,23,6,216,116,78,45,30.5,21,4105,1,23.7
+Buick,Midsize,19,27,1,1,6,3.8,170,4800,1690,0,18.8,5,198,108,73,41,26.5,14,3495,1,26.3
+Cadillac,Large,16,25,1,1,8,4.9,200,4100,1510,0,18,6,206,114,73,43,35,18,3620,1,34.7
+Cadillac,Midsize,16,25,2,1,8,4.6,295,6000,1985,0,20,5,204,111,74,44,31,14,3935,1,40.1
+Chevrolet,Compact,25,36,0,1,4,2.2,110,5200,2380,1,15.2,5,182,101,66,38,25,13,2490,1,13.4
+Chevrolet,Compact,25,34,1,1,4,2.2,110,5200,2665,1,15.6,5,184,103,68,39,26,14,2785,1,11.4
+Chevrolet,Sporty,19,28,2,0,6,3.4,160,4600,1805,1,15.5,4,193,101,74,43,25,13,3240,1,15.1
+Chevrolet,Midsize,21,29,0,1,4,2.2,110,5200,2595,0,16.5,6,198,108,71,40,28.5,16,3195,1,15.9
+Chevrolet,Van,18,23,0,1,6,3.8,170,4800,1690,0,20,7,178,110,74,44,30.5,?,3715,1,16.3
+Chevrolet,Van,15,20,0,2,6,4.3,165,4000,1790,0,27,8,194,111,78,42,33.5,?,4025,1,16.6
+Chevrolet,Large,17,26,1,0,8,5,170,4200,1350,0,23,6,214,116,77,42,29.5,20,3910,1,18.8
+Chevrolet,Sporty,17,25,1,0,8,5.7,300,5000,1450,1,20,2,179,96,74,43,?,?,3380,1,38
+Chrysler,Large,20,28,2,1,6,3.3,153,5300,1990,0,18,6,203,113,74,40,31,15,3515,1,18.4
+Chrysler,Compact,23,28,2,1,4,3,141,5000,2090,0,16,6,183,104,68,41,30.5,14,3085,1,15.8
+Chrysler,Large,20,26,1,1,6,3.3,147,4800,1785,0,16,6,203,110,69,44,36,17,3570,1,29.5
+Dodge,Small,29,33,0,1,4,1.5,92,6000,3285,1,13.2,5,174,98,66,32,26.5,11,2270,1,9.2
+Dodge,Small,23,29,1,1,4,2.2,93,4800,2595,1,14,5,172,97,67,38,26.5,13,2670,1,11.3
+Dodge,Compact,22,27,1,1,4,2.5,100,4800,2535,1,16,6,181,104,68,39,30.5,14,2970,1,13.3
+Dodge,Van,17,21,1,2,6,3,142,5000,1970,0,20,7,175,112,72,42,26.5,?,3705,1,19
+Dodge,Midsize,21,27,1,1,4,2.5,100,4800,2465,0,16,6,192,105,69,42,30.5,16,3080,1,15.6
+Dodge,Sporty,18,24,1,2,6,3,300,6000,2120,1,19.8,4,180,97,72,40,20,11,3805,1,25.8
+Eagle,Small,29,33,0,1,4,1.5,92,6000,2505,1,13.2,5,174,98,66,36,26.5,11,2295,1,12.2
+Eagle,Large,20,28,2,1,6,3.5,214,5800,1980,0,18,6,202,113,74,40,30,15,3490,1,19.3
+Ford,Small,31,33,0,1,4,1.3,63,5000,3150,1,10,4,141,90,63,33,26,12,1845,1,7.4
+Ford,Small,23,30,0,1,4,1.8,127,6500,2410,1,13.2,5,171,98,67,36,28,12,2530,1,10.1
+Ford,Compact,22,27,0,1,4,2.3,96,4200,2805,1,15.9,5,177,100,68,39,27.5,13,2690,1,11.3
+Ford,Sporty,22,29,1,0,4,2.3,105,4600,2285,1,15.4,4,180,101,68,40,24,12,2850,1,15.9
+Ford,Sporty,24,30,1,1,4,2,115,5500,2340,1,15.5,4,179,103,70,38,23,18,2710,1,14
+Ford,Van,15,20,1,2,6,3,145,4800,2080,1,21,7,176,119,72,45,30,?,3735,1,19.9
+Ford,Midsize,21,30,1,1,6,3,140,4800,1885,0,16,5,192,106,71,40,27.5,18,3325,1,20.2
+Ford,Large,18,26,1,0,8,4.6,190,4200,1415,0,20,6,212,114,78,43,30,21,3950,1,20.9
+Geo,Small,46,50,0,1,3,1,55,5700,3755,1,10.6,4,151,93,63,34,27.5,10,1695,0,8.4
+Geo,Sporty,30,36,1,1,4,1.6,90,5400,3250,1,12.4,4,164,97,67,37,24.5,11,2475,0,12.5
+Honda,Sporty,24,31,2,1,4,2.3,160,5800,2855,1,15.9,4,175,100,70,39,23.5,8,2865,0,19.8
+Honda,Small,42,46,1,1,4,1.5,102,5900,2650,1,11.9,4,173,103,67,36,28,12,2350,0,12.1
+Honda,Compact,24,31,2,1,4,2.2,140,5600,2610,1,17,4,185,107,67,41,28,14,3040,0,17.5
+Hyundai,Small,29,33,0,1,4,1.5,81,5500,2710,1,11.9,5,168,94,63,35,26,11,2345,0,8
+Hyundai,Small,22,29,0,1,4,1.8,124,6000,2745,1,13.7,5,172,98,66,36,28,12,2620,0,10
+Hyundai,Sporty,26,34,0,1,4,1.5,92,5550,2540,1,11.9,4,166,94,64,34,23.5,9,2285,0,10
+Hyundai,Midsize,20,27,0,1,4,2,128,6000,2335,1,17.2,5,184,104,69,41,31,14,2885,0,13.9
+Infiniti,Midsize,17,22,1,0,8,4.5,278,6000,1955,0,22.5,5,200,113,72,42,29,15,4000,0,47.9
+Lexus,Midsize,18,24,1,1,6,3,185,5200,2325,1,18.5,5,188,103,70,40,27.5,14,3510,0,28
+Lexus,Midsize,18,23,2,0,6,3,225,6000,2510,1,20.6,4,191,106,71,39,25,9,3515,0,35.2
+Lincoln,Midsize,17,26,2,1,6,3.8,160,4400,1835,0,18.4,6,205,109,73,42,30,19,3695,1,34.3
+Lincoln,Large,18,26,2,0,8,4.6,210,4600,1840,0,20,6,219,117,77,45,31.5,22,4055,1,36.1
+Mazda,Small,29,37,0,1,4,1.6,82,5000,2370,1,13.2,4,164,97,66,34,27,16,2325,0,8.3
+Mazda,Small,28,36,0,1,4,1.8,103,5500,2220,1,14.5,5,172,98,66,36,26.5,13,2440,0,11.6
+Mazda,Compact,26,34,1,1,4,2.5,164,5600,2505,1,15.5,5,184,103,69,40,29.5,14,2970,0,16.5
+Mazda,Van,18,24,0,2,6,3,155,5000,2240,0,19.6,7,190,110,72,39,27.5,?,3735,0,19.1
+Mazda,Sporty,17,25,1,0,?,1.3,255,6500,2325,1,20,2,169,96,69,37,?,?,2895,0,32.5
+Mercedes-Benz,Compact,20,29,1,0,4,2.3,130,5100,2425,1,14.5,5,175,105,67,34,26,12,2920,0,31.9
+Mercedes-Benz,Midsize,19,25,2,0,6,3.2,217,5500,2220,0,18.5,5,187,110,69,37,27,15,3525,0,61.9
+Mercury,Sporty,23,26,1,1,4,1.6,100,5750,2475,1,11.1,4,166,95,65,36,19,6,2450,1,14.1
+Mercury,Midsize,19,26,0,0,6,3.8,140,3800,1730,0,18,5,199,113,73,38,28,15,3610,1,14.9
+Mitsubishi,Small,29,33,0,1,4,1.5,92,6000,2505,1,13.2,5,172,98,67,36,26,11,2295,0,10.3
+Mitsubishi,Midsize,18,24,1,1,6,3,202,6000,2210,0,19,5,190,107,70,43,27.5,14,3730,0,26.1
+Nissan,Small,29,33,1,1,4,1.6,110,6000,2435,1,13.2,5,170,96,66,33,26,12,2545,0,11.8
+Nissan,Compact,24,30,1,1,4,2.4,150,5600,2130,1,15.9,5,181,103,67,40,28.5,14,3050,0,15.7
+Nissan,Van,17,23,0,1,6,3,151,4800,2065,0,20,7,190,112,74,41,27,?,4100,0,19.1
+Nissan,Midsize,21,26,1,1,6,3,160,5200,2045,0,18.5,5,188,104,69,41,28.5,14,3200,0,21.5
+Oldsmobile,Compact,24,31,0,1,4,2.3,155,6000,2380,0,15.2,5,188,103,67,39,28,14,2910,1,13.5
+Oldsmobile,Midsize,23,31,1,1,4,2.2,110,5200,2565,0,16.5,5,190,105,70,42,28,16,2890,1,16.3
+Oldsmobile,Van,18,23,0,1,6,3.8,170,4800,1690,0,20,7,194,110,74,44,30.5,?,3715,1,19.5
+Oldsmobile,Large,19,28,1,1,6,3.8,170,4800,1570,0,18,6,201,111,74,42,31.5,17,3470,1,20.7
+Plymouth,Sporty,23,30,0,2,4,1.8,92,5000,2360,1,15.9,4,173,97,67,39,24.5,8,2640,1,14.4
+Pontiac,Small,31,41,0,1,4,1.6,74,5600,3130,1,13.2,4,177,99,66,35,25.5,17,2350,1,9
+Pontiac,Compact,23,31,0,1,4,2,110,5200,2665,1,15.2,5,181,101,66,39,25,13,2575,1,11.1
+Pontiac,Sporty,19,28,2,0,6,3.4,160,4600,1805,1,15.5,4,196,101,75,43,25,13,3240,1,17.7
+Pontiac,Midsize,19,27,0,1,6,3.4,200,5000,1890,1,16.5,5,195,108,72,41,28.5,16,3450,1,18.5
+Pontiac,Large,19,28,2,1,6,3.8,170,4800,1565,0,18,6,177,111,74,43,30.5,18,3495,1,24.4
+Saab,Compact,20,26,1,1,4,2.1,140,6000,2910,1,18,5,184,99,67,37,26.5,14,2775,0,28.7
+Saturn,Small,28,38,1,1,4,1.9,85,5000,2145,1,12.8,5,176,102,68,40,26.5,12,2495,1,11.1
+Subaru,Small,33,37,0,2,3,1.2,73,5600,2875,1,9.2,4,146,90,60,32,23.5,10,2045,0,8.4
+Subaru,Small,25,30,0,2,4,1.8,90,5200,3375,1,15.9,5,175,97,65,35,27.5,15,2490,0,10.9
+Subaru,Compact,23,30,1,2,4,2.2,130,5600,2330,1,15.9,5,179,102,67,37,27,14,3085,0,19.5
+Suzuki,Small,39,43,0,1,3,1.3,70,6000,3360,1,10.6,4,161,93,63,34,27.5,10,1965,0,8.6
+Toyota,Small,32,37,1,1,4,1.5,82,5200,3505,1,11.9,5,162,94,65,36,24,11,2055,0,9.8
+Toyota,Sporty,25,32,1,1,4,2.2,135,5400,2405,1,15.9,4,174,99,69,39,23,13,2950,0,18.4
+Toyota,Midsize,22,29,1,1,4,2.2,130,5400,2340,1,18.5,5,188,103,70,38,28.5,15,3030,0,18.2
+Toyota,Van,18,22,1,2,4,2.4,138,5000,2515,1,19.8,7,187,113,71,41,35,?,3785,0,22.7
+Volkswagen,Small,25,33,0,1,4,1.8,81,5500,2550,1,12.4,4,163,93,63,34,26,10,2240,0,9.1
+Volkswagen,Van,17,21,0,1,5,2.5,109,4500,2915,1,21.1,7,187,115,72,38,34,?,3960,0,19.7
+Volkswagen,Compact,21,30,0,1,4,2,134,5800,2685,1,18.5,5,180,103,67,35,31.5,14,2985,0,20
+Volkswagen,Sporty,18,25,0,1,6,2.8,178,5800,2385,1,18.5,4,159,97,66,36,26,15,2810,0,23.3
+Volvo,Compact,21,28,1,0,4,2.3,114,5400,2215,1,15.8,5,190,104,67,37,29.5,14,2985,0,22.7
+Volvo,Midsize,20,28,2,1,5,2.4,168,6200,2310,1,19.3,5,184,105,69,38,30,15,3245,0,26.7

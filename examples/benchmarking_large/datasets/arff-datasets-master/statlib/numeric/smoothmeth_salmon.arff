@@ -1,0 +1,102 @@
+%                      File README
+%                      -----------
+% 
+% smoothmeth  A collection of the data sets used in the book "Smoothing
+%             Methods in Statistics," by Jeffrey S. Simonoff,
+%             Springer-Verlag, New York, 1996. Submitted by Jeff
+%             Simonoff (jsimonoff@stern.nyu.edu).
+% 
+% 
+% This submission consists of 37 files, plus this README file.
+% Each file represents a data set analyzed in the book.
+% The names of the files correspond to the names given in
+% the book. The data files are written in plain ASCII (character)
+% text. Missing values are represented by "M" in all data files.
+% 
+% Several of the files include an alphabetic (labeling) variable. It is
+% likely that these files would have to be input into a package using fixed,
+% rather than free, format. The relevant files, along with appropriate
+% Fortran format statements, are as follows:
+% 
+%    adptvisa.dat: (f10.4,4x,f7.4,3x,a20)
+% 
+%    airaccid.dat: (i3,3x,a34)
+% 
+%    basesal.dat : (f8.1,4x,a17)
+% 
+%    baskball.dat: (f7.4,4x,f6.4,3x,i3,4x,f5.2,3x,i2,3x,a17)
+% 
+%    cars93.dat  : (f5.1,2x,i2,2x,i2,3x,f3.1,2x,i3,3x,f4.1,2x,i4,2x,a21)
+% 
+%    elusage.dat : (i4,3x,f7.3,2x,a7)
+% 
+%    hckshoot.dat: (f7.3,4x,i1,4x,a20)
+% 
+%    jantemp.dat : (i6,3x,a30)
+% 
+%    marathon.dat: (f10.2,4x,a27)
+% 
+%    newscirc.dat: (f8.2,3x,f7.2,2x,a25)
+% 
+%    racial.dat  : (f7.4,4x,a32)
+% 
+%    safewatr.dat: (i5,3x,i3,3x,a26)
+% 
+%    schlvote.dat: (i3,4x,f5.2,2x,i8,4x,f4.1,5x,f5.2,2x,i7,2x,a25)
+% 
+% Description of data sources, and further information about the data sets,
+% can be found in the "Descriptions of the data sets" section of the book.
+% Pointing a World Wide Web browser to the URL
+% 
+%             http://www.stern.nyu.edu/SOR/SmoothMeth
+% 
+% will provide access to a site devoted to the book.
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the reference above).
+% 
+%
+% File: ../data/smoothmeth/salmon.dat
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation smoothmeth-salmon
+
+@attribute col_1 INTEGER
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+
+@data
+1940,963,2215
+1941,572,1334
+1942,305,800
+1943,272,438
+1944,824,3071
+1945,940,957
+1946,486,934
+1947,307,971
+1948,1066,2257
+1949,480,1451
+1950,393,686
+1951,176,127
+1952,237,700
+1953,700,1381
+1954,511,1393
+1955,87,363
+1956,370,668
+1957,448,2067
+1958,819,644
+1959,799,1747
+1960,273,744
+1961,936,1087
+1962,558,1335
+1963,597,1981
+1964,848,627
+1965,619,1099
+1966,397,1532
+1967,616,2086

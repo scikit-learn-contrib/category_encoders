@@ -1,0 +1,113 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: 2
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-ossification
+
+@attribute Treatment {Control,PHT,TCPO,TCPO+PHT}
+@attribute Ossification INTEGER
+@attribute Total INTEGER
+
+@data
+Control,8,8
+Control,9,9
+Control,7,9
+Control,0,5
+Control,3,3
+Control,5,8
+Control,9,10
+Control,5,8
+Control,5,8
+Control,1,6
+Control,0,5
+Control,8,8
+Control,9,10
+Control,5,5
+Control,4,7
+Control,9,10
+Control,6,6
+Control,3,5
+Control,8,9
+Control,7,10
+Control,10,10
+Control,1,6
+Control,6,6
+Control,1,9
+Control,8,9
+Control,6,7
+Control,5,5
+Control,7,9
+Control,2,5
+Control,5,6
+Control,2,8
+Control,1,8
+Control,0,2
+Control,7,8
+Control,5,7
+TCPO,0,5
+TCPO,7,10
+TCPO,4,4
+TCPO,8,11
+TCPO,6,10
+TCPO,6,9
+TCPO,3,4
+TCPO,2,8
+TCPO,0,6
+TCPO,0,9
+TCPO,3,6
+TCPO,2,9
+TCPO,7,9
+TCPO,1,10
+TCPO,8,8
+TCPO,6,9
+PHT,1,9
+PHT,4,9
+PHT,3,7
+PHT,4,7
+PHT,0,7
+PHT,0,4
+PHT,1,8
+PHT,1,7
+PHT,2,7
+PHT,2,8
+PHT,1,7
+PHT,0,2
+PHT,3,10
+PHT,3,7
+PHT,2,7
+PHT,0,8
+PHT,0,8
+PHT,1,10
+PHT,1,1
+TCPO+PHT,2,2
+TCPO+PHT,0,7
+TCPO+PHT,1,8
+TCPO+PHT,7,8
+TCPO+PHT,0,10
+TCPO+PHT,0,4
+TCPO+PHT,0,6
+TCPO+PHT,0,7
+TCPO+PHT,6,6
+TCPO+PHT,1,6
+TCPO+PHT,1,7

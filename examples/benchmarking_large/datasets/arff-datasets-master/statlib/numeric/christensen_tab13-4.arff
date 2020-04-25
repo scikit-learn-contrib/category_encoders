@@ -1,0 +1,106 @@
+% 
+% This contains viturally all of the data files
+% in "Analysis of Variance, Design, and Regression:
+% Applied Statistical Methods" by Ronald Christensen
+% (1996, Chapman and Hall).  The individual files 
+% correspond with tables in the book in a self 
+% explanitory manner (presuming you have the book to 
+% look at).  There are three files that correspond 
+% to data in exercises or examples.
+% 
+% The author retains no rights to these data.
+% 
+% Comments should be directed to:
+% Ronald Christensen
+% Dept. of Math and Statistics
+% University of New Mexico
+% Albq., NM 87131
+% e-mail: fletcher@math.unm.edu
+% 
+% More information about the book and alternative
+% access to the data can be obtained from  
+% the web at:  www.math.unm.edu/~fletcher
+% 
+%
+% File: ../data/christensen/tab13-4.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation christensen-tab13-4
+
+@attribute col_1 INTEGER
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+@attribute col_5 INTEGER
+@attribute col_6 INTEGER
+@attribute col_7 INTEGER
+
+@data
+1,44,124,80,254,70,190
+2,35,110,70,240,73,216
+3,41,114,80,279,68,178
+4,31,100,80,284,68,149
+5,61,190,110,315,68,182
+6,61,130,88,250,70,185
+7,44,130,94,298,68,161
+8,58,110,74,384,67,175
+9,52,120,80,310,66,144
+10,52,120,80,337,67,130
+11,52,130,80,367,69,162
+12,40,120,90,273,68,175
+13,49,130,75,273,66,155
+14,34,120,80,314,74,156
+15,37,115,70,243,65,151
+16,63,140,90,341,74,168
+17,28,138,80,245,70,185
+18,40,115,82,302,69,225
+19,51,148,110,302,69,247
+20,33,120,70,386,66,146
+21,37,110,70,312,71,170
+22,33,132,90,302,69,161
+23,41,112,80,394,69,167
+24,38,114,70,358,69,198
+25,52,100,78,336,70,162
+26,31,114,80,251,71,150
+27,44,110,80,322,68,196
+28,31,108,70,281,67,130
+29,40,110,74,336,68,166
+30,36,110,80,314,73,178
+31,42,136,82,383,69,187
+32,28,124,82,360,67,148
+33,40,120,85,369,71,180
+34,40,150,100,333,70,172
+35,35,100,70,253,68,141
+36,32,120,80,268,68,176
+37,31,110,80,257,71,154
+38,52,130,90,474,69,145
+39,45,110,80,391,69,159
+40,39,106,80,248,67,181
+41,40,130,90,520,68,169
+42,48,110,70,285,66,160
+43,29,110,70,352,66,149
+44,56,141,100,428,65,171
+45,53,90,55,334,68,166
+46,47,90,60,278,69,121
+47,30,114,76,264,73,178
+48,64,140,90,243,71,171
+49,31,130,88,348,72,181
+50,35,120,88,290,70,162
+51,65,130,90,370,65,153
+52,43,122,82,363,69,164
+53,53,120,80,343,71,159
+54,58,138,82,305,67,152
+55,67,168,105,365,68,190
+56,53,120,80,307,70,200
+57,42,134,90,243,67,147
+58,43,115,75,266,68,125
+59,52,110,75,341,69,163
+60,68,110,80,268,62,138

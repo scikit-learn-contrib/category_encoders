@@ -1,0 +1,498 @@
+% ------------------------------------------------------------------------
+% 			      Primary Biliary Cirrhosis
+% 
+%     The data set found in appendix D of Fleming and Harrington, Counting
+% Processes and Survival Analysis, Wiley, 1991.  The only differences are:
+%      age is in days
+%      status is coded as 0=censored, 1=censored due to liver tx, 2=death
+%      the sex and stage variables are not missing for obs 313-418
+% 
+% Quoting from F&H.  "The following pages contain the data from the Mayo Clinic
+% trial in primary biliary cirrhosis (PBC) of the liver conducted between 1974
+% and 1984.  A description of the clinical background for the trial and the
+% covariates recorded here is in Chapter 0, especially Section 0.2.  A more
+% extended discussion can be found in Dickson, et al., Hepatology 10:1-7 (1989)
+% and in Markus, et al., N Eng J of Med 320:1709-13 (1989).
+%    "A total of 424 PBC patients, referred to Mayo Clinic during that ten-year
+% interval, met eligibility criteria for the randomized placebo controlled
+% trial of the drug D-penicillamine.  The first 312 cases in the data set
+% participated in the randomized trial and contain largely complete data.  The
+% additional 112 cases did not participate in the clinical trial, but consented
+% to have basic measurements recorded and to be followed for survival.  Six of
+% those cases were lost to follow-up shortly after diagnosis, so the data here
+% are on an additional 106 cases as well as the 312 randomized participants.
+% Missing data items are denoted by `.'. "
+% 
+% Variables:
+%    case number
+%    number of days between registration and the earlier of death,
+%        transplantion, or study analysis time in July, 1986
+%    status
+%    drug: 1= D-penicillamine, 2=placebo
+%    age in days
+%    sex: 0=male, 1=female
+%    presence of asictes:       0=no 1=yes
+%    presence of hepatomegaly   0=no 1=yes
+%    presence of spiders        0=no 1=yes
+%    presence of edema          0=no edema and no diuretic therapy for edema;
+% 	.5 = edema present without diuretics, or edema resolved by diuretics;
+% 	1 = edema despite diuretic therapy
+%    serum bilirubin in mg/dl
+%    serum cholesterol in mg/dl
+%    albumin in gm/dl
+%    urine copper in ug/day
+%    alkaline phosphatase in U/liter
+%    SGOT in U/ml
+%    triglicerides in mg/dl
+%    platelets per cubic ml / 1000
+%    prothrombin time in seconds
+%    histologic stage of disease
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: 3
+%
+
+@relation pbc
+
+@attribute case_number INTEGER
+@attribute number_of_days INTEGER
+@attribute status INTEGER
+@attribute drug {D-penicillamine,placebo}
+@attribute age INTEGER
+@attribute sex {female,male}
+@attribute presence_of_asictes {no,yes}
+@attribute presence_of_hepatomegaly {no,yes}
+@attribute presence_of_spiders {no,yes}
+@attribute presence_of_edema {edema_despite_diuretic_therapy,edema_present_without_diuretics_or_edema_resolved_by_diuretics,no_edema_and_no_diuretic_therapy_for_edema}
+@attribute serum_bilirubin REAL
+@attribute serum_cholesterol INTEGER
+@attribute albumin REAL
+@attribute urine_copper INTEGER
+@attribute alkaline_phosphatase REAL
+@attribute SGOT REAL
+@attribute triglicerides INTEGER
+@attribute platelets INTEGER
+@attribute prothrombin_time REAL
+@attribute histologic_stage_of_disease INTEGER
+
+@data
+1,400,2,D-penicillamine,21464,female,yes,yes,yes,edema_despite_diuretic_therapy,14.5,261,2.60,156,1718.0,137.95,172,190,12.2,4
+2,4500,0,D-penicillamine,20617,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.1,302,4.14,54,7394.8,113.52,88,221,10.6,3
+3,1012,2,D-penicillamine,25594,male,no,no,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.4,176,3.48,210,516.0,96.10,55,151,12.0,4
+4,1925,2,D-penicillamine,19994,female,no,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.8,244,2.54,64,6121.8,60.63,92,183,10.3,4
+5,1504,1,placebo,13918,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.4,279,3.53,143,671.0,113.15,72,136,10.9,3
+6,2503,2,placebo,24201,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,248,3.98,50,944.0,93.00,63,?,11.0,3
+7,1832,0,placebo,20284,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.0,322,4.09,52,824.0,60.45,213,204,9.7,3
+8,2466,2,placebo,19379,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.3,280,4.00,52,4651.2,28.38,189,373,11.0,3
+9,2400,2,D-penicillamine,15526,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,3.2,562,3.08,79,2276.0,144.15,88,251,11.0,2
+10,51,2,placebo,25772,female,yes,no,yes,edema_despite_diuretic_therapy,12.6,200,2.74,140,918.0,147.25,143,302,11.5,4
+11,3762,2,placebo,19619,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.4,259,4.16,46,1104.0,79.05,79,258,12.0,4
+12,304,2,placebo,21600,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,3.6,236,3.52,94,591.0,82.15,95,71,13.6,4
+13,3577,0,placebo,16688,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,281,3.85,40,1181.0,88.35,130,244,10.6,3
+14,1217,2,placebo,20535,male,yes,yes,no,edema_despite_diuretic_therapy,0.8,?,2.27,43,728.0,71.00,?,156,11.0,4
+15,3584,2,D-penicillamine,23612,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,231,3.87,173,9009.8,127.71,96,295,11.0,3
+16,3672,0,placebo,14772,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,204,3.66,28,685.0,72.85,58,198,10.8,3
+17,769,2,placebo,19060,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.7,274,3.15,159,1533.0,117.80,128,224,10.5,4
+18,131,2,D-penicillamine,19698,female,no,yes,yes,edema_despite_diuretic_therapy,11.4,178,2.80,588,961.0,280.55,200,283,12.4,4
+19,4232,0,D-penicillamine,18102,female,no,yes,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.7,235,3.56,39,1881.0,93.00,123,209,11.0,3
+20,1356,2,placebo,21898,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,5.1,374,3.51,140,1919.0,122.45,135,322,13.0,4
+21,3445,0,placebo,23445,male,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,0.6,252,3.83,41,843.0,65.10,83,336,11.4,4
+22,673,2,D-penicillamine,20555,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,3.4,271,3.63,464,1376.0,120.90,55,173,11.6,4
+23,264,2,placebo,20442,female,yes,yes,yes,edema_despite_diuretic_therapy,17.4,395,2.94,558,6064.8,227.04,191,214,11.7,4
+24,4079,2,D-penicillamine,16261,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.1,456,4.00,124,5719.0,221.88,230,70,9.9,2
+25,4127,0,placebo,16463,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,298,4.10,40,661.0,106.95,66,324,11.3,2
+26,1444,2,placebo,19002,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,5.2,1128,3.68,53,3228.0,165.85,166,421,9.9,3
+27,77,2,placebo,19884,female,yes,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,21.6,175,3.31,221,3697.4,101.91,168,80,12.0,4
+28,549,2,placebo,16417,female,yes,yes,yes,edema_despite_diuretic_therapy,17.2,222,3.23,209,1975.0,189.10,195,144,13.0,4
+29,4509,0,placebo,23331,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,370,3.78,24,5833.0,73.53,86,390,10.6,2
+30,321,2,placebo,15116,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.6,260,2.54,172,7277.0,121.26,158,124,11.0,4
+31,3839,2,placebo,15177,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,4.7,296,3.44,114,9933.2,206.40,101,195,10.3,2
+32,4523,0,placebo,19722,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.8,262,3.34,101,7277.0,82.56,158,286,10.6,4
+33,3170,2,placebo,18731,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,210,3.19,82,1592.0,218.55,113,180,12.0,3
+34,3933,0,D-penicillamine,19015,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,364,3.70,37,1840.0,170.50,64,273,10.5,2
+35,2847,2,placebo,17758,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.2,314,3.20,201,12258.8,72.24,151,431,10.6,3
+36,3611,0,placebo,20604,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.3,172,3.39,18,558.0,71.30,96,311,10.6,2
+37,223,2,D-penicillamine,22546,female,yes,yes,no,edema_despite_diuretic_therapy,7.1,334,3.01,150,6931.2,180.60,118,102,12.0,4
+38,3244,2,placebo,13378,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.3,383,3.53,102,1234.0,137.95,87,234,11.0,4
+39,2297,2,D-penicillamine,20232,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,282,3.00,52,9066.8,72.24,111,563,10.6,4
+40,4467,0,D-penicillamine,17046,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.3,?,3.34,105,11046.6,104.49,?,358,11.0,4
+41,1350,2,D-penicillamine,12285,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,6.8,?,3.26,96,1215.0,151.90,?,226,11.7,4
+42,4453,0,placebo,12307,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,2.1,?,3.54,122,8778.0,56.76,?,344,11.0,4
+43,4556,0,D-penicillamine,17850,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,361,3.64,36,5430.2,67.08,89,203,10.6,2
+44,3428,2,placebo,13727,female,no,yes,yes,edema_despite_diuretic_therapy,3.3,299,3.55,131,1029.0,119.35,50,199,11.7,3
+45,4025,0,placebo,15265,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,3.93,19,1826.0,71.30,?,474,10.9,2
+46,2256,2,D-penicillamine,16728,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,5.7,482,2.84,161,11552.0,136.74,165,518,12.7,3
+47,2576,0,placebo,17323,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,316,3.65,68,1716.0,187.55,71,356,9.8,3
+48,4427,0,placebo,17947,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.9,259,3.70,281,10396.8,188.34,178,214,11.0,3
+49,708,2,placebo,22336,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,?,3.82,58,678.0,97.65,?,233,11.0,4
+50,2598,2,D-penicillamine,19544,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,257,3.36,43,1080.0,106.95,73,128,10.6,4
+51,3853,2,placebo,19025,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,276,3.60,54,4332.0,99.33,143,273,10.6,2
+52,2386,2,D-penicillamine,18460,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,6.0,614,3.70,158,5084.4,206.40,93,362,10.6,1
+53,1000,2,D-penicillamine,24621,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.6,?,3.10,94,6456.2,56.76,?,214,11.0,4
+54,1434,2,D-penicillamine,14317,female,yes,yes,yes,edema_despite_diuretic_therapy,1.3,288,3.40,262,5487.2,73.53,125,254,11.0,4
+55,1360,2,D-penicillamine,24020,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.8,416,3.94,121,10165.0,79.98,219,213,11.0,3
+56,1847,2,placebo,12279,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.1,498,3.80,88,13862.4,95.46,319,365,10.6,2
+57,3282,2,D-penicillamine,19567,female,no,yes,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,2.3,260,3.18,231,11320.2,105.78,94,216,12.4,3
+58,4459,0,D-penicillamine,16279,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,242,4.08,73,5890.0,56.76,118,?,10.6,1
+59,2224,2,D-penicillamine,14754,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,0.8,329,3.50,49,7622.8,126.42,124,321,10.6,3
+60,4365,0,D-penicillamine,21324,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,604,3.40,82,876.0,71.30,58,228,10.3,3
+61,4256,0,placebo,16034,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,216,3.94,28,601.0,60.45,188,211,13.0,1
+62,3090,2,placebo,22173,female,yes,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.3,302,2.75,58,1523.0,43.40,112,329,13.2,4
+63,859,2,placebo,17031,female,no,no,yes,edema_despite_diuretic_therapy,22.5,932,3.12,95,5396.0,244.90,133,165,11.6,3
+64,1487,2,placebo,22977,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.1,373,3.50,52,1009.0,150.35,188,178,11.0,3
+65,3992,0,D-penicillamine,14684,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.2,256,3.60,74,724.0,141.05,108,430,10.0,1
+66,4191,2,D-penicillamine,16967,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.4,427,3.70,105,1909.0,182.90,171,123,11.0,3
+67,2769,2,placebo,18733,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,466,3.91,84,1787.0,328.60,185,261,10.0,3
+68,4039,0,D-penicillamine,11912,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,174,4.09,58,642.0,71.30,46,203,10.6,3
+69,1170,2,D-penicillamine,18021,female,no,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,20.0,652,3.46,159,3292.0,215.45,184,227,12.4,3
+70,3458,0,D-penicillamine,20600,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,4.64,20,666.0,54.25,?,265,10.6,2
+71,4196,0,placebo,17841,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.2,258,3.57,79,2201.0,120.90,76,410,11.5,4
+72,4184,0,placebo,11868,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,320,3.54,51,1243.0,122.45,80,225,10.0,3
+73,4190,0,placebo,14060,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,132,3.60,17,423.0,49.60,56,265,11.0,1
+74,1827,2,D-penicillamine,18964,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,8.4,558,3.99,280,967.0,89.90,309,278,11.0,4
+75,1191,2,D-penicillamine,15895,female,yes,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,17.1,674,2.53,207,2078.0,182.90,598,268,11.5,4
+76,71,2,D-penicillamine,18972,female,no,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,12.2,394,3.08,111,2132.0,155.00,243,165,11.6,4
+77,326,2,placebo,18199,female,no,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,6.6,244,3.41,199,1819.0,170.50,91,132,12.1,3
+78,1690,2,D-penicillamine,17512,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,6.3,436,3.02,75,2176.0,170.50,104,236,10.6,4
+79,3707,0,D-penicillamine,16990,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,315,4.24,13,1637.0,170.50,70,426,10.9,3
+80,890,2,placebo,24622,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,7.2,247,3.72,269,1303.0,176.70,91,360,11.2,4
+81,2540,2,D-penicillamine,23107,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,14.4,448,3.65,34,1218.0,60.45,318,385,11.7,4
+82,3574,2,D-penicillamine,24585,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,4.5,472,4.09,154,1580.0,117.80,272,412,11.1,3
+83,4050,0,D-penicillamine,20459,female,no,yes,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.3,250,3.50,48,1138.0,71.30,100,81,12.9,4
+84,4032,0,placebo,20392,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.4,263,3.76,29,1345.0,137.95,74,181,11.2,3
+85,3358,2,placebo,17246,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.1,262,3.48,58,2045.0,89.90,84,225,11.5,4
+86,1657,2,D-penicillamine,19270,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,5.0,1600,3.21,75,2656.0,82.15,174,181,10.9,3
+87,198,2,D-penicillamine,13616,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,345,4.40,75,1860.0,218.55,72,447,10.7,3
+88,2452,0,placebo,15119,female,no,no,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.6,296,4.06,37,1032.0,80.60,83,442,12.0,3
+89,1741,2,D-penicillamine,19155,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.0,408,3.65,50,1083.0,110.05,98,200,11.4,2
+90,2689,2,D-penicillamine,12227,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.6,660,4.22,94,1857.0,151.90,155,337,11.0,2
+91,460,2,placebo,16658,female,no,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,5.0,325,3.47,110,2460.0,246.45,56,430,11.9,4
+92,388,2,D-penicillamine,28018,female,yes,no,no,edema_despite_diuretic_therapy,1.4,206,3.13,36,1626.0,86.80,70,145,12.2,4
+93,3913,0,D-penicillamine,13344,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.3,353,3.67,73,2039.0,232.50,68,380,11.1,2
+94,750,2,D-penicillamine,19693,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.2,201,3.11,178,1212.0,159.65,69,188,11.8,4
+95,130,2,placebo,16944,female,yes,yes,yes,edema_despite_diuretic_therapy,17.4,?,2.64,182,559.0,119.35,?,401,11.7,2
+96,3850,0,D-penicillamine,17841,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.0,?,3.70,33,1258.0,99.20,?,338,10.4,3
+97,611,2,placebo,26259,male,no,yes,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,2.0,420,3.26,62,3196.0,77.50,91,344,11.4,3
+98,3823,0,D-penicillamine,10550,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.0,239,3.77,77,1877.0,97.65,101,312,10.2,1
+99,3820,0,placebo,17703,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.8,460,3.35,148,1472.0,108.50,118,172,10.2,2
+100,552,2,placebo,18799,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.3,178,3.00,145,746.0,178.25,122,119,12.0,4
+101,3581,0,placebo,16418,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,400,3.60,31,1689.0,164.30,166,327,10.4,3
+102,3099,0,D-penicillamine,20662,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,248,3.97,172,646.0,62.00,84,128,10.1,1
+103,110,2,placebo,17884,female,yes,yes,yes,edema_despite_diuretic_therapy,2.5,188,3.67,57,1273.0,119.35,102,110,11.1,4
+104,3086,2,D-penicillamine,15712,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,303,3.64,20,2108.0,128.65,53,349,11.1,2
+105,3092,1,placebo,12433,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,464,4.20,38,1644.0,151.90,102,348,10.3,3
+106,3222,2,D-penicillamine,25023,female,yes,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.1,?,3.90,50,1087.0,103.85,?,137,10.6,2
+107,3388,0,placebo,22836,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,212,4.03,10,648.0,71.30,77,316,17.1,1
+108,2583,2,D-penicillamine,18393,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.4,127,3.50,14,1062.0,49.60,84,334,10.3,2
+109,2504,0,placebo,16094,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,120,3.61,53,804.0,110.05,52,271,10.6,3
+110,2105,2,D-penicillamine,14212,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.9,486,3.54,74,1052.0,108.50,109,141,10.9,3
+111,2350,1,D-penicillamine,15031,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,5.5,528,4.18,77,2404.0,172.05,78,467,10.7,3
+112,3445,2,placebo,20256,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,2.0,267,3.67,89,754.0,196.85,90,136,11.8,4
+113,980,2,D-penicillamine,18713,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,6.7,374,3.74,103,979.0,128.65,100,266,11.1,4
+114,3395,2,placebo,19295,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,3.2,259,4.30,208,1040.0,110.05,78,268,11.7,3
+115,3422,0,placebo,15574,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,0.7,303,4.19,81,1584.0,111.60,156,307,10.3,3
+116,3336,0,D-penicillamine,22306,female,no,no,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,3.0,458,3.63,74,1588.0,106.95,382,438,9.9,3
+117,1083,2,D-penicillamine,18137,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,6.5,950,3.11,111,2374.0,170.50,149,354,11.0,4
+118,2288,2,D-penicillamine,17844,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,3.5,390,3.30,67,878.0,137.95,93,207,10.2,3
+119,515,2,D-penicillamine,19817,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,0.6,636,3.83,129,944.0,97.65,114,306,9.5,3
+120,2033,1,D-penicillamine,12839,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,3.5,325,3.98,444,766.0,130.20,210,344,10.6,3
+121,191,2,placebo,24803,male,yes,yes,no,edema_despite_diuretic_therapy,1.3,151,3.08,73,1112.0,46.50,49,213,13.2,4
+122,3297,0,D-penicillamine,20248,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,298,4.13,29,758.0,65.10,85,256,10.7,3
+123,971,2,D-penicillamine,16736,female,no,yes,yes,edema_despite_diuretic_therapy,5.1,?,3.23,18,790.0,179.80,?,104,13.0,4
+124,3069,0,D-penicillamine,19318,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,251,3.90,25,681.0,57.35,107,182,10.8,4
+125,2468,1,placebo,17233,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.3,316,3.51,75,1162.0,147.25,137,238,10.0,4
+126,824,2,D-penicillamine,19577,female,yes,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.2,269,3.12,?,1441.0,165.85,68,166,11.1,4
+127,3255,0,placebo,16109,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,268,4.08,9,1174.0,86.80,95,453,10.0,2
+128,1037,2,D-penicillamine,15322,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,16.2,?,2.89,42,1828.0,299.15,?,123,12.6,4
+129,3239,0,D-penicillamine,23235,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,420,3.87,30,1009.0,57.35,232,?,9.7,3
+130,1413,2,placebo,16154,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,17.4,1775,3.43,205,2065.0,165.85,97,418,11.5,3
+131,850,2,placebo,22646,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,2.8,242,3.80,74,614.0,136.40,104,121,13.2,4
+132,2944,0,D-penicillamine,14812,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.9,448,3.83,60,1052.0,127.10,175,181,9.8,3
+133,2796,2,placebo,22881,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.5,331,3.95,13,577.0,128.65,99,165,10.1,4
+134,3149,0,placebo,15463,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,578,3.67,35,1353.0,127.10,105,427,10.7,2
+135,3150,0,D-penicillamine,15694,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.4,263,3.57,123,836.0,74.40,121,445,11.0,2
+136,3098,0,D-penicillamine,20440,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,263,3.35,27,1636.0,116.25,69,206,9.8,2
+137,2990,0,D-penicillamine,22960,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,399,3.60,79,3472.0,155.00,152,344,10.1,2
+138,1297,2,D-penicillamine,18719,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,7.3,426,3.93,262,2424.0,145.70,218,252,10.5,3
+139,2106,0,placebo,17080,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,328,3.31,159,1260.0,94.55,134,142,11.6,4
+140,3059,0,D-penicillamine,19751,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,290,4.09,38,2120.0,186.00,146,318,10.0,3
+141,3050,0,D-penicillamine,17180,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,346,3.77,59,794.0,125.55,56,336,10.6,2
+142,2419,2,placebo,20354,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.0,364,3.48,20,720.0,134.85,88,283,9.9,2
+143,786,2,placebo,16839,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.9,332,3.60,86,1492.0,134.85,103,277,11.0,4
+144,943,2,placebo,19098,female,no,yes,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,28.0,556,3.26,152,3896.0,198.40,171,335,10.0,3
+145,2976,0,placebo,18701,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,0.7,309,3.84,96,858.0,41.85,106,253,11.4,3
+146,2615,0,placebo,12369,female,no,no,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.2,?,3.89,58,1284.0,173.60,?,239,9.4,3
+147,2995,0,D-penicillamine,27398,female,no,no,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.2,288,3.37,32,791.0,57.35,114,213,10.7,2
+148,1427,2,placebo,11273,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,7.2,1015,3.26,247,3836.0,198.40,280,330,9.8,3
+149,762,2,D-penicillamine,22574,male,no,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,3.0,257,3.79,290,1664.0,102.30,112,140,9.9,4
+150,2891,0,placebo,12779,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,1.0,?,3.63,57,1536.0,134.85,?,233,10.0,1
+151,2870,0,D-penicillamine,20104,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,460,3.03,57,721.0,85.25,174,301,9.4,2
+152,1152,2,D-penicillamine,25546,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.3,586,3.01,243,2276.0,114.70,126,339,10.9,3
+153,2863,0,D-penicillamine,18118,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,217,3.85,68,453.0,54.25,68,270,11.1,1
+154,140,2,D-penicillamine,25340,male,no,no,yes,edema_despite_diuretic_therapy,2.4,168,2.56,225,1056.0,120.90,75,108,14.1,3
+155,2666,0,placebo,15909,female,no,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.6,220,3.35,57,1620.0,153.45,80,311,11.2,4
+156,853,2,placebo,21699,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,25.5,358,3.52,219,2468.0,201.50,205,151,11.5,2
+157,2835,0,placebo,17809,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,286,3.42,34,1868.0,77.50,206,487,10.0,2
+158,2475,1,D-penicillamine,13329,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,3.4,450,3.37,32,1408.0,116.25,118,313,11.2,2
+159,1536,2,placebo,16714,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,2.5,317,3.46,217,714.0,130.20,140,207,10.1,3
+160,2772,0,placebo,20955,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,217,3.62,13,414.0,75.95,119,224,10.5,3
+161,2797,0,placebo,15612,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,2.3,502,3.56,4,964.0,120.90,180,269,9.6,2
+162,186,2,placebo,21483,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.2,260,3.19,91,815.0,127.10,101,160,12.0,4
+163,2055,2,D-penicillamine,19540,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.3,233,4.08,20,622.0,66.65,68,358,9.9,3
+164,264,2,placebo,15857,female,no,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,8.5,?,3.34,161,1428.0,181.35,?,88,13.3,4
+165,1077,2,D-penicillamine,19470,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,4.0,196,3.45,80,2496.0,133.30,142,212,11.3,4
+166,2721,0,placebo,15105,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,5.7,1480,3.26,84,1960.0,457.25,108,213,9.5,2
+167,1682,2,D-penicillamine,22265,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,376,3.86,200,1015.0,83.70,154,238,10.3,4
+168,2713,0,placebo,17442,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.4,257,3.80,44,842.0,97.65,110,?,9.2,2
+169,1212,2,placebo,12963,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.3,408,4.22,67,1387.0,142.60,137,295,10.1,3
+170,2692,0,D-penicillamine,17774,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.2,390,3.61,32,1509.0,88.35,52,263,9.0,3
+171,2574,0,D-penicillamine,19237,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,?,4.52,31,784.0,74.40,?,361,10.1,3
+172,2301,0,placebo,18215,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,1.3,205,3.34,65,1031.0,91.45,126,217,9.8,3
+173,2657,0,D-penicillamine,11058,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.0,236,3.42,76,1403.0,89.90,86,493,9.8,2
+174,2644,0,D-penicillamine,20296,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,?,3.85,63,663.0,79.05,?,311,9.7,1
+175,2624,0,placebo,19049,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,283,3.80,152,718.0,108.50,168,340,10.1,3
+176,1492,2,D-penicillamine,15198,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.2,?,3.56,77,1790.0,139.50,?,149,10.1,4
+177,2609,0,placebo,20254,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,258,4.01,49,559.0,43.40,133,277,10.4,2
+178,2580,0,D-penicillamine,25569,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,4.08,51,665.0,74.40,?,325,10.2,4
+179,2573,0,placebo,16050,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.8,396,3.83,39,2148.0,102.30,133,278,9.9,4
+180,2563,0,placebo,15548,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,4.7,478,4.38,44,1629.0,237.15,76,175,10.4,3
+181,2556,0,D-penicillamine,16279,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.4,248,3.58,63,554.0,75.95,106,79,10.3,4
+182,2555,0,D-penicillamine,20799,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,3.69,161,674.0,26.35,?,539,9.9,2
+183,2241,1,placebo,14705,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,201,3.73,44,1345.0,54.25,145,445,10.1,2
+184,974,2,placebo,13736,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,11.0,674,3.55,358,2412.0,167.40,140,471,9.8,3
+185,2527,0,D-penicillamine,17664,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,256,3.54,42,1132.0,74.40,94,192,10.5,3
+186,1576,2,D-penicillamine,25873,female,no,no,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,2.0,225,3.53,51,933.0,69.75,62,200,12.7,3
+187,733,2,placebo,13073,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,14.0,808,3.43,251,2870.0,153.45,137,268,11.5,3
+188,2332,0,D-penicillamine,22873,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,187,3.48,41,654.0,120.90,98,164,11.0,4
+189,2456,0,placebo,18499,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.3,360,3.63,52,1812.0,97.65,164,256,9.9,3
+190,2504,0,D-penicillamine,19916,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,2.3,?,3.93,24,1828.0,133.30,?,327,10.2,2
+191,216,2,placebo,19246,female,yes,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,24.5,1092,3.35,233,3740.0,147.25,432,399,15.2,4
+192,2443,0,D-penicillamine,19256,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,308,3.69,67,696.0,51.15,101,344,9.8,4
+193,797,2,placebo,20736,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,10.8,932,3.19,267,2184.0,161.20,157,382,10.4,4
+194,2449,0,D-penicillamine,16216,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.5,293,4.30,50,975.0,125.55,56,336,9.1,2
+195,2330,0,D-penicillamine,10795,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,3.7,347,3.90,76,2544.0,221.65,90,129,11.5,4
+196,2363,0,D-penicillamine,20834,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.4,226,3.36,13,810.0,72.85,62,117,11.6,4
+197,2365,0,D-penicillamine,16300,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,266,3.97,25,1164.0,102.30,102,201,10.1,2
+198,2357,0,placebo,13075,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,0.7,286,2.90,38,1692.0,141.05,90,381,9.6,2
+199,1592,0,D-penicillamine,14872,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,2.1,392,3.43,52,1395.0,184.45,194,328,10.2,3
+200,2318,0,placebo,11773,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,4.7,236,3.55,112,1391.0,137.95,114,332,9.9,3
+201,2294,0,placebo,15009,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,235,3.20,26,1758.0,106.95,67,228,10.8,4
+202,2272,0,D-penicillamine,22514,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,223,3.80,15,1044.0,80.60,89,514,10.0,2
+203,2221,0,placebo,13535,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,149,4.04,227,598.0,52.70,57,166,9.9,2
+204,2090,2,placebo,22857,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,255,3.74,23,1024.0,77.50,58,281,10.2,3
+205,2081,2,D-penicillamine,17889,female,yes,no,no,no_edema_and_no_diuretic_therapy_for_edema,2.5,382,3.55,108,1516.0,238.70,?,126,10.3,3
+206,2255,0,D-penicillamine,22642,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,213,4.07,12,5300.0,57.35,68,240,11.0,1
+207,2171,0,D-penicillamine,26580,female,no,no,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.6,?,3.33,14,733.0,85.25,?,259,10.1,4
+208,904,2,D-penicillamine,22388,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,3.9,396,3.20,58,1440.0,153.45,131,156,10.0,4
+209,2216,0,placebo,19221,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,0.7,252,4.01,11,1210.0,72.85,58,309,9.5,2
+210,2224,0,placebo,18176,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,346,3.37,81,1098.0,122.45,90,298,10.0,2
+211,2195,0,placebo,19327,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.3,?,3.76,27,1282.0,100.75,?,114,10.3,3
+212,2176,0,placebo,17263,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.2,232,3.98,11,1074.0,100.75,99,223,9.9,3
+213,2178,0,D-penicillamine,18337,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,0.5,400,3.40,9,1134.0,96.10,55,356,10.2,3
+214,1786,2,placebo,25329,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,404,3.43,34,1866.0,79.05,224,236,9.9,3
+215,1080,2,placebo,15037,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,5.9,1276,3.85,141,1204.0,203.05,157,216,10.7,3
+216,2168,0,D-penicillamine,21610,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,?,3.68,20,856.0,55.80,?,146,10.4,3
+217,790,2,placebo,13178,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,11.4,608,3.31,65,1790.0,151.90,210,298,10.8,4
+218,2170,0,D-penicillamine,12636,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,?,3.89,29,897.0,66.65,?,423,10.1,1
+219,2157,0,placebo,15601,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.6,215,4.17,67,936.0,134.85,85,176,9.6,3
+220,1235,2,D-penicillamine,23241,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,3.8,426,3.22,96,2716.0,210.80,113,228,10.6,2
+221,2050,0,placebo,20684,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,360,3.65,72,3186.0,94.55,154,269,9.7,4
+222,597,2,placebo,16898,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,4.5,372,3.38,227,2310.0,167.40,135,240,12.4,3
+223,334,2,D-penicillamine,22369,female,yes,yes,no,edema_despite_diuretic_therapy,14.1,448,2.43,123,1833.0,134.00,155,210,11.0,4
+224,1945,0,D-penicillamine,14106,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.0,309,3.66,67,1214.0,158.10,101,309,9.7,3
+225,2022,0,D-penicillamine,14161,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,274,3.66,108,1065.0,88.35,135,251,10.1,2
+226,1978,0,placebo,20708,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,223,3.70,39,884.0,75.95,104,231,9.6,3
+227,999,2,D-penicillamine,21532,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,2.3,316,3.35,172,1601.0,179.80,63,394,9.7,2
+228,1967,0,placebo,13486,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,215,3.35,41,645.0,93.00,74,165,9.6,3
+229,348,2,D-penicillamine,22797,female,yes,yes,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,4.5,191,3.05,200,1020.0,175.15,118,139,11.4,4
+230,1979,0,placebo,12641,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.3,302,3.41,51,310.0,83.70,44,95,11.5,4
+231,1165,2,placebo,21307,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.4,518,1.96,115,2250.0,203.05,90,190,10.7,4
+232,1951,0,D-penicillamine,18329,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.4,267,3.02,47,1001.0,133.30,87,265,10.6,3
+233,1932,0,D-penicillamine,15591,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,0.9,514,3.06,412,2622.0,105.40,87,284,9.8,4
+234,1776,0,placebo,12557,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.9,578,3.35,78,976.0,116.25,177,322,11.2,2
+235,1882,0,placebo,12120,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,13.0,1336,4.16,71,3510.0,209.25,111,338,11.9,3
+236,1908,0,D-penicillamine,14019,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.5,253,3.79,67,1006.0,139.50,106,341,9.7,3
+237,1882,0,D-penicillamine,21828,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.6,442,2.95,105,820.0,85.25,108,181,10.1,3
+238,1874,0,placebo,24257,female,no,no,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.6,280,3.35,?,1093.0,128.65,81,295,9.8,2
+239,694,2,D-penicillamine,17090,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,0.8,300,2.94,231,1794.0,130.20,99,319,11.2,4
+240,1831,0,D-penicillamine,20483,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.4,232,3.72,24,369.0,51.15,139,326,10.1,3
+241,837,1,placebo,15112,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,4.4,316,3.62,308,1119.0,114.70,322,282,9.8,4
+242,1810,0,D-penicillamine,23585,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.9,354,2.97,86,1553.0,196.85,152,277,9.9,3
+243,930,2,placebo,24650,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,8.0,468,2.81,139,2009.0,198.40,139,233,10.0,4
+244,1690,2,D-penicillamine,16374,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,3.9,350,3.22,121,1268.0,272.80,231,270,9.6,3
+245,1790,0,placebo,16718,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,273,3.65,48,794.0,52.70,214,305,9.6,3
+246,1435,1,D-penicillamine,12035,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.1,387,3.77,63,1613.0,150.35,33,185,10.1,4
+247,732,1,D-penicillamine,15056,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,6.1,1712,2.83,89,3681.0,158.10,139,297,10.0,3
+248,1785,0,placebo,20241,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,324,3.51,39,1237.0,66.65,146,371,10.0,3
+249,1783,0,D-penicillamine,17525,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,1.3,242,3.20,35,1556.0,175.15,71,195,10.6,4
+250,1769,0,placebo,14899,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,299,3.36,23,2769.0,220.10,85,303,10.9,4
+251,1457,0,D-penicillamine,20810,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,227,3.61,40,676.0,83.00,120,249,9.9,2
+252,1770,0,D-penicillamine,25006,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.1,246,3.35,116,924.0,113.15,90,317,10.0,4
+253,1765,0,D-penicillamine,28650,male,yes,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,7.1,243,3.03,380,983.0,158.10,154,97,11.2,4
+254,737,1,D-penicillamine,14558,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.1,227,3.75,121,1136.0,110.00,91,264,10.0,3
+255,1735,0,placebo,12897,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,0.7,193,3.85,35,466.0,53.00,118,156,10.3,3
+256,1701,0,D-penicillamine,11485,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,336,3.74,48,823.0,84.00,108,242,9.7,3
+257,1614,0,D-penicillamine,21281,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,280,4.23,36,377.0,56.00,146,227,10.6,2
+258,1702,0,D-penicillamine,18806,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,414,3.44,80,1003.0,99.00,55,271,9.6,1
+259,1615,0,placebo,21904,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,3.1,277,2.97,42,1110.0,125.00,126,221,9.8,3
+260,1656,0,placebo,27220,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,5.6,232,3.59,188,1120.0,98.00,128,248,10.9,4
+261,1677,0,placebo,19126,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.2,375,3.14,129,857.0,89.00,?,375,9.5,3
+262,1666,0,placebo,15628,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,2.8,322,3.06,65,2562.0,91.00,209,231,9.5,3
+263,1301,1,placebo,12738,female,no,yes,yes,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.1,432,3.57,45,1406.0,190.00,77,248,11.4,4
+264,1542,1,placebo,16122,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,3.4,356,3.12,188,1911.0,92.00,130,318,11.2,3
+265,1084,1,placebo,16941,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,3.5,348,3.20,121,938.0,120.00,146,296,10.0,4
+266,1614,0,D-penicillamine,20567,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,318,3.32,52,613.0,70.00,260,279,10.2,3
+267,179,2,D-penicillamine,25899,female,yes,yes,yes,edema_despite_diuretic_therapy,6.6,222,2.33,138,620.0,106.00,91,195,12.1,4
+268,1191,2,D-penicillamine,20233,female,yes,yes,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,6.4,344,2.75,16,834.0,82.00,179,149,11.0,4
+269,1363,0,placebo,16467,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,3.6,374,3.50,143,1428.0,188.00,44,151,10.1,2
+270,1568,0,D-penicillamine,9598,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.0,448,3.74,102,1128.0,71.00,117,228,10.2,3
+271,1569,0,placebo,18435,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.0,321,3.50,94,955.0,111.00,177,289,9.7,3
+272,1525,0,D-penicillamine,14025,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,226,2.93,22,674.0,58.00,85,153,9.8,1
+273,1558,0,placebo,17320,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,2.2,328,3.46,75,1677.0,87.00,116,202,9.6,3
+274,1447,1,D-penicillamine,17525,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.6,?,3.07,136,1995.0,128.00,?,372,9.6,4
+275,1349,0,D-penicillamine,13995,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,2.2,572,3.77,77,2520.0,92.00,114,309,9.5,4
+276,1481,0,D-penicillamine,18302,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.0,219,3.85,67,640.0,145.00,108,95,10.7,2
+277,1434,0,placebo,12816,female,no,no,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.0,317,3.56,44,1636.0,84.00,111,394,9.8,3
+278,1420,0,placebo,11872,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,5.6,338,3.70,130,2139.0,185.00,193,215,9.9,4
+279,1433,0,placebo,20510,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,198,3.77,38,911.0,57.00,56,280,9.8,2
+280,1412,0,D-penicillamine,16858,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.6,325,3.69,69,2583.0,142.00,140,284,9.6,3
+281,41,2,D-penicillamine,24064,female,yes,no,no,edema_despite_diuretic_therapy,17.9,175,2.10,220,705.0,338.00,229,62,12.9,4
+282,1455,0,placebo,12398,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.3,304,3.52,97,1622.0,71.00,169,255,9.5,4
+283,1030,0,placebo,22960,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,412,3.99,103,1293.0,91.00,113,422,9.6,4
+284,1418,0,placebo,17738,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.3,291,3.44,75,1082.0,85.00,195,251,9.5,3
+285,1401,0,D-penicillamine,16929,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,253,3.48,65,688.0,57.00,80,252,10.0,1
+286,1408,0,D-penicillamine,14191,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,2.0,310,3.36,70,1257.0,122.00,118,143,9.8,3
+287,1234,0,D-penicillamine,21421,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,6.4,373,3.46,155,1768.0,120.00,151,258,10.1,4
+288,1067,1,placebo,17874,female,no,yes,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,8.7,310,3.89,107,637.0,117.00,242,298,9.6,2
+289,799,2,D-penicillamine,24681,male,no,yes,no,edema_present_without_diuretics_or_edema_resolved_by_diuretics,4.0,416,3.99,177,960.0,86.00,242,269,9.8,2
+290,1363,0,D-penicillamine,24101,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.4,294,3.57,33,722.0,93.00,69,283,9.8,3
+291,901,1,D-penicillamine,14939,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,3.2,339,3.18,123,3336.0,205.00,84,304,9.9,4
+292,1329,0,placebo,18352,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,8.6,546,3.73,84,1070.0,127.00,153,291,11.2,3
+293,1320,0,placebo,20891,female,no,yes,yes,edema_despite_diuretic_therapy,8.5,194,2.98,196,815.0,163.00,78,122,12.3,4
+294,1302,0,D-penicillamine,22111,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,6.6,1000,3.07,88,3150.0,193.00,133,299,10.9,4
+295,877,1,D-penicillamine,12912,male,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,2.4,646,3.83,102,855.0,127.00,194,306,10.3,3
+296,1321,0,placebo,11462,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,328,3.31,62,1105.0,137.00,95,293,10.9,4
+297,533,1,D-penicillamine,20449,male,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.2,275,3.43,100,1142.0,75.00,91,217,11.3,4
+298,1300,0,placebo,19258,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,1.1,340,3.37,73,289.0,97.00,93,243,10.2,3
+299,1293,0,D-penicillamine,13913,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,2.4,342,3.76,90,1653.0,150.00,127,213,10.8,3
+300,207,2,placebo,21247,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,5.2,?,2.23,234,601.0,135.00,?,206,12.3,4
+301,1295,0,placebo,16513,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.0,393,3.57,50,1307.0,74.00,103,295,10.5,4
+302,1271,0,D-penicillamine,13806,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.7,335,3.95,43,657.0,52.00,104,268,10.6,2
+303,1250,0,placebo,22156,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,1.0,372,3.25,108,1190.0,140.00,55,248,10.6,4
+304,1230,0,D-penicillamine,12979,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.5,219,3.93,22,663.0,45.00,75,246,10.8,3
+305,1216,0,placebo,15730,female,no,yes,yes,no_edema_and_no_diuretic_therapy_for_edema,2.9,426,3.61,73,5184.0,288.00,144,275,10.6,3
+306,1216,0,placebo,20597,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.6,239,3.45,31,1072.0,55.00,64,227,10.7,2
+307,1149,0,placebo,11167,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.8,273,3.56,52,1282.0,130.00,59,344,10.5,2
+308,1153,0,D-penicillamine,22347,female,no,yes,no,no_edema_and_no_diuretic_therapy_for_edema,0.4,246,3.58,24,797.0,91.00,113,288,10.4,2
+309,994,0,placebo,21294,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,0.4,260,2.75,41,1166.0,70.00,82,231,10.8,2
+310,939,0,D-penicillamine,22767,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,1.7,434,3.35,39,1713.0,171.00,100,234,10.2,2
+311,839,0,D-penicillamine,13879,female,no,no,no,no_edema_and_no_diuretic_therapy_for_edema,2.0,247,3.16,69,1050.0,117.00,88,335,10.5,2
+312,788,0,placebo,12109,female,no,no,yes,no_edema_and_no_diuretic_therapy_for_edema,6.4,576,3.79,186,2115.0,136.00,149,200,10.8,2
+313,4062,0,?,21915,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,3.65,?,?,?,?,378,11.0,?
+314,3561,2,?,23741,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.4,?,3.04,?,?,?,?,331,12.1,4
+315,2844,0,?,19724,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,4.03,?,?,?,?,226,9.8,4
+316,2071,2,?,27394,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.7,?,3.96,?,?,?,?,?,11.3,4
+317,3030,0,?,22646,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.8,?,2.48,?,?,?,?,273,10.0,?
+318,1680,0,?,15706,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,3.68,?,?,?,?,306,9.5,2
+319,41,2,?,16802,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,5.0,?,2.93,?,?,?,?,260,10.4,?
+320,2403,0,?,16071,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.4,?,3.81,?,?,?,?,226,10.5,3
+321,1170,0,?,22280,male,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.3,?,3.41,?,?,?,?,259,10.9,4
+322,2011,2,?,23376,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.1,?,3.69,?,?,?,?,139,10.5,?
+323,3523,0,?,14610,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,4.04,?,?,?,?,130,11.2,2
+324,3468,0,?,23011,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,3.94,?,?,?,?,234,11.5,2
+325,4795,0,?,12419,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.8,?,3.24,?,?,?,?,?,18.0,2
+326,1236,0,?,18993,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.5,?,3.42,?,?,?,?,246,10.3,3
+327,4214,0,?,17897,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.2,?,3.99,?,?,?,?,?,11.2,2
+328,2111,2,?,19724,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.0,?,3.60,?,?,?,?,?,12.1,2
+329,1462,2,?,23011,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,3.40,?,?,?,?,371,10.1,4
+330,1746,2,?,19724,male,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,3.5,?,3.63,?,?,?,?,325,10.3,2
+331,94,2,?,16802,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,3.1,?,3.56,?,?,?,?,142,13.6,4
+332,785,2,?,19358,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,12.6,?,2.87,?,?,?,?,114,11.8,4
+333,1518,2,?,20454,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,2.8,?,3.92,?,?,?,?,?,10.6,4
+334,466,2,?,20454,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,7.1,?,3.51,?,?,?,?,721,11.8,?
+335,3527,0,?,20089,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,4.15,?,?,?,?,280,10.1,2
+336,2635,0,?,23741,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,2.1,?,3.34,?,?,?,?,155,10.1,4
+337,2286,2,?,20454,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.8,?,3.64,?,?,?,?,141,10.0,?
+338,791,2,?,17167,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,16.0,?,3.42,?,?,?,?,475,13.8,2
+339,3492,0,?,21915,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,4.38,?,?,?,?,269,10.6,2
+340,3495,0,?,19358,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,5.4,?,4.19,?,?,?,?,141,11.2,2
+341,111,2,?,19724,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,9.0,?,3.29,?,?,?,?,286,13.1,4
+342,3231,0,?,18263,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.9,?,4.01,?,?,?,?,244,10.5,3
+343,625,2,?,17532,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,11.1,?,2.84,?,?,?,?,?,12.2,2
+344,3157,0,?,13149,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,8.9,?,3.76,?,?,?,?,209,10.6,3
+345,3021,1,?,17532,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.5,?,3.76,?,?,?,?,388,10.1,2
+346,559,2,?,25568,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.6,?,3.81,?,?,?,?,160,11.0,4
+347,2812,2,?,18628,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,3.4,?,3.92,?,?,?,?,?,9.3,2
+348,2834,0,?,18993,male,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.9,?,3.14,?,?,?,?,191,12.3,2
+349,2855,0,?,19724,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.4,?,3.82,?,?,?,?,249,10.3,2
+350,662,2,?,17532,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,2.1,?,4.10,?,?,?,?,200,9.0,3
+351,727,2,?,24107,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,15.0,?,3.40,?,?,?,?,150,11.1,4
+352,2716,0,?,19358,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,4.19,?,?,?,?,330,9.9,1
+353,2698,0,?,22646,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.3,?,3.40,?,?,?,?,167,10.6,4
+354,990,2,?,21550,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.3,?,3.12,?,?,?,?,125,9.6,2
+355,2338,0,?,14245,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.6,?,3.75,?,?,?,?,145,10.4,3
+356,1616,2,?,24472,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,2.2,?,3.26,?,?,?,?,171,11.1,4
+357,2563,0,?,21185,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,3.0,?,3.46,?,?,?,?,109,10.4,4
+358,2537,0,?,23376,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.8,?,3.49,?,?,?,?,314,10.3,3
+359,2534,0,?,16802,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.8,?,2.89,?,?,?,?,419,?,1
+360,778,2,?,23376,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.8,?,3.15,?,?,?,?,183,10.4,4
+361,617,1,?,14975,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,5.5,?,2.31,?,?,?,?,517,10.4,4
+362,2267,1,?,17897,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,18.0,?,3.04,?,?,?,?,432,9.7,2
+363,2249,0,?,16071,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,3.50,?,?,?,?,150,9.9,3
+364,359,2,?,21550,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,2.7,?,3.35,?,?,?,?,142,11.5,4
+365,1925,0,?,23011,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.9,?,3.58,?,?,?,?,224,10.0,3
+366,249,2,?,22280,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.3,?,3.01,?,?,?,?,223,10.7,3
+367,2202,0,?,23376,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.1,?,3.49,?,?,?,?,166,9.8,3
+368,43,2,?,17897,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,13.8,?,2.77,?,?,?,?,388,?,4
+369,1197,2,?,15341,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,4.4,?,4.52,?,?,?,?,102,10.8,4
+370,1095,2,?,18263,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,16.0,?,3.36,?,?,?,?,384,10.0,3
+371,489,2,?,18628,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,7.3,?,3.52,?,?,?,?,265,11.1,1
+372,2149,0,?,13514,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,3.55,?,?,?,?,248,10.3,2
+373,2103,0,?,22646,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,3.29,?,?,?,?,190,9.8,2
+374,1980,0,?,18628,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,3.10,?,?,?,?,274,10.6,3
+375,1347,1,?,18993,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.7,?,3.24,?,?,?,?,231,10.5,3
+376,1478,2,?,16071,male,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,9.5,?,3.63,?,?,?,?,292,10.2,3
+377,1987,0,?,12053,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,2.2,?,3.76,?,?,?,?,253,9.9,3
+378,1168,2,?,21915,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.8,?,3.62,?,?,?,?,225,9.9,2
+379,597,2,?,23011,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,3.3,?,2.73,?,?,?,?,224,11.1,4
+380,1725,1,?,12053,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,2.9,?,4.08,?,?,?,?,418,10.5,3
+381,1899,0,?,14975,male,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.7,?,3.66,?,?,?,?,92,11.0,4
+382,221,2,?,18628,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,14.0,?,2.58,?,?,?,?,190,11.6,4
+383,1022,1,?,13514,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.8,?,3.00,?,?,?,?,76,10.8,4
+384,1639,0,?,21550,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.3,?,3.40,?,?,?,?,243,9.7,1
+385,1635,0,?,20089,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,2.93,?,?,?,?,209,10.6,3
+386,1654,0,?,19724,male,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.7,?,2.38,?,?,?,?,166,9.8,3
+387,1653,0,?,17897,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,13.6,?,3.00,?,?,?,?,233,9.9,3
+388,1560,0,?,14610,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.9,?,3.50,?,?,?,?,117,10.9,4
+389,1581,0,?,24472,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,3.06,?,?,?,?,165,10.0,4
+390,1419,0,?,24837,male,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,3.0,?,3.15,?,?,?,?,139,10.0,3
+391,1443,0,?,14975,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.2,?,2.80,?,?,?,?,120,11.0,2
+392,1368,0,?,25202,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.4,?,3.03,?,?,?,?,173,10.9,3
+393,193,2,?,18993,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,0.7,?,2.96,?,?,?,?,319,9.9,4
+394,1367,0,?,20819,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,2.0,?,3.07,?,?,?,?,80,12.1,4
+395,1329,0,?,13149,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.4,?,3.98,?,?,?,?,402,11.0,1
+396,1343,0,?,18263,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.6,?,3.48,?,?,?,?,277,10.2,2
+397,1328,0,?,23376,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.5,?,3.65,?,?,?,?,425,10.2,4
+398,1375,0,?,22646,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,7.3,?,3.49,?,?,?,?,189,10.9,4
+399,1260,0,?,15341,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,8.1,?,2.82,?,?,?,?,193,10.4,2
+400,1223,0,?,16071,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.5,?,3.34,?,?,?,?,258,10.6,2
+401,935,2,?,25202,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,4.2,?,3.19,?,?,?,?,120,11.1,4
+402,943,0,?,18993,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.8,?,3.01,?,?,?,?,256,10.6,3
+403,1141,0,?,24107,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,2.5,?,3.33,?,?,?,?,256,10.8,4
+404,1092,0,?,14610,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,4.6,?,3.60,?,?,?,?,337,10.4,3
+405,1150,0,?,18993,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.0,?,3.64,?,?,?,?,340,10.6,3
+406,703,2,?,16802,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,4.5,?,2.68,?,?,?,?,219,11.5,4
+407,1129,0,?,19724,male,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.1,?,3.69,?,?,?,?,220,10.8,3
+408,1086,0,?,18628,female,?,?,?,edema_present_without_diuretics_or_edema_resolved_by_diuretics,1.9,?,3.17,?,?,?,?,162,10.7,3
+409,1067,0,?,15706,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,3.73,?,?,?,?,214,10.8,3
+410,1072,0,?,14245,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.5,?,3.81,?,?,?,?,255,10.8,3
+411,1119,0,?,18628,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.6,?,3.57,?,?,?,?,286,10.6,3
+412,1097,0,?,24472,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.0,?,3.58,?,?,?,?,244,10.8,3
+413,989,0,?,12784,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,3.23,?,?,?,?,312,10.8,3
+414,681,2,?,24472,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.2,?,2.96,?,?,?,?,174,10.9,3
+415,1103,0,?,14245,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.9,?,3.83,?,?,?,?,180,11.2,4
+416,1055,0,?,20819,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,1.6,?,3.42,?,?,?,?,143,9.9,3
+417,691,0,?,21185,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.8,?,3.75,?,?,?,?,269,10.4,3
+418,976,0,?,19358,female,?,?,?,no_edema_and_no_diuretic_therapy_for_edema,0.7,?,3.29,?,?,?,?,350,10.6,4

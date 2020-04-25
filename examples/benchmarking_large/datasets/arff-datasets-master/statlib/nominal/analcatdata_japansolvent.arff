@@ -1,0 +1,91 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: 2
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-japansolvent
+
+@attribute Firm {Aiden,Ando_Iron_Works,Asahi_Seiko,Chuo_Seikakusho,Chuyu,Dai-Nippon_Sugar_Mfg,Doko_Spinning,Fuji_Seito,Fujiya_Electric,Gisen,Hamaguchi_Senco,Hikari_Bussiness_For,Hitachi_Ferrite,Ishii_Precision_Tool,Japan_Drop_Forge,Kohjin,Kojima_Iron_Works,Maeda_Metal_Ind.,Mamiya_Camera,Marine_Techno,Meiji_Sugar_Mfg.,Metalart,Mie_Horo,Mino_Ceramic,Miroku_Firearms_Mfg.,Monde_Distilleries,Morio_Denki,Nagahama_Gohan,Nagoya_Lumber,Nagoya_Seito,Nankai_Worsted_Spin,Nihon_Aeroplane_Mfg.,Nihon_Sugar_Refining,Nippon_Orimono_Kato,Nippon_Tile_Industri,Osaka_Meter,Osaka_Yogyo,SR_Suntour,Saga_Paper_Board,Sakonic,Sakurai_Iron_Works,Sankyo_Special_Steel,Sansei_Mfg.,Shoun_Machine_Tool,Takeni_Senka,Toa_Electronics,Tokuyama,Toyo_Sugar,Tsunoda,Uemori_Agricultural,Yamato_Woolen_Textil,Yoshida_Machine_Tool}
+@attribute Solvent {0,1}
+@attribute EBIT/TA REAL
+@attribute NI/TC REAL
+@attribute Sales/TA REAL
+@attribute EBIT/Sales REAL
+@attribute NI/Sales REAL
+@attribute WC/TA REAL
+@attribute Equity/TL REAL
+@attribute Equity/TA REAL
+
+@data
+Fuji_Seito,1,-0.337,0.779,2.948,-0.114,-0.135,-1.042,-0.4,-0.667
+Nihon_Sugar_Refining,1,-0.01,-0.008,1.853,-0.005,-0.003,0.29,1.881,0.653
+Toyo_Sugar,1,-0.002,-0.302,2.176,-0.001,-0.01,-0.543,0.007,0.006
+Chuyu,1,0.047,0.007,1.176,0.04,0.001,-0.05,0.125,0.111
+Doko_Spinning,1,0.083,0.061,0.803,0.104,0.034,0.017,0.375,0.273
+Nippon_Orimono_Kato,1,-0.079,-0.192,1.263,-0.062,-0.072,-0.007,0.07,0.065
+Tokuyama,1,0.118,0.069,0.709,0.167,0.057,0.064,0.367,0.269
+Mie_Horo,1,0.004,-0.041,1.273,0.003,-0.012,0.106,0.316,0.24
+Mino_Ceramic,1,0.046,0.049,1.121,0.041,0.023,0.21,0.597,0.374
+Japan_Drop_Forge,1,0.062,0.045,1.371,0.046,0.013,0.049,0.162,0.139
+Metalart,1,0.038,0.002,0.832,0.045,0.001,0.034,0.11,0.099
+Kojima_Iron_Works,1,0.091,0.078,1.106,0.082,0.034,0.212,0.819,0.45
+Shoun_Machine_Tool,1,0.044,0.076,1.021,0.043,0.023,0.133,0.273,0.215
+Maeda_Metal_Ind.,1,0.106,0.05,1.105,0.096,0.023,0.309,0.599,0.374
+Ishii_Precision_Tool,1,0.191,0.159,0.948,0.202,0.099,0.099,0.631,0.387
+Toa_Electronics,1,0.038,-0.027,0.896,0.042,-0.013,0.197,0.355,0.262
+Chuo_Seikakusho,1,0.096,0.089,1.505,0.064,0.027,0.35,0.708,0.414
+Morio_Denki,1,0.108,0.075,1.143,0.094,0.041,0.401,1.387,0.581
+Miroku_Firearms_Mfg.,1,0.079,0.028,0.706,0.112,0.019,0.168,0.212,0.175
+Tsunoda,1,0.065,0.07,0.903,0.072,0.02,-0.026,0.216,0.178
+Sakonic,1,0.096,0.095,2.216,0.043,0.014,0.135,0.379,0.275
+Marine_Techno,1,0.083,0.071,0.861,0.097,0.047,0.239,0.738,0.425
+Hikari_Bussiness_For,1,0.067,0.079,1.449,0.046,0.015,-0.08,0.186,0.157
+Nankai_Worsted_Spin,1,0.052,0.116,1.922,0.027,0.019,0.112,0.393,0.282
+SR_Suntour,1,0.085,0.087,1.317,0.064,0.035,0.197,0.516,0.34
+Nagoya_Lumber,1,0.019,0.039,2.177,0.009,0.003,0.064,0.201,0.617
+Gisen,1,0.034,0.03,1.676,0.02,0.012,0.089,0.668,0.4
+Dai-Nippon_Sugar_Mfg,0,-0.0701,0.1246,3.7913,-0.0185,-0.0185,-1.0029,-0.4496,0.076
+Meiji_Sugar_Mfg.,0,-0.71,0.9775,3.8498,-0.1844,-0.1844,-1.1348,-0.4641,-0.413
+Nagoya_Seito,0,-0.1307,-0.3354,2.4262,-0.0539,-0.0539,-0.2872,-0.1046,0.079
+Monde_Distilleries,0,0.0101,0.0605,0.906,0.0112,0.0112,-0.2936,0.1852,-0.333
+Yamato_Woolen_Textil,0,0.0265,0.1076,0.8962,0.0296,0.0296,-0.1839,0.2039,0.169
+Takeni_Senka,0,-0.2674,-1.5182,1.64,-0.1631,-0.1631,-0.2326,-0.2925,-0.653
+Kohjin,0,-0.0093,-0.0212,0.1733,-0.0539,-0.0539,0.2304,0.0856,0.099
+Nippon_Tile_Industri,0,-0.4904,0.3285,1.848,-0.2654,-0.2654,-1.8847,-0.6366,-3.959
+Osaka_Yogyo,0,-0.4434,-4.2589,1.1062,-0.4008,-0.401,-0.4772,-0.3152,0.449
+Sakurai_Iron_Works,0,-0.132,-0.7261,0.9783,-0.1349,-0.1349,-0.1427,-0.3096,0.054
+Sankyo_Special_Steel,0,-0.0089,-0.0191,1.0225,-0.0087,-0.0087,-0.1129,-0.4086,0.137
+Ando_Iron_Works,0,0.0154,0.0338,0.5392,0.0285,0.0128,0.0246,0.1157,-0.066
+Sansei_Mfg.,0,-0.1083,-1.6352,0.6321,-0.1714,-0.1714,-0.1092,-0.0477,-0.204
+Yoshida_Machine_Tool,0,-0.0058,-0.0202,0.5367,-0.0107,-0.0107,0.0785,0.2205,-1.752
+Asahi_Seiko,0,-0.2294,-0.4678,4.2599,-0.0539,-0.0539,0.2138,0.2282,-0.817
+Fujiya_Electric,0,0.0869,0.651,1.5505,0.056,0.056,-0.076,-0.2098,-0.007
+Aiden,0,-0.0019,-0.0116,1.3659,-0.0014,-0.0016,-0.0257,0.11,-0.117
+Hitachi_Ferrite,0,-0.1643,-3.4785,0.386,-0.1186,-0.1167,-0.2896,-0.1694,0.181
+Osaka_Meter,0,-0.0319,-0.2092,0.5145,-0.0621,-0.0621,0.0797,0.1585,-0.023
+Mamiya_Camera,0,-0.0434,-0.1759,0.849,-0.0511,-0.0511,0.0785,0.0572,0.186
+Uemori_Agricultural,0,-0.836,0.734,1.0642,-0.7856,-0.7856,-1.451,-0.7984,-0.866
+Saga_Paper_Board,0,0.1973,0.4086,1.4161,0.1393,0.0857,-0.0669,0.0821,0.156
+Nihon_Aeroplane_Mfg.,0,0.0279,0.252,0.2559,0.1092,0.1092,0.0562,0.1247,-2.056
+Nagahama_Gohan,0,-0.091,-0.7737,2.2764,-0.04,-0.0396,-0.2168,-0.0224,0.111
+Hamaguchi_Senco,0,-0.1161,0.2015,2.515,-0.0462,-0.0462,-1.0256,-0.6728,-0.266

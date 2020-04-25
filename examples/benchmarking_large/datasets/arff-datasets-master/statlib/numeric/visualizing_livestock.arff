@@ -1,0 +1,158 @@
+% This S dump contains 22 data sets from the
+% book Visualizing Data published by
+% Hobart Press (books@hobart.com).
+% The dump was created by data.dump()
+% and can be read back into S by data.restore().
+% The name of each S data set is the name of
+% the data set used in the book. To find the
+% description of the data set in the book look
+% under the entry - data, name - in the index.
+% For example, one data set is barley.
+% To find the description of barley, look
+% in the index under the entry - data, barley.
+%
+% File: ../data/visualizing/livestock.csv
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation visualizing-livestock
+
+@attribute livestocktype {Cattle,Horses,Pigs,Poultry,Sheep}
+@attribute country {Albania,Austria,Belgium,Bulgaria,Czechoslovakia,Denmark,East_Germany,Finland,France,Greece,Hungary,Ireland,Italy,Netherlands,Norway,Poland,Portugal,Romania,Russia_et_al.,Spain,Sweden,Switzerland,Turkey,United_Kingdom,West_Germany,Yugoslavia}
+@attribute count REAL
+
+@data
+Cattle,Albania,478000
+Cattle,Austria,2536000
+Cattle,Belgium,3246000
+Cattle,Bulgaria,1796000
+Cattle,Czechoslovakia,5131000
+Cattle,Denmark,2873000
+Cattle,West_Germany,15098000
+Cattle,Finland,1719000
+Cattle,France,23599000
+Cattle,East_Germany,5690000
+Cattle,Greece,831000
+Cattle,Hungary,1922000
+Cattle,Ireland,6908000
+Cattle,Italy,8734000
+Cattle,Netherlands,5241000
+Cattle,Norway,971000
+Cattle,Poland,11912000
+Cattle,Portugal,1173000
+Cattle,Romania,6303000
+Cattle,Spain,4495000
+Cattle,Sweden,1902000
+Cattle,Switzerland,1954000
+Cattle,Turkey,16983000
+Cattle,United_Kingdom,13155000
+Cattle,Russia_et_al.,42200000
+Cattle,Yugoslavia,5474000
+Pigs,Albania,125000
+Pigs,Austria,3920000
+Pigs,Belgium,5108000
+Pigs,Bulgaria,3808000
+Pigs,Czechoslovakia,7126000
+Pigs,Denmark,9317000
+Pigs,West_Germany,22478000
+Pigs,Finland,1475000
+Pigs,France,11711000
+Pigs,East_Germany,12107000
+Pigs,Greece,1107000
+Pigs,Hungary,9035000
+Pigs,Ireland,1031000
+Pigs,Italy,8928000
+Pigs,Netherlands,10254000
+Pigs,Norway,687000
+Pigs,Poland,19471000
+Pigs,Portugal,2448000
+Pigs,Romania,12464000
+Pigs,Spain,11263000
+Pigs,Sweden,2677000
+Pigs,Switzerland,2071000
+Pigs,Turkey,11000
+Pigs,United_Kingdom,7975000
+Pigs,Russia_et_al.,33100000
+Pigs,Yugoslavia,7867000
+Poultry,Albania,484000
+Poultry,Austria,11371000
+Poultry,Belgium,29448000
+Poultry,Bulgaria,41096000
+Poultry,Czechoslovakia,49212000
+Poultry,Denmark,16296000
+Poultry,West_Germany,83033000
+Poultry,Finland,7763000
+Poultry,France,234131000
+Poultry,East_Germany,51356000
+Poultry,Greece,29846000
+Poultry,Hungary,45397000
+Poultry,Ireland,9903000
+Poultry,Italy,137999000
+Poultry,Netherlands,88174000
+Poultry,Norway,5571000
+Poultry,Poland,67244000
+Poultry,Portugal,4143000
+Poultry,Romania,109244000
+Poultry,Spain,42824000
+Poultry,Sweden,11393000
+Poultry,Switzerland,6188000
+Poultry,Turkey,59660000
+Poultry,United_Kingdom,130018000
+Poultry,Russia_et_al.,3.85e+08
+Poultry,Yugoslavia,65690000
+Horses,Albania,43000
+Horses,Austria,35000
+Horses,Belgium,31000
+Horses,Bulgaria,120000
+Horses,Czechoslovakia,44000
+Horses,Denmark,41000
+Horses,West_Germany,369000
+Horses,Finland,20000
+Horses,France,278000
+Horses,East_Germany,81000
+Horses,Greece,420000
+Horses,Hungary,120000
+Horses,Ireland,68000
+Horses,Italy,273000
+Horses,Netherlands,59000
+Horses,Norway,25000
+Horses,Poland,1734000
+Horses,Portugal,23000
+Horses,Romania,566000
+Horses,Spain,242000
+Horses,Sweden,57000
+Horses,Switzerland,45000
+Horses,Turkey,784000
+Horses,United_Kingdom,140000
+Horses,Russia_et_al.,1556000
+Horses,Yugoslavia,573000
+Sheep,Albania,914000
+Sheep,Austria,326000
+Sheep,Belgium,123000
+Sheep,Bulgaria,11271000
+Sheep,Czechoslovakia,990000
+Sheep,Denmark,58000
+Sheep,West_Germany,1172000
+Sheep,Finland,104000
+Sheep,France,14346000
+Sheep,East_Germany,2220000
+Sheep,Greece,12669000
+Sheep,Hungary,3183000
+Sheep,Ireland,3323000
+Sheep,Italy,10497000
+Sheep,Netherlands,1210000
+Sheep,Norway,1999000
+Sheep,Poland,3899000
+Sheep,Portugal,2811000
+Sheep,Romania,17748000
+Sheep,Spain,16543000
+Sheep,Sweden,437000
+Sheep,Switzerland,336000
+Sheep,Turkey,70093000
+Sheep,United_Kingdom,32888000
+Sheep,Russia_et_al.,2.1e+07
+Sheep,Yugoslavia,7384000

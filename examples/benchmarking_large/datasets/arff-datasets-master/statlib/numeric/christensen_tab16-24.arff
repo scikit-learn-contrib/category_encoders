@@ -1,0 +1,66 @@
+% 
+% This contains viturally all of the data files
+% in "Analysis of Variance, Design, and Regression:
+% Applied Statistical Methods" by Ronald Christensen
+% (1996, Chapman and Hall).  The individual files 
+% correspond with tables in the book in a self 
+% explanitory manner (presuming you have the book to 
+% look at).  There are three files that correspond 
+% to data in exercises or examples.
+% 
+% The author retains no rights to these data.
+% 
+% Comments should be directed to:
+% Ronald Christensen
+% Dept. of Math and Statistics
+% University of New Mexico
+% Albq., NM 87131
+% e-mail: fletcher@math.unm.edu
+% 
+% More information about the book and alternative
+% access to the data can be obtained from  
+% the web at:  www.math.unm.edu/~fletcher
+% 
+%
+% File: ../data/christensen/tab16-24.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation christensen-tab16-24
+
+@attribute col_1 INTEGER
+@attribute col_2 {SH,SL,TH,TL}
+@attribute col_3 REAL
+@attribute col_4 {SH,SL,TH,TL}
+@attribute col_5 REAL
+@attribute col_6 {SH,SL,TH,TL}
+@attribute col_7 REAL
+
+@data
+1,TL,14.7,TH,15.4,SH,14.8
+2,TL,15.1,TH,15.0,SH,15.8
+3,TH,14.4,SH,13.8,TL,14.4
+4,TH,16.2,TL,14.0,SH,13.0
+5,TH,15.8,SH,16.0,TL,15.0
+6,TH,15.8,TL,14.3,SL,14.8
+7,TH,17.0,TL,16.5,SL,15.0
+8,TL,13.6,SL,15.3,TH,17.2
+9,TL,14.0,TH,13.8,SL,14.0
+10,TL,13.0,SL,13.4,TH,13.8
+11,SL,13.8,SH,17.0,TH,16.0
+12,SL,12.0,SH,13.8,TH,14.0
+13,SH,14.6,TH,15.4,SL,14.0
+14,SH,13.0,SL,14.0,TH,14.0
+15,SH,15.2,TH,16.2,SL,15.0
+16,SH,15.0,SL,14.5,TL,14.0
+17,SH,15.0,SL,14.0,TL,14.6
+18,SL,15.8,TL,15.0,SH,15.2
+19,SL,13.2,SH,16.0,TL,14.9
+20,SL,14.2,TL,14.1,SH,15.0

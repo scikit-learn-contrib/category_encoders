@@ -1,0 +1,43 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/case1602.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-case1602
+
+@attribute baseline INTEGER
+@attribute hifiber INTEGER
+@attribute lofiber INTEGER
+@attribute order {HL,LH}
+
+@data
+205,187,193,HL
+161,145,138,HL
+166,168,169,HL
+195,167,176,HL
+206,174,203,HL
+135,102,130,HL
+172,175,156,HL
+172,157,161,HL
+234,202,198,HL
+175,155,169,HL
+200,185,193,LH
+151,160,127,LH
+188,168,163,LH
+204,182,163,LH
+128,132,149,LH
+202,218,197,LH
+165,163,171,LH
+190,180,182,LH
+225,220,216,LH
+246,203,206,LH

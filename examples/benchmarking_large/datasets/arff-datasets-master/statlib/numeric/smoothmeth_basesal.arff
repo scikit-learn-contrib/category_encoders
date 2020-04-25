@@ -1,0 +1,191 @@
+%                      File README
+%                      -----------
+% 
+% smoothmeth  A collection of the data sets used in the book "Smoothing
+%             Methods in Statistics," by Jeffrey S. Simonoff,
+%             Springer-Verlag, New York, 1996. Submitted by Jeff
+%             Simonoff (jsimonoff@stern.nyu.edu).
+% 
+% 
+% This submission consists of 37 files, plus this README file.
+% Each file represents a data set analyzed in the book.
+% The names of the files correspond to the names given in
+% the book. The data files are written in plain ASCII (character)
+% text. Missing values are represented by "M" in all data files.
+% 
+% Several of the files include an alphabetic (labeling) variable. It is
+% likely that these files would have to be input into a package using fixed,
+% rather than free, format. The relevant files, along with appropriate
+% Fortran format statements, are as follows:
+% 
+%    adptvisa.dat: (f10.4,4x,f7.4,3x,a20)
+% 
+%    airaccid.dat: (i3,3x,a34)
+% 
+%    basesal.dat : (f8.1,4x,a17)
+% 
+%    baskball.dat: (f7.4,4x,f6.4,3x,i3,4x,f5.2,3x,i2,3x,a17)
+% 
+%    cars93.dat  : (f5.1,2x,i2,2x,i2,3x,f3.1,2x,i3,3x,f4.1,2x,i4,2x,a21)
+% 
+%    elusage.dat : (i4,3x,f7.3,2x,a7)
+% 
+%    hckshoot.dat: (f7.3,4x,i1,4x,a20)
+% 
+%    jantemp.dat : (i6,3x,a30)
+% 
+%    marathon.dat: (f10.2,4x,a27)
+% 
+%    newscirc.dat: (f8.2,3x,f7.2,2x,a25)
+% 
+%    racial.dat  : (f7.4,4x,a32)
+% 
+%    safewatr.dat: (i5,3x,i3,3x,a26)
+% 
+%    schlvote.dat: (i3,4x,f5.2,2x,i8,4x,f4.1,5x,f5.2,2x,i7,2x,a25)
+% 
+% Description of data sources, and further information about the data sets,
+% can be found in the "Descriptions of the data sets" section of the book.
+% Pointing a World Wide Web browser to the URL
+% 
+%             http://www.stern.nyu.edu/SOR/SmoothMeth
+% 
+% will provide access to a site devoted to the book.
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the reference above).
+% 
+%
+% File: ../data/smoothmeth/basesal.dat
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation smoothmeth-basesal
+
+@attribute col_1 REAL
+@attribute col_2 {Al_Leiter,Andy_Benes,Bill_Sampen,Bip_Roberts,Bob_Tewksbury,Brady_Anderson,Carlos_Martinez,Carlos_Quintana,Charlie_Hayes,Chico_Walker,Chris_Gwynn,Craig_Biggio,Craig_Grebeck,Craig_Wilson,Cris_Carpenter,Curt_Schilling,Damon_Berryhill,Dante_Bichette,Darrin_Jackson,David_Justice,David_Wells,Delino_DeShields,Derek_Lilliquist,Duane_Ward,Erik_Hanson,Felix_Jose,Gary_Sheffield,Gary_Thurman,Greg_Briley,Greg_Hibbard,Greg_Olson,Gregg_Jeffries,Hal_Morris,Henry_Cotto,Jack_McDowell,Jamie_Navarro,Jay_Buhner,Jeff_Blauser,Jeff_Brantley,Jeff_Huson,Jeff_Innis,Jeff_King,Jeff_Montgomery,Jerry_Browne,Jim_Abbott,Jim_Gott,Jody_Reed,Joe_Girardi,Joe_Magrane,Joe_Oliver,John_Burkett,John_Dopson,John_Habyan,John_Olerud,John_Smoltz,Jose_Lind,Junior_Felix,Keith_Miller,Ken_Caminiti,Ken_Hill,Kenny_Rogers,Kent_Mercker,Kevin_Appier,Kevin_Brown,Kevin_Reimer,Kevin_Tapani,Kirt_Manwaring,L._Blankenship,Lance_Johnson,Larry_Walker,Luis_Aquino,Luis_Polonia,Luis_Rivera,Mark_Gardner,Mark_Grace,Mark_Guthrie,Mark_Leiter,Mark_Lemke,Mark_Portugal,Marquis_Grissom,Marvin_Freeman,Matt_Williams,Melido_Perez,Mike_Deveraux,Mike_Hartley,Mike_Henneman,Mike_MacFarlane,Mike_Maddux,Mike_Schooler,Mike_Sharperson,Mike_Stanton,Norm_Charlton,Omar_Vizquel,Pat_Borders,Pete_Harnisch,Pete_Smith,Rafael_Palmeiro,Ramon_Martinez,Randy_Johnson,Randy_Velarde,Ricky_Jordan,Ron_Karkovice,Russ_Swan,Sammy_Sosa,Scott_Radinsky,Shane_Mack,Shawn_Abner,Skeeter_Barnes,Steve_Finley,Steve_Frey,Terry_Mulholland,Todd_Frohwirth,Todd_Stottlemyre,Tom_Belcher,Tom_Gordon,Trevor_Wilson,Walt_Weiss,Xavier_Hernandez}
+
+@data
+1855.0,Brady_Anderson
+3025.0,Mike_Deveraux
+900.0,Todd_Frohwirth
+750.0,John_Dopson
+340.0,Carlos_Quintana
+1075.0,Luis_Rivera
+525.0,Steve_Frey
+2475.0,Luis_Polonia
+425.0,Shawn_Abner
+632.5,Craig_Grebeck
+2533.0,Lance_Johnson
+1375.0,Ron_Karkovice
+4000.0,Jack_McDowell
+900.0,Scott_Radinsky
+725.0,Derek_Lilliquist
+550.0,Carlos_Martinez
+250.0,Skeeter_Barnes
+3437.5,Mike_Henneman
+500.0,Mark_Leiter
+2000.0,Kevin_Appier
+685.0,Luis_Aquino
+1000.0,Mark_Gardner
+890.0,Tom_Gordon
+460.0,Chris_Gwynn
+1525.0,Felix_Jose
+2400.0,Jose_Lind
+1175.0,Mike_MacFarlane
+1090.0,Keith_Miller
+3667.0,Jeff_Montgomery
+450.0,Bill_Sampen
+425.0,Gary_Thurman
+2100.0,Jamie_Navarro
+725.0,Kevin_Reimer
+800.0,Mark_Guthrie
+625.0,Mike_Hartley
+3050.0,Shane_Mack
+2000.0,Kevin_Tapani
+2350.0,Jim_Abbott
+600.0,John_Habyan
+3500.0,Melido_Perez
+1050.0,Randy_Velarde
+627.5,L._Blankenship
+625.0,Jerry_Browne
+700.0,Greg_Briley
+2772.5,Jay_Buhner
+2335.0,Norm_Charlton
+900.0,Henry_Cotto
+1250.0,Erik_Hanson
+2625.0,Randy_Johnson
+800.0,Mike_Schooler
+435.0,Russ_Swan
+1112.5,Omar_Vizquel
+2800.0,Kevin_Brown
+312.0,Jeff_Huson
+4550.0,Rafael_Palmeiro
+1000.0,Kenny_Rogers
+2500.0,Pat_Borders
+180.0,Al_Leiter
+1487.5,John_Olerud
+2325.0,Todd_Stottlemyre
+4000.0,Duane_Ward
+2050.0,David_Wells
+975.0,Damon_Berryhill
+2000.0,Jeff_Blauser
+725.0,Marvin_Freeman
+1775.0,David_Justice
+550.0,Mark_Lemke
+712.5,Kent_Mercker
+925.0,Greg_Olson
+1025.0,Pete_Smith
+4000.0,John_Smoltz
+850.0,Mike_Stanton
+3100.0,Mark_Grace
+1375.0,Greg_Hibbard
+695.0,Sammy_Sosa
+3750.0,Tom_Belcher
+1275.0,Hal_Morris
+1200.0,Joe_Oliver
+3900.0,Bip_Roberts
+725.0,Dante_Bichette
+670.0,Joe_Girardi
+1200.0,Charlie_Hayes
+725.0,Cris_Carpenter
+1250.0,Junior_Felix
+825.0,Walt_Weiss
+3667.0,Craig_Biggio
+3633.0,Ken_Caminiti
+3467.0,Steve_Finley
+1725.0,Pete_Harnisch
+900.0,Xavier_Hernandez
+1875.0,Mark_Portugal
+1800.0,Jim_Gott
+1775.0,Ramon_Martinez
+2500.0,Jody_Reed
+970.0,Mike_Sharperson
+1537.5,Delino_DeShields
+1500.0,Marquis_Grissom
+2000.0,Ken_Hill
+3000.0,Larry_Walker
+850.0,Jeff_Innis
+1687.5,Mike_Maddux
+635.0,Chico_Walker
+1000.0,Ricky_Jordan
+2600.0,Terry_Mulholland
+1000.0,Curt_Schilling
+675.0,Jeff_King
+2650.0,Gregg_Jeffries
+738.0,Joe_Magrane
+2625.0,Bob_Tewksbury
+240.0,Craig_Wilson
+2050.0,Andy_Benes
+2100.0,Darrin_Jackson
+3110.0,Gary_Sheffield
+1500.0,Jeff_Brantley
+1550.0,John_Burkett
+735.0,Kirt_Manwaring
+2250.0,Matt_Williams
+900.0,Trevor_Wilson

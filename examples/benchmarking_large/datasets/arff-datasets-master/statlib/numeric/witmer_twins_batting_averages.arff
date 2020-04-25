@@ -1,0 +1,37 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Twins_batting_averages
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Twins_batting_averages
+
+@attribute PLAYER {Backman,Brian_Harper,Bush,Castillo,Dwyer,Gaetti,Gagne,Gladden,Hrbek,Larkin,Laudner,Moses,Newman,Puckett}
+@attribute LATE_BA REAL
+@attribute EARLY_BA REAL
+
+@data
+Puckett,0.34129693,0.33625731
+Dwyer,0.29166667,0.32679739
+Brian_Harper,0.33333333,0.31250000
+Gladden,0.29797980,0.29277567
+Castillo,0.19753086,0.29197080
+Moses,0.27777778,0.28289474
+Hrbek,0.26724138,0.27972028
+Gaetti,0.21604938,0.26785714
+Bush,0.26701571,0.26000000
+Gagne,0.29500000,0.25384615
+Backman,0.17777778,0.25358852
+Newman,0.25523013,0.25120773
+Larkin,0.30288462,0.23529412
+Laudner,0.25882353,0.20129870

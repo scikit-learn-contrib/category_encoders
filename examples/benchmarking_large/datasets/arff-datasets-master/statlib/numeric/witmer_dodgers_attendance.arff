@@ -1,0 +1,65 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Dodgers_attendance
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Dodgers_attendance
+
+@attribute ATTENDANCE INTEGER
+@attribute WEEKEND {0,1}
+
+@data
+47136,0
+44312,1
+43836,1
+39520,1
+32489,0
+33619,0
+48295,0
+47251,1
+48437,1
+48493,1
+27630,0
+29310,0
+34861,0
+36689,0
+46767,1
+47389,1
+46329,1
+32199,0
+37089,0
+27781,0
+47034,1
+47083,1
+46060,1
+44953,0
+25336,0
+22858,0
+46912,1
+42207,1
+41032,1
+28161,0
+29073,0
+30430,0
+42782,0
+33372,1
+42940,1
+43050,1
+37385,0
+33708,0
+36128,0
+46411,1
+33692,1
+40789,1
+29673,0

@@ -1,0 +1,60 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Cereal
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Cereal
+
+@attribute CEREAL {100Perc_Bran,All_Bran_Xtra_Fiber,Batman,Bran_Buds,Bran_Flakes,Capt._Crunch,Cheerios,Common_Sense_Oat_Bran,Froot_Loops,Frosted_Flakes,Fruit_&_Fiber,Fruitn_Oat_Bran,Fruitn_Oat_Bran_Crunch,Heartwise,Hodgsons_Mill_Oat_Bran,Hodgsons_Mill_Wheat,Honey_Smacks,Just_Right,Kenmei_Rice_Bran,Mueslix_Crispy_Blend,Ninja_Turtles,Nutri_Grain,Oatbake_Raisin_Nut,Oatmeal_raisin_Crisp,Original_Oat_Bran,Product_19,Puffed_Rice,Raisin_Nut_Bran,Shredded_Wheat_Squares,Special_K,Total_Raisin_Bran,Trix,Uncle_Sam,Wheat_Chex,Wheaties,hole_Wheat_Total}
+@attribute CALORIES REAL
+@attribute SUGER REAL
+@attribute FIBER REAL
+
+@data
+Common_Sense_Oat_Bran,100,6,3
+Product_19,100,3,1
+All_Bran_Xtra_Fiber,50,0,14
+Just_Right,140,9,2
+Original_Oat_Bran,70,5,10
+Heartwise,90,5,6
+Special_K,110,3,0
+Oatbake_Raisin_Nut,110,8,2
+Kenmei_Rice_Bran,150,9,2
+Nutri_Grain,100,2,3
+Shredded_Wheat_Squares,90,5,3
+Oatmeal_raisin_Crisp,110,6,1
+hole_Wheat_Total,100,3,3
+Cheerios,110,1,2
+Total_Raisin_Bran,86.7,9.3,3.3
+Wheaties,100,3,3
+Raisin_Nut_Bran,110,8,3
+Wheat_Chex,100,3,2
+Batman,110,10,0
+Ninja_Turtles,110,13,0
+Capt._Crunch,120,12,0
+Trix,110,12,0
+Frosted_Flakes,110,11,0
+Honey_Smacks,110,15,1
+Froot_Loops,110,13,1
+Puffed_Rice,100,0,0
+Mueslix_Crispy_Blend,160,13,3
+Uncle_Sam,110,0,7
+100Perc_Bran,70,6,10
+Fruit_&_Fiber,96,6.4,4
+Bran_Flakes,90,5,5
+Bran_Buds,70,1,8
+Fruitn_Oat_Bran,110,0,4
+Fruitn_Oat_Bran_Crunch,60,0,13
+Hodgsons_Mill_Wheat,108,0,4
+Hodgsons_Mill_Oat_Bran,77,0,6

@@ -1,0 +1,172 @@
+%                      File README
+%                      -----------
+% 
+% smoothmeth  A collection of the data sets used in the book "Smoothing
+%             Methods in Statistics," by Jeffrey S. Simonoff,
+%             Springer-Verlag, New York, 1996. Submitted by Jeff
+%             Simonoff (jsimonoff@stern.nyu.edu).
+% 
+% 
+% This submission consists of 37 files, plus this README file.
+% Each file represents a data set analyzed in the book.
+% The names of the files correspond to the names given in
+% the book. The data files are written in plain ASCII (character)
+% text. Missing values are represented by "M" in all data files.
+% 
+% Several of the files include an alphabetic (labeling) variable. It is
+% likely that these files would have to be input into a package using fixed,
+% rather than free, format. The relevant files, along with appropriate
+% Fortran format statements, are as follows:
+% 
+%    adptvisa.dat: (f10.4,4x,f7.4,3x,a20)
+% 
+%    airaccid.dat: (i3,3x,a34)
+% 
+%    basesal.dat : (f8.1,4x,a17)
+% 
+%    baskball.dat: (f7.4,4x,f6.4,3x,i3,4x,f5.2,3x,i2,3x,a17)
+% 
+%    cars93.dat  : (f5.1,2x,i2,2x,i2,3x,f3.1,2x,i3,3x,f4.1,2x,i4,2x,a21)
+% 
+%    elusage.dat : (i4,3x,f7.3,2x,a7)
+% 
+%    hckshoot.dat: (f7.3,4x,i1,4x,a20)
+% 
+%    jantemp.dat : (i6,3x,a30)
+% 
+%    marathon.dat: (f10.2,4x,a27)
+% 
+%    newscirc.dat: (f8.2,3x,f7.2,2x,a25)
+% 
+%    racial.dat  : (f7.4,4x,a32)
+% 
+%    safewatr.dat: (i5,3x,i3,3x,a26)
+% 
+%    schlvote.dat: (i3,4x,f5.2,2x,i8,4x,f4.1,5x,f5.2,2x,i7,2x,a25)
+% 
+% Description of data sources, and further information about the data sets,
+% can be found in the "Descriptions of the data sets" section of the book.
+% Pointing a World Wide Web browser to the URL
+% 
+%             http://www.stern.nyu.edu/SOR/SmoothMeth
+% 
+% will provide access to a site devoted to the book.
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the reference above).
+% 
+%
+% File: ../data/smoothmeth/cars93.dat
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation smoothmeth-cars93
+
+@attribute col_1 REAL
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 REAL
+@attribute col_5 INTEGER
+@attribute col_6 REAL
+@attribute col_7 INTEGER
+@attribute col_8 {Acura_Integra,Acura_Legend,Audi_100,Audi_90,BMW_535i,Buick_Century,Buick_LeSabre,Buick_Riviera,Buick_Roadmaster,Cadillac_DeVille,Cadillac_Seville,Chevrolet_Astro,Chevrolet_Camaro,Chevrolet_Caprice,Chevrolet_Cavalier,Chevrolet_Corsica,Chevrolet_Corvette,Chevrolet_Lumina,Chevrolet_Lumina_APV,Chrylser_Concorde,Chrysler_Imperial,Chrysler_LeBaron,Dodge_Caravan,Dodge_Colt,Dodge_Dynasty,Dodge_Shadow,Dodge_Spirit,Dodge_Stealth,Eagle_Summit,Eagle_Vision,Ford_Aerostar,Ford_Crown_Victoria,Ford_Escort,Ford_Festiva,Ford_Mustang,Ford_Probe,Ford_Taurus,Ford_Tempo,Geo_Metro,Geo_Storm,Honda_Accord,Honda_Civic,Honda_Prelude,Hyundai_Elantra,Hyundai_Excel,Hyundai_Scoupe,Hyundai_Sonata,Infiniti_Q45,Lexus_ES300,Lexus_SC300,Lincoln_Continental,Lincoln_Town_Car,Mazda_323,Mazda_626,Mazda_MPV,Mazda_Protege,Mazda_RX-7,Mercedes-Benz_190E,Mercedes-Benz_300E,Mercury_Capri,Mercury_Cougar,Mitsubishi_Diamante,Mitsubishi_Mirage,Nissan_Altima,Nissan_Maxima,Nissan_Quest,Nissan_Sentra,Oldsmobile_88,Oldsmobile_Achieva,Oldsmobile_Cutlass,Oldsmobile_Silhouette,Plymouth_Laser,Pontiac_Bonneville,Pontiac_Firebird,Pontiac_Grand_Prix,Pontiac_LeMans,Pontiac_Sunbird,Saab_900,Saturn_SL,Subaru_Justy,Subaru_Legacy,Subaru_Loyale,Suzuki_Swift,Toyota_Camry,Toyota_Celica,Toyota_Previa,Toyota_Tercel,Volkswagen_Corrado,Volkswagen_Euro_6,Volkswagen_Fox,Volkswagen_Passat,Volvo_240,Volvo_850}
+
+@data
+12.9,25,31,1.8,140,13.2,2705,Acura_Integra
+29.2,18,25,3.2,200,18.0,3560,Acura_Legend
+25.9,20,26,2.8,172,16.9,3375,Audi_90
+30.8,19,26,2.8,172,21.1,3405,Audi_100
+23.7,22,30,3.5,208,21.1,3640,BMW_535i
+14.2,22,31,2.2,110,16.4,2880,Buick_Century
+19.9,19,28,3.8,170,18.0,3470,Buick_LeSabre
+22.6,16,25,5.7,180,23.0,4105,Buick_Roadmaster
+26.3,19,27,3.8,170,18.8,3495,Buick_Riviera
+33.0,16,25,4.9,200,18.0,3620,Cadillac_DeVille
+37.5,16,25,4.6,295,20.0,3935,Cadillac_Seville
+8.5,25,36,2.2,110,15.2,2490,Chevrolet_Cavalier
+11.4,25,34,2.2,110,15.6,2785,Chevrolet_Corsica
+13.4,19,28,3.4,160,15.5,3240,Chevrolet_Camaro
+13.4,21,29,2.2,110,16.5,3195,Chevrolet_Lumina
+14.7,18,23,3.8,170,20.0,3715,Chevrolet_Lumina_APV
+14.7,15,20,4.3,165,27.0,4025,Chevrolet_Astro
+18.0,17,26,5.0,170,23.0,3910,Chevrolet_Caprice
+34.6,17,25,5.7,300,20.0,3380,Chevrolet_Corvette
+18.4,20,28,3.3,153,18.0,3515,Chrylser_Concorde
+14.5,23,28,3.0,141,16.0,3085,Chrysler_LeBaron
+29.5,20,26,3.3,147,16.0,3570,Chrysler_Imperial
+7.9,29,33,1.5,92,13.2,2270,Dodge_Colt
+8.4,23,29,2.2,93,14.0,2670,Dodge_Shadow
+11.9,22,27,2.5,100,16.0,2970,Dodge_Spirit
+13.6,17,21,3.0,142,20.0,3705,Dodge_Caravan
+14.8,21,27,2.5,100,16.0,3080,Dodge_Dynasty
+18.5,18,24,3.0,300,19.8,3805,Dodge_Stealth
+7.9,29,33,1.5,92,13.2,2295,Eagle_Summit
+17.5,20,28,3.5,214,18.0,3490,Eagle_Vision
+6.9,31,33,1.3,63,10.0,1845,Ford_Festiva
+8.4,23,30,1.8,127,13.2,2530,Ford_Escort
+10.4,22,27,2.3,96,15.9,2690,Ford_Tempo
+10.8,22,29,2.3,105,15.4,2850,Ford_Mustang
+12.8,24,30,2.0,115,15.5,2710,Ford_Probe
+14.5,15,20,3.0,145,21.0,3735,Ford_Aerostar
+15.6,21,30,3.0,140,16.0,3325,Ford_Taurus
+20.1,18,26,4.6,190,20.0,3950,Ford_Crown_Victoria
+6.7,46,50,1.0,55,10.6,1695,Geo_Metro
+11.5,30,36,1.6,90,12.4,2475,Geo_Storm
+17.0,24,31,2.3,160,15.9,2865,Honda_Prelude
+8.4,42,46,1.5,102,11.9,2350,Honda_Civic
+13.8,24,31,2.2,140,17.0,3040,Honda_Accord
+6.8,29,33,1.5,81,11.9,2345,Hyundai_Excel
+9.0,22,29,1.8,124,13.7,2620,Hyundai_Elantra
+9.1,26,34,1.5,92,11.9,2285,Hyundai_Scoupe
+12.4,20,27,2.0,128,17.2,2885,Hyundai_Sonata
+45.4,17,22,4.5,278,22.5,4000,Infiniti_Q45
+27.5,18,24,3.0,185,18.5,3510,Lexus_ES300
+34.7,18,23,3.0,225,20.6,3515,Lexus_SC300
+33.3,17,26,3.8,160,18.4,3695,Lincoln_Continental
+34.4,18,26,4.6,210,20.0,4055,Lincoln_Town_Car
+7.4,29,37,1.6,82,13.2,2325,Mazda_323
+10.9,28,36,1.8,103,14.5,2440,Mazda_Protege
+14.3,26,34,2.5,164,15.5,2970,Mazda_626
+16.6,18,24,3.0,155,19.6,3735,Mazda_MPV
+32.5,17,25,1.3,255,20.0,2895,Mazda_RX-7
+29.0,20,29,2.3,130,14.5,2920,Mercedes-Benz_190E
+43.8,19,25,3.2,217,18.5,3525,Mercedes-Benz_300E
+13.3,23,26,1.6,100,11.1,2450,Mercury_Capri
+14.9,19,26,3.8,140,18.0,3610,Mercury_Cougar
+7.7,29,33,1.5,92,13.2,2295,Mitsubishi_Mirage
+22.4,18,24,3.0,202,19.0,3730,Mitsubishi_Diamante
+8.7,29,33,1.6,110,13.2,2545,Nissan_Sentra
+13.0,24,30,2.4,150,15.9,3050,Nissan_Altima
+16.7,17,23,3.0,151,20.0,4100,Nissan_Quest
+21.0,21,26,3.0,160,18.5,3200,Nissan_Maxima
+13.0,24,31,2.3,155,15.2,2910,Oldsmobile_Achieva
+14.2,23,31,2.2,110,16.5,2890,Oldsmobile_Cutlass
+19.5,18,23,3.8,170,20.0,3715,Oldsmobile_Silhouette
+19.5,19,28,3.8,170,18.0,3470,Oldsmobile_88
+11.4,23,30,1.8,92,15.9,2640,Plymouth_Laser
+8.2,31,41,1.6,74,13.2,2350,Pontiac_LeMans
+9.4,23,31,2.0,110,15.2,2575,Pontiac_Sunbird
+14.0,19,28,3.4,160,15.5,3240,Pontiac_Firebird
+15.4,19,27,3.4,200,16.5,3450,Pontiac_Grand_Prix
+19.4,19,28,3.8,170,18.0,3495,Pontiac_Bonneville
+20.3,20,26,2.1,140,18.0,2775,Saab_900
+9.2,28,38,1.9,85,12.8,2495,Saturn_SL
+7.3,33,37,1.2,73,9.2,2045,Subaru_Justy
+10.5,25,30,1.8,90,15.9,2490,Subaru_Loyale
+16.3,23,30,2.2,130,15.9,3085,Subaru_Legacy
+7.3,39,43,1.3,70,10.6,1965,Suzuki_Swift
+7.8,32,37,1.5,82,11.9,2055,Toyota_Tercel
+14.2,25,32,2.2,135,15.9,2950,Toyota_Celica
+15.2,22,29,2.2,130,18.5,3030,Toyota_Camry
+18.9,18,22,2.4,138,19.8,3785,Toyota_Previa
+8.7,25,33,1.8,81,12.4,2240,Volkswagen_Fox
+16.6,17,21,2.5,109,21.1,3960,Volkswagen_Euro_6
+17.6,21,30,2.0,134,18.5,2985,Volkswagen_Passat
+22.9,18,25,2.8,178,18.5,2810,Volkswagen_Corrado
+21.8,21,28,2.3,114,15.8,2985,Volvo_240
+24.8,20,28,2.4,168,19.3,3245,Volvo_850

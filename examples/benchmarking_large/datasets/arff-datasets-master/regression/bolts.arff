@@ -1,0 +1,106 @@
+% Data from StatLib (ftp stat.cmu.edu/datasets)
+% 
+% SUMMARY:
+% 
+% Data from an experiment on the affects of machine adjustments on
+% the time to count bolts.  Data appear as the STATS (Issue 10) Challenge.
+% 
+% DATA:
+% 
+% Submitted by W. Robert Stephenson, Iowa State University
+%                             email: wrstephe@iastate.edu
+% 
+% A manufacturer of automotive accessories provides hardware, e.g. nuts,
+% bolts, washers and screws, to fasten the accessory to the car or truck.
+% Hardware is counted and packaged automatically.  Specifically, bolts
+% are dumped into a large metal dish.  A plate that forms the bottom of
+% the dish rotates counterclockwise.  This rotation forces bolts to the
+% outside of the dish and up along a narrow ledge.  Due to the vibration
+% of the dish caused by the spinning bottom plate, some bolts fall off 
+% the ledge and back into the dish.  The ledge spirals up to a point 
+% where the bolts are allowed to drop into a pan on a conveyor belt.  
+% As a bolt drops, it passes by an electronic eye that counts it.  When 
+% the electronic counter reaches the preset number of bolts, the
+% rotation is stopped and the conveyor belt is moved forward.  
+% 
+% There are several adjustments on the machine that affect its operation.  
+% These include; a speed setting that controls the speed of rotation
+% (SPEED1) of the plate at the bottom of the dish, a total number of 
+% bolts (TOTAL) to be counted, a second speed setting (SPEED2) that is 
+% used to change the speed of rotation (usually slowing it down) for the
+% last few bolts, the number of bolts to be counted at this second speed
+% (NUMBER2), and the sensitivity of the electronic eye (SENS).  The 
+% sensitivity setting is to insure that the correct number of bolts are 
+% counted.  Too few bolts packaged causes customer complaints.  Too many
+% bolts packaged increases costs.  For each run conducted in this 
+% experiment the correct number of bolts was counted.  From an
+% engineering standpoint if the correct number of bolts is counted, the 
+% sensitivity should not affect the time to count bolts.  The measured 
+% response is the time (TIME), in seconds, it takes to count the desired
+% number of bolts.  In order to put times on a equal footing the
+% response to be analyzed is the time to count 20 bolts (T20BOLT).
+% Below are the data for 40 combinations of settings.  RUN is the order 
+% in which the data were collected.
+% 
+% Analyze the data.  What adjustments have the greatest effect on the 
+% time to count 20 bolts?  How would you adjust the machine to get
+% the shortest time to count 20 bolts?  Are there any unusual features
+% to the data?
+% 
+% The data description and data may be freely used for non-commercial
+% purposes and can be freely distributed.  Copyright remains with the
+% author and STATS Magazine.
+% 
+
+@relation bolts
+
+@attribute RUN integer
+@attribute SPEED1 integer
+@attribute TOTAL integer
+@attribute SPEED2 integer
+@attribute NUMBER2 integer
+@attribute SENS integer
+@attribute TIME real
+@attribute T20BOLT real
+
+@data
+25, 2, 10, 1.5, 0,  6,   5.70, 11.40
+24, 2, 10, 1.5, 0, 10,  17.56, 35.12
+30, 2, 10, 1.5, 2,  6,  11.28, 22.56
+ 2, 2, 10, 1.5, 2, 10,   8.39, 16.78
+40, 2, 10, 2.5, 0,  6,  16.67, 33.34
+37, 2, 10, 2.5, 0, 10,  12.04, 24.08
+16, 2, 10, 2.5, 2,  6,   9.22, 18.44
+22, 2, 10, 2.5, 2, 10,   3.94,  7.88
+33, 2, 30, 1.5, 0,  6,  27.02, 18.01
+17, 2, 30, 1.5, 0, 10,  19.46, 12.97
+28, 2, 30, 1.5, 2,  6,  18.54, 12.36
+27, 2, 30, 1.5, 2, 10,  25.70, 17.13
+14, 2, 30, 2.5, 0,  6,  19.02, 12.68
+13, 2, 30, 2.5, 0, 10,  22.39, 14.93
+ 4, 2, 30, 2.5, 2,  6,  23.85, 15.90
+21, 2, 30, 2.5, 2, 10,  30.12, 20.08
+23, 6, 10, 1.5, 0,  6,  13.42, 26.84
+35, 6, 10, 1.5, 0, 10,  34.26, 68.52
+19, 6, 10, 1.5, 2,  6,  39.74, 79.48
+34, 6, 10, 1.5, 2, 10,  10.60, 21.20
+31, 6, 10, 2.5, 0,  6,  28.89, 57.78
+ 9, 6, 10, 2.5, 0, 10,  35.61, 71.22
+38, 6, 10, 2.5, 2,  6,  17.20, 34.40
+15, 6, 10, 2.5, 2, 10,   6.00, 12.00
+39, 6, 30, 1.5, 0,  6, 129.45, 86.30
+ 8, 6, 30, 1.5, 0,  0, 107.38, 71.59
+26, 6, 30, 1.5, 2,  6, 111.66, 74.44
+11, 6, 30, 1.5, 2,  0, 109.10, 72.73
+ 6, 6, 30, 2.5, 0,  6, 100.43, 66.95
+20, 6, 30, 2.5, 0,  0, 109.28, 72.85
+10, 6, 30, 2.5, 2,  6, 106.46, 70.97
+32, 6, 30, 2.5, 2,  0, 134.01, 89.34
+ 1, 4, 20, 2.0, 1,  8,  10.78, 10.78
+ 3, 4, 20, 2.0, 1,  8,   9.39,  9.39
+ 5, 4, 20, 2.0, 1,  8,   9.84,  9.84
+ 7, 4, 20, 2.0, 1,  8,  13.94, 13.94
+12, 4, 20, 2.0, 1,  8,  12.33, 12.33
+18, 4, 20, 2.0, 1,  8,   7.32,  7.32
+29, 4, 20, 2.0, 1,  8,   7.91,  7.91
+36, 4, 20, 2.0, 1,  8,  15.58, 15.58
