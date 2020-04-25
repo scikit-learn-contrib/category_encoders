@@ -21,11 +21,11 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
     2) No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation process.
     In short, the less observations a category has and/or the more the outcome varies for a category
     then the higher the regularization towards "the prior" or "grand mean".
-    3) The technique is applicable for both continuous outcomes (via mixed linear regression) or two-class outcomes (via mixed logit regression).
+    3) The technique is applicable for both continuous and binomial targets. If the target is continuous,
+    the encoder returns regularized difference of the observation's category from the global mean.
+    If the target is binomial, the encoder returns regularized log odds per category.
 
-    In comparison to JamesSteinEstimator, this encoder utilizes (generalized) mixed linear models from statsmodels library.
-
-    The encoder supports continuous and binary targets.
+    In comparison to JamesSteinEstimator, this encoder utilizes generalized linear mixed models from statsmodels library.
 
     Note: This is an alpha implementation. The API of the method may change in the future.
 
@@ -41,15 +41,17 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
     handle_missing: str
-        options are 'return_nan', 'error' and 'value', defaults to 'value', which returns the prior probability.
+        options are 'return_nan', 'error' and 'value', defaults to 'value', which returns 0.
     handle_unknown: str
-        options are 'return_nan', 'error' and 'value', defaults to 'value', which returns the prior probability.
+        options are 'return_nan', 'error' and 'value', defaults to 'value', which returns 0.
     randomized: bool,
         adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
     sigma: float
         standard deviation (spread or "width") of the normal distribution.
-    binary_classification: bool
-        if true, the target is assumed to be binomial with values {0, 1}. By default, the target is assumed to be continuous.
+    binomial_target: bool
+        if True, the target must be binomial with values {0, 1} and Binomial mixed model is used.
+        If False, the target must be continuous and Linear mixed model is used.
+        If None (the default), a heuristic is applied to estimate the target type.
 
     Example
     -------
@@ -90,7 +92,7 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
 
     """
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_unknown='value', handle_missing='value', random_state=None, randomized=False, sigma=0.05, binary_classification=False):
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_unknown='value', handle_missing='value', random_state=None, randomized=False, sigma=0.05, binomial_target=None):
         self.verbose = verbose
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -104,7 +106,7 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
         self.random_state = random_state
         self.randomized = randomized
         self.sigma = sigma
-        self.binary_classification = binary_classification
+        self.binomial_target = binomial_target
         self.feature_names = None
 
     # noinspection PyUnusedLocal
@@ -261,9 +263,17 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
         # Initialize the output
         mapping = {}
 
-        # Since statsmodels.regression.mixed_linear_model.MixedLM() does not accept exog=None and it rejects
-        # dummy values like exog=np.zeros((nrow, 1)), we use formulas. And we have to be sure that the target
-        # name differs from the feature names.
+        # Estimate target type, if necessary
+        if self.binomial_target is None:
+            if len(y.unique()) <= 2:
+                binomial_target = True
+            else:
+                binomial_target = False
+        else:
+            binomial_target = self.binomial_target
+
+        # Since we use formulas, we have to be sure that the target name differs from the feature names.
+        # If formulas turn out to be brittle, see issue #242 for non-formula solutions.
         target_name = self._get_unique_target_name(X)
         data = X.copy()
         data[target_name] = y
@@ -275,7 +285,7 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
             try:
                 with warnings.catch_warnings():
                     warnings.filterwarnings("ignore")
-                    if self.binary_classification:
+                    if binomial_target:
                         # Classification, returns (regularized) log odds per category as stored in vc_mean
                         # Note: md.predict() returns: output = fe_mean + vcp_mean + vc_mean[category]
                         md = bgmm.from_formula(target_name + ' ~ 1', {'a': '0 + C(' + str(col) + ')'}, data).fit_vb()
@@ -288,7 +298,7 @@ class MixedEncoder(BaseEstimator, TransformerMixin):
                         for key, value in md.random_effects.items():
                             tmp[key] = value[0]
                         estimate = pd.Series(tmp)
-            except (np.linalg.LinAlgError):
+            except np.linalg.LinAlgError:
                 # Singular matrix -> just return all zeros
                 estimate = pd.Series(np.zeros(len(values)), index=values)
 
