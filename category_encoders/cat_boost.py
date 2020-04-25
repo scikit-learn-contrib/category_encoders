@@ -2,14 +2,14 @@
 
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
 
 
-class CatBoostEncoder(BaseEstimator, TransformerMixin):
+class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """CatBoost coding for categorical features.
 
     This is very similar to leave-one-out encoding, but calculates the
@@ -223,20 +223,6 @@ class CatBoostEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
-
-    def fit_transform(self, X, y=None, **fit_params):
-        """
-        Encoders that utilize the target must make sure that the training data are transformed with:
-             transform(X, y)
-        and not with:
-            transform(X)
-        """
-
-        # the interface requires 'y=None' in the signature but we need 'y'
-        if y is None:
-            raise(TypeError, 'fit_transform() missing argument: ''y''')
-
-        return self.fit(X, y, **fit_params).transform(X, y)
 
     def _fit(self, X_in, y, cols=None):
         X = X_in.copy(deep=True)

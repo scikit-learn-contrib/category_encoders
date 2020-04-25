@@ -3,7 +3,7 @@ import warnings
 import re
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from sklearn.utils.random import check_random_state
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
@@ -13,7 +13,7 @@ from statsmodels.genmod.bayes_mixed_glm import BinomialBayesMixedGLM as bgmm
 __author__ = 'Jan Motl'
 
 
-class GLMMEncoder(BaseEstimator, TransformerMixin):
+class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """Generalized linear mixed model.
 
     This is a supervised encoder similar to TargetEncoder or MEstimateEncoder, but there are some advantages:
@@ -244,20 +244,6 @@ class GLMMEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
-
-    def fit_transform(self, X, y=None, **fit_params):
-        """
-        Encoders that utilize the target must make sure that the training data are transformed with:
-            transform(X, y)
-        and not with:
-            transform(X)
-        """
-
-        # the interface requires 'y=None' in the signature but we need 'y'
-        if y is None:
-            raise(TypeError, 'fit_transform() missing argument: ''y''')
-
-        return self.fit(X, y, **fit_params).transform(X, y)
 
     def _train(self, X, y):
         # Initialize the output
