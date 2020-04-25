@@ -287,7 +287,7 @@ class GLMMEncoder(BaseEstimator, TransformerMixin):
                         # Classification, returns (regularized) log odds per category as stored in vc_mean
                         # Note: md.predict() returns: output = fe_mean + vcp_mean + vc_mean[category]
                         md = bgmm.from_formula('target ~ 1', {'a': '0 + C(feature)'}, data).fit_vb()
-                        index_names = [int(float(re.sub(r'C\(feature\)\[(\S+)\]', r'\1', col))) for col in md.model.vc_names]
+                        index_names = [int(float(re.sub(r'C\(feature\)\[(\S+)\]', r'\1', index_name))) for index_name in md.model.vc_names]
                         estimate = pd.Series(md.vc_mean, index=index_names)
                     else:
                         # Regression, returns (regularized) mean deviation of the observation's category from the global mean
