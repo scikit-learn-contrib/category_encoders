@@ -135,3 +135,16 @@ def get_generated_cols(X_original, X_transformed, to_transform):
         [current_cols.remove(c) for c in original_cols]
 
     return current_cols
+
+
+class TransformerWithTargetMixin:
+    def fit_transform(self, X, y=None, **fit_params):
+        """
+        Encoders that utilize the target must make sure that the training data are transformed with:
+             transform(X, y)
+        and not with:
+            transform(X)
+        """
+        if y is None:
+            raise TypeError('fit_transform() missing argument: ''y''')
+        return self.fit(X, y, **fit_params).transform(X, y)

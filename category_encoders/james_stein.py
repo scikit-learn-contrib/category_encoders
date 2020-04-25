@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import scipy
 from scipy import optimize
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import BaseEstimator
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
@@ -11,7 +11,7 @@ from sklearn.utils.random import check_random_state
 __author__ = 'Jan Motl'
 
 
-class JamesSteinEncoder(BaseEstimator, TransformerMixin):
+class JamesSteinEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """James-Stein estimator.
 
     For feature value `i`, James-Stein estimator returns a weighted average of:
@@ -308,20 +308,6 @@ class JamesSteinEncoder(BaseEstimator, TransformerMixin):
             return X
         else:
             return X.values
-
-    def fit_transform(self, X, y=None, **fit_params):
-        """
-        Encoders that utilize the target must make sure that the training data are transformed with:
-            transform(X, y)
-        and not with:
-            transform(X)
-        """
-
-        # the interface requires 'y=None' in the signature but we need 'y'
-        if y is None:
-            raise(TypeError, 'fit_transform() missing argument: ''y''')
-
-        return self.fit(X, y, **fit_params).transform(X, y)
 
     def _train_pooled(self, X, y):
         # Implemented based on reference [1]
