@@ -5,7 +5,7 @@ from sklearn.model_selection import GroupKFold
 
 import category_encoders as encoders
 import category_encoders.tests.helpers as th
-from category_encoders.wrapper import MultiClassWrapper, NestedCVWrapper
+from category_encoders.wrapper import PolynomialWrapper, NestedCVWrapper
 
 
 class TestMultiClassWrapper(TestCase):
@@ -19,7 +19,7 @@ class TestMultiClassWrapper(TestCase):
             ['a', 'b', 'a'],
         ])
         y = [1, 2, 3, 3, 3, 3]
-        wrapper = MultiClassWrapper(encoders.TargetEncoder())
+        wrapper = PolynomialWrapper(encoders.TargetEncoder())
         result = wrapper.fit_transform(x, y)
         th.verify_numeric(result)
 
@@ -32,7 +32,7 @@ class TestMultiClassWrapper(TestCase):
             ['a', 'b', 'a'],
         ], columns=['f1', 'f2', 'f3'])
         y = ['bee', 'cat', 'dog', 'dog', 'dog', 'dog']
-        wrapper = MultiClassWrapper(encoders.TargetEncoder())
+        wrapper = PolynomialWrapper(encoders.TargetEncoder())
         result2 = wrapper.fit_transform(x, y)
 
         self.assertTrue((result.values == result2.values).all(), 'The content should be the same regardless whether we pass Numpy or Pandas data type.')
@@ -47,7 +47,7 @@ class TestMultiClassWrapper(TestCase):
             ['a', 'b', 'a'],
         ], columns=['f1', 'f2', 'f3'])
         y = ['bee', 'cat', 'dog', 'dog', 'dog', 'dog']
-        wrapper = MultiClassWrapper(encoders.LeaveOneOutEncoder(cols=['f2']))
+        wrapper = PolynomialWrapper(encoders.LeaveOneOutEncoder(cols=['f2']))
 
         # combination fit() + transform()
         wrapper.fit(x, y)
@@ -56,7 +56,7 @@ class TestMultiClassWrapper(TestCase):
         self.assertEqual(len(result.columns), 4, 'We expect 2 untouched features + f2 target encoded into 2 features')
 
         # directly fit_transform()
-        wrapper = MultiClassWrapper(encoders.LeaveOneOutEncoder(cols=['f2']))
+        wrapper = PolynomialWrapper(encoders.LeaveOneOutEncoder(cols=['f2']))
         result2 = wrapper.fit_transform(x, y)
         print(result2)
         self.assertEqual(len(result2.columns), 4, 'We expect 2 untouched features + f2 target encoded into 2 features')

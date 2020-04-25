@@ -42,6 +42,7 @@ To use:
     encoder = ce.BaseNEncoder(cols=[...])
     encoder = ce.BinaryEncoder(cols=[...])
     encoder = ce.CatBoostEncoder(cols=[...])
+    encoder = ce.GLMMEncoder(cols=[...])
     encoder = ce.HashingEncoder(cols=[...])
     encoder = ce.HelmertEncoder(cols=[...])
     encoder = ce.JamesSteinEncoder(cols=[...])
@@ -69,6 +70,7 @@ Contents:
    basen
    binary
    catboost
+   glmm
    hashing
    helmert
    jamesstein
@@ -80,6 +82,7 @@ Contents:
    sum
    targetencoder
    woe
+   wrapper
 
 
 Indices and tables

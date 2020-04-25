@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 
-class MultiClassWrapper(BaseEstimator, TransformerMixin):
+class PolynomialWrapper(BaseEstimator, TransformerMixin):
     """Extend supervised encoders to n-class labels, where n >= 2.
 
     The label can be numerical (e.g.: 0, 1, 2, 3,...,n), string or categorical (pandas.Categorical).
@@ -33,13 +33,13 @@ class MultiClassWrapper(BaseEstimator, TransformerMixin):
     >>> from category_encoders import *
     >>> import pandas as pd
     >>> from sklearn.datasets import load_boston
-    >>> from category_encoders.wrapper import MultiClassWrapper
+    >>> from category_encoders.wrapper import PolynomialWrapper
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> y = (y/10).round().astype(int)  # we create 6 artificial classes
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
     >>> enc = TargetEncoder(cols=['CHAS', 'RAD'])
-    >>> wrapper = MultiClassWrapper(enc)
+    >>> wrapper = PolynomialWrapper(enc)
     >>> encoded =wrapper.fit_transform(X, y)
     >>> print(encoded.info())
     """
