@@ -115,7 +115,7 @@ testing_numeric_dataset = enc.transform(X_test)
 For the transformation of the _training_ data with the supervised methods, you should use `fit_transform()` method instead of `fit().transform()`, because these two methods _do not_ have to generate the same result. The difference can be observed with LeaveOneOut encoder, which performs a nested cross-validation for the _training_ data in `fit_transform()` method (to decrease over-fitting of the downstream model) but uses all the training data for scoring with `transform()` method (to get as accurate estimates as possible).
 
 Furthermore, you may benefit from following wrappers:
- * MultiClassWrapper, which extends supervised encoders to support polynomial targets
+ * PolynomialWrapper, which extends supervised encoders to support polynomial targets
  * NestedCVWrapper, which helps to prevent overfitting  
 
 Additional examples and benchmarks can be found in the `examples` directory.
