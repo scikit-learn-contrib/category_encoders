@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import multiprocessing
 import category_encoders as encoders
-import category_encoders.tests.helpers as th
+import tests.helpers as th
 
 __author__ = 'LiuShulun'
 

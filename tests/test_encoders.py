@@ -1,12 +1,10 @@
-import doctest
-import os
 import warnings
 from datetime import timedelta
 
 import numpy as np
 import pandas as pd
 import sklearn
-import category_encoders.tests.helpers as th
+import tests.helpers as th
 from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted
 from sklearn.compose import ColumnTransformer
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+

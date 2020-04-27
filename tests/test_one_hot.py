@@ -1,7 +1,7 @@
 import pandas as pd
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
-import category_encoders.tests.helpers as th
+import tests.helpers as th
 
 import category_encoders as encoders
 
