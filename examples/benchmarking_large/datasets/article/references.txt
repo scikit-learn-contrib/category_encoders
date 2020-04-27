@@ -1,9 +1,0 @@
-Airlines		https://www.openml.org/d/1169
-Amazon			https://www.kaggle.com/c/amazon-employee-access-challenge/data
-Carvana			https://www.kaggle.com/c/DontGetKicked/data
-Erasmus			https://github.com/BuzzFeedNews/zika-data/tree/master/data/raw/paho-who
-Internet		https://kdd.ics.uci.edu/databases/internet_usage/internet_usage.html
-IPUM			https://www.openml.org/d/382
-Kobe			https://www.kaggle.com/c/kobe-bryant-shot-selection/data
-PBC				https://www.openml.org/d/516
-WestNile		https://www.kaggle.com/c/predict-west-nile-virus
