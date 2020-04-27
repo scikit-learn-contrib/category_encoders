@@ -28,6 +28,7 @@ jobs:
         python -m pip install --upgrade pip wheel
         python -m pip install -r requirements.txt
         python -m pip install -r requirements-dev.txt
+        python -m pip install -e .
     - name: Test with pytest
       run: |
         python -m pytest -rootdir=.
