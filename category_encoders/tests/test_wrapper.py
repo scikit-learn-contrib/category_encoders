@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from unittest2 import TestCase
+from unittest import TestCase
 from sklearn.model_selection import GroupKFold
 
 import category_encoders as encoders

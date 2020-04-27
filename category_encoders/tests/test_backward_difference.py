@@ -1,5 +1,5 @@
 import pandas as pd
-from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
 import category_encoders as encoders
 
@@ -85,7 +85,7 @@ class TestBackwardsEncoder(TestCase):
         encoder.fit(train)
         columns = encoder.transform(train).columns.values
 
-        self.assertItemsEqual(expected_columns, columns)
+        self.assertTrue(np.array_equal(expected_columns, columns))
 
     def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
         train = ['A', 'B', np.nan]
@@ -96,7 +96,7 @@ class TestBackwardsEncoder(TestCase):
         expected = [[1, -2 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, 2 / 3.0]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertTrue(np.array_equal(result.values.tolist(), expected))
 
     def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
         train = ['A', 'B']

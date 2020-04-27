@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 
 from category_encoders.tests.helpers import verify_numeric
 

@@ -1,9 +1,6 @@
 Categorical Encoding Methods
 ============================
 
-[![Travis Status](https://travis-ci.org/scikit-learn-contrib/categorical-encoding.svg?branch=master)](https://travis-ci.org/scikit-learn-contrib/categorical-encoding)
-[![Coveralls Status](https://coveralls.io/repos/scikit-learn-contrib/categorical-encoding/badge.svg?branch=master&service=github)](https://coveralls.io/r/scikit-learn-contrib/categorical-encoding)
-[![CircleCI Status](https://circleci.com/gh/scikit-learn-contrib/categorical-encoding.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/scikit-learn-contrib/categorical-encoding/tree/master)
 [![DOI](https://zenodo.org/badge/47077067.svg)](https://zenodo.org/badge/latestdoi/47077067)
 
 A set of scikit-learn-style transformers for encoding categorical 
@@ -12,7 +9,7 @@ variables into numeric by means of different techniques.
 Important Links
 ---------------
 
-Documentation: [http://contrib.scikit-learn.org/categorical-encoding/](http://contrib.scikit-learn.org/categorical-encoding/)
+Documentation: [http://contrib.scikit-learn.org/category_encoders/](http://contrib.scikit-learn.org/category_encoders/)
 
 Encoding Methods
 ----------------
@@ -63,13 +60,16 @@ conda install -c conda-forge category_encoders
 To install the development version, you may use:
 
 ```shell
-pip install --upgrade git+https://github.com/scikit-learn-contrib/categorical-encoding
+pip install --upgrade git+https://github.com/scikit-learn-contrib/category_encoders
 ```
 
 Usage
 -----
 
-All of the encoders are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. Supported input formats include numpy arrays and pandas dataframes. If the cols parameter isn't passed, all columns with object or pandas categorical data type will be encoded. Please see the docs for transformer-specific configuration options.
+All of the encoders are fully compatible sklearn transformers, so they can be used in pipelines or in your existing 
+scripts. Supported input formats include numpy arrays and pandas dataframes. If the cols parameter isn't passed, all 
+columns with object or pandas categorical data type will be encoded. Please see the docs for transformer-specific 
+configuration options.
 
 Examples
 --------
