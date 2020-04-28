@@ -277,7 +277,7 @@ class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                         estimate = pd.Series(md.vc_mean, index=index_names)
                     else:
                         # Regression, returns (regularized) mean deviation of the observation's category from the global mean
-                        md = smf.mixedlm('target ~ 1', data, groups=data[col]).fit()
+                        md = smf.mixedlm('target ~ 1', data, groups=data['feature']).fit()
                         tmp = dict()
                         for key, value in md.random_effects.items():
                             tmp[key] = value[0]
