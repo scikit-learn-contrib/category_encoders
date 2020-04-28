@@ -1,5 +1,5 @@
+from unittest import TestCase
 import numpy as np
-from unittest2 import TestCase
 import category_encoders as encoders
 import tests.helpers as th
 
