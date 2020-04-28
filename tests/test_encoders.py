@@ -1,15 +1,13 @@
-import doctest
-import os
 import warnings
 from datetime import timedelta
 
 import numpy as np
 import pandas as pd
 import sklearn
-import category_encoders.tests.helpers as th
+import tests.helpers as th
 from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted
 from sklearn.compose import ColumnTransformer
-from unittest2 import TestSuite, TextTestRunner, TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 from copy import deepcopy
 
 import category_encoders as encoders
@@ -388,16 +386,16 @@ class TestEncoders(TestCase):
                 result = encoder.fit_transform(X[['unique_str']], y)
                 self.assertTrue(all(result.var() < 0.001), 'The unique string column must not be predictive of the label')
 
-    # beware: for some reason doctest does not raise exceptions - you have to read the text output
-    def test_doc(self):
-        suite = TestSuite()
-
-        for filename in os.listdir('../'):
-            if filename.endswith(".py"):
-                suite.addTest(doctest.DocFileSuite('../' + filename))
-
-        runner = TextTestRunner(verbosity=2)
-        runner.run(suite)
+    # # beware: for some reason doctest does not raise exceptions - you have to read the text output
+    # def test_doc(self):
+    #     suite = TestSuite()
+    #
+    #     for filename in os.listdir('../'):
+    #         if filename.endswith(".py"):
+    #             suite.addTest(doctest.DocFileSuite('../' + filename))
+    #
+    #     runner = TextTestRunner(verbosity=2)
+    #     runner.run(suite)
 
     def test_cols(self):
         # Test cols argument with different data types, which are array-like or scalars

@@ -1,4 +1,4 @@
-from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 from category_encoders.utils import convert_input_vector
 import pandas as pd
 import numpy as np
