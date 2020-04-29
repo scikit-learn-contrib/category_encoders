@@ -24,7 +24,7 @@ from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.glmm import GLMMEncoder
 
-__version__ = '2.2.1'
+__version__ = '2.2.2'
 
 __author__ = 'willmcginnis'
 
