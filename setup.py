@@ -1,8 +1,7 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
-
-__version__ = '2.2.0'
+from category_encoders import __version__
 
 
 here = path.abspath(path.dirname(__file__))
@@ -17,8 +16,8 @@ setup(
     description='A collection sklearn transformers to encode categorical variables as numeric',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/wdm0006/categorical_encoding',
-    download_url='https://github.com/wdm0006/categorical_encoding/tarball/' + __version__,
+    url='https://github.com/scikit-learn-contrib/category_encoders',
+    download_url='https://github.com/scikit-learn-contrib/category_encoders/tarball/' + __version__,
     license='BSD',
     classifiers=[
       'Development Status :: 3 - Alpha',
