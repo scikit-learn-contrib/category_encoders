@@ -1,6 +1,7 @@
 Categorical Encoding Methods
 ============================
 
+![Test Suite and Linting](https://github.com/scikit-learn-contrib/category_encoders/workflows/Test%20Suite%20and%20Linting/badge.svg)
 [![DOI](https://zenodo.org/badge/47077067.svg)](https://zenodo.org/badge/latestdoi/47077067)
 
 A set of scikit-learn-style transformers for encoding categorical 
