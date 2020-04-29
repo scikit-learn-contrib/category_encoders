@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Generalized Linear Mixed Model Encoder &mdash; Category Encoders latest documentation</title>
+  <title>Generalized Linear Mixed Model Encoder &mdash; Category Encoders 2.2.1 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                latest
+                2.2.1
               </div>
             
           
@@ -168,6 +168,142 @@
             
   <div class="section" id="generalized-linear-mixed-model-encoder">
 <h1>Generalized Linear Mixed Model Encoder<a class="headerlink" href="#generalized-linear-mixed-model-encoder" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="category_encoders.glmm.GLMMEncoder">
+<em class="property">class </em><code class="sig-prename descclassname">category_encoders.glmm.</code><code class="sig-name descname">GLMMEncoder</code><span class="sig-paren">(</span><em class="sig-param">verbose=0</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">drop_invariant=False</em>, <em class="sig-param">return_df=True</em>, <em class="sig-param">handle_unknown='value'</em>, <em class="sig-param">handle_missing='value'</em>, <em class="sig-param">random_state=None</em>, <em class="sig-param">randomized=False</em>, <em class="sig-param">sigma=0.05</em>, <em class="sig-param">binomial_target=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/glmm.html#GLMMEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generalized linear mixed model.</p>
+<p>This is a supervised encoder similar to TargetEncoder or MEstimateEncoder, but there are some advantages:
+1) Solid statistical theory behind the technique. Mixed effects models are a mature branch of statistics.
+2) No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation process.
+In short, the less observations a category has and/or the more the outcome varies for a category
+then the higher the regularization towards “the prior” or “grand mean”.
+3) The technique is applicable for both continuous and binomial targets. If the target is continuous,
+the encoder returns regularized difference of the observation’s category from the global mean.
+If the target is binomial, the encoder returns regularized log odds per category.</p>
+<p>In comparison to JamesSteinEstimator, this encoder utilizes generalized linear mixed models from statsmodels library.</p>
+<p>Note: This is an alpha implementation. The API of the method may change in the future.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of the output. 0 for none.</p>
+</dd>
+<dt><strong>cols: list</strong></dt><dd><p>a list of columns to encode, if None, all string columns will be encoded.</p>
+</dd>
+<dt><strong>drop_invariant: bool</strong></dt><dd><p>boolean for whether or not to drop encoded columns with 0 variance.</p>
+</dd>
+<dt><strong>return_df: bool</strong></dt><dd><p>boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</p>
+</dd>
+<dt><strong>handle_missing: str</strong></dt><dd><p>options are ‘return_nan’, ‘error’ and ‘value’, defaults to ‘value’, which returns 0.</p>
+</dd>
+<dt><strong>handle_unknown: str</strong></dt><dd><p>options are ‘return_nan’, ‘error’ and ‘value’, defaults to ‘value’, which returns 0.</p>
+</dd>
+<dt><strong>randomized: bool,</strong></dt><dd><p>adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).</p>
+</dd>
+<dt><strong>sigma: float</strong></dt><dd><p>standard deviation (spread or “width”) of the normal distribution.</p>
+</dd>
+<dt><strong>binomial_target: bool</strong></dt><dd><p>if True, the target must be binomial with values {0, 1} and Binomial mixed model is used.
+If False, the target must be continuous and Linear mixed model is used.
+If None (the default), a heuristic is applied to estimate the target type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="citation">
+<dt class="label" id="rf0d54b3f0131-1"><span class="brackets">Rf0d54b3f0131-1</span></dt>
+<dd><p>Data Analysis Using Regression and Multilevel/Hierarchical Models, page 253, from</p>
+</dd>
+</dl>
+<p><a class="reference external" href="https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf">https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf</a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.fit" title="category_encoders.glmm.GLMMEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y, \*\*kwargs)</p></td>
+<td><p>Fit encoder according to X and binary y.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(self, X[, y])</p></td>
+<td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names" title="category_encoders.glmm.GLMMEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>(self)</p></td>
+<td><p>Returns the names of all transformed / added columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, \*\*params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.transform" title="category_encoders.glmm.GLMMEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X[, y, override_return_df])</p></td>
+<td><p>Perform the transformation to new categorical data.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="category_encoders.glmm.GLMMEncoder.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/glmm.html#GLMMEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit encoder according to X and binary y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd><p>Training vectors, where n_samples is the number of samples
+and n_features is the number of features.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples]</span></dt><dd><p>Binary target values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">encoder</span></dt><dd><p>Returns self.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="category_encoders.glmm.GLMMEncoder.get_feature_names">
+<code class="sig-name descname">get_feature_names</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/glmm.html#GLMMEncoder.get_feature_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_feature_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the names of all transformed / added columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>feature_names: list</dt><dd><p>A list with all feature names transformed or added.
+Note: potentially dropped features are not included!</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="category_encoders.glmm.GLMMEncoder.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em>, <em class="sig-param">override_return_df=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/glmm.html#GLMMEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the transformation to new categorical data.</p>
+<p>When the data are used for model training, it is important to also pass the target in order to apply leave one out.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd></dd>
+<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples] when transform by leave one out</span></dt><dd><p>None, when transform without target information (such as transform test set)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>p</strong><span class="classifier">array, shape = [n_samples, n_numeric + N]</span></dt><dd><p>Transformed values with encoding applied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

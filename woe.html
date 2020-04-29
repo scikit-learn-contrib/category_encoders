@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Weight of Evidence &mdash; Category Encoders latest documentation</title>
+  <title>Weight of Evidence &mdash; Category Encoders 2.2.1 documentation</title>
   
 
   
@@ -60,7 +60,7 @@
             
             
               <div class="version">
-                latest
+                2.2.1
               </div>
             
           
@@ -168,6 +168,131 @@
             
   <div class="section" id="weight-of-evidence">
 <h1>Weight of Evidence<a class="headerlink" href="#weight-of-evidence" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="category_encoders.woe.WOEEncoder">
+<em class="property">class </em><code class="sig-prename descclassname">category_encoders.woe.</code><code class="sig-name descname">WOEEncoder</code><span class="sig-paren">(</span><em class="sig-param">verbose=0</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">drop_invariant=False</em>, <em class="sig-param">return_df=True</em>, <em class="sig-param">handle_unknown='value'</em>, <em class="sig-param">handle_missing='value'</em>, <em class="sig-param">random_state=None</em>, <em class="sig-param">randomized=False</em>, <em class="sig-param">sigma=0.05</em>, <em class="sig-param">regularization=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/woe.html#WOEEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.woe.WOEEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Weight of Evidence coding for categorical features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of the output. 0 for none.</p>
+</dd>
+<dt><strong>cols: list</strong></dt><dd><p>a list of columns to encode, if None, all string columns will be encoded.</p>
+</dd>
+<dt><strong>drop_invariant: bool</strong></dt><dd><p>boolean for whether or not to drop columns with 0 variance.</p>
+</dd>
+<dt><strong>return_df: bool</strong></dt><dd><p>boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</p>
+</dd>
+<dt><strong>handle_missing: str</strong></dt><dd><p>options are ‘return_nan’, ‘error’ and ‘value’, defaults to ‘value’, which will assume WOE=0.</p>
+</dd>
+<dt><strong>handle_unknown: str</strong></dt><dd><p>options are ‘return_nan’, ‘error’ and ‘value’, defaults to ‘value’, which will assume WOE=0.</p>
+</dd>
+<dt><strong>randomized: bool,</strong></dt><dd><p>adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).</p>
+</dd>
+<dt><strong>sigma: float</strong></dt><dd><p>standard deviation (spread or “width”) of the normal distribution.</p>
+</dd>
+<dt><strong>regularization: float</strong></dt><dd><p>the purpose of regularization is mostly to prevent division by zero.
+When regularization is 0, you may encounter division by zero.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="citation">
+<dt class="label" id="ra54881acb8a4-1"><span class="brackets">Ra54881acb8a4-1</span></dt>
+<dd><p>Weight of Evidence (WOE) and Information Value Explained, from</p>
+</dd>
+</dl>
+<p><a class="reference external" href="https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html">https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html</a></p>
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.fit" title="category_encoders.woe.WOEEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y, \*\*kwargs)</p></td>
+<td><p>Fit encoder according to X and binary y.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(self, X[, y])</p></td>
+<td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_feature_names" title="category_encoders.woe.WOEEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>(self)</p></td>
+<td><p>Returns the names of all transformed / added columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, \*\*params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.transform" title="category_encoders.woe.WOEEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X[, y, override_return_df])</p></td>
+<td><p>Perform the transformation to new categorical data.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="category_encoders.woe.WOEEncoder.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/woe.html#WOEEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.woe.WOEEncoder.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit encoder according to X and binary y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd><p>Training vectors, where n_samples is the number of samples
+and n_features is the number of features.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples]</span></dt><dd><p>Binary target values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">encoder</span></dt><dd><p>Returns self.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="category_encoders.woe.WOEEncoder.get_feature_names">
+<code class="sig-name descname">get_feature_names</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/woe.html#WOEEncoder.get_feature_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.woe.WOEEncoder.get_feature_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the names of all transformed / added columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>feature_names: list</dt><dd><p>A list with all feature names transformed or added.
+Note: potentially dropped features are not included!</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="category_encoders.woe.WOEEncoder.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">X</em>, <em class="sig-param">y=None</em>, <em class="sig-param">override_return_df=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/woe.html#WOEEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.woe.WOEEncoder.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the transformation to new categorical data. When the data are used for model training,
+it is important to also pass the target in order to apply leave one out.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd></dd>
+<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples] when transform by leave one out</span></dt><dd><p>None, when transform without target information (such as transform test set)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>p</strong><span class="classifier">array, shape = [n_samples, n_numeric + N]</span></dt><dd><p>Transformed values with encoding applied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
