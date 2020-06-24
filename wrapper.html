@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Weight of Evidence" href="woe.html" /> 
@@ -49,7 +50,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Category Encoders
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Category Encoders
           
 
           
@@ -76,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -106,6 +108,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -144,7 +147,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Wrappers</li>
     
@@ -199,7 +202,7 @@ The order of the returned features may change in the future.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, \*\*params)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, **params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 </tbody>
@@ -227,9 +230,8 @@ and returns a transformed version of X.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>X</strong><span class="classifier">numpy array of shape [n_samples, n_features]</span></dt><dd><p>Training set.</p>
-</dd>
-<dt><strong>y</strong><span class="classifier">numpy array of shape [n_samples]</span></dt><dd><p>Target values.</p>
+<dt><strong>X</strong><span class="classifier">{array-like, sparse matrix, dataframe} of shape                 (n_samples, n_features)</span></dt><dd></dd>
+<dt><strong>y</strong><span class="classifier">ndarray of shape (n_samples,), default=None</span></dt><dd><p>Target values.</p>
 </dd>
 <dt><strong>**fit_params</strong><span class="classifier">dict</span></dt><dd><p>Additional fit parameters.</p>
 </dd>
@@ -237,7 +239,7 @@ and returns a transformed version of X.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>X_new</strong><span class="classifier">numpy array of shape [n_samples, n_features_new]</span></dt><dd><p>Transformed array.</p>
+<dt><strong>X_new</strong><span class="classifier">ndarray array of shape (n_samples, n_features_new)</span></dt><dd><p>Transformed array.</p>
 </dd>
 </dl>
 </dd>
@@ -287,7 +289,7 @@ Using out-of-fold encodings is an effective way to prevent target leakage. This 
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.fit" title="category_encoders.wrapper.NestedCVWrapper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y, \*\*kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.fit" title="category_encoders.wrapper.NestedCVWrapper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y, **kwargs)</p></td>
 <td><p>Calls fit on the base feature_encoder without nested cross validation</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.fit_transform" title="category_encoders.wrapper.NestedCVWrapper.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(self, X[, y, X_test, groups])</p></td>
@@ -296,7 +298,7 @@ Using out-of-fold encodings is an effective way to prevent target leakage. This 
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, \*\*params)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, **params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.transform" title="category_encoders.wrapper.NestedCVWrapper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X)</p></td>
@@ -366,11 +368,19 @@ Transformed values with encoding applied. Returns multiple arrays if X_test is n
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2016, Will McGinnis
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -381,7 +391,6 @@ Transformed values with encoding applied. Returns multiple arrays if X_test is n
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="One Hot" href="onehot.html" />
@@ -50,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Category Encoders
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Category Encoders
           
 
           
@@ -77,6 +78,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -107,6 +109,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -145,7 +148,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>M-estimate</li>
     
@@ -203,19 +206,19 @@ M is non-negative.</p>
 </dl>
 <p class="rubric">References</p>
 <dl class="citation">
-<dt class="label" id="r73dfab905ada-1"><span class="brackets">R73dfab905ada-1</span></dt>
+<dt class="label" id="r73dfab905ada-1"><span class="brackets">1</span></dt>
 <dd><p>A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from</p>
 </dd>
 </dl>
 <p><a class="reference external" href="https://dl.acm.org/citation.cfm?id=507538">https://dl.acm.org/citation.cfm?id=507538</a></p>
 <dl class="citation">
-<dt class="label" id="r73dfab905ada-2"><span class="brackets">R73dfab905ada-2</span></dt>
+<dt class="label" id="r73dfab905ada-2"><span class="brackets">2</span></dt>
 <dd><p>On estimating probabilities in tree pruning, equation 1, from</p>
 </dd>
 </dl>
 <p><a class="reference external" href="https://link.springer.com/chapter/10.1007/BFb0017010">https://link.springer.com/chapter/10.1007/BFb0017010</a></p>
 <dl class="citation">
-<dt class="label" id="r73dfab905ada-3"><span class="brackets">R73dfab905ada-3</span></dt>
+<dt class="label" id="r73dfab905ada-3"><span class="brackets">3</span></dt>
 <dd><p>Additive smoothing, from</p>
 </dd>
 </dl>
@@ -227,7 +230,7 @@ M is non-negative.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.m_estimate.MEstimateEncoder.fit" title="category_encoders.m_estimate.MEstimateEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y, \*\*kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.m_estimate.MEstimateEncoder.fit" title="category_encoders.m_estimate.MEstimateEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(self, X, y, **kwargs)</p></td>
 <td><p>Fit encoder according to X and binary y.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(self, X[, y])</p></td>
@@ -239,7 +242,7 @@ M is non-negative.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>(self[, deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, \*\*params)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(self, **params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.m_estimate.MEstimateEncoder.transform" title="category_encoders.m_estimate.MEstimateEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(self, X[, y, override_return_df])</p></td>
@@ -331,11 +334,19 @@ Note: potentially dropped features are not included!</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2016, Will McGinnis
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -346,7 +357,6 @@ Note: potentially dropped features are not included!</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
