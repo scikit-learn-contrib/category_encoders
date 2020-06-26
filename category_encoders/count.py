@@ -23,6 +23,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         For a given categorical feature, replace the names of the groups
         with the group counts.
 
+
         Parameters
         ----------
 
