@@ -43,6 +43,7 @@ class TestEncoders(TestCase):
                 # Encode a numpy array
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(np_X, np_y)
+                print(encoder_name)
                 th.verify_numeric(enc.transform(np_X_t))
 
     def test_classification(self):

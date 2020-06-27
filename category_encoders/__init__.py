@@ -31,7 +31,6 @@ __author__ = 'willmcginnis'
 __all__ = [
     'BackwardDifferenceEncoder',
     'BinaryEncoder',
-    'CountEncoder',
     'HashingEncoder',
     'HelmertEncoder',
     'OneHotEncoder',
