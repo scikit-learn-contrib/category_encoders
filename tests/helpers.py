@@ -11,6 +11,7 @@ def verify_numeric(X_test):
     Test that all attributes in the DataFrame are numeric.
     """
     _NUMERIC_KINDS = set('buifc')
+
     for dt in X_test.dtypes:
         assert(dt.kind in _NUMERIC_KINDS)
 
