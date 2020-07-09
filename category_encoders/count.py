@@ -262,7 +262,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
     def _transform_count_encode(self, X_in, y):
         """Perform the transform count encoding."""
         X = X_in.copy(deep=True)
-        X.loc[:, self.cols] = X.fillna(value=np.nan)
+        X.fillna(value=np.nan, inplace=True)
 
         for col in self.cols:
             if self._min_group_size is not None:
