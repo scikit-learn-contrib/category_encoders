@@ -116,6 +116,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.min_group_size = min_group_size
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
+        self.feature_names = None
 
         self._check_set_create_attrs()
 
@@ -159,17 +160,26 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
         self._fit_count_encode(X, y)
 
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = list(X_temp.columns)
+
         if self.drop_invariant:
             self.drop_cols = []
-            X_temp = self.transform(X)
             generated_cols = util.get_generated_cols(X, X_temp, self.cols)
             self.drop_cols = [
                 x for x in generated_cols if X_temp[x].var() <= 10e-5
             ]
 
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                    "Not found in generated cols.\n{}".format(e))
+
         return self
 
-    def transform(self, X, y=None):
+    def transform(self, X, y=None, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -207,7 +217,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             for col in self.drop_cols:
                 X.drop(col, 1, inplace=True)
 
-        if self.return_df:
+        if self.return_df or override_return_df:
             return X
         else:
             return X.values
@@ -262,7 +272,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                         .fillna(X[col])
                     )
 
-            X[col] = X[col].map(self.mapping[col])
+            X[col] = X[col].astype(object).map(self.mapping[col])
 
             if isinstance(self._handle_unknown[col], (int, np.integer)):
                 X[col] = X[col].fillna(self._handle_unknown[col])
@@ -348,14 +358,14 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 "'combine_min_nan_groups' == 'force' for all columns."
             )
         
-        if (
-            self.combine_min_nan_groups is not None
-            and self.min_group_size is None
-        ):
-            raise ValueError(
-                "`combine_min_nan_groups` only works when `min_group_size` "
-                "is set for all columns."
-            )
+        # if (
+        #     self.combine_min_nan_groups is not None
+        #     and self.min_group_size is None
+        # ):
+        #     raise ValueError(
+        #         "`combine_min_nan_groups` only works when `min_group_size` "
+        #         "is set for all columns."
+        #     )
 
         if (
             self.min_group_name is not None
@@ -423,3 +433,19 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                     "is set for column %s."
                     % (col,)
                 )
+    
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns
+        -------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+
+        """
+        if not isinstance(self.feature_names, list):
+            raise ValueError("Estimator has to be fitted to return feature names.")
+        else:
+            return self.feature_names
