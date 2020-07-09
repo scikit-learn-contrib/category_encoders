@@ -15,7 +15,7 @@ __author__ = 'joshua t. dunn'
 class CountEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
                  return_df=True, handle_unknown=None,
-                 handle_missing='count',
+                 handle_missing='value',
                  min_group_size=None, combine_min_nan_groups=None,
                  min_group_name=None, normalize=False):
         """Count encoding for categorical features.
@@ -192,6 +192,9 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         p : array, shape = [n_samples, n_numeric + N]
             Transformed values with encoding applied.
         """
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().any():
+                raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:
             raise ValueError(
@@ -239,10 +242,10 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                         % (col,)
                     )
 
-                elif self._handle_missing[col] not in ['count', 'return_nan',  'error', None]:
+                elif self._handle_missing[col] not in ['value', 'return_nan',  'error', None]:
                     raise ValueError(
                         '%s key in `handle_missing` should be one of: '
-                        ' `count`, `return_nan` and `error` not `%s`.'
+                        ' `value`, `return_nan` and `error` not `%s`.'
                         % (col, str(self._handle_missing[col]))
                     )
 
