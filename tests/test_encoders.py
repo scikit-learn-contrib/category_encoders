@@ -232,7 +232,10 @@ class TestEncoders(TestCase):
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
+<<<<<<< HEAD
 
+=======
+>>>>>>> a2f81ada784d4dc5393d3a850ddef81b7b3020d6
                 enc = getattr(encoders, encoder_name)(handle_unknown='value')
                 enc.fit(train, y)
                 result = enc.transform(test)
