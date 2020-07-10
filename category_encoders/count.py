@@ -453,6 +453,6 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
         """
         if not isinstance(self.feature_names, list):
-            raise ValueError("Estimator has to be fitted to return feature names.")
+            raise ValueError("CountEncoder has to be fitted to return feature names.")
         else:
             return self.feature_names

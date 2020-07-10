@@ -185,7 +185,6 @@ class TestEncoders(TestCase):
         y = pd.Series([1, 0])
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
-            breakpoint()
             with self.subTest(encoder_name=encoder_name):
 
                 enc = getattr(encoders, encoder_name)(handle_unknown='return_nan')
@@ -217,7 +216,6 @@ class TestEncoders(TestCase):
         y = pd.Series([1, 0, 1])
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
-            breakpoint()
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(handle_missing='return_nan')
                 result = enc.fit(X, y).transform(X_t).iloc[2, :]
@@ -231,16 +229,13 @@ class TestEncoders(TestCase):
         train = pd.DataFrame({'city': ['chicago', 'los angeles']})
         test = pd.DataFrame({'city': ['chicago', 'denver']})
         y = pd.Series([1, 0])
+
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
             with self.subTest(encoder_name=encoder_name):
-                breakpoint()
+
                 enc = getattr(encoders, encoder_name)(handle_unknown='value')
                 enc.fit(train, y)
-                print(enc.__class__.__name__)
-                print(enc.mapping)
                 result = enc.transform(test)
-                # print(enc.mapping)
-                print("result: ", result)
                 self.assertFalse(result.iloc[1, :].isnull().all())
 
     def test_sklearn_compliance(self):
