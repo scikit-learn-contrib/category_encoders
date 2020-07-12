@@ -49,7 +49,8 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             for more details.
         min_group_size: int, float or dict of {column : option, ...}.
             the minimal count threshold of a group needed to ensure it is not
-            combined into a "leftovers" group. If float in the range (0, 1),
+            combined into a "leftovers" group. Default value is 0.01. 
+            If float in the range (0, 1),
             `min_group_size` is calculated as int(X.shape[0] * min_group_size).
             Note: This value may change type based on the `normalize` variable. If True
             this will become a float. If False, it will be an int.
@@ -385,6 +386,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
         if self.combine_min_nan_groups is None:
             self.combine_min_nan_groups = True
+            self.min_group_size = 0.01
 
     def _check_set_create_dict_attrs(self):
         """Check attributes that can be dicts and format for all `self.cols`."""
