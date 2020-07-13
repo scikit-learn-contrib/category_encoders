@@ -279,11 +279,17 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                         X[col].map(self._min_group_categories[col])
                         .fillna(X[col])
                     )
-
+            
             X[col] = X[col].astype(object).map(self.mapping[col])
 
             if isinstance(self._handle_unknown[col], (int, np.integer)):
                 X[col] = X[col].fillna(self._handle_unknown[col])
+            
+            # elif (self._handle_unknown[col] == 'value' and
+            #         X[col].isna().any()
+            #      ):
+            #      X[col].replace(np.nan, 0, inplace=True)   
+
             elif (
                 self._handle_unknown[col] == 'error'
                 and X[col].isnull().any()
