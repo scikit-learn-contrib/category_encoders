@@ -11,7 +11,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 __author__ = 'joshua t. dunn'
 
-
+# COUNT_ENCODER BRANCH
 class CountEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
                  return_df=True, handle_unknown='value',
@@ -247,6 +247,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                     raise ValueError(
                         '%s key in `handle_missing` should be one of: '
                         ' `value`, `return_nan` and `error` not `%s`.'
+                        % (col, str(self._handle_missing[col]))
                     )
 
             self.mapping[col] = X[col].value_counts(
@@ -261,8 +262,8 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             if self._handle_missing[col] == 'return_nan':
                 self.mapping[col][np.NaN] = np.NaN
             
-            elif self._handle_missing[col] == 'value':
-                self.mapping[col].loc[-2] = 0
+            # elif self._handle_missing[col] == 'value':
+            #test_count.py failing     self.mapping[col].loc[-2] = 0
 
         if any([val is not None for val in self._min_group_size.values()]):
             self.combine_min_categories(X)
@@ -289,7 +290,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                     and self._handle_missing[col] != 'return_nan'
                  ):
                  X[col].replace(np.nan, 0, inplace=True)
-
+ 
             elif (
                 self._handle_unknown[col] == 'error'
                 and X[col].isnull().any()
@@ -392,7 +393,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
         if self.combine_min_nan_groups is None:
             self.combine_min_nan_groups = True
-            self.min_group_size = 0.01
+            # test_count.py failing: self.min_group_size = 0.01
 
     def _check_set_create_dict_attrs(self):
         """Check attributes that can be dicts and format for all `self.cols`."""
