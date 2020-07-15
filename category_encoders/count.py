@@ -373,14 +373,16 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 "'combine_min_nan_groups' == 'force' for all columns."
             )
         
+
         if (
             self.combine_min_nan_groups is not None
             and self.min_group_size is None
         ):
-            raise ValueError(
-                "`combine_min_nan_groups` only works when `min_group_size` "
-                "is set for all columns."
-            )
+            pass
+            # raise ValueError(
+            #     "`combine_min_nan_groups` only works when `min_group_size` "
+            #     "is set for all columns."
+            # )
 
         if (
             self.min_group_name is not None
@@ -393,7 +395,6 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
         if self.combine_min_nan_groups is None:
             self.combine_min_nan_groups = True
-            # test_count.py failing: self.min_group_size = 0.01
 
     def _check_set_create_dict_attrs(self):
         """Check attributes that can be dicts and format for all `self.cols`."""
