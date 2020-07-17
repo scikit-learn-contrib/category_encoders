@@ -61,3 +61,11 @@ docs/_build/
 target/
 
 .pytest_cache/
+.tmp/
+checkcommits.sh
+runtest.py
+
+
+*~
+*.swp
+*.swo

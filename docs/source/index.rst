@@ -42,6 +42,7 @@ To use:
     encoder = ce.BaseNEncoder(cols=[...])
     encoder = ce.BinaryEncoder(cols=[...])
     encoder = ce.CatBoostEncoder(cols=[...])
+    encoder = ce.CountEncoder(cols=[...])
     encoder = ce.GLMMEncoder(cols=[...])
     encoder = ce.HashingEncoder(cols=[...])
     encoder = ce.HelmertEncoder(cols=[...])
@@ -70,6 +71,7 @@ Contents:
    basen
    binary
    catboost
+   count
    glmm
    hashing
    helmert
