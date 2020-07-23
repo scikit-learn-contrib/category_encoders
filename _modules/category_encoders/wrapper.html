@@ -299,15 +299,15 @@
 
 <div class="viewcode-block" id="NestedCVWrapper"><a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.NestedCVWrapper">[docs]</a><span class="k">class</span> <span class="nc">NestedCVWrapper</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Extend supervised encoders to perform nested cross validation and minimise prevent target leakage</span>
+<span class="sd">    Extends supervised encoders with the nested cross validation on the training data to minimise overfitting.</span>
 
-<span class="sd">    For a validation or a test set, supervised encoders can be used as follows::</span>
+<span class="sd">    For a validation or a test set, supervised encoders can be used as follows:</span>
 
-<span class="sd">        encoder.fit(X_train, y_train)</span>
+<span class="sd">        X_train_encoded = encoder.fit_transform(X_train, y_train)</span>
 <span class="sd">        X_valid_encoded = encoder.transform(X_valid)</span>
 
-<span class="sd">    However, when encoding the train data in the method above will introduce bias into the data.</span>
-<span class="sd">    Using out-of-fold encodings is an effective way to prevent target leakage. This is equivalent to::</span>
+<span class="sd">    However, the downstream model will be overfitting to the encoded training data due to target leakage.</span>
+<span class="sd">    Using out-of-fold encodings is an effective way to prevent target leakage. This is equivalent to:</span>
 
 <span class="sd">        X_train_encoded = np.zeros(X.shape)</span>
 <span class="sd">        for trn, val in kfold.split(X, y):</span>
@@ -315,9 +315,24 @@
 <span class="sd">            X_train_encoded[val] = encoder.transform(X[val])</span>
 
 <span class="sd">    This can be used in place of the &quot;inner folds&quot; as discussed here:</span>
-<span class="sd">    https://sebastianraschka.com/faq/docs/evaluate-a-model.html</span>
+<span class="sd">        https://sebastianraschka.com/faq/docs/evaluate-a-model.html</span>
 
-<span class="sd">    See README.md for a list of supervised encoders</span>
+<span class="sd">    See README.md for a list of supervised encoders.</span>
+
+<span class="sd">    Discussion: Although leave-one-out encoder internally performs leave-one-out cross-validation, it is</span>
+<span class="sd">    actually the most overfitting supervised model in our library. To illustrate the issue, let&#39;s imagine we</span>
+<span class="sd">    have a totally unpredictive nominal feature and a perfectly balanced binary label. A supervised encoder</span>
+<span class="sd">    should encode the feature into a constant vector as the feature is unpredictive of the label. But when we</span>
+<span class="sd">    use leave-one-out cross-validation, the label ratio cease to be perfectly balanced and the wrong class</span>
+<span class="sd">    label always becomes the majority in the training fold. Leave-one-out encoder returns a seemingly</span>
+<span class="sd">    predictive feature. And the downstream model starts to overfit to the encoded feature. Unfortunately,</span>
+<span class="sd">    even 10-fold cross-validation is not immune to this effect:</span>
+<span class="sd">        http://www.kdd.org/exploration_files/v12-02-4-UR-Perlich.pdf</span>
+<span class="sd">    To decrease the effect, it is recommended to use a low count of the folds. And that is the reason why</span>
+<span class="sd">    this wrapper uses 5 folds by default.</span>
+
+<span class="sd">    Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper. The remaining</span>
+<span class="sd">    encoders can be used without this wrapper.</span>
 
 
 <span class="sd">    Parameters</span>
@@ -326,13 +341,13 @@
 <span class="sd">        an instance of a supervised encoder.</span>
 
 <span class="sd">    cv: int or sklearn cv Object</span>
-<span class="sd">        If an int is given, StratifiedKFold is used by default, where the int is the number of folds</span>
+<span class="sd">        if an int is given, StratifiedKFold is used by default, where the int is the number of folds.</span>
 
 <span class="sd">    shuffle: boolean, optional</span>
-<span class="sd">        Whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided</span>
+<span class="sd">        whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided.</span>
 
 <span class="sd">    random_state: int, RandomState instance or None, optional, default=None</span>
-<span class="sd">        If int, random_state is the seed used by the random number generator. Ignored if a CV method is provided</span>
+<span class="sd">        if int, random_state is the seed used by the random number generator. Ignored if a CV method is provided.</span>
 
 
 <span class="sd">    Example</span>
@@ -395,6 +410,7 @@
         <span class="n">X</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">convert_input</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">convert_input</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
+        <span class="c1"># Get out-of-fold encoding for the training data</span>
         <span class="n">out_of_fold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">trn_idx</span><span class="p">,</span> <span class="n">oof_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
@@ -404,20 +420,20 @@
 
         <span class="n">out_of_fold</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out_of_fold</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 
+        <span class="c1"># Train the encoder on all the training data for testing data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">X_test</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">out_of_fold</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Train the encoder on the full dataset and infer for test and validation sets</span>
-            <span class="n">feature_encoder</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="p">)</span>
-            <span class="n">feature_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
                 <span class="n">encoded_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">out_of_fold</span><span class="p">,</span> <span class="p">)</span>
                 <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">X_test</span><span class="p">:</span>
-                    <span class="n">encoded_data</span> <span class="o">=</span> <span class="n">encoded_data</span> <span class="o">+</span> <span class="p">(</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="p">)</span>
+                    <span class="n">encoded_data</span> <span class="o">=</span> <span class="n">encoded_data</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="p">)</span>
                 <span class="k">return</span> <span class="n">encoded_data</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">out_of_fold</span><span class="p">,</span> <span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span></div></div>
+                <span class="k">return</span> <span class="n">out_of_fold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

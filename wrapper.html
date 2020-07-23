@@ -252,33 +252,52 @@ and returns a transformed version of X.</p>
 <dl class="class">
 <dt id="category_encoders.wrapper.NestedCVWrapper">
 <em class="property">class </em><code class="sig-prename descclassname">category_encoders.wrapper.</code><code class="sig-name descname">NestedCVWrapper</code><span class="sig-paren">(</span><em class="sig-param">feature_encoder</em>, <em class="sig-param">cv=5</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">random_state=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extend supervised encoders to perform nested cross validation and minimise prevent target leakage</p>
+<dd><p>Extends supervised encoders with the nested cross validation on the training data to minimise overfitting.</p>
 <p>For a validation or a test set, supervised encoders can be used as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<span class="n">X_valid_encoded</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_valid</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>However, when encoding the train data in the method above will introduce bias into the data.
+<blockquote>
+<div><p>X_train_encoded = encoder.fit_transform(X_train, y_train)
+X_valid_encoded = encoder.transform(X_valid)</p>
+</div></blockquote>
+<p>However, the downstream model will be overfitting to the encoded training data due to target leakage.
 Using out-of-fold encodings is an effective way to prevent target leakage. This is equivalent to:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X_train_encoded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">trn</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">kfold</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="n">encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">trn</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">trn</span><span class="p">])</span>
-    <span class="n">X_train_encoded</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">val</span><span class="p">])</span>
-</pre></div>
-</div>
-<p>This can be used in place of the “inner folds” as discussed here:
-<a class="reference external" href="https://sebastianraschka.com/faq/docs/evaluate-a-model.html">https://sebastianraschka.com/faq/docs/evaluate-a-model.html</a></p>
-<p>See README.md for a list of supervised encoders</p>
+<blockquote>
+<div><p>X_train_encoded = np.zeros(X.shape)
+for trn, val in kfold.split(X, y):</p>
+<blockquote>
+<div><p>encoder.fit(X[trn], y[trn])
+X_train_encoded[val] = encoder.transform(X[val])</p>
+</div></blockquote>
+</div></blockquote>
+<dl class="simple">
+<dt>This can be used in place of the “inner folds” as discussed here:</dt><dd><p><a class="reference external" href="https://sebastianraschka.com/faq/docs/evaluate-a-model.html">https://sebastianraschka.com/faq/docs/evaluate-a-model.html</a></p>
+</dd>
+</dl>
+<p>See README.md for a list of supervised encoders.</p>
+<p>Discussion: Although leave-one-out encoder internally performs leave-one-out cross-validation, it is
+actually the most overfitting supervised model in our library. To illustrate the issue, let’s imagine we
+have a totally unpredictive nominal feature and a perfectly balanced binary label. A supervised encoder
+should encode the feature into a constant vector as the feature is unpredictive of the label. But when we
+use leave-one-out cross-validation, the label ratio cease to be perfectly balanced and the wrong class
+label always becomes the majority in the training fold. Leave-one-out encoder returns a seemingly
+predictive feature. And the downstream model starts to overfit to the encoded feature. Unfortunately,
+even 10-fold cross-validation is not immune to this effect:</p>
+<blockquote>
+<div><p><a class="reference external" href="http://www.kdd.org/exploration_files/v12-02-4-UR-Perlich.pdf">http://www.kdd.org/exploration_files/v12-02-4-UR-Perlich.pdf</a></p>
+</div></blockquote>
+<p>To decrease the effect, it is recommended to use a low count of the folds. And that is the reason why
+this wrapper uses 5 folds by default.</p>
+<p>Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper. The remaining
+encoders can be used without this wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>feature_encoder: Object</strong></dt><dd><p>an instance of a supervised encoder.</p>
 </dd>
-<dt><strong>cv: int or sklearn cv Object</strong></dt><dd><p>If an int is given, StratifiedKFold is used by default, where the int is the number of folds</p>
+<dt><strong>cv: int or sklearn cv Object</strong></dt><dd><p>if an int is given, StratifiedKFold is used by default, where the int is the number of folds.</p>
 </dd>
-<dt><strong>shuffle: boolean, optional</strong></dt><dd><p>Whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided</p>
+<dt><strong>shuffle: boolean, optional</strong></dt><dd><p>whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided.</p>
 </dd>
-<dt><strong>random_state: int, RandomState instance or None, optional, default=None</strong></dt><dd><p>If int, random_state is the seed used by the random number generator. Ignored if a CV method is provided</p>
+<dt><strong>random_state: int, RandomState instance or None, optional, default=None</strong></dt><dd><p>if int, random_state is the seed used by the random number generator. Ignored if a CV method is provided.</p>
 </dd>
 </dl>
 </dd>
