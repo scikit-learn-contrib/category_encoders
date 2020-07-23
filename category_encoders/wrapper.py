@@ -130,15 +130,15 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
 
 class NestedCVWrapper(BaseEstimator, TransformerMixin):
     """
-    Extend supervised encoders to perform nested cross validation and minimise prevent target leakage
+    Extends supervised encoders with the nested cross validation on the training data to minimise overfitting.
 
-    For a validation or a test set, supervised encoders can be used as follows::
+    For a validation or a test set, supervised encoders can be used as follows:
 
-        encoder.fit(X_train, y_train)
+        X_train_encoded = encoder.fit_transform(X_train, y_train)
         X_valid_encoded = encoder.transform(X_valid)
 
-    However, when encoding the train data in the method above will introduce bias into the data.
-    Using out-of-fold encodings is an effective way to prevent target leakage. This is equivalent to::
+    However, the downstream model will be overfitting to the encoded training data due to target leakage.
+    Using out-of-fold encodings is an effective way to prevent target leakage. This is equivalent to:
 
         X_train_encoded = np.zeros(X.shape)
         for trn, val in kfold.split(X, y):
@@ -146,9 +146,24 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
             X_train_encoded[val] = encoder.transform(X[val])
 
     This can be used in place of the "inner folds" as discussed here:
-    https://sebastianraschka.com/faq/docs/evaluate-a-model.html
+        https://sebastianraschka.com/faq/docs/evaluate-a-model.html
 
-    See README.md for a list of supervised encoders
+    See README.md for a list of supervised encoders.
+
+    Discussion: Although leave-one-out encoder internally performs leave-one-out cross-validation, it is
+    actually the most overfitting supervised model in our library. To illustrate the issue, let's imagine we
+    have a totally unpredictive nominal feature and a perfectly balanced binary label. A supervised encoder
+    should encode the feature into a constant vector as the feature is unpredictive of the label. But when we
+    use leave-one-out cross-validation, the label ratio cease to be perfectly balanced and the wrong class
+    label always becomes the majority in the training fold. Leave-one-out encoder returns a seemingly
+    predictive feature. And the downstream model starts to overfit to the encoded feature. Unfortunately,
+    even 10-fold cross-validation is not immune to this effect:
+        http://www.kdd.org/exploration_files/v12-02-4-UR-Perlich.pdf
+    To decrease the effect, it is recommended to use a low count of the folds. And that is the reason why
+    this wrapper uses 5 folds by default.
+
+    Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper. The remaining
+    encoders can be used without this wrapper.
 
 
     Parameters
@@ -157,13 +172,13 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         an instance of a supervised encoder.
 
     cv: int or sklearn cv Object
-        If an int is given, StratifiedKFold is used by default, where the int is the number of folds
+        if an int is given, StratifiedKFold is used by default, where the int is the number of folds.
 
     shuffle: boolean, optional
-        Whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided
+        whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided.
 
     random_state: int, RandomState instance or None, optional, default=None
-        If int, random_state is the seed used by the random number generator. Ignored if a CV method is provided
+        if int, random_state is the seed used by the random number generator. Ignored if a CV method is provided.
 
 
     Example
@@ -226,6 +241,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         X = utils.convert_input(X)
         y = utils.convert_input(y)
 
+        # Get out-of-fold encoding for the training data
         out_of_fold = np.zeros(X.shape)
 
         for trn_idx, oof_idx in self.cv.split(X, y, groups):
@@ -235,17 +251,17 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
 
         out_of_fold = pd.DataFrame(out_of_fold, columns=X.columns)
 
+        # Train the encoder on all the training data for testing data
+        self.feature_encoder = copy.deepcopy(self.feature_encoder)
+        self.feature_encoder.fit(X, y)
+
         if X_test is None:
             return out_of_fold
         else:
-            # Train the encoder on the full dataset and infer for test and validation sets
-            feature_encoder = copy.deepcopy(self.feature_encoder)
-            feature_encoder.fit(X, y)
-
             if type(X_test) == tuple:
                 encoded_data = (out_of_fold, )
                 for dataset in X_test:
-                    encoded_data = encoded_data + (feature_encoder.transform(dataset), )
+                    encoded_data = encoded_data + (self.feature_encoder.transform(dataset), )
                 return encoded_data
             else:
-                return out_of_fold, feature_encoder.transform(X_test)
+                return out_of_fold, self.feature_encoder.transform(X_test)
