@@ -16,6 +16,8 @@ __author__ = 'Jan Motl'
 class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """Generalized linear mixed model.
 
+    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+
     This is a supervised encoder similar to TargetEncoder or MEstimateEncoder, but there are some advantages:
     1) Solid statistical theory behind the technique. Mixed effects models are a mature branch of statistics.
     2) No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation process.

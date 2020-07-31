@@ -12,6 +12,8 @@ __author__ = 'Jan Motl'
 class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """CatBoost coding for categorical features.
 
+    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+
     This is very similar to leave-one-out encoding, but calculates the
     values "on-the-fly". Consequently, the values naturally vary
     during the training phase and it is not necessary to add random noise.

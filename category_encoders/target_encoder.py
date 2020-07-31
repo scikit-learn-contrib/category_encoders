@@ -11,6 +11,8 @@ __author__ = 'chappers'
 class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """Target encoding for categorical features.
 
+    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+
     For the case of categorical target: features are replaced with a blend of posterior probability of the target
     given particular categorical value and the prior probability of the target over all the training data.
 

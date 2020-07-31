@@ -14,6 +14,8 @@ __author__ = 'Jan Motl'
 class JamesSteinEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """James-Stein estimator.
 
+    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+
     For feature value `i`, James-Stein estimator returns a weighted average of:
 
         1. The mean target value for the observed feature value `i`.

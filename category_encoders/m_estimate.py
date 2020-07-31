@@ -12,6 +12,8 @@ __author__ = 'Jan Motl'
 class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """M-probability estimate of likelihood.
 
+    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+
     This is a simplified version of target encoder, which goes under names like m-probability estimate or
     additive smoothing with known incidence rates. In comparison to target encoder, m-probability estimate
     has only one tunable parameter (`m`), while target encoder has two tunable parameters (`min_samples_leaf`

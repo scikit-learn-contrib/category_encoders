@@ -12,6 +12,8 @@ __author__ = 'Jan Motl'
 class WOEEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """Weight of Evidence coding for categorical features.
 
+    Supported targets: binomial. For polynomial target support, see PolynomialWrapper.
+
     Parameters
     ----------
 
