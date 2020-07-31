@@ -181,6 +181,8 @@
 <div class="viewcode-block" id="MEstimateEncoder"><a class="viewcode-back" href="../../mestimate.html#category_encoders.m_estimate.MEstimateEncoder">[docs]</a><span class="k">class</span> <span class="nc">MEstimateEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">TransformerWithTargetMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;M-probability estimate of likelihood.</span>
 
+<span class="sd">    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</span>
+
 <span class="sd">    This is a simplified version of target encoder, which goes under names like m-probability estimate or</span>
 <span class="sd">    additive smoothing with known incidence rates. In comparison to target encoder, m-probability estimate</span>
 <span class="sd">    has only one tunable parameter (`m`), while target encoder has two tunable parameters (`min_samples_leaf`</span>

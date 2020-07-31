@@ -176,6 +176,7 @@
 <dt id="category_encoders.target_encoder.TargetEncoder">
 <em class="property">class </em><code class="sig-prename descclassname">category_encoders.target_encoder.</code><code class="sig-name descname">TargetEncoder</code><span class="sig-paren">(</span><em class="sig-param">verbose=0</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">drop_invariant=False</em>, <em class="sig-param">return_df=True</em>, <em class="sig-param">handle_missing='value'</em>, <em class="sig-param">handle_unknown='value'</em>, <em class="sig-param">min_samples_leaf=1</em>, <em class="sig-param">smoothing=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/target_encoder.html#TargetEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.target_encoder.TargetEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Target encoding for categorical features.</p>
+<p>Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</p>
 <p>For the case of categorical target: features are replaced with a blend of posterior probability of the target
 given particular categorical value and the prior probability of the target over all the training data.</p>
 <p>For the case of continuous target: features are replaced with a blend of the expected value of the target

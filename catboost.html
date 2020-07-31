@@ -176,6 +176,7 @@
 <dt id="category_encoders.cat_boost.CatBoostEncoder">
 <em class="property">class </em><code class="sig-prename descclassname">category_encoders.cat_boost.</code><code class="sig-name descname">CatBoostEncoder</code><span class="sig-paren">(</span><em class="sig-param">verbose=0</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">drop_invariant=False</em>, <em class="sig-param">return_df=True</em>, <em class="sig-param">handle_unknown='value'</em>, <em class="sig-param">handle_missing='value'</em>, <em class="sig-param">random_state=None</em>, <em class="sig-param">sigma=None</em>, <em class="sig-param">a=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/cat_boost.html#CatBoostEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>CatBoost coding for categorical features.</p>
+<p>Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</p>
 <p>This is very similar to leave-one-out encoding, but calculates the
 values “on-the-fly”. Consequently, the values naturally vary
 during the training phase and it is not necessary to add random noise.</p>

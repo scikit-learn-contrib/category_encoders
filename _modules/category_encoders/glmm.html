@@ -185,6 +185,8 @@
 <div class="viewcode-block" id="GLMMEncoder"><a class="viewcode-back" href="../../glmm.html#category_encoders.glmm.GLMMEncoder">[docs]</a><span class="k">class</span> <span class="nc">GLMMEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">TransformerWithTargetMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Generalized linear mixed model.</span>
 
+<span class="sd">    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</span>
+
 <span class="sd">    This is a supervised encoder similar to TargetEncoder or MEstimateEncoder, but there are some advantages:</span>
 <span class="sd">    1) Solid statistical theory behind the technique. Mixed effects models are a mature branch of statistics.</span>
 <span class="sd">    2) No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation process.</span>

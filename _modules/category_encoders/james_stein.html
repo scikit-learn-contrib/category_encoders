@@ -183,6 +183,8 @@
 <div class="viewcode-block" id="JamesSteinEncoder"><a class="viewcode-back" href="../../jamesstein.html#category_encoders.james_stein.JamesSteinEncoder">[docs]</a><span class="k">class</span> <span class="nc">JamesSteinEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">TransformerWithTargetMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;James-Stein estimator.</span>
 
+<span class="sd">    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</span>
+
 <span class="sd">    For feature value `i`, James-Stein estimator returns a weighted average of:</span>
 
 <span class="sd">        1. The mean target value for the observed feature value `i`.</span>

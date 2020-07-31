@@ -176,6 +176,7 @@
 <dt id="category_encoders.james_stein.JamesSteinEncoder">
 <em class="property">class </em><code class="sig-prename descclassname">category_encoders.james_stein.</code><code class="sig-name descname">JamesSteinEncoder</code><span class="sig-paren">(</span><em class="sig-param">verbose=0</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">drop_invariant=False</em>, <em class="sig-param">return_df=True</em>, <em class="sig-param">handle_unknown='value'</em>, <em class="sig-param">handle_missing='value'</em>, <em class="sig-param">model='independent'</em>, <em class="sig-param">random_state=None</em>, <em class="sig-param">randomized=False</em>, <em class="sig-param">sigma=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/james_stein.html#JamesSteinEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.james_stein.JamesSteinEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>James-Stein estimator.</p>
+<p>Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</p>
 <p>For feature value <cite>i</cite>, James-Stein estimator returns a weighted average of:</p>
 <blockquote>
 <div><ol class="arabic simple">

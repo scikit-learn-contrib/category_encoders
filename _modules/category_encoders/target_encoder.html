@@ -180,6 +180,8 @@
 <div class="viewcode-block" id="TargetEncoder"><a class="viewcode-back" href="../../targetencoder.html#category_encoders.target_encoder.TargetEncoder">[docs]</a><span class="k">class</span> <span class="nc">TargetEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">TransformerWithTargetMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Target encoding for categorical features.</span>
 
+<span class="sd">    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</span>
+
 <span class="sd">    For the case of categorical target: features are replaced with a blend of posterior probability of the target</span>
 <span class="sd">    given particular categorical value and the prior probability of the target over all the training data.</span>
 
