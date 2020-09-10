@@ -273,11 +273,10 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                     nan_idx = self._kfold_helper[col]['nan_idx']
                     stats = self._kfold_helper[col]['stats']
                     infold_stats = y_.groupby(X_[col]).agg(['count', 'sum'])
+                    # meet categories which didn't show up in fit
+                    infold_stats = infold_stats[infold_stats.index != -1]
                     infold_stats['sum'] = infold_stats['sum'].astype('float')
                     outfold_stats = stats.copy(deep=True)
-                    # meet categories which didn't show up in fit
-                    if infold_stats.index.contains(-1) and not outfold_stats.index.contains(-1):
-                        infold_stats = infold_stats.drop(index=-1)
                     known_ids = infold_stats.index.astype('int64')
                     # remove the ids that are not in current fold
                     outfold_stats = outfold_stats.loc[known_ids]
