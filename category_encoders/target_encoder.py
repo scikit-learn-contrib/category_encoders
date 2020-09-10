@@ -102,8 +102,8 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self._mean = None
         self.feature_names = None
         self.nfolds = nfolds
-        self.stratified = self.stratified
-        self.random_state = self.random_state
+        self.stratified = stratified
+        self.random_state = random_state
         if self.nfolds > 1:
             self.kfold = KFold(n_splits=self.nfolds, shuffle=True, random_state=self.random_state) \
                 if not self.stratified else StratifiedKFold(n_splits=self.nfolds, shuffle=True, random_state=self.random_state)
