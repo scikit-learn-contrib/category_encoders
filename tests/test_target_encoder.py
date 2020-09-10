@@ -19,8 +19,13 @@ y_t = pd.DataFrame(np_y_t)
 class TestTargetEncoder(TestCase):
 
     def test_target_encoder(self):
-
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2)
+        enc.fit(X, y)
+        th.verify_numeric(enc.transform(X_t))
+        th.verify_numeric(enc.transform(X_t, y_t))
+
+    def test_kfold_target_encoder(self):
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, nfolds=4)
         enc.fit(X, y)
         th.verify_numeric(enc.transform(X_t))
         th.verify_numeric(enc.transform(X_t, y_t))
@@ -67,6 +72,21 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.5874, values[0], delta=1e-4)
         self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
         self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
+        self.assertEqual(0.5, values[3])
+
+    def test_kfold_target_encoder_fit_transform_HaveCategoricalColumn_ExpectCorrectValueInResult(self):
+        k = 2
+        f = 10
+        binary_cat_example = pd.DataFrame(
+            {'Trend': pd.Categorical(['UP', 'UP', 'DOWN', 'FLAT', 'DOWN', 'UP', 'DOWN', 'UP', 'FLAT', 'FLAT'],
+                                     categories=['UP', 'FLAT', 'DOWN']),
+             'target': [1, 1, 0, 0, 0, 0, 0, 1, 1, 1]})
+        encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f, nfolds=2, random_state=7)
+        result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
+        values = result['Trend'].values
+        self.assertAlmostEqual(0.5, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.5875, values[-3], delta=1e-4)
+        self.assertAlmostEqual(0.25, values[2], delta=1e-4)
         self.assertEqual(0.5, values[3])
 
     def test_target_encoder_fit_transform_HaveNanValue_ExpectCorrectValueInResult(self):

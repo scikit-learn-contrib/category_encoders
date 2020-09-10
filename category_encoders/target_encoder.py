@@ -85,7 +85,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
-                     handle_unknown='value', min_samples_leaf=1, smoothing=1.0, nfolds=1, stratified=False):
+                     handle_unknown='value', min_samples_leaf=1, smoothing=1.0, nfolds=1, stratified=False, random_state=None):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
@@ -103,7 +103,8 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.feature_names = None
         self.nfolds = nfolds
         if self.nfolds > 1:
-            self.kfold = KFold(n_splits=self.nfolds, shuffle=True) if not stratified else StratifiedKFold(n_splits=self.nfolds, shuffle=True)
+            self.kfold = KFold(n_splits=self.nfolds, shuffle=True, random_state=random_state) \
+                if not stratified else StratifiedKFold(n_splits=self.nfolds, shuffle=True, random_state=random_state)
         else:
             self.kfold = None
 
@@ -153,7 +154,6 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
         self.mapping, self._kfold_helper = self.fit_target_encoding(X_ordinal, y)
-        
         X_temp = self.transform(X, y, override_return_df=True)
         self.feature_names = list(X_temp.columns)
 
@@ -187,6 +187,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             col = switch.get('col')
             values = switch.get('mapping')
             stats = y.groupby(X[col]).agg(['count', 'sum'])
+            stats['sum'] = stats['sum'].astype('float')
             smoothing = self._smoothing(stats['sum'] / stats['count'], stats['count'], self._mean)
 
             if self.handle_unknown == 'return_nan':
@@ -246,7 +247,6 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         if self.handle_unknown == 'error':
             if X[self.cols].isin([-1]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
-
         X = self.target_encode(X, y)
 
         if self.drop_invariant:
@@ -271,6 +271,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                     nan_idx = self._kfold_helper[col]['nan_idx']
                     stats = self._kfold_helper[col]['stats']
                     infold_stats = y_.groupby(X_[col]).agg(['count', 'sum'])
+                    infold_stats['sum'] = infold_stats['sum'].astype('float')
                     outfold_stats = stats.copy(deep=True)
                     known_ids = infold_stats.index.astype('int64')
                     # remove the ids that are not in current fold
