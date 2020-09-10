@@ -96,6 +96,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.smoothing = float(smoothing)  # Make smoothing a float so that python 2 does not treat as integer division
         self._dim = None
         self.mapping = None
+        self._kfold_helper = None
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
         self._mean = None
@@ -151,7 +152,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
-        self.mapping = self.fit_target_encoding(X_ordinal, y)
+        self.mapping, self._kfold_helper = self.fit_target_encoding(X_ordinal, y)
         
         X_temp = self.transform(X, y, override_return_df=True)
         self.feature_names = list(X_temp.columns)
@@ -180,6 +181,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
     def fit_target_encoding(self, X, y):
         mapping = {}
+        kfold_helper = {}
         self._mean = y.mean()
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
@@ -196,8 +198,9 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                 smoothing.loc[values.loc[np.nan]] = np.nan
             elif self.handle_missing == 'value':
                 smoothing.loc[-2] = self._mean
-            mapping[col] = {'nan_idx': values.loc[np.nan], 'stats': stats, 'apply_test': smoothing}
-        return mapping
+            mapping[col] = smoothing
+            kfold_helper[col] = {'nan_idx': values.loc[np.nan], 'stats': stats}
+        return mapping, kfold_helper
 
     def transform(self, X, y=None, override_return_df=False):
         """Perform the transformation to new categorical data.
@@ -259,15 +262,14 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         X = X_in.copy(deep=True)
         if y is None or self.kfold is None:
             for col in self.cols:
-                mapping = self.mapping[col]['apply_test']
-                X[col] = X[col].map(mapping)
+                X[col] = X[col].map(self.mapping[col])
         else:
             for _, infold_index in self.kfold.split(X_in, y):
                 X_ = X.iloc[infold_index]
                 y_ = y[infold_index]
                 for col in self.cols:
-                    nan_idx = self.mapping[col]['nan_idx']
-                    stats = self.mapping[col]['stats']
+                    nan_idx = self._kfold_helper[col]['nan_idx']
+                    stats = self._kfold_helper[col]['stats']
                     infold_stats = y_.groupby(X_[col]).agg(['count', 'sum'])
                     outfold_stats = stats.copy(deep=True)
                     known_ids = infold_stats.index.astype('int64')
