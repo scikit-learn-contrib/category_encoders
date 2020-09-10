@@ -85,7 +85,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
-                     handle_unknown='value', min_samples_leaf=1, smoothing=1.0, nfolds=4, stratified=False):
+                     handle_unknown='value', min_samples_leaf=1, smoothing=1.0, nfolds=1, stratified=False):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.drop_cols = []
