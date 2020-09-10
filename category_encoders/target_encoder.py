@@ -102,9 +102,11 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self._mean = None
         self.feature_names = None
         self.nfolds = nfolds
+        self.stratified = self.stratified
+        self.random_state = self.random_state
         if self.nfolds > 1:
-            self.kfold = KFold(n_splits=self.nfolds, shuffle=True, random_state=random_state) \
-                if not stratified else StratifiedKFold(n_splits=self.nfolds, shuffle=True, random_state=random_state)
+            self.kfold = KFold(n_splits=self.nfolds, shuffle=True, random_state=self.random_state) \
+                if not self.stratified else StratifiedKFold(n_splits=self.nfolds, shuffle=True, random_state=self.random_state)
         else:
             self.kfold = None
 
@@ -273,6 +275,9 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                     infold_stats = y_.groupby(X_[col]).agg(['count', 'sum'])
                     infold_stats['sum'] = infold_stats['sum'].astype('float')
                     outfold_stats = stats.copy(deep=True)
+                    # meet categories which didn't show up in fit
+                    if infold_stats.index.contains(-1) and not outfold_stats.index.contains(-1):
+                        infold_stats = infold_stats.drop(index=-1)
                     known_ids = infold_stats.index.astype('int64')
                     # remove the ids that are not in current fold
                     outfold_stats = outfold_stats.loc[known_ids]

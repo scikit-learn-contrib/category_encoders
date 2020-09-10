@@ -25,7 +25,7 @@ class TestTargetEncoder(TestCase):
         th.verify_numeric(enc.transform(X_t, y_t))
 
     def test_kfold_target_encoder(self):
-        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, nfolds=4)
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, nfolds=4, random_state=1)
         enc.fit(X, y)
         th.verify_numeric(enc.transform(X_t))
         th.verify_numeric(enc.transform(X_t, y_t))
