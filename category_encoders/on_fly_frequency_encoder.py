@@ -231,8 +231,8 @@ class OnFlyFrequencyEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             if y is None:
                 X[col] = X[col].map(colmap['freq'])
             else:
-                temp = y.groupby(X[col].astype(str)).agg(['cumcount']) + 1
                 total_cnt = pd.Series(range(1,len(y) + 1))
+                temp = total_cnt.groupby(X[col].astype(str)).agg(['cumcount']) + 1
                 X[col] = (temp['cumcount'] / total_cnt)
 
             if self.handle_unknown == 'value':
