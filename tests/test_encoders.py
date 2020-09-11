@@ -444,7 +444,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 # Target encoders also need y
-                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
+                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'OnFlyFrequencyEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -459,7 +459,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
                 # Target encoders also need y
-                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'KFoldEncoder', 'GLMMEncoder']:
+                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'KFoldEncoder', 'GLMMEncoder', 'OnFlyFrequencyEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -528,13 +528,13 @@ class TestEncoders(TestCase):
         x = ['A', 'B', 'C']
         y_good = pd.Series([1, 0, 1])
         y_bad = pd.Series([1, 0, 1, 0])
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'OnFlyFrequencyEncoder']:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 self.assertRaises(ValueError, enc.fit, x, y_bad)
 
         # ...and scoring. Otherwise they raise an error of ValueError type.
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'OnFlyFrequencyEncoder']:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(x, y_good)
@@ -556,7 +556,7 @@ class TestEncoders(TestCase):
 
     def test_target_encoders(self):
         # See issue #206
-        for encoder_name in {'CatBoostEncoder', 'JamesSteinEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'TargetEncoder', 'WOEEncoder', 'GLMMEncoder'}:
+        for encoder_name in {'CatBoostEncoder', 'JamesSteinEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'TargetEncoder', 'WOEEncoder', 'GLMMEncoder', 'OnFlyFrequencyEncoder'}:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(return_df=False)
                 # an attempt to fit_transform() a supervised encoder without the target should result into a meaningful error message

@@ -37,4 +37,4 @@ class TestOnFlyFrequencyEncoder(TestCase):
         obtained = enc.fit_transform(X, y)
         X_t = pd.DataFrame({'col1': ['B', 'B', 'C', np.NaN, 'D']})
         obtained = enc.transform(X_t)
-        self.assertEqual(list(obtained['col1']), [2.0/5, 2.0/5, 1.0/5, 1.0/3, 1.0/3])
+        self.assertEqual(list(obtained['col1']), [2.0/5, 2.0/5, 1.0/5, 1.0/4, 1.0/4])

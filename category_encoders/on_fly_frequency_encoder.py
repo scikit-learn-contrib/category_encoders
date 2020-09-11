@@ -113,8 +113,15 @@ class OnFlyFrequencyEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         # unite the input into pandas types
         X = util.convert_input(X)
+        y = util.convert_input_vector(y, X.index).astype(float)
+
+        if X.shape[0] != y.shape[0]:
+            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         self._dim = X.shape[1]
+
+        if X.shape[0] != y.shape[0]:
+            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         # if columns aren't passed, just use every string column
         if self.use_default_cols:
@@ -180,6 +187,10 @@ class OnFlyFrequencyEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
 
+        if y is not None:
+            y = util.convert_input_vector(y, X.index).astype(float)
+            if X.shape[0] != y.shape[0]:
+                raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         if not list(self.cols):
             return X
@@ -209,7 +220,7 @@ class OnFlyFrequencyEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             category = pd.Categorical(col_series)
             cnt_cats = len(category.categories)
             result = category.value_counts(dropna=False) / len(col_series)
-            mapping[col] = {'freq': result, 'prior': 1.0 / cnt_cats}
+            mapping[col] = {'freq': result, 'prior': 1.0 / (cnt_cats + 1.0)}
         return mapping
 
     def _transform(self, X_in, y=None, mapping=None):
