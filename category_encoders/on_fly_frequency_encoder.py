@@ -218,6 +218,11 @@ class OnFlyFrequencyEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
         X = X_in.copy(deep=True)
 
+        if y is not None:
+            y_ = y.copy(deep=True)
+            y_.iloc[:len(y)] = range(1, len(y) + 1)
+            y_ = y_.astype('double')
+
         for col, colmap in mapping.items():
             prior = colmap['prior']
             unique_train = colmap['freq'].index
@@ -231,9 +236,8 @@ class OnFlyFrequencyEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             if y is None:
                 X[col] = X[col].map(colmap['freq'])
             else:
-                total_cnt = pd.Series(range(1,len(y) + 1))
-                temp = total_cnt.groupby(X[col].astype(str)).agg(['cumcount']) + 1
-                X[col] = (temp['cumcount'] / total_cnt)
+                temp = y_.groupby(X[col].astype(str)).agg(['cumcount']) + 1
+                X[col] = (temp['cumcount'] / y_)
 
             if self.handle_unknown == 'value':
                 if X[col].dtype.name == 'category':
