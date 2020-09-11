@@ -11,6 +11,7 @@ from category_encoders.binary import BinaryEncoder
 from category_encoders.count import CountEncoder
 from category_encoders.hashing import HashingEncoder
 from category_encoders.helmert import HelmertEncoder
+from category_encoders.on_fly_frequency_encoder import OnFlyFrequencyEncoder
 from category_encoders.one_hot import OneHotEncoder
 from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.sum_coding import SumEncoder
@@ -34,6 +35,7 @@ __all__ = [
     'CountEncoder',
     'HashingEncoder',
     'HelmertEncoder',
+    'OnFlyFrequencyEncoder',
     'OneHotEncoder',
     'OrdinalEncoder',
     'SumEncoder',

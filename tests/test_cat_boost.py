@@ -20,7 +20,7 @@ class TestCatBoostEncoder(TestCase):
         obtained = enc.transform(X_t)
         self.assertEqual(list(obtained['col1']), [1.6/3, 1.6/3, 2.6/3])
 
-    def test_catBoost_missing(self):
+    def test_catBoost_missing_in_train(self):
         X = pd.DataFrame({'col1': ['A', 'B', 'B', 'C', 'A', np.NaN, np.NaN, np.NaN]})
         y = pd.Series([1, 0, 1, 0, 1, 0, 1, 0])
         enc = encoders.CatBoostEncoder(handle_missing='value')
@@ -30,6 +30,15 @@ class TestCatBoostEncoder(TestCase):
         X_t = pd.DataFrame({'col1': ['B', 'B', 'A', np.NaN]})
         obtained = enc.transform(X_t)
         self.assertEqual(list(obtained['col1']), [1.5/3, 1.5/3, 2.5/3, 1.5/4])
+
+    def test_catBoost_missing_in_test(self):
+        X = pd.DataFrame({'col1': ['A', 'B', 'B', 'C', 'A']})
+        y = pd.Series([1, 0, 1, 0, 1])
+        enc = encoders.CatBoostEncoder()
+        obtained = enc.fit_transform(X, y)
+        X_t = pd.DataFrame({'col1': ['B', 'B', 'A', np.NaN, 'D']})
+        obtained = enc.transform(X_t)
+        self.assertEqual(list(obtained['col1']), [1.6/3, 1.6/3, 2.6/3, 3.0/5, 3.0/5])
 
     def test_catBoost_reference(self):
         # The reference is from:
