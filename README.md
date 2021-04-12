@@ -4,7 +4,7 @@ Categorical Encoding Methods
 ![Test Suite and Linting](https://github.com/scikit-learn-contrib/category_encoders/workflows/Test%20Suite%20and%20Linting/badge.svg)
 [![DOI](https://zenodo.org/badge/47077067.svg)](https://zenodo.org/badge/latestdoi/47077067)
 
-A set of scikit-learn-style transformers for encoding categorical 
+Hello A set of scikit-learn-style transformers for encoding categorical
 variables into numeric by means of different techniques.
 
 Important Links
@@ -28,7 +28,7 @@ __Unsupervised:__
 
 __Supervised:__
  * CatBoost [11]
- * Generalized Linear Mixed Model [12] 
+ * Generalized Linear Mixed Model [12]
  * James-Stein Estimator [9]
  * LeaveOneOut [4]
  * M-estimator [7]
@@ -46,7 +46,7 @@ To install the package, execute:
 $ python setup.py install
 ```
 
-or 
+or
 
 ```shell
 pip install category_encoders
@@ -67,9 +67,9 @@ pip install --upgrade git+https://github.com/scikit-learn-contrib/category_encod
 Usage
 -----
 
-All of the encoders are fully compatible sklearn transformers, so they can be used in pipelines or in your existing 
-scripts. Supported input formats include numpy arrays and pandas dataframes. If the cols parameter isn't passed, all 
-columns with object or pandas categorical data type will be encoded. Please see the docs for transformer-specific 
+All of the encoders are fully compatible sklearn transformers, so they can be used in pipelines or in your existing
+scripts. Supported input formats include numpy arrays and pandas dataframes. If the cols parameter isn't passed, all
+columns with object or pandas categorical data type will be encoded. Please see the docs for transformer-specific
 configuration options.
 
 Examples
@@ -117,7 +117,7 @@ For the transformation of the _training_ data with the supervised methods, you s
 
 Furthermore, you may benefit from following wrappers:
  * PolynomialWrapper, which extends supervised encoders to support polynomial targets
- * NestedCVWrapper, which helps to prevent overfitting  
+ * NestedCVWrapper, which helps to prevent overfitting
 
 Additional examples and benchmarks can be found in the `examples` directory.
 
@@ -142,4 +142,4 @@ References
  10. Simple Count or Frequency Encoding. From https://www.datacamp.com/community/tutorials/encoding-methodologies
  11. Transforming categorical features to numerical features. From https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
  12. Andrew Gelman and Jennifer Hill (2006). Data Analysis Using Regression and Multilevel/Hierarchical Models. From https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf
- 
+
