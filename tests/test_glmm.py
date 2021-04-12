@@ -5,7 +5,7 @@ import tests.helpers as th
 
 # data definitions
 X = th.create_dataset(n_rows=100)
-np_y = np.random.randn(100) > 0.5
+np_y = np.random.default_rng(42).standard_normal(100) > 0.5
 
 class TestGLMMEncoder(TestCase):
     def test_continuous(self):

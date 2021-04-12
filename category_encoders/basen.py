@@ -12,6 +12,27 @@ import warnings
 __author__ = 'willmcginnis'
 
 
+def _ceillogint(n, base):
+    """
+    Returns ceil(log(n, base)) for integers n and base.
+
+    Uses integer math, so the result is not subject to floating point rounding errors.
+
+    base must be >= 2 and n must be >= 1.
+    """
+    if base < 2:
+        raise ValueError('base must be >= 2')
+    if n < 1:
+        raise ValueError('n must be >= 1')
+
+    n -= 1
+    ret = 0
+    while n > 0:
+        ret += 1
+        n //= base
+    return ret
+
+
 class BaseNEncoder(BaseEstimator, TransformerMixin):
     """Base-N encoder encodes the categories into arrays of their base-N representation.  A base of 1 is equivalent to
     one-hot encoding (not really base-1, but useful), a base of 2 is equivalent to binary encoding. N=number of actual
@@ -296,7 +317,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         if self.base == 1:
             digits = len(values) + 1
         else:
-            digits = int(np.ceil(math.log(len(values), self.base))) + 1
+            digits = _ceillogint(len(values) + 1, self.base)
 
         return digits
 
