@@ -23,10 +23,12 @@ from category_encoders.m_estimate import MEstimateEncoder
 from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.glmm import GLMMEncoder
+from category_encoders.quantile_encoder import QuantileEncoder
+from category_encoders.quantile_encoder import SummaryEncoder
 
 __version__ = '2.2.2'
 
-__author__ = 'willmcginnis'
+__author__ = 'willmcginnis','cmougan'
 
 __all__ = [
     'BackwardDifferenceEncoder',
@@ -45,5 +47,7 @@ __all__ = [
     'MEstimateEncoder',
     'JamesSteinEncoder',
     'CatBoostEncoder',
-    'GLMMEncoder'
+    'GLMMEncoder',
+    'QuantileEncoder',
+    'SummaryEncoder'
 ]

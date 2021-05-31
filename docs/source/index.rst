@@ -55,6 +55,8 @@ To use:
     encoder = ce.PolynomialEncoder(cols=[...])
     encoder = ce.TargetEncoder(cols=[...])
     encoder = ce.WOEEncoder(cols=[...])
+    encoder = ce.QuantileEncoder(cols=[...])
+    encoder = ce.SummaryEncoder(cols=[...])
 
     encoder.fit(X, y)
     X_cleaned = encoder.transform(X_dirty)
@@ -85,6 +87,8 @@ Contents:
    targetencoder
    woe
    wrapper
+   quantile
+   summary
 
 
 Indices and tables
