@@ -253,7 +253,7 @@ class WOEEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             col = switch.get('col')
             values = switch.get('mapping')
             # Calculate sum and count of the target for each unique value in the feature col
-            stats = y.groupby(X[col]).agg(['sum', 'count'])  # Count of x_{i,+} and x_i
+            stats = y.groupby(X[col].to_numpy()).agg(['sum', 'count'])  # Count of x_{i,+} and x_i
 
             # Create a new column with regularized WOE.
             # Regularization helps to avoid division by zero.
