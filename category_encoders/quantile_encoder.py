@@ -64,10 +64,11 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     None
     References
     ----------
-    .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538
-    .. [2] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010
-    .. [3] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
-    .. [4] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/
+    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://arxiv.org/abs/2105.13783
+    .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538
+    .. [3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010
+    .. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
+    .. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/
     """
 
     def __init__(
