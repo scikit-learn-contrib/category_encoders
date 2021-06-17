@@ -56,7 +56,6 @@ To use:
     encoder = ce.TargetEncoder(cols=[...])
     encoder = ce.WOEEncoder(cols=[...])
     encoder = ce.QuantileEncoder(cols=[...])
-    encoder = ce.SummaryEncoder(cols=[...])
 
     encoder.fit(X, y)
     X_cleaned = encoder.transform(X_dirty)
