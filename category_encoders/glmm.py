@@ -261,48 +261,53 @@ class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             binomial_target = self.binomial_target
 
         # The estimation does not have to converge -> at least converge to the same value.
+        original_state = np.random.get_state()
         np.random.seed(2001)
 
-        for switch in self.ordinal_encoder.category_mapping:
-            col = switch.get('col')
-            values = switch.get('mapping')
-            data = self._rename_and_merge(X, y, col)
+        # Reset random state on completion
+        try:
+            for switch in self.ordinal_encoder.category_mapping:
+                col = switch.get('col')
+                values = switch.get('mapping')
+                data = self._rename_and_merge(X, y, col)
 
-            try:
-                with warnings.catch_warnings():
-                    warnings.filterwarnings("ignore")
-                    if binomial_target:
-                        # Classification, returns (regularized) log odds per category as stored in vc_mean
-                        # Note: md.predict() returns: output = fe_mean + vcp_mean + vc_mean[category]
-                        md = bgmm.from_formula('target ~ 1', {'a': '0 + C(feature)'}, data).fit_vb()
-                        index_names = [int(float(re.sub(r'C\(feature\)\[(\S+)\]', r'\1', index_name))) for index_name in md.model.vc_names]
-                        estimate = pd.Series(md.vc_mean, index=index_names)
-                    else:
-                        # Regression, returns (regularized) mean deviation of the observation's category from the global mean
-                        md = smf.mixedlm('target ~ 1', data, groups=data['feature']).fit()
-                        tmp = dict()
-                        for key, value in md.random_effects.items():
-                            tmp[key] = value[0]
-                        estimate = pd.Series(tmp)
-            except np.linalg.LinAlgError:
-                # Singular matrix -> just return all zeros
-                estimate = pd.Series(np.zeros(len(values)), index=values)
+                try:
+                    with warnings.catch_warnings():
+                        warnings.filterwarnings("ignore")
+                        if binomial_target:
+                            # Classification, returns (regularized) log odds per category as stored in vc_mean
+                            # Note: md.predict() returns: output = fe_mean + vcp_mean + vc_mean[category]
+                            md = bgmm.from_formula('target ~ 1', {'a': '0 + C(feature)'}, data).fit_vb()
+                            index_names = [int(float(re.sub(r'C\(feature\)\[(\S+)\]', r'\1', index_name))) for index_name in md.model.vc_names]
+                            estimate = pd.Series(md.vc_mean, index=index_names)
+                        else:
+                            # Regression, returns (regularized) mean deviation of the observation's category from the global mean
+                            md = smf.mixedlm('target ~ 1', data, groups=data['feature']).fit()
+                            tmp = dict()
+                            for key, value in md.random_effects.items():
+                                tmp[key] = value[0]
+                            estimate = pd.Series(tmp)
+                except np.linalg.LinAlgError:
+                    # Singular matrix -> just return all zeros
+                    estimate = pd.Series(np.zeros(len(values)), index=values)
 
-            # Ignore unique columns. This helps to prevent overfitting on id-like columns
-            if len(X[col].unique()) == len(y):
-                estimate[:] = 0
+                # Ignore unique columns. This helps to prevent overfitting on id-like columns
+                if len(X[col].unique()) == len(y):
+                    estimate[:] = 0
 
-            if self.handle_unknown == 'return_nan':
-                estimate.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                estimate.loc[-1] = 0
+                if self.handle_unknown == 'return_nan':
+                    estimate.loc[-1] = np.nan
+                elif self.handle_unknown == 'value':
+                    estimate.loc[-1] = 0
 
-            if self.handle_missing == 'return_nan':
-                estimate.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                estimate.loc[-2] = 0
+                if self.handle_missing == 'return_nan':
+                    estimate.loc[values.loc[np.nan]] = np.nan
+                elif self.handle_missing == 'value':
+                    estimate.loc[-2] = 0
 
-            mapping[col] = estimate
+                mapping[col] = estimate
+        finally:
+            np.random.set_state(original_state)
 
         return mapping
 
