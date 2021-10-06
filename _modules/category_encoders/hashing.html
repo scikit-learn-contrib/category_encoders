@@ -325,6 +325,9 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_sample</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max_sample</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_lines</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_process</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_sample</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">max_sample</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_process</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">require_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_lock</span><span class="p">,</span> <span class="n">new_start</span><span class="p">,</span> <span class="n">done_index</span><span class="p">,</span> <span class="n">hashing_parts</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">process_index</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
