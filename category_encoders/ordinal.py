@@ -319,8 +319,8 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             for col in cols:
 
                 nan_identity = np.nan
-
-                categories = X[col].unique().tolist()
+                
+                categories = list(X[col].unique())
                 if util.is_category(X[col].dtype):
                     # Avoid using pandas category dtype meta-data if possible, see #235, #238.
                     if X[col].dtype.ordered:
