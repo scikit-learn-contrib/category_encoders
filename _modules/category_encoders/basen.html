@@ -96,6 +96,27 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;willmcginnis&#39;</span>
 
 
+<span class="k">def</span> <span class="nf">_ceillogint</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns ceil(log(n, base)) for integers n and base.</span>
+
+<span class="sd">    Uses integer math, so the result is not subject to floating point rounding errors.</span>
+
+<span class="sd">    base must be &gt;= 2 and n must be &gt;= 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;base must be &gt;= 2&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;n must be &gt;= 1&#39;</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">n</span> <span class="o">//=</span> <span class="n">base</span>
+    <span class="k">return</span> <span class="n">ret</span>
+
+
 <div class="viewcode-block" id="BaseNEncoder"><a class="viewcode-back" href="../../basen.html#category_encoders.basen.BaseNEncoder">[docs]</a><span class="k">class</span> <span class="nc">BaseNEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base-N encoder encodes the categories into arrays of their base-N representation.  A base of 1 is equivalent to</span>
 <span class="sd">    one-hot encoding (not really base-1, but useful), a base of 2 is equivalent to binary encoding. N=number of actual</span>
@@ -380,7 +401,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">digits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">digits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">)))</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">digits</span> <span class="o">=</span> <span class="n">_ceillogint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">digits</span>
 
