@@ -19,7 +19,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     quantile: float
         float indicating statistical quantile. ´0.5´ for median.
     m: float
-        float indicating the smoothing parameter. 0 for no smoothing.
+        this is the “m” in the m-probability estimate. Higher value of m results into stronger shrinking. M is non-negative. 0 for no smoothing.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
