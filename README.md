@@ -35,6 +35,7 @@ __Supervised:__
  * Target Encoding [7]
  * Weight of Evidence [8]
  * Quantile Encoder [13]
+ * Summary Encoder [13]
 
 Installation
 ------------
