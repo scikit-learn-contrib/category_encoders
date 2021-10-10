@@ -2,7 +2,6 @@
 __author__ = "david26694", "cmougan"
 
 import numpy as np
-import pandas as pd
 from sklearn.base import BaseEstimator
 from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.m_estimate import MEstimateEncoder
