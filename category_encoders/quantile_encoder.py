@@ -4,7 +4,8 @@ __author__ = "david26694", "cmougan"
 import numpy as np
 from sklearn.base import BaseEstimator
 import category_encoders.utils as util
-from sklearn.utils.random import check_random_state
+
+
 class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """Quantile Encoding for categorical features.
     This a statistically modified version of target MEstimate encoder where selected features
@@ -15,10 +16,10 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     ----------
     verbose: int
         integer indicating verbosity of the output. 0 for none.
-    quantile: int
-        integer indicating statistical quantile. ´0.5´ for median.
-    m: int
-        integer indicating the smoothing parameter. 0 for no smoothing.
+    quantile: float
+        float indicating statistical quantile. ´0.5´ for median.
+    m: float
+        float indicating the smoothing parameter. 0 for no smoothing.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
@@ -37,7 +38,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = QuantileEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> enc = QuantileEncoder(cols=['CHAS', 'RAD'], quantile=0.5, m=1.0).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
@@ -166,9 +167,8 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         mapping = {}
 
         # Calculate global statistics
-        prior = self._quantile = np.quantile(y, self.quantile)
-        self._sum = y.sum()
-        self._count = y.count()
+        prior = np.quantile(y, self.quantile)
+
 
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get("col")
@@ -282,7 +282,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         if not isinstance(self.feature_names, list):
             raise ValueError(
-                "Must fit data first. Affected feature names are not known " "before."
+                "Must fit data first. Affected feature names are not known before."
             )
         else:
             return self.feature_names
