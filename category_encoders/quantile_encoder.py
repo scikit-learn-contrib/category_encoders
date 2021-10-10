@@ -169,7 +169,6 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         # Calculate global statistics
         prior = np.quantile(y, self.quantile)
 
-
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get("col")
             values = switch.get("mapping")
@@ -227,7 +226,11 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
             raise ValueError(
-                "Unexpected input dimension %d, expected %d" % (X.shape[1], self._dim,)
+                "Unexpected input dimension %d, expected %d"
+                % (
+                    X.shape[1],
+                    self._dim,
+                )
             )
 
         # if we are encoding the training data, we have to check the target
