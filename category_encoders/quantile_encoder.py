@@ -1,13 +1,15 @@
-"""Target Encoder"""
+"""Quantile Encoder"""
 __author__ = "david26694", "cmougan"
 
 import numpy as np
+from category_encoders.ordinal import OrdinalEncoder
 from sklearn.base import BaseEstimator
 import category_encoders.utils as util
 
 
 class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     """Quantile Encoding for categorical features.
+
     This a statistically modified version of target MEstimate encoder where selected features
     are replaced the statistical quantile instead than the mean. Replacing with the
     median is a particular case where self.quantile = 0.5. In comparison to MEstimateEncoder
@@ -289,3 +291,114 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             )
         else:
             return self.feature_names
+
+
+class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+    """Summary Encoding for categorical features.
+
+     This method provides a broader description of a categorical variable than the quantile encoder.
+     It's an encoder designed for creating richer representations.
+    This is built by leveraging information from different quantiles by concatenating them
+
+        This a statistically modified version of target MEstimate encoder where selected features
+        are replaced the statistical quantile instead than the mean. Replacing with the
+        median is a particular case where self.quantile = 0.5. In comparison to MEstimateEncoder
+        it has two tunable parameter `m` and `quantile`
+        Parameters
+        ----------
+        verbose: int
+            integer indicating verbosity of the output. 0 for none.
+        quantiles: list
+            list of floats indicating the statistical quantiles. Each element represent a column
+        m: float
+            this is the “m” in the m-probability estimate. Higher value of m results into stronger shrinking. M is non-negative. 0 for no smoothing.
+        cols: list
+            a list of columns to encode, if None, all string columns will be encoded.
+        drop_invariant: bool
+            boolean for whether or not to drop columns with 0 variance.
+        return_df: bool
+            boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+        handle_missing: str
+            options are 'error', 'return_nan'  and 'value', defaults to 'value', which returns the target quantile.
+        handle_unknown: str
+            options are 'error', 'return_nan' and 'value', defaults to 'value', which returns the target quantile.
+        Example
+        -------
+        >>> from category_encoders import *
+        >>> import pandas as pd
+        >>> from sklearn.datasets import load_boston
+        >>> bunch = load_boston()
+        >>> y = bunch.target
+        >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+        >>> enc = SummaryEncoder(cols=["CHAS", "RAD"], quantiles=[0.25, 0.5, 0.75]).fit(X, y)
+        >>> numeric_dataset = enc.transform(X)
+        >>> print(numeric_dataset.info())
+        <class 'pandas.core.frame.DataFrame'>
+        RangeIndex: 506 entries, 0 to 505
+        Data columns (total 13 columns):
+        CRIM       506 non-null float64
+        ZN         506 non-null float64
+        INDUS      506 non-null float64
+        CHAS       506 non-null float64
+        NOX        506 non-null float64
+        RM         506 non-null float64
+        AGE        506 non-null float64
+        DIS        506 non-null float64
+        RAD        506 non-null float64
+        TAX        506 non-null float64
+        PTRATIO    506 non-null float64
+        B          506 non-null float64
+        LSTAT      506 non-null float64
+        dtypes: float64(13)
+        memory usage: 51.5 KB
+        None
+        References
+        ----------
+        .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://arxiv.org/abs/2105.13783
+        .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538
+        .. [3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010
+        .. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
+        .. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/
+    """
+
+    def __init__(self, cols, quantiles, m=1.0):
+
+        self.cols = cols
+        self.quantiles = quantiles
+        self.m = m
+        self.encoder_list = None
+
+    def fit(self, X, y):
+
+        X = X.copy()
+
+        for quantile in self.quantiles:
+            for col in self.cols:
+                percentile = round(quantile * 100)
+                X[f"{col}_{percentile}"] = X[col]
+
+        encoder_list = []
+        for quantile in self.quantiles:
+            col_names = []
+            for col in self.cols:
+                percentile = round(quantile * 100)
+                col_names.append(f"{col}_{percentile}")
+            enc = QuantileEncoder(cols=col_names, quantile=quantile, m=self.m)
+            enc.fit(X, y)
+            encoder_list.append(enc)
+
+        self.encoder_list = encoder_list
+
+        return self
+
+    def transform(self, X, y=None):
+        X_encoded = X.copy()
+
+        for quantile in self.quantiles:
+            for col in self.cols:
+                percentile = round(quantile * 100)
+                X_encoded[f"{col}_{percentile}"] = X_encoded[col]
+
+        for encoder in self.encoder_list:
+            X_encoded = encoder.transform(X_encoded)
+        return X_encoded

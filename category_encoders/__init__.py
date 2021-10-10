@@ -23,7 +23,7 @@ from category_encoders.m_estimate import MEstimateEncoder
 from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.glmm import GLMMEncoder
-from category_encoders.quantile_encoder import QuantileEncoder
+from category_encoders.quantile_encoder import QuantileEncoder,SummaryEncoder
 
 __version__ = '2.2.2'
 
@@ -48,4 +48,5 @@ __all__ = [
     'CatBoostEncoder',
     'GLMMEncoder',
     'QuantileEncoder',
+    'SummaryEncoder'
 ]
