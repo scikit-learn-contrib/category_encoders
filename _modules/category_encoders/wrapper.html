@@ -124,7 +124,7 @@
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)</span>
 <span class="sd">    &gt;&gt;&gt; enc = TargetEncoder(cols=[&#39;CHAS&#39;, &#39;RAD&#39;])</span>
 <span class="sd">    &gt;&gt;&gt; wrapper = PolynomialWrapper(enc)</span>
-<span class="sd">    &gt;&gt;&gt; encoded =wrapper.fit_transform(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; encoded = wrapper.fit_transform(X, y)</span>
 <span class="sd">    &gt;&gt;&gt; print(encoded.info())</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -288,6 +288,8 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_encoder</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span> <span class="o">=</span> <span class="n">feature_encoder</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">feature_encoder</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
 
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">cv</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cv</span> <span class="o">=</span> <span class="n">StratifiedKFold</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="n">cv</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">random_state</span><span class="p">)</span>
