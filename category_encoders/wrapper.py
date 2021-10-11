@@ -40,7 +40,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
     >>> enc = TargetEncoder(cols=['CHAS', 'RAD'])
     >>> wrapper = PolynomialWrapper(enc)
-    >>> encoded =wrapper.fit_transform(X, y)
+    >>> encoded = wrapper.fit_transform(X, y)
     >>> print(encoded.info())
     """
 
@@ -204,6 +204,8 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
     def __init__(self, feature_encoder, cv=5, shuffle=True, random_state=None):
         self.feature_encoder = feature_encoder
         self.__name__ = feature_encoder.__class__.__name__
+        self.shuffle = shuffle
+        self.random_state = random_state
 
         if type(cv) == int:
             self.cv = StratifiedKFold(n_splits=cv, shuffle=shuffle, random_state=random_state)
