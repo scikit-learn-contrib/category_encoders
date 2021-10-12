@@ -366,16 +366,16 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         X = X.copy()
 
-        for quantile in self.quantiles:
-            for col in self.cols:
-                percentile = round(quantile * 100)
-                X[f"{col}_{percentile}"] = X[col]
+        rounded_percentiles = [round(quantile * 100) for quantile in self.quantiles]
+        if len(rounded_percentiles) != len(set(rounded_percentiles)):
+            raise ValueError("There are two quantiles that belong to the same rounded percentile")
 
         encoder_list = []
         for quantile in self.quantiles:
             col_names = []
             for col in self.cols:
                 percentile = round(quantile * 100)
+                X[f"{col}_{percentile}"] = X[col]
                 col_names.append(f"{col}_{percentile}")
             enc = QuantileEncoder(cols=col_names, quantile=quantile, m=self.m)
             enc.fit(X, y)
