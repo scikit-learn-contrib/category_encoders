@@ -241,6 +241,9 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         if self.auto_sample:
             self.max_sample = int(self.data_lines / self.max_process)
+
+            if self.max_sample == 0:
+                self.max_sample = 1
         if self.max_process == 1:
             self.require_data(self, data_lock, new_start, done_index, hashing_parts, cols=self.cols, process_index=1)
         else:

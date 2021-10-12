@@ -26,3 +26,19 @@ class TestHashingEncoder(TestCase):
         assert df.shape[0] == pd.concat([df, df_encoded_multi_process], axis=1).shape[0]
 
         assert_frame_equal(df_encoded_single_process, df_encoded_multi_process)
+
+    def test_transform_works_with_single_row_df(self):
+        columns = ['column1', 'column2', 'column3', 'column4']
+        df = pd.DataFrame([[i, i, i, i] for i in range(10)], columns=columns)
+        df = df.iloc[2:8, :]
+        target_columns = ['column1', 'column2', 'column3']
+
+        multi_process_encoder = encoders.HashingEncoder(cols=target_columns)
+        multi_process_encoder.fit(df, None)
+        df_encoded_multi_process = multi_process_encoder.transform(df.sample(1))
+        
+        assert (multi_process_encoder.n_components +
+                len(list(set(columns) -
+                         set(target_columns))
+                   ) == df_encoded_multi_process.shape[1]
+               )

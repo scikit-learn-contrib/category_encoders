@@ -692,3 +692,15 @@ class TestEncoders(TestCase):
         self.assertTrue(result['float_edge'].min() < 1, 'should still be a number and untouched')
         self.assertTrue(result['unique_int'].min() < 1, 'should still be a number and untouched')
         self.assertTrue(result[321].min() < 1, 'should still be a number')
+
+    def test_ignored_columns_are_untouched(self):
+        # Make sure None values in ignored columns are preserved.
+        # See: https://github.com/scikit-learn-contrib/category_encoders/pull/261
+        X = pd.DataFrame({'col1': ['A', 'B', None], 'col2': ['C', 'D', None]})
+        y = [1, 0, 1]
+
+        for encoder_name in (set(encoders.__all__)):
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(cols=['col1'])
+                out = enc.fit_transform(X, y)
+                self.assertTrue(out.col2[2] is None)

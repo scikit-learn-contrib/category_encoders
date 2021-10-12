@@ -82,8 +82,8 @@ class TestBaseNEncoder(TestCase):
         result = encoder.fit_transform(train)
 
         self.assertEqual(2, result.shape[0])
-        self.assertListEqual([0, 0, 1], result.iloc[0, :].tolist())
-        self.assertListEqual([0, 1, 0], result.iloc[1, :].tolist())
+        self.assertListEqual([0, 1], result.iloc[0, :].tolist())
+        self.assertListEqual([1, 0], result.iloc[1, :].tolist())
 
     def test_inverse_transform_HaveNanInTrainAndHandleMissingValue_ExpectReturnedWithNan(self):
         train = pd.DataFrame({'city': ['chicago', np.nan]})
@@ -139,3 +139,39 @@ class TestBaseNEncoder(TestCase):
         original = enc.inverse_transform(result)
 
         pd.testing.assert_frame_equal(expected, original)
+
+    def test_num_cols(self):
+        """
+        Test that BaseNEncoder produces the correct number of output columns.
+
+        Since the value 0 is reserved for encoding unseen values, there need to be enough digits to
+        represent up to nvals + 1 distinct encodings, where nvals is the number of distinct input
+        values. This is ceil(log(nvals + 1, base)) digits.
+
+        This test specifically checks the case where BaseNEncoder is initialized with
+        handle_unknown='value' and handle_missing='value' (i.e. the defaults).
+        """
+        def num_cols(nvals, base):
+            """Returns the number of columns output for a given number of distinct input values"""
+            vals = [str(i) for i in range(nvals)]
+            df = pd.DataFrame({'vals': vals})
+            encoder = encoders.BaseNEncoder(base=base)
+            encoder.fit(df)
+            return len(list(encoder.transform(df)))
+
+        self.assertEqual(num_cols(1, 2), 1)
+        self.assertEqual(num_cols(2, 2), 2)
+        self.assertEqual(num_cols(3, 2), 2)
+        self.assertEqual(num_cols(4, 2), 3)
+        self.assertEqual(num_cols(7, 2), 3)
+        self.assertEqual(num_cols(8, 2), 4)
+        self.assertEqual(num_cols(62, 2), 6)
+        self.assertEqual(num_cols(63, 2), 6)
+        self.assertEqual(num_cols(64, 2), 7)
+        self.assertEqual(num_cols(65, 2), 7)
+
+        # nvals = 0 returns the original dataframe unchanged, so it still has 1 column even though
+        # logically there should be zero.
+        self.assertEqual(num_cols(0, 2), 1)
+
+        self.assertEqual(num_cols(55, 7), 3)

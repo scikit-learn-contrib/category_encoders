@@ -1,3 +1,9 @@
+v2.3.0
+======
+
+ * many bugfixes
+ * added count encoder
+ 
 v2.2.2
 ======
 * Added generalized linear mixed model encoder
