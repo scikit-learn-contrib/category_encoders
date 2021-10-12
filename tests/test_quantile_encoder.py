@@ -65,7 +65,7 @@ class TestQuantileEncoder(unittest.TestCase):
 
 
 class TestSummaryEncoder(unittest.TestCase):
-    """Tests for percentile encoder."""
+    """Tests for summary encoder."""
 
     def setUp(self):
         """Create dataframe with categories and a target variable"""
@@ -75,6 +75,10 @@ class TestSummaryEncoder(unittest.TestCase):
         self.col = "categories"
 
     def assert_same_quantile(self, quantile):
+        """
+        Given a quantile, compares if the summary encoder and the quantile encoder provide the same results
+
+        """
 
         quantile_results = encoders.QuantileEncoder(
             cols=[self.col], quantile=quantile
@@ -92,11 +96,18 @@ class TestSummaryEncoder(unittest.TestCase):
         )
 
     def test_several_quantiles(self):
+        """
+        Check that all quantiles of the QE are in the summary encoder
+        """
 
         for quantile in [0.1, 0.5, 0.9]:
             self.assert_same_quantile(quantile)
 
-    def test_several_quantiles(self):
+    def test_several_quantiles_reverse(self):
+        """
+        Checks that all quantiles of summary encoder are in the quantile encoder
+
+        """
 
         quantile_list = [0.2, 0.1, 0.8]
 
