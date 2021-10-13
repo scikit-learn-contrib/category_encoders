@@ -109,7 +109,7 @@ class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
     # noinspection PyUnusedLocal
     def fit(self, X, y, **kwargs):
-        """Fit encoder according to X and binary y.
+        """Fit encoder according to X and binary or continuous y.
 
         Parameters
         ----------
