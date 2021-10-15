@@ -370,14 +370,26 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         if len(rounded_percentiles) != len(set(rounded_percentiles)):
             raise ValueError("There are two quantiles that belong to the same rounded percentile")
 
-        encoder_list = []
+        # We need to create all the columns before fitting any encoder
+        # In new_df_columns we'll have, for each quantile, the names of
+        # the new columns that are created for that quantile.
+        new_df_columns = {}
         for quantile in self.quantiles:
-            col_names = []
+            new_df_columns[quantile] = []
             for col in self.cols:
                 percentile = round(quantile * 100)
-                X[f"{col}_{percentile}"] = X[col]
-                col_names.append(f"{col}_{percentile}")
-            enc = QuantileEncoder(cols=col_names, quantile=quantile, m=self.m)
+                col_name = f"{col}_{percentile}"
+                X[col_name] = X[col]
+                new_df_columns[quantile].append(col_name)
+
+        # Now we create a QuantileEncoder per quantile
+        encoder_list = []
+        for quantile in self.quantiles:
+            enc = QuantileEncoder(
+                cols=new_df_columns[quantile],
+                quantile=quantile,
+                m=self.m
+            )
             enc.fit(X, y)
             encoder_list.append(enc)
 
