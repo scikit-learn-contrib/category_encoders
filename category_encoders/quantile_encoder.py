@@ -355,7 +355,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     .. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/
     """
 
-    def __init__(self, cols, quantiles, m=1.0):
+    def __init__(self, cols=None, quantiles=(0.25, 0.75), m=1.0):
 
         self.cols = cols
         self.quantiles = quantiles
