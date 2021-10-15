@@ -113,7 +113,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         # unite the input into pandas types
         X = util.convert_input(X)
-        y = util.convert_input_vector(y, X.index)
+        y = util.convert_input_vector(y, X.index).astype(float)
 
         if X.shape[0] != y.shape[0]:
             raise ValueError(
@@ -355,9 +355,28 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     .. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/
     """
 
-    def __init__(self, cols, quantiles, m=1.0):
-
+    def __init__(
+        self,
+        verbose=0,
+        cols=None,
+        drop_invariant=False,
+        return_df=True,
+        handle_missing="value",
+        handle_unknown="value",
+        quantiles=(0.25, 0.75),
+        m=1.0,
+    ):
+        self.return_df = return_df
+        self.drop_invariant = drop_invariant
+        self.drop_cols = []
+        self.verbose = verbose
         self.cols = cols
+        self.ordinal_encoder = None
+        self._dim = None
+        self.mapping = None
+        self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
+        self.feature_names = None
         self.quantiles = quantiles
         self.m = m
         self.encoder_list = None
@@ -366,18 +385,41 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         X = X.copy()
 
+        # TODO: This
+        # if self.cols is None:
+        #     self.cols = util.get_obj_cols(X)
+        # else:
+        #     self.cols = util.convert_cols_to_list(self.cols)
+
         rounded_percentiles = [round(quantile * 100) for quantile in self.quantiles]
         if len(rounded_percentiles) != len(set(rounded_percentiles)):
             raise ValueError("There are two quantiles that belong to the same rounded percentile")
 
-        encoder_list = []
+        # We need to create all the columns before fitting any encoder
+        # In new_df_columns we'll have, for each quantile, the names of
+        # the new columns that are created for that quantile.
+        new_df_columns = {}
         for quantile in self.quantiles:
-            col_names = []
+            new_df_columns[quantile] = []
             for col in self.cols:
                 percentile = round(quantile * 100)
-                X[f"{col}_{percentile}"] = X[col]
-                col_names.append(f"{col}_{percentile}")
-            enc = QuantileEncoder(cols=col_names, quantile=quantile, m=self.m)
+                col_name = f"{col}_{percentile}"
+                X[col_name] = X[col]
+                new_df_columns[quantile].append(col_name)
+
+        # Now we create a QuantileEncoder per quantile
+        encoder_list = []
+        for quantile in self.quantiles:
+            enc = QuantileEncoder(
+                verbose=self.verbose,
+                cols=new_df_columns[quantile],
+                drop_invariant=self.drop_invariant,
+                return_df=self.return_df,
+                handle_missing=self.handle_missing,
+                handle_unknown=self.handle_unknown,
+                quantile=quantile,
+                m=self.m
+            )
             enc.fit(X, y)
             encoder_list.append(enc)
 
@@ -395,4 +437,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         for encoder in self.encoder_list:
             X_encoded = encoder.transform(X_encoded)
+
+        # Drop string columns
+        X_encoded = X_encoded.drop(columns=self.cols)
         return X_encoded
