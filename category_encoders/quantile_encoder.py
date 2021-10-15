@@ -113,7 +113,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         # unite the input into pandas types
         X = util.convert_input(X)
-        y = util.convert_input_vector(y, X.index)
+        y = util.convert_input_vector(y, X.index).astype(float)
 
         if X.shape[0] != y.shape[0]:
             raise ValueError(
