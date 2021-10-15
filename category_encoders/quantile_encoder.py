@@ -355,9 +355,28 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     .. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/
     """
 
-    def __init__(self, cols=None, quantiles=(0.25, 0.75), m=1.0):
-
+    def __init__(
+        self,
+        verbose=0,
+        cols=None,
+        drop_invariant=False,
+        return_df=True,
+        handle_missing="value",
+        handle_unknown="value",
+        quantiles=(0.25, 0.75),
+        m=1.0,
+    ):
+        self.return_df = return_df
+        self.drop_invariant = drop_invariant
+        self.drop_cols = []
+        self.verbose = verbose
         self.cols = cols
+        self.ordinal_encoder = None
+        self._dim = None
+        self.mapping = None
+        self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
+        self.feature_names = None
         self.quantiles = quantiles
         self.m = m
         self.encoder_list = None
@@ -365,6 +384,12 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     def fit(self, X, y):
 
         X = X.copy()
+
+        # TODO: This
+        # if self.cols is None:
+        #     self.cols = util.get_obj_cols(X)
+        # else:
+        #     self.cols = util.convert_cols_to_list(self.cols)
 
         rounded_percentiles = [round(quantile * 100) for quantile in self.quantiles]
         if len(rounded_percentiles) != len(set(rounded_percentiles)):
@@ -386,7 +411,12 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         encoder_list = []
         for quantile in self.quantiles:
             enc = QuantileEncoder(
+                verbose=self.verbose,
                 cols=new_df_columns[quantile],
+                drop_invariant=self.drop_invariant,
+                return_df=self.return_df,
+                handle_missing=self.handle_missing,
+                handle_unknown=self.handle_unknown,
                 quantile=quantile,
                 m=self.m
             )
@@ -407,4 +437,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         for encoder in self.encoder_list:
             X_encoded = encoder.transform(X_encoded)
+
+        # Drop string columns
+        X_encoded = X_encoded.drop(columns=self.cols)
         return X_encoded
