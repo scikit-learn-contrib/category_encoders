@@ -5,6 +5,9 @@ import numpy as np
 from category_encoders.ordinal import OrdinalEncoder
 from sklearn.base import BaseEstimator
 import category_encoders.utils as util
+import pandas as pd
+from functools import reduce
+import operator
 
 
 class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
@@ -116,13 +119,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         y = util.convert_input_vector(y, X.index).astype(float)
 
         if X.shape[0] != y.shape[0]:
-            raise ValueError(
-                "The length of X is "
-                + str(X.shape[0])
-                + " but length of y is "
-                + str(y.shape[0])
-                + "."
-            )
+            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         self._dim = X.shape[1]
 
@@ -158,10 +155,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                 [self.feature_names.remove(x) for x in self.drop_cols]
             except KeyError as e:
                 if self.verbose > 0:
-                    print(
-                        "Could not remove column from feature names."
-                        "Not found in generated cols.\n{}".format(e)
-                    )
+                    print("Could not remove column from feature names." "Not found in generated cols.\n{}".format(e))
 
         return self
 
@@ -176,15 +170,11 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             values = switch.get("mapping")
 
             # Calculate sum, count and quantile of the target for each unique value in the feature col
-            stats = y.groupby(X[col]).agg(
-                [lambda x: np.quantile(x, self.quantile), "sum", "count"]
-            )
+            stats = y.groupby(X[col]).agg([lambda x: np.quantile(x, self.quantile), "sum", "count"])
             stats.columns = ["quantile", "sum", "count"]
 
             # Calculate the m-probability estimate of the quantile
-            estimate = (stats["count"] * stats["quantile"] + prior * self.m) / (
-                stats["count"] + self.m
-            )
+            estimate = (stats["count"] * stats["quantile"] + prior * self.m) / (stats["count"] + self.m)
 
             if self.handle_unknown == "return_nan":
                 estimate.loc[-1] = np.nan
@@ -218,9 +208,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                 raise ValueError("Columns to be encoded can not contain null")
 
         if self._dim is None:
-            raise ValueError(
-                "Must train encoder before it can be used to transform data."
-            )
+            raise ValueError("Must train encoder before it can be used to transform data.")
 
         # unite the input into pandas types
         X = util.convert_input(X)
@@ -240,11 +228,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             y = util.convert_input_vector(y, X.index)
             if X.shape[0] != y.shape[0]:
                 raise ValueError(
-                    "The length of X is "
-                    + str(X.shape[0])
-                    + " but length of y is "
-                    + str(y.shape[0])
-                    + "."
+                    "The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + "."
                 )
 
         if not list(self.cols):
@@ -286,9 +270,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         if not isinstance(self.feature_names, list):
-            raise ValueError(
-                "Must fit data first. Affected feature names are not known before."
-            )
+            raise ValueError("Must fit data first. Affected feature names are not known before.")
         else:
             return self.feature_names
 
@@ -382,62 +364,92 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.encoder_list = None
 
     def fit(self, X, y):
+        X = util.convert_input(X)
+        y = util.convert_input_vector(y, X.index).astype(float)
 
-        X = X.copy()
-
-        # TODO: This
-        # if self.cols is None:
-        #     self.cols = util.get_obj_cols(X)
-        # else:
-        #     self.cols = util.convert_cols_to_list(self.cols)
+        if self.cols is None:
+            self.cols = util.get_obj_cols(X)
+        else:
+            self.cols = util.convert_cols_to_list(self.cols)
 
         rounded_percentiles = [round(quantile * 100) for quantile in self.quantiles]
         if len(rounded_percentiles) != len(set(rounded_percentiles)):
             raise ValueError("There are two quantiles that belong to the same rounded percentile")
 
-        # We need to create all the columns before fitting any encoder
-        # In new_df_columns we'll have, for each quantile, the names of
-        # the new columns that are created for that quantile.
-        new_df_columns = {}
-        for quantile in self.quantiles:
-            new_df_columns[quantile] = []
-            for col in self.cols:
-                percentile = round(quantile * 100)
-                col_name = f"{col}_{percentile}"
-                X[col_name] = X[col]
-                new_df_columns[quantile].append(col_name)
-
-        # Now we create a QuantileEncoder per quantile
         encoder_list = []
         for quantile in self.quantiles:
             enc = QuantileEncoder(
                 verbose=self.verbose,
-                cols=new_df_columns[quantile],
+                cols=self.cols,
                 drop_invariant=self.drop_invariant,
-                return_df=self.return_df,
+                return_df=True,  # always return df for individual encoders. If not desired this is handled below.
                 handle_missing=self.handle_missing,
                 handle_unknown=self.handle_unknown,
                 quantile=quantile,
-                m=self.m
+                m=self.m,
             )
-            enc.fit(X, y)
+            enc.fit(X.copy(), y)
             encoder_list.append(enc)
+            self.drop_cols += enc.drop_cols
+        self.feature_names = reduce(
+            operator.add,
+            [
+                [self._get_col_name(c, q) for q in self.quantiles] if c in self.cols else [c]
+                for c in X.columns
+                if c not in self.drop_cols
+            ],
+        )
 
         self.encoder_list = encoder_list
-
         return self
 
-    def transform(self, X, y=None):
-        X_encoded = X.copy()
+    def transform(self, X, y=None, override_return_df=False):
+        if self.encoder_list is None:
+            raise ValueError("Must train encoder before it can be used to transform data.")
+        X = util.convert_input(X)
 
-        for quantile in self.quantiles:
-            for col in self.cols:
-                percentile = round(quantile * 100)
-                X_encoded[f"{col}_{percentile}"] = X_encoded[col]
+        # if we are encoding the training data, we have to check the target
+        if y is not None:
+            y = util.convert_input_vector(y, X.index)
+            if X.shape[0] != y.shape[0]:
+                raise ValueError(
+                    "The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + "."
+                )
 
-        for encoder in self.encoder_list:
-            X_encoded = encoder.transform(X_encoded)
+        orig_cols = X.columns
+        transformed_df = X.copy()
+        for idx, encoder in enumerate(self.encoder_list):
+            colname_mapping = {col: self._get_col_name(col, encoder.quantile) for col in self.cols}
+            X_encoded = encoder.transform(X.copy()).rename(columns=colname_mapping)
+            if idx == 0:
+                transformed_df = X_encoded
+            else:
+                new_feat = X_encoded[[c for c in X_encoded.columns if c not in orig_cols]]
+                transformed_df = pd.concat([transformed_df, new_feat], axis=1)
+        feature_order = [c for c in self.get_feature_names() if c in transformed_df]
+        transformed_df = transformed_df[feature_order]
 
-        # Drop string columns
-        X_encoded = X_encoded.drop(columns=self.cols)
-        return X_encoded
+        if self.return_df or override_return_df:
+            return transformed_df
+        else:
+            return transformed_df.values
+
+    def get_feature_names(self):
+        """
+        Returns the names of all transformed / added columns.
+        Returns
+        -------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features are not included!
+        """
+
+        if not isinstance(self.feature_names, list):
+            raise ValueError("Must fit data first. Affected feature names are not known before.")
+        else:
+            return self.feature_names
+
+    @staticmethod
+    def _get_col_name(col: str, quantile: float) -> str:
+        percentile = round(quantile * 100)
+        return "{}_{}".format(col, percentile)
