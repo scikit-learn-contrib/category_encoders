@@ -486,7 +486,7 @@ class TestEncoders(TestCase):
         data = pd.DataFrame(data={'x': ['A', 'B', 'C', 'A', 'B'], 'y': [1, 0, 1, 0, 1]})
         data = data.iloc[2:5]
         data2 = pd.DataFrame(data={'x': ['C', 'A', 'B'], 'y': [1, 0, 1]})
-        for encoder_name in encoders.__all__:
+        for encoder_name in set(encoders.__all__) - {"HashingEncoder"}:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 result = enc.fit_transform(data.x, data.y)
@@ -658,7 +658,7 @@ class TestEncoders(TestCase):
         }, columns=pd.Index(['hello', 'world']))
         cols = df.select_dtypes(include='object').columns
 
-        for encoder_name in (set(encoders.__all__)):
+        for encoder_name in (set(encoders.__all__) - {"HashingEncoder"}):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit_transform(df, df['world'])
