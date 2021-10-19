@@ -1,4 +1,3 @@
-# -*- coding: future_fstrings -*-
 import unittest
 
 import pandas as pd
@@ -90,10 +89,10 @@ class TestSummaryEncoder(unittest.TestCase):
         ).fit_transform(self.df, self.target)
 
         percentile = round(quantile * 100)
-
+        col_name = str(self.col)+'_'+str(percentile)
         np.testing.assert_allclose(
             quantile_results[self.col].values,
-            summary_results[f"{self.col}_{percentile}"].values,
+            summary_results[col_name].values,
         )
 
     def test_several_quantiles(self):
@@ -123,8 +122,9 @@ class TestSummaryEncoder(unittest.TestCase):
             ).fit_transform(self.df, self.target)
 
             percentile = round(quantile * 100)
+            col_name = str(self.col)+'_'+str(percentile)
 
             np.testing.assert_allclose(
                 quantile_results[self.col].values,
-                summary_results[f"{self.col}_{percentile}"].values,
+                summary_results[col_name].values,
             )

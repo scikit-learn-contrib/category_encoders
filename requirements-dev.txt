@@ -2,4 +2,3 @@ sphinx
 sphinx_rtd_theme
 pytest
 numpydoc
-future-fstrings
