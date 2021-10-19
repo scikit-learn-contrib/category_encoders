@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 import unittest
 
 import pandas as pd
