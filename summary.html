@@ -91,9 +91,9 @@
 <em class="property">class </em><code class="sig-prename descclassname">category_encoders.quantile_encoder.</code><code class="sig-name descname">SummaryEncoder</code><span class="sig-paren">(</span><em class="sig-param">verbose=0</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">drop_invariant=False</em>, <em class="sig-param">return_df=True</em>, <em class="sig-param">handle_missing='value'</em>, <em class="sig-param">handle_unknown='value'</em>, <em class="sig-param">quantiles=(0.25</em>, <em class="sig-param">0.75)</em>, <em class="sig-param">m=1.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/quantile_encoder.html#SummaryEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.quantile_encoder.SummaryEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Summary Encoding for categorical features.</p>
 <p>It’s an encoder designed for creating richer representations by applying quantile encoding for a set of quantiles.</p>
-<dl class="field-list">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
+<dd class="field-odd"><dl class="simple">
 <dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of the output. 0 for none.</p>
 </dd>
 <dt><strong>quantiles: list</strong></dt><dd><p>list of floats indicating the statistical quantiles. Each element represent a column</p>
@@ -110,46 +110,25 @@
 </dd>
 <dt><strong>handle_unknown: str</strong></dt><dd><p>options are ‘error’, ‘return_nan’ and ‘value’, defaults to ‘value’, which returns the target quantile.</p>
 </dd>
-<dt><strong>Example</strong></dt><dd></dd>
-<dt><strong>——-</strong></dt><dd></dd>
-<dt><strong>&gt;&gt;&gt; from category_encoders import *</strong></dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_boston</span>
-</pre></div>
-</div>
-</dd>
-<dt><strong>&gt;&gt;&gt; bunch = load_boston()</strong></dt><dd></dd>
-<dt><strong>&gt;&gt;&gt; y = bunch.target</strong></dt><dd></dd>
-<dt><strong>&gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)</strong></dt><dd></dd>
-<dt><strong>&gt;&gt;&gt; enc = SummaryEncoder(cols=[“CHAS”, “RAD”], quantiles=[0.25, 0.5, 0.75]).fit(X, y)</strong></dt><dd></dd>
-<dt><strong>&gt;&gt;&gt; numeric_dataset = enc.transform(X)</strong></dt><dd></dd>
-<dt><strong>&gt;&gt;&gt; print(numeric_dataset.info())</strong></dt><dd></dd>
-<dt><strong>&lt;class ‘pandas.core.frame.DataFrame’&gt;</strong></dt><dd></dd>
-<dt><strong>RangeIndex: 506 entries, 0 to 505</strong></dt><dd></dd>
-<dt><strong>Data columns (total 13 columns):</strong></dt><dd></dd>
-<dt><strong>CRIM       506 non-null float64</strong></dt><dd></dd>
-<dt><strong>ZN         506 non-null float64</strong></dt><dd></dd>
-<dt><strong>INDUS      506 non-null float64</strong></dt><dd></dd>
-<dt><strong>CHAS       506 non-null float64</strong></dt><dd></dd>
-<dt><strong>NOX        506 non-null float64</strong></dt><dd></dd>
-<dt><strong>RM         506 non-null float64</strong></dt><dd></dd>
-<dt><strong>AGE        506 non-null float64</strong></dt><dd></dd>
-<dt><strong>DIS        506 non-null float64</strong></dt><dd></dd>
-<dt><strong>RAD        506 non-null float64</strong></dt><dd></dd>
-<dt><strong>TAX        506 non-null float64</strong></dt><dd></dd>
-<dt><strong>PTRATIO    506 non-null float64</strong></dt><dd></dd>
-<dt><strong>B          506 non-null float64</strong></dt><dd></dd>
-<dt><strong>LSTAT      506 non-null float64</strong></dt><dd></dd>
-<dt><strong>dtypes: float64(13)</strong></dt><dd></dd>
-<dt><strong>memory usage: 51.5 KB</strong></dt><dd></dd>
-<dt><strong>None</strong></dt><dd></dd>
-<dt><strong>References</strong></dt><dd></dd>
-<dt><strong>———-</strong></dt><dd></dd>
-<dt><strong>.. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://arxiv.org/abs/2105.13783</strong></dt><dd></dd>
-<dt><strong>.. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538</strong></dt><dd></dd>
-<dt><strong>.. [3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010</strong></dt><dd></dd>
-<dt><strong>.. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates</strong></dt><dd></dd>
-<dt><strong>.. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/</strong></dt><dd></dd>
 </dl>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="citation">
+<dt class="label" id="r21e1e6e9fdbe-1"><span class="brackets">1</span></dt>
+<dd><p>Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, <a class="reference external" href="https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14">https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14</a></p>
+</dd>
+<dt class="label" id="r21e1e6e9fdbe-2"><span class="brackets">2</span></dt>
+<dd><p>A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from <a class="reference external" href="https://dl.acm.org/citation.cfm?id=507538">https://dl.acm.org/citation.cfm?id=507538</a></p>
+</dd>
+<dt class="label" id="r21e1e6e9fdbe-3"><span class="brackets">3</span></dt>
+<dd><p>On estimating probabilities in tree pruning, equation 1, from <a class="reference external" href="https://link.springer.com/chapter/10.1007/BFb0017010">https://link.springer.com/chapter/10.1007/BFb0017010</a></p>
+</dd>
+<dt class="label" id="r21e1e6e9fdbe-4"><span class="brackets">4</span></dt>
+<dd><p>Additive smoothing, from <a class="reference external" href="https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates">https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates</a></p>
+</dd>
+<dt class="label" id="r21e1e6e9fdbe-5"><span class="brackets">5</span></dt>
+<dd><p>Target encoding done the right way <a class="reference external" href="https://maxhalford.github.io/blog/target-encoding/">https://maxhalford.github.io/blog/target-encoding/</a></p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>

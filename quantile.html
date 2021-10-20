@@ -94,66 +94,47 @@
 <p>This a statistically modified version of target MEstimate encoder where selected features
 are replaced by the statistical quantile instead of the mean. Replacing with the
 median is a particular case where self.quantile = 0.5. In comparison to MEstimateEncoder
-it has two tunable parameter <cite>m</cite> and <cite>quantile</cite>
-Parameters
-———-
-verbose: int</p>
-<blockquote>
-<div><p>integer indicating verbosity of the output. 0 for none.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>quantile: float</dt><dd><p>float indicating statistical quantile. ´0.5´ for median.</p>
+it has two tunable parameter <cite>m</cite> and <cite>quantile</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of the output. 0 for none.</p>
 </dd>
-<dt>m: float</dt><dd><p>this is the “m” in the m-probability estimate. Higher value of m results into stronger shrinking. M is non-negative. 0 for no smoothing.</p>
+<dt><strong>quantile: float</strong></dt><dd><p>float indicating statistical quantile. ´0.5´ for median.</p>
 </dd>
-<dt>cols: list</dt><dd><p>a list of columns to encode, if None, all string columns will be encoded.</p>
+<dt><strong>m: float</strong></dt><dd><p>this is the “m” in the m-probability estimate. Higher value of m results into stronger shrinking. M is non-negative. 0 for no smoothing.</p>
 </dd>
-<dt>drop_invariant: bool</dt><dd><p>boolean for whether or not to drop columns with 0 variance.</p>
+<dt><strong>cols: list</strong></dt><dd><p>a list of columns to encode, if None, all string columns will be encoded.</p>
 </dd>
-<dt>return_df: bool</dt><dd><p>boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</p>
+<dt><strong>drop_invariant: bool</strong></dt><dd><p>boolean for whether or not to drop columns with 0 variance.</p>
 </dd>
-<dt>handle_missing: str</dt><dd><p>options are ‘error’, ‘return_nan’  and ‘value’, defaults to ‘value’, which returns the target quantile.</p>
+<dt><strong>return_df: bool</strong></dt><dd><p>boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</p>
 </dd>
-<dt>handle_unknown: str</dt><dd><p>options are ‘error’, ‘return_nan’ and ‘value’, defaults to ‘value’, which returns the target quantile.</p>
+<dt><strong>handle_missing: str</strong></dt><dd><p>options are ‘error’, ‘return_nan’  and ‘value’, defaults to ‘value’, which returns the target quantile.</p>
+</dd>
+<dt><strong>handle_unknown: str</strong></dt><dd><p>options are ‘error’, ‘return_nan’ and ‘value’, defaults to ‘value’, which returns the target quantile.</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">category_encoders</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_boston</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">bunch</span> <span class="o">=</span> <span class="n">load_boston</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">bunch</span><span class="o">.</span><span class="n">target</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">bunch</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">bunch</span><span class="o">.</span><span class="n">feature_names</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">enc</span> <span class="o">=</span> <span class="n">QuantileEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CHAS&#39;</span><span class="p">,</span> <span class="s1">&#39;RAD&#39;</span><span class="p">],</span> <span class="n">quantile</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">numeric_dataset</span> <span class="o">=</span> <span class="n">enc</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">numeric_dataset</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
-<span class="go">&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="go">RangeIndex: 506 entries, 0 to 505</span>
-<span class="go">Data columns (total 13 columns):</span>
-<span class="go">CRIM       506 non-null float64</span>
-<span class="go">ZN         506 non-null float64</span>
-<span class="go">INDUS      506 non-null float64</span>
-<span class="go">CHAS       506 non-null float64</span>
-<span class="go">NOX        506 non-null float64</span>
-<span class="go">RM         506 non-null float64</span>
-<span class="go">AGE        506 non-null float64</span>
-<span class="go">DIS        506 non-null float64</span>
-<span class="go">RAD        506 non-null float64</span>
-<span class="go">TAX        506 non-null float64</span>
-<span class="go">PTRATIO    506 non-null float64</span>
-<span class="go">B          506 non-null float64</span>
-<span class="go">LSTAT      506 non-null float64</span>
-<span class="go">dtypes: float64(13)</span>
-<span class="go">memory usage: 51.5 KB</span>
-<span class="go">None</span>
-<span class="go">References</span>
-<span class="go">----------</span>
-<span class="go">.. [Re0ba8a73ae85-1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://arxiv.org/abs/2105.13783</span>
-<span class="go">.. [Re0ba8a73ae85-2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538</span>
-<span class="go">.. [Re0ba8a73ae85-3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010</span>
-<span class="go">.. [Re0ba8a73ae85-4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates</span>
-<span class="go">.. [Re0ba8a73ae85-5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/</span>
-</pre></div>
-</div>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="citation">
+<dt class="label" id="re0ba8a73ae85-1"><span class="brackets">1</span></dt>
+<dd><p>Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, <a class="reference external" href="https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14">https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14</a></p>
+</dd>
+<dt class="label" id="re0ba8a73ae85-2"><span class="brackets">2</span></dt>
+<dd><p>A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from <a class="reference external" href="https://dl.acm.org/citation.cfm?id=507538">https://dl.acm.org/citation.cfm?id=507538</a></p>
+</dd>
+<dt class="label" id="re0ba8a73ae85-3"><span class="brackets">3</span></dt>
+<dd><p>On estimating probabilities in tree pruning, equation 1, from <a class="reference external" href="https://link.springer.com/chapter/10.1007/BFb0017010">https://link.springer.com/chapter/10.1007/BFb0017010</a></p>
+</dd>
+<dt class="label" id="re0ba8a73ae85-4"><span class="brackets">4</span></dt>
+<dd><p>Additive smoothing, from <a class="reference external" href="https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates">https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates</a></p>
+</dd>
+<dt class="label" id="re0ba8a73ae85-5"><span class="brackets">5</span></dt>
+<dd><p>Target encoding done the right way <a class="reference external" href="https://maxhalford.github.io/blog/target-encoding/">https://maxhalford.github.io/blog/target-encoding/</a></p>
+</dd>
+</dl>
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -198,20 +179,22 @@ verbose: int</p>
 <dl class="method">
 <dt id="category_encoders.quantile_encoder.QuantileEncoder.fit">
 <code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/quantile_encoder.html#QuantileEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.quantile_encoder.QuantileEncoder.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit encoder according to X and y.
-Parameters
-———-
-X : array-like, shape = [n_samples, n_features]</p>
-<blockquote>
-<div><p>Training vectors, where n_samples is the number of samples
+<dd><p>Fit encoder according to X and y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd><p>Training vectors, where n_samples is the number of samples
 and n_features is the number of features.</p>
-</div></blockquote>
-<dl class="simple">
-<dt>y<span class="classifier">array-like, shape = [n_samples]</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples]</span></dt><dd><p>Target values.</p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>self<span class="classifier">encoder</span></dt><dd><p>Returns self.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">encoder</span></dt><dd><p>Returns self.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -219,29 +202,35 @@ and n_features is the number of features.</p>
 <dl class="method">
 <dt id="category_encoders.quantile_encoder.QuantileEncoder.get_feature_names">
 <code class="sig-name descname">get_feature_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/quantile_encoder.html#QuantileEncoder.get_feature_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.quantile_encoder.QuantileEncoder.get_feature_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the names of all transformed / added columns.
-Returns
-——-
-feature_names: list</p>
-<blockquote>
-<div><p>A list with all feature names transformed or added.
+<dd><p>Returns the names of all transformed / added columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>feature_names: list</dt><dd><p>A list with all feature names transformed or added.
 Note: potentially dropped features are not included!</p>
-</div></blockquote>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="category_encoders.quantile_encoder.QuantileEncoder.transform">
 <code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param">X</em>, <em class="sig-param">y=None</em>, <em class="sig-param">override_return_df=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/quantile_encoder.html#QuantileEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.quantile_encoder.QuantileEncoder.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform the transformation to new categorical data.
-Parameters
-———-
-X : array-like, shape = [n_samples, n_features]
-y : array-like, shape = [n_samples]</p>
-<blockquote>
-<div><p>None, when transform without target info (such as transform test set)</p>
-</div></blockquote>
-<dl class="simple">
-<dt>p<span class="classifier">array, shape = [n_samples, n_numeric + N]</span></dt><dd><p>Transformed values with encoding applied.</p>
+<dd><p>Perform the transformation to new categorical data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd></dd>
+<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples]</span></dt><dd><p>None, when transform without target info (such as transform test set)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>p</strong><span class="classifier">array, shape = [n_samples, n_numeric + N]</span></dt><dd><p>Transformed values with encoding applied.</p>
+</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
