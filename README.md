@@ -1,6 +1,8 @@
 Categorical Encoding Methods
 ============================
 
+[![Downloads](https://pepy.tech/badge/category-encoders)](https://pepy.tech/project/category-encoders)
+[![Downloads](https://pepy.tech/badge/category-encoders/month)](https://pepy.tech/project/category-encoders)
 ![Test Suite and Linting](https://github.com/scikit-learn-contrib/category_encoders/workflows/Test%20Suite%20and%20Linting/badge.svg)
 [![DOI](https://zenodo.org/badge/47077067.svg)](https://zenodo.org/badge/latestdoi/47077067)
 
