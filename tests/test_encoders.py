@@ -86,7 +86,7 @@ class TestEncoders(TestCase):
                 enc2 = deepcopy(enc)
 
     def test_impact_encoders(self):
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
             with self.subTest(encoder_name=encoder_name):
 
                 # encode a numpy array and transform with the help of the target
@@ -444,7 +444,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 # Target encoders also need y
-                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
+                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -459,7 +459,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
                 # Target encoders also need y
-                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'KFoldEncoder', 'GLMMEncoder']:
+                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'KFoldEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
                     obtained = enc.fit(X).get_feature_names()
                     expected = enc.transform(X).columns.tolist()
                 else:
@@ -486,7 +486,7 @@ class TestEncoders(TestCase):
         data = pd.DataFrame(data={'x': ['A', 'B', 'C', 'A', 'B'], 'y': [1, 0, 1, 0, 1]})
         data = data.iloc[2:5]
         data2 = pd.DataFrame(data={'x': ['C', 'A', 'B'], 'y': [1, 0, 1]})
-        for encoder_name in encoders.__all__:
+        for encoder_name in set(encoders.__all__) - {"HashingEncoder"}:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 result = enc.fit_transform(data.x, data.y)
@@ -528,13 +528,13 @@ class TestEncoders(TestCase):
         x = ['A', 'B', 'C']
         y_good = pd.Series([1, 0, 1])
         y_bad = pd.Series([1, 0, 1, 0])
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 self.assertRaises(ValueError, enc.fit, x, y_bad)
 
         # ...and scoring. Otherwise they raise an error of ValueError type.
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
+        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(x, y_good)
@@ -658,7 +658,7 @@ class TestEncoders(TestCase):
         }, columns=pd.Index(['hello', 'world']))
         cols = df.select_dtypes(include='object').columns
 
-        for encoder_name in (set(encoders.__all__)):
+        for encoder_name in (set(encoders.__all__) - {"HashingEncoder"}):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit_transform(df, df['world'])

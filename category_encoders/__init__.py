@@ -23,27 +23,30 @@ from category_encoders.m_estimate import MEstimateEncoder
 from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.glmm import GLMMEncoder
+from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
 
 __version__ = '2.3.0'
 
-__author__ = 'willmcginnis'
+__author__ = "willmcginnis", "cmougan"
 
 __all__ = [
-    'BackwardDifferenceEncoder',
-    'BinaryEncoder',
-    'CountEncoder',
-    'HashingEncoder',
-    'HelmertEncoder',
-    'OneHotEncoder',
-    'OrdinalEncoder',
-    'SumEncoder',
-    'PolynomialEncoder',
-    'BaseNEncoder',
-    'LeaveOneOutEncoder',
-    'TargetEncoder',
-    'WOEEncoder',
-    'MEstimateEncoder',
-    'JamesSteinEncoder',
-    'CatBoostEncoder',
-    'GLMMEncoder'
+    "BackwardDifferenceEncoder",
+    "BinaryEncoder",
+    "CountEncoder",
+    "HashingEncoder",
+    "HelmertEncoder",
+    "OneHotEncoder",
+    "OrdinalEncoder",
+    "SumEncoder",
+    "PolynomialEncoder",
+    "BaseNEncoder",
+    "LeaveOneOutEncoder",
+    "TargetEncoder",
+    "WOEEncoder",
+    "MEstimateEncoder",
+    "JamesSteinEncoder",
+    "CatBoostEncoder",
+    "GLMMEncoder",
+    "QuantileEncoder",
+    "SummaryEncoder",
 ]
