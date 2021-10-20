@@ -17,8 +17,10 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     are replaced by the statistical quantile instead of the mean. Replacing with the
     median is a particular case where self.quantile = 0.5. In comparison to MEstimateEncoder
     it has two tunable parameter `m` and `quantile`
+
     Parameters
     ----------
+
     verbose: int
         integer indicating verbosity of the output. 0 for none.
     quantile: float
@@ -35,6 +37,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         options are 'error', 'return_nan'  and 'value', defaults to 'value', which returns the target quantile.
     handle_unknown: str
         options are 'error', 'return_nan' and 'value', defaults to 'value', which returns the target quantile.
+
     Example
     -------
     >>> from category_encoders import *
@@ -65,9 +68,11 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     dtypes: float64(13)
     memory usage: 51.5 KB
     None
+
     References
     ----------
-    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://arxiv.org/abs/2105.13783
+
+    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14
     .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538
     .. [3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010
     .. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
@@ -101,6 +106,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
     def fit(self, X, y, **kwargs):
         """Fit encoder according to X and y.
+
         Parameters
         ----------
         X : array-like, shape = [n_samples, n_features]
@@ -108,6 +114,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             and n_features is the number of features.
         y : array-like, shape = [n_samples]
             Target values.
+
         Returns
         -------
         self : encoder
@@ -192,11 +199,13 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
     def transform(self, X, y=None, override_return_df=False):
         """Perform the transformation to new categorical data.
+
         Parameters
         ----------
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples]
             None, when transform without target info (such as transform test set)
+
         Returns
         -------
         p : array, shape = [n_samples, n_numeric + N]
@@ -262,6 +271,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     def get_feature_names(self):
         """
         Returns the names of all transformed / added columns.
+
         Returns
         -------
         feature_names: list
@@ -298,11 +308,12 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         options are 'error', 'return_nan'  and 'value', defaults to 'value', which returns the target quantile.
     handle_unknown: str
         options are 'error', 'return_nan' and 'value', defaults to 'value', which returns the target quantile.
+
     Example
     -------
     >>> from category_encoders import *
-        >>> import pandas as pd
-        >>> from sklearn.datasets import load_boston
+    >>> import pandas as pd
+    >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
@@ -328,9 +339,10 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     dtypes: float64(13)
     memory usage: 51.5 KB
     None
+
     References
     ----------
-    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://arxiv.org/abs/2105.13783
+    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14
     .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538
     .. [3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010
     .. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
