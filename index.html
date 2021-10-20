@@ -56,6 +56,8 @@
 <li class="toctree-l1"><a class="reference internal" href="targetencoder.html">Target Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="woe.html">Weight of Evidence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wrapper.html">Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantile.html">Quantile Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary Encoder</a></li>
 </ul>
 
         </div>
@@ -126,6 +128,7 @@ transformers in this library all share a few useful properties:</p>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">PolynomialEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">TargetEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">WOEEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">QuantileEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 
 <span class="n">encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="n">X_cleaned</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_dirty</span><span class="p">)</span>
@@ -154,6 +157,8 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l1"><a class="reference internal" href="targetencoder.html">Target Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="woe.html">Weight of Evidence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wrapper.html">Wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantile.html">Quantile Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary Encoder</a></li>
 </ul>
 </div>
 </div>
