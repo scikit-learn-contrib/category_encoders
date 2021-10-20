@@ -301,8 +301,8 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     Example
     -------
     >>> from category_encoders import *
-        >>> import pandas as pd
-        >>> from sklearn.datasets import load_boston
+    >>> import pandas as pd
+    >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
