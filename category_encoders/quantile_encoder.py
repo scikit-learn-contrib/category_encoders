@@ -394,12 +394,12 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.feature_names = reduce(
             operator.add,
             [
-                [self._get_col_name(c, q) for q in self.quantiles] if c in self.cols else [c]
+                [self._get_col_name(c, enc.quantile) for enc in encoder_list if c not in enc.drop_cols]
+                if c in self.cols
+                else [c]
                 for c in X.columns
-                if c not in self.drop_cols
             ],
         )
-
         self.encoder_list = encoder_list
         return self
 
