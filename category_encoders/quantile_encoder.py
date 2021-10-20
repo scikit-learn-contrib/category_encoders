@@ -67,7 +67,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     None
     References
     ----------
-    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://arxiv.org/abs/2105.13783
+    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14
     .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538
     .. [3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010
     .. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
@@ -330,7 +330,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     None
     References
     ----------
-    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://arxiv.org/abs/2105.13783
+    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14
     .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538
     .. [3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010
     .. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
