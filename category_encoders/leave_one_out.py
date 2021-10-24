@@ -178,7 +178,7 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = util.convert_inputs(X, y, deep=True)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -224,12 +224,11 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         result = y.groupby(codes).agg(['sum', 'count'])
         return result.rename(return_map)
 
-    def transform_leave_one_out(self, X_in, y, mapping=None):
+    def transform_leave_one_out(self, X, y, mapping=None):
         """
         Leave one out encoding uses a single column of floats to represent the means of the target variables.
         """
 
-        X = X_in.copy(deep=True)
         random_state_ = check_random_state(self.random_state)
 
         for col, colmap in mapping.items():

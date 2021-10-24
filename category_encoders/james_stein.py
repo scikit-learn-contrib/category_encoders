@@ -268,7 +268,7 @@ class JamesSteinEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # Unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = util.convert_inputs(X, y, deep=True)
 
         # Then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -276,9 +276,6 @@ class JamesSteinEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         if not list(self.cols):
             return X
-
-        # Do not modify the input argument
-        X = X.copy(deep=True)
 
         X = self.ordinal_encoder.transform(X)
 
