@@ -122,11 +122,8 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # unite the input into pandas types
-        X = util.convert_input(X)
-        y = util.convert_input_vector(y, X.index).astype(float)
-
-        if X.shape[0] != y.shape[0]:
-            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
+        X, y = util.convert_inputs(X, y)
+        y = y.astype(float)
 
         self._dim = X.shape[1]
 
@@ -220,7 +217,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError("Must train encoder before it can be used to transform data.")
 
         # unite the input into pandas types
-        X = util.convert_input(X)
+        X, y = util.convert_inputs(X, y)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -231,14 +228,6 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                     self._dim,
                 )
             )
-
-        # if we are encoding the training data, we have to check the target
-        if y is not None:
-            y = util.convert_input_vector(y, X.index)
-            if X.shape[0] != y.shape[0]:
-                raise ValueError(
-                    "The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + "."
-                )
 
         if not list(self.cols):
             return X
@@ -376,8 +365,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.encoder_list = None
 
     def fit(self, X, y):
-        X = util.convert_input(X)
-        y = util.convert_input_vector(y, X.index).astype(float)
+        X, y = util.convert_inputs(X, y)
 
         if self.cols is None:
             self.cols = util.get_obj_cols(X)
@@ -418,15 +406,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     def transform(self, X, y=None, override_return_df=False):
         if self.encoder_list is None:
             raise ValueError("Must train encoder before it can be used to transform data.")
-        X = util.convert_input(X)
-
-        # if we are encoding the training data, we have to check the target
-        if y is not None:
-            y = util.convert_input_vector(y, X.index)
-            if X.shape[0] != y.shape[0]:
-                raise ValueError(
-                    "The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + "."
-                )
+        X, y = util.convert_inputs(X, y)
 
         orig_cols = X.columns
         transformed_df = X.copy()

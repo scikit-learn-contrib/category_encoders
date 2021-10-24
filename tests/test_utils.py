@@ -111,3 +111,5 @@ class TestUtils(TestCase):
         self.assertTrue(list(X.index) == list(y.index) == bindex)
 
         self.assertRaises(ValueError, convert_input_vector, barray, aseries)
+
+        self.assertRaises(ValueError, convert_input_vector, barray, [1, 2, 3, 4])

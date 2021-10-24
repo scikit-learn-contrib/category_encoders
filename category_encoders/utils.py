@@ -65,10 +65,14 @@ def convert_inputs(X, y, columns=None, index=None, deep=False):
     """
     X_alt_index = y.index if isinstance(y, pd.Series) else index
     X = convert_input(X, columns=columns, deep=deep, index=X_alt_index)
-    y = convert_input_vector(y, index=X.index)
-    # N.B.: If either was already pandas, it keeps its index.
-    if isinstance(y, pd.Series) and any(X.index != y.index):
-        raise ValueError("`X` and `y` both have indexes, but they do not match.")
+    if y is not None:
+        y = convert_input_vector(y, index=X.index)
+        # N.B.: If either was already pandas, it keeps its index.
+
+        if any(X.index != y.index):
+            raise ValueError("`X` and `y` both have indexes, but they do not match.")
+        if X.shape[0] != y.shape[0]:
+            raise ValueError(f"The length of X is {X.shape[0]} but length of y is {y.shape[0]}.")
     return X, y
 
 

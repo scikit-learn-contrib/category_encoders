@@ -177,12 +177,7 @@ class JamesSteinEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # Unite parameters into pandas types
-        X = util.convert_input(X)
-        y = util.convert_input_vector(y, X.index).astype(float)
-
-        # The lengths must be equal
-        if X.shape[0] != y.shape[0]:
-            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
+        X, y = util.convert_inputs(X, y)
 
         self._dim = X.shape[1]
 
@@ -273,17 +268,11 @@ class JamesSteinEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # Unite the input into pandas types
-        X = util.convert_input(X)
+        X, y = util.convert_inputs(X, y)
 
         # Then make sure that it is the right size
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
-
-        # If we are encoding the training data, we have to check the target
-        if y is not None:
-            y = util.convert_input_vector(y, X.index).astype(float)
-            if X.shape[0] != y.shape[0]:
-                raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         if not list(self.cols):
             return X
