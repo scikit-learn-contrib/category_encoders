@@ -72,7 +72,7 @@ def convert_inputs(X, y, columns=None, index=None, deep=False):
         if any(X.index != y.index):
             raise ValueError("`X` and `y` both have indexes, but they do not match.")
         if X.shape[0] != y.shape[0]:
-            raise ValueError(f"The length of X is {X.shape[0]} but length of y is {y.shape[0]}.")
+            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
     return X, y
 
 
