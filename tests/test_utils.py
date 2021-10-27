@@ -110,6 +110,7 @@ class TestUtils(TestCase):
         self.assertEqual(3, len(y))
         self.assertTrue(list(X.index) == list(y.index) == bindex)
 
-        self.assertRaises(ValueError, convert_input_vector, barray, aseries)
+        self.assertRaises(ValueError, convert_inputs, bframe, aseries)
 
-        self.assertRaises(ValueError, convert_input_vector, barray, [1, 2, 3, 4])
+        # shape mismatch
+        self.assertRaises(ValueError, convert_inputs, barray, [1, 2, 3, 4])
