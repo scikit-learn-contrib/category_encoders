@@ -51,9 +51,8 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y, **kwargs):
         # unite the input into pandas types
-        X = utils.convert_input(X)
-        y = utils.convert_input(y)
-        y.columns = ['target']
+        X, y = utils.convert_inputs(X, y)
+        y = pd.DataFrame(y, columns=['target'])
 
         # apply one-hot-encoder on the label
         self.label_encoder = encoders.OneHotEncoder(handle_missing='error', handle_unknown='error', cols=['target'], drop_invariant=True,
@@ -94,9 +93,8 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
         # When we are training the feature encoders, we have to use fit_transform() method on the features.
 
         # unite the input into pandas types
-        X = utils.convert_input(X)
-        y = utils.convert_input(y)
-        y.columns = ['target']
+        X, y = utils.convert_inputs(X, y)
+        y = pd.DataFrame(y, columns=['target'])
 
         # apply one-hot-encoder on the label
         self.label_encoder = encoders.OneHotEncoder(handle_missing='error', handle_unknown='error', cols=['target'], drop_invariant=True,
@@ -240,8 +238,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         :return: array, shape = [n_samples, n_numeric + N]
                  Transformed values with encoding applied. Returns multiple arrays if X_test is not None
         """
-        X = utils.convert_input(X)
-        y = utils.convert_input(y)
+        X, y = utils.convert_inputs(X, y)
 
         # Get out-of-fold encoding for the training data
         out_of_fold = np.zeros(X.shape)
