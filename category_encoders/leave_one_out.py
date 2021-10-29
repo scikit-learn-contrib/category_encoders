@@ -115,6 +115,7 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         # unite the input into pandas types
         X, y = util.convert_inputs(X, y)
+        y = y.astype(float)
 
         self._dim = X.shape[1]
 
@@ -179,6 +180,8 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         # unite the input into pandas types
         X, y = util.convert_inputs(X, y, deep=True)
+        if y is not None:
+            y = y.astype(float)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
