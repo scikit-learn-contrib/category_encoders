@@ -238,16 +238,16 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         """
 
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
         if self._dim is None:
             raise ValueError(
                 'Must train encoder before it can be used to transform data.')
 
         # first check the type
         X = util.convert_input(X)
+
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().any():
+                raise ValueError('Columns to be encoded can not contain null')
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
