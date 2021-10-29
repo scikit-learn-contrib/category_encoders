@@ -146,7 +146,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             verbose=self.verbose,
             cols=self.cols,
             handle_unknown='value',
-            handle_missing='value'
+            handle_missing='error' if self.handle_missing == 'error' else 'value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         self.mapping = self.generate_mapping()
