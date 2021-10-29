@@ -124,8 +124,10 @@ def convert_input_vector(y, index):
     elif np.isscalar(y):
         return pd.Series([y], name='target', index=index)
     elif isinstance(y, list):
-        if len(y)==0 or (len(y)>0 and not isinstance(y[0], list)): # empty list or a vector
+        if len(y)==0:  # empty list
             return pd.Series(y, name='target', index=index, dtype=float)
+        elif len(y)>0 and not isinstance(y[0], list):  # vector
+            return pd.Series(y, name='target', index=index)
         elif len(y)>0 and isinstance(y[0], list) and len(y[0])==1: # single row in a matrix
             flatten = lambda y: [item for sublist in y for item in sublist]
             return pd.Series(flatten(y), name='target', index=index)
