@@ -663,6 +663,15 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit_transform(df, df['world'])
 
+    def test_mismatched_indexes(self):
+        df = pd.DataFrame({'x': ['a', 'b', 'b']}, index=[7, 5, 9])
+        y_list = [1, 0, 1]
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                out = enc.fit_transform(df, y_list)
+                self.assertFalse(out.isna().any().any())
+
     def test_numbers_as_strings_with_numpy_output(self):
         # see issue #229
         X = np.array(['11', '12', '13', '14', '15'])
