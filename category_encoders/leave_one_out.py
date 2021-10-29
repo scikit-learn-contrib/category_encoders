@@ -114,11 +114,8 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # unite the input into pandas types
-        X = util.convert_input(X)
-        y = util.convert_input_vector(y, X.index).astype(float)
-
-        if X.shape[0] != y.shape[0]:
-            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
+        X, y = util.convert_inputs(X, y)
+        y = y.astype(float)
 
         self._dim = X.shape[1]
 
@@ -182,17 +179,13 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # unite the input into pandas types
-        X = util.convert_input(X)
+        X, y = util.convert_inputs(X, y, deep=True)
+        if y is not None:
+            y = y.astype(float)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
             raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
-
-        # if we are encoding the training data, we have to check the target
-        if y is not None:
-            y = util.convert_input_vector(y, X.index).astype(float)
-            if X.shape[0] != y.shape[0]:
-                raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
 
         if not list(self.cols):
             return X
@@ -234,12 +227,11 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         result = y.groupby(codes).agg(['sum', 'count'])
         return result.rename(return_map)
 
-    def transform_leave_one_out(self, X_in, y, mapping=None):
+    def transform_leave_one_out(self, X, y, mapping=None):
         """
         Leave one out encoding uses a single column of floats to represent the means of the target variables.
         """
 
-        X = X_in.copy(deep=True)
         random_state_ = check_random_state(self.random_state)
 
         for col, colmap in mapping.items():

@@ -40,7 +40,43 @@ def is_category(dtype):
     return pd.api.types.is_categorical_dtype(dtype)
 
 
-def convert_input(X, columns=None, deep=False):
+def convert_inputs(X, y, columns=None, index=None, deep=False):
+    """
+    Unite arraylike `X` and vectorlike `y` into a DataFrame and Series.
+
+    If both are pandas types already, raises an error if their indexes do not match.
+    If one is pandas, the returns will share that index.
+    If neither is pandas, a default index will be used, unless `index` is passed.
+
+    Parameters
+    ----------
+    X: arraylike
+    y: listlike
+    columns: listlike
+        Specifies column names to use for `X`.
+        Ignored if `X` is already a dataframe.
+        If `None`, use the default pandas column names.
+    index: listlike
+        The index to use, if neither `X` nor `y` is a pandas type.
+        (If one has an index, then this has no effect.)
+        If `None`, use the default pandas index.
+    deep: bool
+        Whether to deep-copy `X`.
+    """
+    X_alt_index = y.index if isinstance(y, pd.Series) else index
+    X = convert_input(X, columns=columns, deep=deep, index=X_alt_index)
+    if y is not None:
+        y = convert_input_vector(y, index=X.index)
+        # N.B.: If either was already pandas, it keeps its index.
+
+        if any(X.index != y.index):
+            raise ValueError("`X` and `y` both have indexes, but they do not match.")
+        if X.shape[0] != y.shape[0]:
+            raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
+    return X, y
+
+
+def convert_input(X, columns=None, deep=False, index=None):
     """
     Unite data into a DataFrame.
     Objects that do not contain column names take the names from the argument.
@@ -53,11 +89,11 @@ def convert_input(X, columns=None, deep=False):
             if columns is not None and np.size(X,1) != len(columns):
                 raise ValueError('The count of the column names does not correspond to the count of the columns')
             if isinstance(X, list):
-                X = pd.DataFrame(X, columns=columns, copy=deep)  # lists are always copied, but for consistency, we still pass the argument
+                X = pd.DataFrame(X, columns=columns, copy=deep, index=index)  # lists are always copied, but for consistency, we still pass the argument
             elif isinstance(X, (np.generic, np.ndarray)):
-                X = pd.DataFrame(X, columns=columns, copy=deep)
+                X = pd.DataFrame(X, columns=columns, copy=deep, index=index)
             elif isinstance(X, csr_matrix):
-                X = pd.DataFrame(X.todense(), columns=columns, copy=deep)
+                X = pd.DataFrame(X.todense(), columns=columns, copy=deep, index=index)
             else:
                 raise ValueError('Unexpected input type: %s' % (str(type(X))))
     elif deep:
@@ -88,8 +124,10 @@ def convert_input_vector(y, index):
     elif np.isscalar(y):
         return pd.Series([y], name='target', index=index)
     elif isinstance(y, list):
-        if len(y)==0 or (len(y)>0 and not isinstance(y[0], list)): # empty list or a vector
+        if len(y)==0:  # empty list
             return pd.Series(y, name='target', index=index, dtype=float)
+        elif len(y)>0 and not isinstance(y[0], list):  # vector
+            return pd.Series(y, name='target', index=index)
         elif len(y)>0 and isinstance(y[0], list) and len(y[0])==1: # single row in a matrix
             flatten = lambda y: [item for sublist in y for item in sublist]
             return pd.Series(flatten(y), name='target', index=index)

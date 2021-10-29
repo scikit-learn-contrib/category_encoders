@@ -1,5 +1,5 @@
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
-from category_encoders.utils import convert_input_vector
+from category_encoders.utils import convert_input_vector, convert_inputs
 import pandas as pd
 import numpy as np
 
@@ -73,3 +73,44 @@ class TestUtils(TestCase):
         _ = convert_input_vector([], [])
         _ = convert_input_vector([[]], [])
         _ = convert_input_vector(pd.DataFrame(), [])
+
+    def test_convert_inputs(self):
+        aindex = [2, 4, 5]
+        bindex = [1, 3, 4]
+        alist = [5, 3, 6]
+        aseries = pd.Series(alist, aindex)
+        barray = np.array([[7, 9], [4, 3], [0, 1]])
+        bframe = pd.DataFrame(barray, bindex)
+
+        X, y = convert_inputs(barray, alist)
+        self.assertTrue(isinstance(X, pd.DataFrame))
+        self.assertTrue(isinstance(y, pd.Series))
+        self.assertEqual((3, 2), X.shape)
+        self.assertEqual(3, len(y))
+        self.assertTrue(list(X.index) == list(y.index) == [0, 1, 2])
+
+        X, y = convert_inputs(barray, alist, index=aindex)
+        self.assertTrue(isinstance(X, pd.DataFrame))
+        self.assertTrue(isinstance(y, pd.Series))
+        self.assertEqual((3, 2), X.shape)
+        self.assertEqual(3, len(y))
+        self.assertTrue(list(X.index) == list(y.index) == aindex)
+
+        X, y = convert_inputs(barray, aseries, index=bindex)
+        self.assertTrue(isinstance(X, pd.DataFrame))
+        self.assertTrue(isinstance(y, pd.Series))
+        self.assertEqual((3, 2), X.shape)
+        self.assertEqual(3, len(y))
+        self.assertTrue(list(X.index) == list(y.index) == aindex)
+
+        X, y = convert_inputs(bframe, alist, index=[3, 1, 4])
+        self.assertTrue(isinstance(X, pd.DataFrame))
+        self.assertTrue(isinstance(y, pd.Series))
+        self.assertEqual((3, 2), X.shape)
+        self.assertEqual(3, len(y))
+        self.assertTrue(list(X.index) == list(y.index) == bindex)
+
+        self.assertRaises(ValueError, convert_inputs, bframe, aseries)
+
+        # shape mismatch
+        self.assertRaises(ValueError, convert_inputs, barray, [1, 2, 3, 4])
