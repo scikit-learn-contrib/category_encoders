@@ -194,13 +194,17 @@ class TestOneHotEncoderTestCase(TestCase):
         test = ['A', 'B', np.nan]
 
         encoder = encoders.OneHotEncoder(handle_missing='indicator', handle_unknown='value')
-        encoder.fit(train)
-        result = encoder.transform(test)
+        encoded_train = encoder.fit_transform(train)
+        encoded_test = encoder.transform(test)
 
-        expected = [[1, 0, 0],
-                    [0, 1, 0],
-                    [0, 0, 1]]
-        self.assertEqual(result.values.tolist(), expected)
+        expected_1 = [[1, 0, 0],
+                      [0, 1, 0]]
+        self.assertEqual(encoded_train.values.tolist(), expected_1)
+
+        expected_2 = [[1, 0, 0],
+                      [0, 1, 0],
+                      [0, 0, 1]]
+        self.assertEqual(encoded_test.values.tolist(), expected_2)
 
     def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
         train = ['A', 'B']
