@@ -142,11 +142,21 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             if X[self.cols].isnull().any().any():
                 raise ValueError('Columns to be encoded can not contain null')
 
+        # TODO: when these are settled, make the code sleeker
+        if self.handle_missing == 'error':
+            oe_missing_strat = 'error'
+        elif self.handle_missing == 'return_nan':
+            oe_missing_strat = 'return_nan'
+        elif self.handle_missing == 'value':
+            oe_missing_strat = 'value'
+        elif self.handle_missing == 'indicator':
+            oe_missing_strat = 'return_nan'
+
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
             handle_unknown='value',
-            handle_missing='error' if self.handle_missing == 'error' else 'value'
+            handle_missing=oe_missing_strat,
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         self.mapping = self.generate_mapping()
@@ -184,7 +194,13 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             index = []
             new_columns = []
 
+            add_me_to_the_end = False
             for cat_name, class_ in values.iteritems():
+                if pd.isna(cat_name) and self.handle_missing == 'return_nan':
+                    # we don't want a mapping column if return_nan
+                    # but do add the index to the end
+                    add_me_to_the_end = class_
+                    continue
                 if self.use_cat_names:
                     n_col_name = str(col) + '_%s' % (cat_name,)
                     found_count = found_column_counts.get(n_col_name, 0)
@@ -205,7 +221,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 new_columns.append(n_col_name)
                 index.append(-1)
 
-            base_matrix = np.eye(N=len(index), dtype=np.int)
+            if add_me_to_the_end:
+                index.append(add_me_to_the_end)
+
+            base_matrix = np.eye(N=len(index), M=len(new_columns), dtype=int)
             base_df = pd.DataFrame(data=base_matrix, columns=new_columns, index=index)
 
             if self.handle_unknown == 'value':
@@ -214,7 +233,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 base_df.loc[-1] = np.nan
 
             if self.handle_missing == 'return_nan':
-                base_df.loc[values.loc[np.nan]] = np.nan
+                base_df.loc[-2] = np.nan
             elif self.handle_missing == 'value':
                 base_df.loc[-2] = 0
 
@@ -344,7 +363,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            base_df = mod.reindex(X[col])
+            base_df = mod.reindex(X[col].fillna(-2))
             base_df = base_df.set_index(X.index)
             X = pd.concat([base_df, X], axis=1)
 

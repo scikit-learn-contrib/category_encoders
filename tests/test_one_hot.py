@@ -159,6 +159,15 @@ class TestOneHotEncoderTestCase(TestCase):
 
         self.assertRaisesRegex(ValueError, '.*null.*', encoder.fit, data_w_missing)
 
+    def test_HandleMissingReturnNan(self):
+        train = pd.DataFrame({'x': ['A', np.nan, 'B']})
+        encoder = encoders.OneHotEncoder(handle_missing='return_nan', use_cat_names=True)
+        result = encoder.fit_transform(train)
+        pd.testing.assert_frame_equal(
+            result,
+            pd.DataFrame({'x_A': [1, np.nan, 0], 'x_B': [0, np.nan, 1]}),
+        )
+
     def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
         train = ['A', 'B', np.nan]
 
