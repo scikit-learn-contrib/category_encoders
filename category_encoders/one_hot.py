@@ -142,15 +142,12 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             if X[self.cols].isnull().any().any():
                 raise ValueError('Columns to be encoded can not contain null')
 
-        # TODO: when these are settled, make the code sleeker
-        if self.handle_missing == 'error':
-            oe_missing_strat = 'error'
-        elif self.handle_missing == 'return_nan':
-            oe_missing_strat = 'return_nan'
-        elif self.handle_missing == 'value':
-            oe_missing_strat = 'value'
-        elif self.handle_missing == 'indicator':
-            oe_missing_strat = 'return_nan'
+        oe_missing_strat = {
+            'error': 'error',
+            'return_nan': 'return_nan',
+            'value': 'value',
+            'indicator': 'return_nan',
+        }[self.handle_missing]
 
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
@@ -194,12 +191,12 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             index = []
             new_columns = []
 
-            add_me_to_the_end = False
+            append_nan_to_index = False
             for cat_name, class_ in values.iteritems():
                 if pd.isna(cat_name) and self.handle_missing == 'return_nan':
                     # we don't want a mapping column if return_nan
                     # but do add the index to the end
-                    add_me_to_the_end = class_
+                    append_nan_to_index = class_
                     continue
                 if self.use_cat_names:
                     n_col_name = str(col) + '_%s' % (cat_name,)
@@ -221,8 +218,8 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 new_columns.append(n_col_name)
                 index.append(-1)
 
-            if add_me_to_the_end:
-                index.append(add_me_to_the_end)
+            if append_nan_to_index:
+                index.append(append_nan_to_index)
 
             base_matrix = np.eye(N=len(index), M=len(new_columns), dtype=int)
             base_df = pd.DataFrame(data=base_matrix, columns=new_columns, index=index)
