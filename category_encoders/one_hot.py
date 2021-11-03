@@ -27,13 +27,20 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if True, category values will be included in the encoded column names. Since this can result in duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
         If False, category indices will be used instead of the category values.
     handle_unknown: str
-        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can cause
-        unexpected changes in dimension in some cases.
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
+
+        'error' will raise a `ValueError` at transform time if there are new categories.
+        'return_nan' will encode a new value as `np.nan` in every dummy column.
+        'value' will encode a new value as 0 in every dummy column.
+        'indicator' will add an additional dummy column (in both training and test data).
     handle_missing: str
-        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has nan values.  This can cause
-        unexpected changes in dimension in some cases.
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
+
+        'error' will raise a `ValueError` if missings are encountered.
+        'return_nan' will encode a missing value as `np.nan` in every dummy column.
+        'value' will encode a missing value as 0 in every dummy column.
+        'indicator' will treat missingness as its own category, adding an additional dummy column
+        (whether there are missing values in the training set or not).
 
     Example
     -------
@@ -142,11 +149,18 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             if X[self.cols].isnull().any().any():
                 raise ValueError('Columns to be encoded can not contain null')
 
+        oe_missing_strat = {
+            'error': 'error',
+            'return_nan': 'return_nan',
+            'value': 'value',
+            'indicator': 'return_nan',
+        }[self.handle_missing]
+
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
             handle_unknown='value',
-            handle_missing='value'
+            handle_missing=oe_missing_strat,
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         self.mapping = self.generate_mapping()
@@ -184,7 +198,13 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             index = []
             new_columns = []
 
+            append_nan_to_index = False
             for cat_name, class_ in values.iteritems():
+                if pd.isna(cat_name) and self.handle_missing == 'return_nan':
+                    # we don't want a mapping column if return_nan
+                    # but do add the index to the end
+                    append_nan_to_index = class_
+                    continue
                 if self.use_cat_names:
                     n_col_name = str(col) + '_%s' % (cat_name,)
                     found_count = found_column_counts.get(n_col_name, 0)
@@ -205,7 +225,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 new_columns.append(n_col_name)
                 index.append(-1)
 
-            base_matrix = np.eye(N=len(index), dtype=np.int)
+            if append_nan_to_index:
+                index.append(append_nan_to_index)
+
+            base_matrix = np.eye(N=len(index), M=len(new_columns), dtype=int)
             base_df = pd.DataFrame(data=base_matrix, columns=new_columns, index=index)
 
             if self.handle_unknown == 'value':
@@ -214,7 +237,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 base_df.loc[-1] = np.nan
 
             if self.handle_missing == 'return_nan':
-                base_df.loc[values.loc[np.nan]] = np.nan
+                base_df.loc[-2] = np.nan
             elif self.handle_missing == 'value':
                 base_df.loc[-2] = 0
 
@@ -238,16 +261,16 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         """
 
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
         if self._dim is None:
             raise ValueError(
                 'Must train encoder before it can be used to transform data.')
 
         # first check the type
         X = util.convert_input(X)
+
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().any():
+                raise ValueError('Columns to be encoded can not contain null')
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -344,7 +367,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            base_df = mod.reindex(X[col])
+            base_df = mod.reindex(X[col].fillna(-2))
             base_df = base_df.set_index(X.index)
             X = pd.concat([base_df, X], axis=1)
 
