@@ -113,13 +113,20 @@
 <span class="sd">        if True, category values will be included in the encoded column names. Since this can result in duplicate column names, duplicates are suffixed with &#39;#&#39; symbol until a unique name is generated.</span>
 <span class="sd">        If False, category indices will be used instead of the category values.</span>
 <span class="sd">    handle_unknown: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;. Warning: if indicator is used,</span>
-<span class="sd">        an extra column will be added in if the transform matrix has unknown categories.  This can cause</span>
-<span class="sd">        unexpected changes in dimension in some cases.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;.</span>
+
+<span class="sd">        &#39;error&#39; will raise a `ValueError` at transform time if there are new categories.</span>
+<span class="sd">        &#39;return_nan&#39; will encode a new value as `np.nan` in every dummy column.</span>
+<span class="sd">        &#39;value&#39; will encode a new value as 0 in every dummy column.</span>
+<span class="sd">        &#39;indicator&#39; will add an additional dummy column (in both training and test data).</span>
 <span class="sd">    handle_missing: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;. Warning: if indicator is used,</span>
-<span class="sd">        an extra column will be added in if the transform matrix has nan values.  This can cause</span>
-<span class="sd">        unexpected changes in dimension in some cases.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;.</span>
+
+<span class="sd">        &#39;error&#39; will raise a `ValueError` if missings are encountered.</span>
+<span class="sd">        &#39;return_nan&#39; will encode a missing value as `np.nan` in every dummy column.</span>
+<span class="sd">        &#39;value&#39; will encode a missing value as 0 in every dummy column.</span>
+<span class="sd">        &#39;indicator&#39; will treat missingness as its own category, adding an additional dummy column</span>
+<span class="sd">        (whether there are missing values in the training set or not).</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
@@ -228,11 +235,18 @@
             <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns to be encoded can not contain null&#39;</span><span class="p">)</span>
 
+        <span class="n">oe_missing_strat</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;indicator&#39;</span><span class="p">:</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">,</span>
+        <span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">]</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="p">(</span>
             <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
             <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
             <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
-            <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="n">oe_missing_strat</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_mapping</span><span class="p">()</span>
@@ -270,7 +284,13 @@
             <span class="n">index</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">new_columns</span> <span class="o">=</span> <span class="p">[]</span>
 
+            <span class="n">append_nan_to_index</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">for</span> <span class="n">cat_name</span><span class="p">,</span> <span class="n">class_</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">cat_name</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
+                    <span class="c1"># we don&#39;t want a mapping column if return_nan</span>
+                    <span class="c1"># but do add the index to the end</span>
+                    <span class="n">append_nan_to_index</span> <span class="o">=</span> <span class="n">class_</span>
+                    <span class="k">continue</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cat_names</span><span class="p">:</span>
                     <span class="n">n_col_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cat_name</span><span class="p">,)</span>
                     <span class="n">found_count</span> <span class="o">=</span> <span class="n">found_column_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n_col_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -291,7 +311,10 @@
                 <span class="n">new_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_col_name</span><span class="p">)</span>
                 <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-            <span class="n">base_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">append_nan_to_index</span><span class="p">:</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">append_nan_to_index</span><span class="p">)</span>
+
+            <span class="n">base_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">),</span> <span class="n">M</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">new_columns</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
             <span class="n">base_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">base_matrix</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">new_columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
@@ -300,7 +323,7 @@
                 <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
                 <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -324,16 +347,16 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns to be encoded can not contain null&#39;</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s1">&#39;Must train encoder before it can be used to transform data.&#39;</span><span class="p">)</span>
 
         <span class="c1"># first check the type</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">convert_input</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns to be encoded can not contain null&#39;</span><span class="p">)</span>
 
         <span class="c1"># then make sure that it is the right size</span>
         <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span><span class="p">:</span>
@@ -430,7 +453,7 @@
             <span class="n">col</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)</span>
             <span class="n">mod</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mapping&#39;</span><span class="p">)</span>
 
-            <span class="n">base_df</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="n">base_df</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span>
             <span class="n">base_df</span> <span class="o">=</span> <span class="n">base_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">base_df</span><span class="p">,</span> <span class="n">X</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 

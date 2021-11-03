@@ -91,9 +91,9 @@
 <dt id="category_encoders.one_hot.OneHotEncoder">
 <em class="property">class </em><code class="sig-prename descclassname">category_encoders.one_hot.</code><code class="sig-name descname">OneHotEncoder</code><span class="sig-paren">(</span><em class="sig-param">verbose=0</em>, <em class="sig-param">cols=None</em>, <em class="sig-param">drop_invariant=False</em>, <em class="sig-param">return_df=True</em>, <em class="sig-param">handle_missing='value'</em>, <em class="sig-param">handle_unknown='value'</em>, <em class="sig-param">use_cat_names=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/one_hot.html#OneHotEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#category_encoders.one_hot.OneHotEncoder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Onehot (or dummy) coding for categorical features, produces one feature per category, each binary.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
+<dd class="field-odd"><dl>
 <dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of the output. 0 for none.</p>
 </dd>
 <dt><strong>cols: list</strong></dt><dd><p>a list of columns to encode, if None, all string columns will be encoded.</p>
@@ -105,13 +105,18 @@
 <dt><strong>use_cat_names: bool</strong></dt><dd><p>if True, category values will be included in the encoded column names. Since this can result in duplicate column names, duplicates are suffixed with ‘#’ symbol until a unique name is generated.
 If False, category indices will be used instead of the category values.</p>
 </dd>
-<dt><strong>handle_unknown: str</strong></dt><dd><p>options are ‘error’, ‘return_nan’, ‘value’, and ‘indicator’. The default is ‘value’. Warning: if indicator is used,
-an extra column will be added in if the transform matrix has unknown categories.  This can cause
-unexpected changes in dimension in some cases.</p>
+<dt><strong>handle_unknown: str</strong></dt><dd><p>options are ‘error’, ‘return_nan’, ‘value’, and ‘indicator’. The default is ‘value’.</p>
+<p>‘error’ will raise a <cite>ValueError</cite> at transform time if there are new categories.
+‘return_nan’ will encode a new value as <cite>np.nan</cite> in every dummy column.
+‘value’ will encode a new value as 0 in every dummy column.
+‘indicator’ will add an additional dummy column (in both training and test data).</p>
 </dd>
-<dt><strong>handle_missing: str</strong></dt><dd><p>options are ‘error’, ‘return_nan’, ‘value’, and ‘indicator’. The default is ‘value’. Warning: if indicator is used,
-an extra column will be added in if the transform matrix has nan values.  This can cause
-unexpected changes in dimension in some cases.</p>
+<dt><strong>handle_missing: str</strong></dt><dd><p>options are ‘error’, ‘return_nan’, ‘value’, and ‘indicator’. The default is ‘value’.</p>
+<p>‘error’ will raise a <cite>ValueError</cite> if missings are encountered.
+‘return_nan’ will encode a missing value as <cite>np.nan</cite> in every dummy column.
+‘value’ will encode a missing value as 0 in every dummy column.
+‘indicator’ will treat missingness as its own category, adding an additional dummy column
+(whether there are missing values in the training set or not).</p>
 </dd>
 </dl>
 </dd>
