@@ -27,13 +27,20 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if True, category values will be included in the encoded column names. Since this can result in duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
         If False, category indices will be used instead of the category values.
     handle_unknown: str
-        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can cause
-        unexpected changes in dimension in some cases.
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
+
+        'error' will raise a `ValueError` at transform time if there are new categories.
+        'return_nan' will encode a new value as `np.nan` in every dummy column.
+        'value' will encode a new value as 0 in every dummy column.
+        'indicator' will add an additional dummy column (in both training and test data).
     handle_missing: str
-        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has nan values.  This can cause
-        unexpected changes in dimension in some cases.
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
+
+        'error' will raise a `ValueError` if missings are encountered.
+        'return_nan' will encode a missing value as `np.nan` in every dummy column.
+        'value' will encode a missing value as 0 in every dummy column.
+        'indicator' will treat missingness as its own category, adding an additional dummy column
+        (whether there are missing values in the training set or not).
 
     Example
     -------
