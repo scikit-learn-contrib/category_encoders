@@ -71,8 +71,8 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     References
     ----------
 
-    .. [1] Strategies to encode categorical variables with many categories, from
-    https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
+    .. [1] Originally by Owen Zhang (reference broken), another short explanation at:
+    https://datascience.stackexchange.com/questions/10839/what-is-difference-between-one-hot-encoding-and-leave-one-out-encoding
 
     """
 
