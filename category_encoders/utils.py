@@ -33,6 +33,9 @@ def get_obj_cols(df):
         if dt == 'object' or is_category(dt):
             obj_cols.append(df.columns.values[idx])
 
+    if not obj_cols:
+        print("Warning: No categorical columns found. Calling 'transform' will only return input data.")
+
     return obj_cols
 
 
