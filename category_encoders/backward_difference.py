@@ -1,7 +1,7 @@
 """Backward difference contrast encoding"""
 
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 from patsy.contrasts import Diff
 import numpy as np
 from category_encoders.ordinal import OrdinalEncoder
@@ -10,7 +10,7 @@ import category_encoders.utils as util
 __author__ = 'willmcginnis'
 
 
-class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
+class BackwardDifferenceEncoder(util.BaseEncoder, TransformerMixin):
     """Backward difference contrast coding for encoding categorical variables.
 
     Parameters
@@ -120,7 +120,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
 
         # if the input dataset isn't already a dataframe, convert it to one (using default column names)
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         self._dim = X.shape[1]
 
@@ -196,7 +196,7 @@ class BackwardDifferenceEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

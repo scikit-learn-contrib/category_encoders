@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 from scipy.sparse.csr import csr_matrix
+from sklearn.base import BaseEstimator
 
 __author__ = 'willmcginnis'
 
@@ -176,6 +177,9 @@ def get_generated_cols(X_original, X_transformed, to_transform):
 
 
 class TransformerWithTargetMixin:
+    def _more_tags(self):
+        return {'supervised_encoder': True}
+
     def fit_transform(self, X, y=None, **fit_params):
         """
         Encoders that utilize the target must make sure that the training data are transformed with:
@@ -186,3 +190,24 @@ class TransformerWithTargetMixin:
         if y is None:
             raise TypeError('fit_transform() missing argument: ''y''')
         return self.fit(X, y, **fit_params).transform(X, y)
+
+
+class BaseEncoder(BaseEstimator):
+    """A base class for categorical encoders."""
+    def convert_inputs(self, X, y, columns=None, index=None, deep=False):
+        # TODO: move the utils.convert_inputs into here
+        return convert_inputs(X, y, columns=columns, index=index, deep=deep)
+
+    def check_fit_inputs(self, X, y):
+        if self._get_tags().get('supervised_encoder') and y is None:
+            raise ValueError(
+                'Supervised encoders need a target for the fitting. The target cannot be None'
+            )
+        # TODO: add as much of the other pre-fit checks as possible
+
+    def check_transform_inputs(self, X, y):
+        ...
+
+    def _more_tags(self):
+        # sklearn default tags live in BaseEstimator; we add:
+        return {'supervised_encoder': False}

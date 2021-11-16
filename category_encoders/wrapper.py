@@ -1,13 +1,13 @@
 import copy
 from category_encoders import utils
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 from sklearn.model_selection import StratifiedKFold
 import category_encoders as encoders
 import pandas as pd
 import numpy as np
 
 
-class PolynomialWrapper(BaseEstimator, TransformerMixin):
+class PolynomialWrapper(utils.BaseEncoder, TransformerMixin):
     """Extend supervised encoders to n-class labels, where n >= 2.
 
     The label can be numerical (e.g.: 0, 1, 2, 3,...,n), string or categorical (pandas.Categorical).
@@ -51,7 +51,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y, **kwargs):
         # unite the input into pandas types
-        X, y = utils.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
         y = pd.DataFrame(y, columns=['target'])
 
         # apply one-hot-encoder on the label
@@ -126,7 +126,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
         return result
 
 
-class NestedCVWrapper(BaseEstimator, TransformerMixin):
+class NestedCVWrapper(utils.BaseEncoder, TransformerMixin):
     """
     Extends supervised encoders with the nested cross validation on the training data to minimise overfitting.
 
@@ -238,7 +238,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         :return: array, shape = [n_samples, n_numeric + N]
                  Transformed values with encoding applied. Returns multiple arrays if X_test is not None
         """
-        X, y = utils.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         # Get out-of-fold encoding for the training data
         out_of_fold = np.zeros(X.shape)

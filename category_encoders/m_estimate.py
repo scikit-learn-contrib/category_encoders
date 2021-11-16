@@ -1,7 +1,6 @@
 """M-probability estimate"""
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
@@ -9,7 +8,7 @@ from sklearn.utils.random import check_random_state
 __author__ = 'Jan Motl'
 
 
-class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class MEstimateEncoder(util.BaseEncoder, util.TransformerWithTargetMixin):
     """M-probability estimate of likelihood.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
@@ -129,7 +128,7 @@ class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # Unite parameters into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         self._dim = X.shape[1]
 
@@ -200,7 +199,7 @@ class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # Unite the input into pandas types
-        X, y = util.convert_inputs(X, y, deep=True)
+        X, y = self.convert_inputs(X, y, deep=True)
 
         # Then make sure that it is the right size
         if X.shape[1] != self._dim:

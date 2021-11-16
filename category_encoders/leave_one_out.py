@@ -1,14 +1,13 @@
 """Leave one out coding"""
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
 __author__ = 'hbghhy'
 
 
-class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class LeaveOneOutEncoder(util.BaseEncoder, util.TransformerWithTargetMixin):
     """Leave one out coding for categorical features.
 
     This is very similar to target encoding but excludes the current row's
@@ -114,7 +113,7 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
         y = y.astype(float)
 
         self._dim = X.shape[1]
@@ -179,7 +178,7 @@ class LeaveOneOutEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # unite the input into pandas types
-        X, y = util.convert_inputs(X, y, deep=True)
+        X, y = self.convert_inputs(X, y, deep=True)
         if y is not None:
             y = y.astype(float)
 

@@ -10,7 +10,7 @@ from functools import reduce
 import operator
 
 
-class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class QuantileEncoder(util.BaseEncoder, util.TransformerWithTargetMixin):
     """Quantile Encoding for categorical features.
 
     This a statistically modified version of target MEstimate encoder where selected features
@@ -122,7 +122,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
         y = y.astype(float)
 
         self._dim = X.shape[1]
@@ -217,7 +217,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError("Must train encoder before it can be used to transform data.")
 
         # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -274,7 +274,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             return self.feature_names
 
 
-class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class SummaryEncoder(util.BaseEncoder, util.TransformerWithTargetMixin):
     """Summary Encoding for categorical features.
 
     It's an encoder designed for creating richer representations by applying quantile encoding for a set of quantiles.
@@ -365,7 +365,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.encoder_list = None
 
     def fit(self, X, y):
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         if self.cols is None:
             self.cols = util.get_obj_cols(X)
@@ -406,7 +406,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     def transform(self, X, y=None, override_return_df=False):
         if self.encoder_list is None:
             raise ValueError("Must train encoder before it can be used to transform data.")
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         orig_cols = X.columns
         transformed_df = X.copy()

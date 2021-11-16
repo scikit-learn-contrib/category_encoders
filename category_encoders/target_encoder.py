@@ -1,14 +1,13 @@
 """Target Encoder"""
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 
 __author__ = 'chappers'
 
 
-class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class TargetEncoder(util.BaseEncoder, util.TransformerWithTargetMixin):
     """Target encoding for categorical features.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
@@ -115,7 +114,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         self._dim = X.shape[1]
 
@@ -209,7 +208,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

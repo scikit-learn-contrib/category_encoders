@@ -4,13 +4,13 @@ import numpy as np
 import pandas as pd
 from patsy.contrasts import Poly
 from category_encoders.ordinal import OrdinalEncoder
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 import category_encoders.utils as util
 
 __author__ = 'willmcginnis'
 
 
-class PolynomialEncoder(BaseEstimator, TransformerMixin):
+class PolynomialEncoder(util.BaseEncoder, TransformerMixin):
     """Polynomial contrast coding for the encoding of categorical features.
 
     Parameters
@@ -119,7 +119,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
 
         # if the input dataset isn't already a dataframe, convert it to one (using default column names)
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         self._dim = X.shape[1]
 
@@ -194,7 +194,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = util.convert_inputs(X, y=None)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

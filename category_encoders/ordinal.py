@@ -2,14 +2,14 @@
 
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 import category_encoders.utils as util
 import warnings
 
 __author__ = 'willmcginnis'
 
 
-class OrdinalEncoder(BaseEstimator, TransformerMixin):
+class OrdinalEncoder(util.BaseEncoder, TransformerMixin):
     """Encodes categorical features as ordinal, in one ordered feature.
 
     Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
@@ -122,7 +122,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         self._dim = X.shape[1]
 
@@ -191,7 +191,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 'Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -238,7 +238,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
         # first check the type and make deep copy
-        X = util.convert_input(X_in, deep=True)
+        X, _ = self.convert_inputs(X_in, y=None, deep=True)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

@@ -2,7 +2,7 @@
 
 import sys
 import hashlib
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 import category_encoders.utils as util
 import multiprocessing
 import pandas as pd
@@ -12,7 +12,7 @@ import platform
 __author__ = 'willmcginnis', 'LiuShulun'
 
 
-class HashingEncoder(BaseEstimator, TransformerMixin):
+class HashingEncoder(util.BaseEncoder, TransformerMixin):
 
     """ A multivariate hashing implementation with configurable dimensionality/precision.
 
@@ -153,7 +153,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         self._dim = X.shape[1]
 
@@ -224,7 +224,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        self.X = util.convert_input(X)
+        self.X, _ = self.convert_inputs(X, y=None)
         self.data_lines = len(self.X)
 
         # then make sure that it is the right size
@@ -296,7 +296,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

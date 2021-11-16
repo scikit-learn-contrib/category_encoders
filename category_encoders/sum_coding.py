@@ -3,14 +3,14 @@
 import pandas as pd
 import numpy as np
 from patsy.contrasts import Sum
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 
 __author__ = 'willmcginnis'
 
 
-class SumEncoder(BaseEstimator, TransformerMixin):
+class SumEncoder(util.BaseEncoder, TransformerMixin):
     """Sum contrast coding for the encoding of categorical features.
 
     Parameters
@@ -119,7 +119,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
 
         # if the input dataset isn't already a dataframe, convert it to one (using default column names)
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         self._dim = X.shape[1]
 
@@ -194,7 +194,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

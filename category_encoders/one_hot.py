@@ -2,14 +2,14 @@
 import numpy as np
 import pandas as pd
 import warnings
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 
 __author__ = 'willmcginnis'
 
 
-class OneHotEncoder(BaseEstimator, TransformerMixin):
+class OneHotEncoder(util.BaseEncoder, TransformerMixin):
     """Onehot (or dummy) coding for categorical features, produces one feature per category, each binary.
 
     Parameters
@@ -135,7 +135,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         self._dim = X.shape[1]
 
@@ -266,7 +266,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 'Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         if self.handle_missing == 'error':
             if X[self.cols].isnull().any().any():
@@ -316,7 +316,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
         # first check the type and make deep copy
-        X = util.convert_input(X_in, columns=self.feature_names, deep=True)
+        X, y = self.convert_inputs(X_in, y=None, columns=self.feature_names, deep=True)
 
         X = self.reverse_dummies(X, self.mapping)
 

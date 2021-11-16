@@ -3,7 +3,7 @@
 
 import pandas as pd
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 from patsy.contrasts import Helmert
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
@@ -11,7 +11,7 @@ import category_encoders.utils as util
 __author__ = 'willmcginnis'
 
 
-class HelmertEncoder(BaseEstimator, TransformerMixin):
+class HelmertEncoder(util.BaseEncoder, TransformerMixin):
     """Helmert contrast coding for encoding categorical features.
 
     Parameters
@@ -119,7 +119,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         self._dim = X.shape[1]
 
@@ -193,7 +193,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

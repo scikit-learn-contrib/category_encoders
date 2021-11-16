@@ -3,7 +3,6 @@ import warnings
 import re
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
 from sklearn.utils.random import check_random_state
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
@@ -13,7 +12,7 @@ from statsmodels.genmod.bayes_mixed_glm import BinomialBayesMixedGLM as bgmm
 __author__ = 'Jan Motl'
 
 
-class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class GLMMEncoder(util.BaseEncoder, util.TransformerWithTargetMixin):
     """Generalized linear mixed model.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
@@ -133,7 +132,7 @@ class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # Unite parameters into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
         y = y.astype(float)
 
         self._dim = X.shape[1]
@@ -205,7 +204,7 @@ class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # Unite the input into pandas types
-        X, y = util.convert_inputs(X, y, deep=True)
+        X, y = self.convert_inputs(X, y, deep=True)
 
         # Then make sure that it is the right size
         if X.shape[1] != self._dim:

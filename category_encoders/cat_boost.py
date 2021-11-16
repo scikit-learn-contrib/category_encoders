@@ -2,14 +2,13 @@
 
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
 
 
-class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class CatBoostEncoder(util.BaseEncoder, util.TransformerWithTargetMixin):
     """CatBoost coding for categorical features.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
@@ -130,7 +129,7 @@ class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         self._dim = X.shape[1]
 
@@ -194,7 +193,7 @@ class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

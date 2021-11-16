@@ -6,13 +6,13 @@ import pandas as pd
 import category_encoders.utils as util
 
 from copy import copy
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 
 
 __author__ = 'joshua t. dunn'
 
 # COUNT_ENCODER BRANCH
-class CountEncoder(BaseEstimator, TransformerMixin):
+class CountEncoder(util.BaseEncoder, TransformerMixin):
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
                  return_df=True, handle_unknown='value',
                  handle_missing='value',
@@ -147,7 +147,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         """
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         self._dim = X.shape[1]
 
@@ -203,7 +203,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             )
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

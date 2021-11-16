@@ -1,14 +1,14 @@
 """Binary encoding"""
 
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 
 import category_encoders as ce
 
 __author__ = 'willmcginnis'
 
 
-class BinaryEncoder(BaseEstimator, TransformerMixin):
+class BinaryEncoder(ce.utils.BaseEncoder, TransformerMixin):
     """Binary encoding for categorical variables, similar to onehot, but stores categories as binary bitstrings.
 
     Parameters

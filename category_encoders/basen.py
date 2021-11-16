@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import math
 import re
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 import warnings
@@ -33,7 +33,7 @@ def _ceillogint(n, base):
     return ret
 
 
-class BaseNEncoder(BaseEstimator, TransformerMixin):
+class BaseNEncoder(util.BaseEncoder, TransformerMixin):
     """Base-N encoder encodes the categories into arrays of their base-N representation.  A base of 1 is equivalent to
     one-hot encoding (not really base-1, but useful), a base of 2 is equivalent to binary encoding. N=number of actual
     categories is equivalent to vanilla ordinal encoding.
@@ -135,7 +135,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         """
 
         # if the input dataset isn't already a dataframe, convert it to one (using default column names)
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         self._dim = X.shape[1]
 
@@ -235,7 +235,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # first check the type
-        X = util.convert_input(X)
+        X, _ = self.convert_inputs(X, y=None)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -284,7 +284,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
         # unite the type into pandas dataframe (it makes the input size detection code easier...) and make deep copy
-        X = util.convert_input(X_in, columns=self.feature_names, deep=True)
+        X, _ = self.convert_inputs(X_in, y=None, columns=self.feature_names, deep=True)
 
         X = self.basen_to_integer(X, self.cols, self.base)
 

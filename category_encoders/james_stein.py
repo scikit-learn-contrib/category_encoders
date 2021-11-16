@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 import scipy
 from scipy import optimize
-from sklearn.base import BaseEstimator
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
@@ -11,7 +10,7 @@ from sklearn.utils.random import check_random_state
 __author__ = 'Jan Motl'
 
 
-class JamesSteinEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class JamesSteinEncoder(util.BaseEncoder, util.TransformerWithTargetMixin):
     """James-Stein estimator.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
@@ -177,7 +176,7 @@ class JamesSteinEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         """
 
         # Unite parameters into pandas types
-        X, y = util.convert_inputs(X, y)
+        X, y = self.convert_inputs(X, y)
 
         self._dim = X.shape[1]
 
@@ -268,7 +267,7 @@ class JamesSteinEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             raise ValueError('Must train encoder before it can be used to transform data.')
 
         # Unite the input into pandas types
-        X, y = util.convert_inputs(X, y, deep=True)
+        X, y = self.convert_inputs(X, y, deep=True)
 
         # Then make sure that it is the right size
         if X.shape[1] != self._dim:
