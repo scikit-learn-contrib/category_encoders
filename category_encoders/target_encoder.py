@@ -8,7 +8,7 @@ import category_encoders.utils as util
 __author__ = 'chappers'
 
 
-class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """Target encoding for categorical features.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
@@ -78,14 +78,16 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     https://dl.acm.org/citation.cfm?id=507538
 
     """
+    prefit_ordinal = True
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
                      handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
-        self.drop_cols = []
+        self.invariant_cols = []
         self.verbose = verbose
         self.cols = cols
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
         self.ordinal_encoder = None
         self.min_samples_leaf = min_samples_leaf
         self.smoothing = float(smoothing)  # Make smoothing a float so that python 2 does not treat as integer division
@@ -96,39 +98,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self._mean = None
         self.feature_names = None
 
-    def fit(self, X, y, **kwargs):
-        """Fit encoder according to X and y.
-
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-        self : encoder
-            Returns self.
-
-        """
-
-        # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
+    def _fit(self, X, y, **kwargs):
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
@@ -138,23 +108,6 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
         self.mapping = self.fit_target_encoding(X_ordinal, y)
-        
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = list(X_temp.columns)
-
-        if self.drop_invariant:
-            self.drop_cols = []
-            X_temp = self.transform(X)
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                    "Not found in generated cols.\n{}".format(e))
-
-        return self
 
     def fit_target_encoding(self, X, y):
         mapping = {}
@@ -185,39 +138,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         return mapping
 
-    def transform(self, X, y=None, override_return_df=False):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples] when transform by leave one out
-            None, when transform without target info (such as transform test set)
-            
-        Returns
-        -------
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
-
-        # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
-
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
-
-        if not list(self.cols):
-            return X
-
+    def _transform(self, X, y=None):
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -225,15 +146,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                 raise ValueError('Unexpected categories found in dataframe')
 
         X = self.target_encode(X)
-
-        if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.values
+        return X
 
     def target_encode(self, X_in):
         X = X_in.copy(deep=True)

@@ -33,7 +33,7 @@ def _ceillogint(n, base):
     return ret
 
 
-class BaseNEncoder(BaseEstimator, TransformerMixin):
+class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     """Base-N encoder encodes the categories into arrays of their base-N representation.  A base of 1 is equivalent to
     one-hot encoding (not really base-1, but useful), a base of 2 is equivalent to binary encoding. N=number of actual
     categories is equivalent to vanilla ordinal encoding.
@@ -98,57 +98,25 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
     """
 
+    prefit_ordinal = True
+
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True, base=2,
                  handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
-        self.drop_cols = []
+        self.invariant_cols = []
         self.verbose = verbose
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
         self.cols = cols
         self.mapping = mapping
         self.ordinal_encoder = None
         self._dim = None
         self.base = base
-        self._encoded_columns = None
         self.feature_names = None
 
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X and y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        # if the input dataset isn't already a dataframe, convert it to one (using default column names)
-        X = util.convert_input(X)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
+    def _fit(self, X, y=None, **kwargs):
         # train an ordinal pre-encoder
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
@@ -159,25 +127,6 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
         self.mapping = self.fit_base_n_encoding(X)
-
-        # do a transform on the training data to get a column list
-        X_temp = self.transform(X, override_return_df=True)
-        self._encoded_columns = X_temp.columns.values
-        self.feature_names = list(X_temp.columns)
-
-        # drop all output columns with 0 variance.
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                          "Not found in generated cols.\n{}".format(e))
-
-        return self
 
     def fit_base_n_encoding(self, X):
         mappings_out = []
@@ -211,38 +160,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
 
         return mappings_out
 
-    def transform(self, X, override_return_df=False):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
-
-        # first check the type
-        X = util.convert_input(X)
-
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
-
-        if not list(self.cols):
-            return X
+    def _transform(self, X):
 
         X_out = self.ordinal_encoder.transform(X)
 
@@ -251,19 +169,8 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
                 raise ValueError('Columns to be encoded can not contain new values')
 
         X_out = self.basen_encode(X_out, cols=self.cols)
+        return X_out
 
-        if self.drop_invariant:
-            for col in self.drop_cols:
-                X_out.drop(col, 1, inplace=True)
-
-        # impute missing values only in the generated columns
-        # generated_cols = util.get_generated_cols(X, X_out, self.cols)
-        # X_out[generated_cols] = X_out[generated_cols].fillna(value=0.0)
-
-        if self.return_df or override_return_df:
-            return X_out
-        else:
-            return X_out.values
 
     def inverse_transform(self, X_in):
         """

@@ -9,7 +9,7 @@ from sklearn.utils.random import check_random_state
 __author__ = 'Jan Motl'
 
 
-class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """M-probability estimate of likelihood.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
@@ -86,13 +86,15 @@ class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
 
     """
+    prefit_ordinal = True
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value', random_state=None, randomized=False, sigma=0.05, m=1.0):
         self.verbose = verbose
         self.return_df = return_df
         self.drop_invariant = drop_invariant
-        self.drop_cols = []
+        self.invariant_cols = []
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
         self.cols = cols
         self.ordinal_encoder = None
         self._dim = None
@@ -107,41 +109,7 @@ class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.m = m
         self.feature_names = None
 
-    # noinspection PyUnusedLocal
-    def fit(self, X, y, **kwargs):
-        """Fit encoder according to X and binary or continuous y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Binary target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        # Unite parameters into pandas types
-        X, y = util.convert_inputs(X, y)
-
-        self._dim = X.shape[1]
-
-        # If columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
+    def _fit(self, X, y, **kwargs):
 
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
@@ -155,23 +123,8 @@ class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         # Training
         self.mapping = self._train(X_ordinal, y)
 
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = X_temp.columns.tolist()
-
-        # Store column names with approximately constant variance on the training data
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                    "Not found in generated cols.\n{}".format(e))
-        return self
-
-    def transform(self, X, y=None, override_return_df=False):
+    # todo docstring
+    def _transform(self, X, y=None):
         """Perform the transformation to new categorical data.
 
         When the data are used for model training, it is important to also pass the target in order to apply leave one out.
@@ -191,24 +144,6 @@ class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             Transformed values with encoding applied.
 
         """
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
-
-        # Unite the input into pandas types
-        X, y = util.convert_inputs(X, y, deep=True)
-
-        # Then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
-
-        if not list(self.cols):
-            return X
-
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -217,17 +152,7 @@ class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         # Loop over the columns and replace the nominal values with the numbers
         X = self._score(X, y)
-
-        # Postprocessing
-        # Note: We should not even convert these columns.
-        if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.values
+        return X
 
     def _train(self, X, y):
         # Initialize the output

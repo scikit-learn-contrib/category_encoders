@@ -1,8 +1,12 @@
 """A collection of shared utilities for all encoders, not intended for external use."""
+from abc import abstractmethod
 
 import pandas as pd
 import numpy as np
+import sklearn.base
 from scipy.sparse.csr import csr_matrix
+from sklearn.base import BaseEstimator, TransformerMixin
+from typing import Dict, List, Optional, Union
 
 __author__ = 'willmcginnis'
 
@@ -176,6 +180,153 @@ def get_generated_cols(X_original, X_transformed, to_transform):
         [current_cols.remove(c) for c in original_cols]
 
     return current_cols
+
+
+# todo also inherit transformer mixin?
+class BaseEncoder(BaseEstimator):
+    _dim: Optional[int]
+    cols: List[str]
+    use_default_cols: bool
+    handle_missing: str
+    handle_unknown: str
+    verbose: int
+    mapping: Dict[str, Dict[str, float]]  # todo check if this is the case -> probably not, backward difference has different types
+    drop_invariant: bool
+    invariant_cols: List[str] = []
+    return_df: bool
+    supervised: bool
+
+    def fit(self, X, y=None, **kwargs):
+
+        # first check the type
+        if self.supervised:
+            X, y = convert_inputs(X, y)
+        else:
+            X = convert_input(X)
+
+        self._dim = X.shape[1]
+
+        # if columns aren't passed, just use every string column
+        # todo this is a construct from LOO that applies to all encoders. However we should look for a proper way to make encoders re-fitable
+        if self.use_default_cols:
+            self.cols = get_obj_cols(X)
+        else:
+            self.cols = convert_cols_to_list(self.cols)
+
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().any():
+                raise ValueError('Columns to be encoded can not contain null')
+
+        self._fit(X, y, **kwargs)
+
+        # if self.supervised:
+        #     X_temp = self.transform(X, y, override_return_df=True)
+        # else:
+        X_temp = self.transform(X, override_return_df=True)  # for finding invariant columns transform as if it was the test set
+        self.feature_names = X_temp.columns.tolist()
+
+        # drop all output columns with 0 variance.
+        if self.drop_invariant:
+            generated_cols = get_generated_cols(X, X_temp, self.cols)
+            self.invariant_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            try:
+                [self.feature_names.remove(x) for x in self.invariant_cols]
+            except KeyError as e:
+                print("entered except clause")
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                          "Not found in generated cols.\n{}".format(e))
+
+        return self
+
+    def _check_transform_inputs(self, X):
+        if self.handle_missing == 'error':
+            if X[self.cols].isnull().any().any():
+                raise ValueError('Columns to be encoded can not contain null')
+
+        if self._dim is None:
+            raise ValueError('Must train encoder before it can be used to transform data.')
+
+        # then make sure that it is the right size
+        if X.shape[1] != self._dim:
+            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+
+    def _drop_invariants(self, X: pd.DataFrame, override_return_df: bool) -> Union[np.ndarray, pd.DataFrame]:
+        if self.drop_invariant:
+            for col in self.invariant_cols:
+                X.drop(col, 1, inplace=True)
+
+        if self.return_df or override_return_df:
+            return X
+        else:
+            return X.values
+
+    @abstractmethod
+    def _fit(self, X: pd.DataFrame, y: Optional[pd.Series], **kwargs):
+        ...
+
+
+class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
+    supervised = True
+
+    def transform(self, X, y=None, override_return_df=False):
+
+        # first check the type
+        X, y = convert_inputs(X, y, deep=True)
+        self._check_transform_inputs(X)
+
+        if not list(self.cols):
+            return X
+
+        X = self._transform(X, y)
+
+        # todo check if this is really after _transform or within transform. Some encoder (backward_difference)
+        #  do ordinal encoding first and only then check for unknowns. If it's in the middle of the process it is hard to generalize
+        # if self.handle_unknown == 'error':
+        #     if X[self.cols].isin([-1]).any().any():
+        #         raise ValueError('Columns to be encoded can not contain new values')
+        return self._drop_invariants(X, override_return_df)
+
+    @abstractmethod
+    def _transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+        ...
+
+    def fit_transform(self, X, y=None, **fit_params):
+        """
+        Encoders that utilize the target must make sure that the training data are transformed with:
+             transform(X, y)
+        and not with:
+            transform(X)
+        """
+        if y is None:
+            raise TypeError('fit_transform() missing argument: ''y''')
+        return self.fit(X, y, **fit_params).transform(X, y)
+
+
+class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
+    supervised = False
+
+    def transform(self, X, override_return_df=False):
+
+        # first check the type
+        X = convert_input(X, deep=True)
+        self._check_transform_inputs(X)
+
+        if not list(self.cols):
+            return X
+
+        X = self._transform(X)
+
+        # todo check if this is really after _transform or within transform. Some encoder (backward_difference)
+        #  do ordinal encoding first and only then check for unknowns. If it's in the middle of the process it is hard to generalize
+        # if self.handle_unknown == 'error':
+        #     if X[self.cols].isin([-1]).any().any():
+        #         raise ValueError('Columns to be encoded can not contain new values')
+        return self._drop_invariants(X, override_return_df)
+
+    @abstractmethod
+    def _transform(self, X) -> pd.DataFrame:
+        ...
 
 
 class TransformerWithTargetMixin:

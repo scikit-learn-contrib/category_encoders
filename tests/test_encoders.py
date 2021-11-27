@@ -496,23 +496,23 @@ class TestEncoders(TestCase):
 
     def test_column_transformer(self):
         # see issue #169
-            for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder does not accept handle_missing parameter
-                with self.subTest(encoder_name=encoder_name):
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder does not accept handle_missing parameter
+            with self.subTest(encoder_name=encoder_name):
 
-                    # we can only test one data type at once. Here, we test string columns.
-                    tested_columns = ['unique_str', 'invariant', 'underscore', 'none', 'extra']
+                # we can only test one data type at once. Here, we test string columns.
+                tested_columns = ['unique_str', 'invariant', 'underscore', 'none', 'extra']
 
-                    # ColumnTransformer instantiates the encoder twice -> we have to make sure the encoder settings are correctly passed
-                    ct = ColumnTransformer([
-                        ("dummy_encoder_name", getattr(encoders, encoder_name)(handle_missing="return_nan"), tested_columns)
-                    ])
-                    obtained = ct.fit_transform(X, y)
+                # ColumnTransformer instantiates the encoder twice -> we have to make sure the encoder settings are correctly passed
+                ct = ColumnTransformer([
+                    ("dummy_encoder_name", getattr(encoders, encoder_name)(handle_missing="return_nan"), tested_columns)
+                ])
+                obtained = ct.fit_transform(X, y)
 
-                    # the old-school approach
-                    enc = getattr(encoders, encoder_name)(handle_missing="return_nan", return_df=False)
-                    expected = enc.fit_transform(X[tested_columns], y)
+                # the old-school approach
+                enc = getattr(encoders, encoder_name)(handle_missing="return_nan", return_df=False)
+                expected = enc.fit_transform(X[tested_columns], y)
 
-                    np.testing.assert_array_equal(obtained, expected)
+                np.testing.assert_array_equal(obtained, expected)
 
     def test_error_messages(self):
         # when the count of features change between training and scoring, we raise an exception

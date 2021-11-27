@@ -10,7 +10,7 @@ import category_encoders.utils as util
 __author__ = 'willmcginnis'
 
 
-class PolynomialEncoder(BaseEstimator, TransformerMixin):
+class PolynomialEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     """Polynomial contrast coding for the encoding of categorical features.
 
     Parameters
@@ -82,56 +82,24 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
     """
+    prefit_ordinal = True
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
         self.return_df = return_df
         self.drop_invariant = drop_invariant
-        self.drop_cols = []
+        self.invariant_cols = []
         self.verbose = verbose
         self.mapping = mapping
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
         self.cols = cols
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
         self.ordinal_encoder = None
         self._dim = None
         self.feature_names = None
 
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X and y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        # if the input dataset isn't already a dataframe, convert it to one (using default column names)
-        # first check the type
-        X = util.convert_input(X)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
+    def _fit(self, X, y=None, **kwargs):
 
         # train an ordinal pre-encoder
         self.ordinal_encoder = OrdinalEncoder(
@@ -153,55 +121,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
 
         self.mapping = mappings_out
 
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = X_temp.columns.tolist()
-
-        # drop all output columns with 0 variance.
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                    "Not found in generated cols.\n{}".format(e))
-
-        return self
-
-    def transform(self, X, override_return_df=False):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
-
-        # first check the type
-        X = util.convert_input(X)
-
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
-
-        if not list(self.cols):
-            return X
+    def _transform(self, X):
 
         X = self.ordinal_encoder.transform(X)
 
@@ -210,15 +130,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
                 raise ValueError('Columns to be encoded can not contain new values')
 
         X = self.polynomial_coding(X, self.mapping)
-
-        if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.values
+        return X
 
     @staticmethod
     def fit_polynomial_coding(col, values, handle_missing, handle_unknown):

@@ -8,6 +8,7 @@ import category_encoders as ce
 __author__ = 'willmcginnis'
 
 
+# todo this does not fit into our schema
 class BinaryEncoder(BaseEstimator, TransformerMixin):
     """Binary encoding for categorical variables, similar to onehot, but stores categories as binary bitstrings.
 
@@ -72,6 +73,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
         self.verbose = verbose
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
         self.cols = cols
         self.mapping = mapping
         self.drop_invariant = drop_invariant

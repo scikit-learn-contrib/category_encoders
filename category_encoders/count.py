@@ -11,8 +11,10 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 __author__ = 'joshua t. dunn'
 
-# COUNT_ENCODER BRANCH
-class CountEncoder(BaseEstimator, TransformerMixin):
+
+class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+    prefit_ordinal = False
+
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
                  return_df=True, handle_unknown='value',
                  handle_missing='value',
@@ -106,8 +108,9 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         """
         self.return_df = return_df
         self.drop_invariant = drop_invariant
-        self.drop_cols = []
+        self.invariant_cols = []
         self.verbose = verbose
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
         self.cols = cols
         self._dim = None
         self.mapping = None
@@ -129,104 +132,48 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self._handle_unknown = {}
         self._handle_missing = {}
 
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X.
-
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-        self : encoder
-            Returns self.
-        """
-
-        # first check the type
-        X = util.convert_input(X)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
+    def _fit(self, X, y=None, **kwargs):
         self._check_set_create_dict_attrs()
+        self._fit_count_encode(X)
 
-        self._fit_count_encode(X, y)
+    def _transform(self, X):
+        """Perform the transform count encoding."""
+        X = X.copy(deep=True)
 
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = list(X_temp.columns)
+        for col in self.cols:
 
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [
-                x for x in generated_cols if X_temp[x].var() <= 10e-5
-            ]
+            X[col] = X.fillna(value=np.nan)[col]
 
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                    "Not found in generated cols.\n{}".format(e))
+            if self._min_group_size is not None:
+                if col in self._min_group_categories.keys():
+                    X[col] = (
+                        X[col].map(self._min_group_categories[col])
+                            .fillna(X[col])
+                    )
 
-        return self
+            X[col] = X[col].astype(object).map(self.mapping[col])
+            if isinstance(self._handle_unknown[col], (int, np.integer)):
+                X[col] = X[col].fillna(self._handle_unknown[col])
 
-    def transform(self, X, y=None, override_return_df=False):
-        """Perform the transformation to new categorical data.
+            elif (self._handle_unknown[col] == 'value'
+                  and X[col].isna().any()
+                  and self._handle_missing[col] != 'return_nan'
+            ):
+                X[col].replace(np.nan, 0, inplace=True)
 
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples]
-            
-        Returns
-        -------
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-        """
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
+            elif (
+                    self._handle_unknown[col] == 'error'
+                    and X[col].isnull().any()
+            ):
 
-        if self._dim is None:
-            raise ValueError(
-                'Must train encoder before it can be used to transform data.'
-            )
+                raise ValueError(
+                    'Missing data found in column %s at transform time.'
+                    % (col,)
+                )
 
-        # first check the type
-        X = util.convert_input(X)
+        return X
 
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError(
-                'Unexpected input dimension %d, expected %d'
-                % (X.shape[1], self._dim,)
-            )
-
-        if not list(self.cols):
-            return X
-
-        X, _ = self._transform_count_encode(X, y)
-
-        if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.values
-
-    def _fit_count_encode(self, X_in, y):
+    def _fit_count_encode(self, X_in):
         """Perform the count encoding."""
         X = X_in.copy(deep=True)
 
@@ -257,8 +204,6 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
             self.mapping[col].index = self.mapping[col].index.astype(object)
 
-
-
             if self._handle_missing[col] == 'return_nan':
                 self.mapping[col][np.NaN] = np.NaN
             
@@ -267,43 +212,6 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
         if any([val is not None for val in self._min_group_size.values()]):
             self.combine_min_categories(X)
-
-    def _transform_count_encode(self, X_in, y):
-        """Perform the transform count encoding."""
-        X = X_in.copy(deep=True)
-
-        for col in self.cols:
-
-            X[col] = X.fillna(value=np.nan)[col]
-
-            if self._min_group_size is not None:
-                if col in self._min_group_categories.keys():
-                    X[col] = (
-                        X[col].map(self._min_group_categories[col])
-                        .fillna(X[col])
-                    )
-            
-            X[col] = X[col].astype(object).map(self.mapping[col])
-            if isinstance(self._handle_unknown[col], (int, np.integer)):
-                X[col] = X[col].fillna(self._handle_unknown[col])
-            
-            elif (self._handle_unknown[col] == 'value'
-                    and X[col].isna().any()
-                    and self._handle_missing[col] != 'return_nan'
-                 ):
-                 X[col].replace(np.nan, 0, inplace=True)
- 
-            elif (
-                self._handle_unknown[col] == 'error'
-                and X[col].isnull().any()
-            ):
-
-                raise ValueError(
-                    'Missing data found in column %s at transform time.'
-                    % (col,)
-                )
-
-        return X, self.mapping
 
     def combine_min_categories(self, X):
         """Combine small categories into a single category."""
