@@ -2,9 +2,7 @@
 
 import pandas as pd
 import numpy as np
-import math
 import re
-from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 import warnings
@@ -324,20 +322,3 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             n, _ = divmod(n, b)
 
         return digits[::-1]
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names

@@ -190,7 +190,6 @@ class BaseEncoder(BaseEstimator):
     handle_missing: str
     handle_unknown: str
     verbose: int
-    mapping: Dict[str, Dict[str, float]]  # todo check if this is the case -> probably not, backward difference has different types
     drop_invariant: bool
     invariant_cols: List[str] = []
     return_df: bool
@@ -260,6 +259,22 @@ class BaseEncoder(BaseEstimator):
             return X
         else:
             return X.values
+
+    def get_feature_names(self) -> List[str]:
+        """
+        Returns the names of all transformed / added columns.
+
+        Returns
+        -------
+        feature_names: list
+            A list with all feature names transformed or added.
+            Note: potentially dropped features (because the feature is constant/invariant) are not included!
+
+        """
+        if not isinstance(self.feature_names, list):
+            raise ValueError("Estimator has to be fitted to return feature names.")
+        else:
+            return self.feature_names
 
     @abstractmethod
     def _fit(self, X: pd.DataFrame, y: Optional[pd.Series], **kwargs):

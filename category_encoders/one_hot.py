@@ -2,7 +2,6 @@
 import numpy as np
 import pandas as pd
 import warnings
-from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 
@@ -321,21 +320,3 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             out_cols = X.columns.values.tolist()
 
         return X
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError(
-                'Must transform data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names

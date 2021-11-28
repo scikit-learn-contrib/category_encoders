@@ -1,12 +1,9 @@
 """Count Encoder"""
-from __future__ import division
-
 import numpy as np
 import pandas as pd
 import category_encoders.utils as util
 
 from copy import copy
-from sklearn.base import BaseEstimator, TransformerMixin
 
 
 __author__ = 'joshua t. dunn'
@@ -138,8 +135,6 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     def _transform(self, X):
         """Perform the transform count encoding."""
-        X = X.copy(deep=True)
-
         for col in self.cols:
 
             X[col] = X.fillna(value=np.nan)[col]
@@ -360,19 +355,3 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     "is set for column %s."
                     % (col,)
                 )
-    
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-        if not isinstance(self.feature_names, list):
-            raise ValueError("CountEncoder has to be fitted to return feature names.")
-        else:
-            return self.feature_names

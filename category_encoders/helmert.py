@@ -3,7 +3,6 @@
 
 import pandas as pd
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
 from patsy.contrasts import Helmert
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
@@ -202,20 +201,3 @@ class HelmertEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         cols = ['intercept'] + cols
 
         return X.reindex(columns=cols)
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names

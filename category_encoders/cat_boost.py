@@ -2,7 +2,6 @@
 
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
@@ -141,7 +140,6 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             Transformed values with encoding applied.
 
         """
-        X = X.copy(deep=True)
         random_state_ = check_random_state(self.random_state)
 
         # Prepare the data
@@ -186,8 +184,7 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
             if self.handle_missing == 'value':
                 # only set value if there are actually missing values.
-                # In case of pd.Categorical columns setting values might give an error
-                # todo this is probably a hack and needs to be done properly
+                # In case of pd.Categorical columns setting values that are not seen in pd.Categorical gives an error.
                 nan_cond = is_nan & unseen_values.isnull().any()
                 if nan_cond.any():
                     X.loc[is_nan & unseen_values.isnull().any(), col] = self._mean
@@ -212,21 +209,3 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
         result = y.groupby(codes).agg(['sum', 'count'])
         return result.rename(return_map)
-
-    # todo check if we can move get_feature_names to base class
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names

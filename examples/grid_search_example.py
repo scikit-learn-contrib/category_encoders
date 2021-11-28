@@ -3,7 +3,6 @@ Modified from https://scikit-learn.org/stable/auto_examples/model_selection/plot
 Tested to work with scikit-learn 0.20.2
 """
 
-from __future__ import print_function
 
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split

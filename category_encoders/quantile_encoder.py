@@ -168,22 +168,6 @@ class QuantileEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
         return X
 
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError("Must fit data first. Affected feature names are not known before.")
-        else:
-            return self.feature_names
-
 
 # todo does not fit in schema since it is an ensemble of other encoders
 class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):

@@ -1,7 +1,6 @@
 """Leave one out coding"""
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
@@ -182,20 +181,3 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                 X[col] = X[col] * random_state_.normal(1., self.sigma, X[col].shape[0])
 
         return X
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names

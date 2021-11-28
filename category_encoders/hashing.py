@@ -2,7 +2,6 @@
 
 import sys
 import hashlib
-from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
 import multiprocessing
 import pandas as pd
@@ -338,20 +337,3 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         X = pd.concat([X_cat, X_num], axis=1)
 
         return X
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names

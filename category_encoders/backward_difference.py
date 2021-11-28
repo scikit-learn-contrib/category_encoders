@@ -1,7 +1,6 @@
 """Backward difference contrast encoding"""
 
 import pandas as pd
-from sklearn.base import TransformerMixin
 from patsy.contrasts import Diff
 import numpy as np
 from category_encoders.ordinal import OrdinalEncoder
@@ -206,20 +205,3 @@ class BackwardDifferenceEncoder(util.BaseEncoder, util.UnsupervisedTransformerMi
         cols = ['intercept'] + cols
 
         return X.reindex(columns=cols)
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names
