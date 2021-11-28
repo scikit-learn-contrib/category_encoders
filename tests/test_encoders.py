@@ -86,9 +86,11 @@ class TestEncoders(TestCase):
                 enc2 = deepcopy(enc)
 
     def test_impact_encoders(self):
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
+        for encoder_name in encoders.__all__:
+            if not getattr(encoders, encoder_name)()._get_tags().get("supervised_encoder"):
+                continue
+            print(encoder_name)
             with self.subTest(encoder_name=encoder_name):
-
                 # encode a numpy array and transform with the help of the target
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(np_X, np_y)
@@ -359,10 +361,13 @@ class TestEncoders(TestCase):
              'Trend_tmp': ['UP', 'UP', 'DOWN', 'FLAT'],
              'target': [1, 1, 0, 0]}, columns=['Trend', 'Trend_tmp', 'target'])
 
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
+        for encoder_name in encoders.__all__:
+            enc = getattr(encoders, encoder_name)()
+            if not enc._get_tags().get('supervised_encoder'):
+                continue
+            # ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
             with self.subTest(encoder_name=encoder_name):
-                encoder = getattr(encoders, encoder_name)()
-                _ = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
+                _ = enc.fit_transform(binary_cat_example, binary_cat_example['target'])
 
     def test_preserve_names(self):
         binary_cat_example = pd.DataFrame(
@@ -379,10 +384,13 @@ class TestEncoders(TestCase):
                 self.assertTrue('ignore' in columns, "Column 'ignore' is missing in: " + str(columns))
 
     def test_unique_column_is_not_predictive(self):
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']:
+        for encoder_name in encoders.__all__:
+            enc = getattr(encoders, encoder_name)()
+            if not enc._get_tags().get('supervised_encoder'):
+                continue
             with self.subTest(encoder_name=encoder_name):
-                encoder = getattr(encoders, encoder_name)()
-                result = encoder.fit_transform(X[['unique_str']], y)
+                print(encoder_name)
+                result = enc.fit_transform(X[['unique_str']], y)
                 self.assertTrue(all(result.var() < 0.001), 'The unique string column must not be predictive of the label')
 
     # # beware: for some reason doctest does not raise exceptions - you have to read the text output
@@ -444,13 +452,13 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 # Target encoders also need y
-                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
-                    obtained = enc.fit(X).get_feature_names()
-                    expected = enc.transform(X).columns.tolist()
-                else:
+                if enc._get_tags().get('supervised_encoder'):
                     obtained = enc.fit(X, y).get_feature_names()
                     expected = enc.transform(X, y).columns.tolist()
-                self.assertEqual(obtained, expected)
+                else:
+                    obtained = enc.fit(X).get_feature_names()
+                    expected = enc.transform(X).columns.tolist()
+                self.assertEqual(obtained, expected, "Failed with " + encoder_name)
 
     def test_get_feature_names_drop_invariant(self):
         # TODO: What could a DF look like that results in constant
@@ -458,13 +466,12 @@ class TestEncoders(TestCase):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
-                # Target encoders also need y
-                if encoder_name not in ['TargetEncoder', 'WOEEncoder', 'LeaveOneOutEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'KFoldEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
-                    obtained = enc.fit(X).get_feature_names()
-                    expected = enc.transform(X).columns.tolist()
-                else:
+                if enc._get_tags().get('supervised_encoder'):
                     obtained = enc.fit(X, y).get_feature_names()
                     expected = enc.transform(X, y).columns.tolist()
+                else:
+                    obtained = enc.fit(X).get_feature_names()
+                    expected = enc.transform(X).columns.tolist()
                 self.assertEqual(obtained, expected)
 
     def test_get_feature_names_not_set(self):
@@ -496,23 +503,23 @@ class TestEncoders(TestCase):
 
     def test_column_transformer(self):
         # see issue #169
-            for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder does not accept handle_missing parameter
-                with self.subTest(encoder_name=encoder_name):
+        for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder does not accept handle_missing parameter
+            with self.subTest(encoder_name=encoder_name):
 
-                    # we can only test one data type at once. Here, we test string columns.
-                    tested_columns = ['unique_str', 'invariant', 'underscore', 'none', 'extra']
+                # we can only test one data type at once. Here, we test string columns.
+                tested_columns = ['unique_str', 'invariant', 'underscore', 'none', 'extra']
 
-                    # ColumnTransformer instantiates the encoder twice -> we have to make sure the encoder settings are correctly passed
-                    ct = ColumnTransformer([
-                        ("dummy_encoder_name", getattr(encoders, encoder_name)(handle_missing="return_nan"), tested_columns)
-                    ])
-                    obtained = ct.fit_transform(X, y)
+                # ColumnTransformer instantiates the encoder twice -> we have to make sure the encoder settings are correctly passed
+                ct = ColumnTransformer([
+                    ("dummy_encoder_name", getattr(encoders, encoder_name)(handle_missing="return_nan"), tested_columns)
+                ])
+                obtained = ct.fit_transform(X, y)
 
-                    # the old-school approach
-                    enc = getattr(encoders, encoder_name)(handle_missing="return_nan", return_df=False)
-                    expected = enc.fit_transform(X[tested_columns], y)
+                # the old-school approach
+                enc = getattr(encoders, encoder_name)(handle_missing="return_nan", return_df=False)
+                expected = enc.fit_transform(X[tested_columns], y)
 
-                    np.testing.assert_array_equal(obtained, expected)
+                np.testing.assert_array_equal(obtained, expected)
 
     def test_error_messages(self):
         # when the count of features change between training and scoring, we raise an exception
@@ -528,15 +535,19 @@ class TestEncoders(TestCase):
         x = ['A', 'B', 'C']
         y_good = pd.Series([1, 0, 1])
         y_bad = pd.Series([1, 0, 1, 0])
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
+        for encoder_name in encoders.__all__:
+            enc = getattr(encoders, encoder_name)()
+            if not enc._get_tags().get('supervised_encoder'):
+                continue
             with self.subTest(encoder_name=encoder_name):
-                enc = getattr(encoders, encoder_name)()
                 self.assertRaises(ValueError, enc.fit, x, y_bad)
 
         # ...and scoring. Otherwise they raise an error of ValueError type.
-        for encoder_name in ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder', 'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder', 'QuantileEncoder', 'SummaryEncoder']:
+        for encoder_name in encoders.__all__:
+            enc = getattr(encoders, encoder_name)()
+            if not enc._get_tags().get('supervised_encoder'):
+                continue
             with self.subTest(encoder_name=encoder_name):
-                enc = getattr(encoders, encoder_name)()
                 enc.fit(x, y_good)
                 self.assertRaises(ValueError, enc.transform, x, y_bad)
 
