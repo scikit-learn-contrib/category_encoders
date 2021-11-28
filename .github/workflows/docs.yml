@@ -1,7 +1,7 @@
 name: "Master Docs Publication"
 on:
-  push:
-    branches: [ master ]
+  release:
+    types: created
 
 jobs:
   docs:

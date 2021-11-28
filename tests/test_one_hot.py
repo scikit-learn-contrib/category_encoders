@@ -144,6 +144,30 @@ class TestOneHotEncoderTestCase(TestCase):
 
         pd.testing.assert_frame_equal(expected_result, result)
 
+    def test_HandleMissingError(self):
+        data_no_missing = ['A', 'B', 'B']
+        data_w_missing = [np.nan, 'B', 'B']
+        encoder = encoders.OneHotEncoder(handle_missing="error")
+
+        result = encoder.fit_transform(data_no_missing)
+        expected = [[1, 0],
+                    [0, 1],
+                    [0, 1]]
+        self.assertEqual(result.values.tolist(), expected)
+
+        self.assertRaisesRegex(ValueError, '.*null.*', encoder.transform, data_w_missing)
+
+        self.assertRaisesRegex(ValueError, '.*null.*', encoder.fit, data_w_missing)
+
+    def test_HandleMissingReturnNan(self):
+        train = pd.DataFrame({'x': ['A', np.nan, 'B']})
+        encoder = encoders.OneHotEncoder(handle_missing='return_nan', use_cat_names=True)
+        result = encoder.fit_transform(train)
+        pd.testing.assert_frame_equal(
+            result,
+            pd.DataFrame({'x_A': [1, np.nan, 0], 'x_B': [0, np.nan, 1]}),
+        )
+
     def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
         train = ['A', 'B', np.nan]
 
@@ -170,13 +194,17 @@ class TestOneHotEncoderTestCase(TestCase):
         test = ['A', 'B', np.nan]
 
         encoder = encoders.OneHotEncoder(handle_missing='indicator', handle_unknown='value')
-        encoder.fit(train)
-        result = encoder.transform(test)
+        encoded_train = encoder.fit_transform(train)
+        encoded_test = encoder.transform(test)
 
-        expected = [[1, 0, 0],
-                    [0, 1, 0],
-                    [0, 0, 1]]
-        self.assertEqual(result.values.tolist(), expected)
+        expected_1 = [[1, 0, 0],
+                      [0, 1, 0]]
+        self.assertEqual(encoded_train.values.tolist(), expected_1)
+
+        expected_2 = [[1, 0, 0],
+                      [0, 1, 0],
+                      [0, 0, 1]]
+        self.assertEqual(encoded_test.values.tolist(), expected_2)
 
     def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
         train = ['A', 'B']
