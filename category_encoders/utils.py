@@ -207,7 +207,3 @@ class BaseEncoder(BaseEstimator):
 
     def check_transform_inputs(self, X, y):
         ...
-
-    def _more_tags(self):
-        # sklearn default tags live in BaseEstimator; we add:
-        return {'supervised_encoder': False}
