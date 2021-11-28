@@ -182,7 +182,6 @@ def get_generated_cols(X_original, X_transformed, to_transform):
     return current_cols
 
 
-# todo also inherit transformer mixin?
 class BaseEncoder(BaseEstimator):
     _dim: Optional[int]
     cols: List[str]
@@ -192,6 +191,7 @@ class BaseEncoder(BaseEstimator):
     verbose: int
     drop_invariant: bool
     invariant_cols: List[str] = []
+    feature_names: List[str] = []
     return_df: bool
     supervised: bool
 
@@ -331,12 +331,6 @@ class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
             return X
 
         X = self._transform(X)
-
-        # todo check if this is really after _transform or within transform. Some encoder (backward_difference)
-        #  do ordinal encoding first and only then check for unknowns. If it's in the middle of the process it is hard to generalize
-        # if self.handle_unknown == 'error':
-        #     if X[self.cols].isin([-1]).any().any():
-        #         raise ValueError('Columns to be encoded can not contain new values')
         return self._drop_invariants(X, override_return_df)
 
     @abstractmethod
