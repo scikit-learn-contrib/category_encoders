@@ -211,7 +211,7 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
         X = self.helmert_coding(X, mapping=self.mapping)
 
         if self.drop_invariant:
-            X = X.drop(columns=colself.drop_cols)
+            X = X.drop(columns=self.drop_cols)
 
         if self.return_df or override_return_df:
             return X

@@ -221,7 +221,7 @@ class MEstimateEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         # Postprocessing
         # Note: We should not even convert these columns.
         if self.drop_invariant:
-            X = X.drop(columns=colself.drop_cols)
+            X = X.drop(columns=self.drop_cols)
 
         if self.return_df or override_return_df:
             return X
