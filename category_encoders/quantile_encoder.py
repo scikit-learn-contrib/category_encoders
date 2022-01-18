@@ -241,8 +241,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         X = self.quantile_encode(X)
 
         if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
+            X = X.drop(columns=colself.drop_cols)
 
         if self.return_df or override_return_df:
             return X
