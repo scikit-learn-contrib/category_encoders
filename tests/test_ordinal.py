@@ -161,6 +161,16 @@ class TestOrdinalEncoder(TestCase):
 
         self.assertEqual(expected, result)
 
+        new_nan = pd.DataFrame({'city': [np.nan,]})
+        result_new_nan = enc.transform(new_nan)['city'].tolist()
+        expected_new_nan = [1]
+        self.assertEqual(expected_new_nan, result_new_nan)
+
+        new_none = pd.DataFrame({'city': [None, ]})
+        result_new_none = enc.transform(new_none)['city'].tolist()
+        expected_new_none = [1]
+        self.assertEqual(expected_new_none, result_new_none)
+
     def test_inverse_transform_HaveUnknown_ExpectWarning(self):
         train = pd.DataFrame({'city': ['chicago', 'st louis']})
         test = pd.DataFrame({'city': ['chicago', 'los angeles']})

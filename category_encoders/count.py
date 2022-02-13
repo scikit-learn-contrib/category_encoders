@@ -4,6 +4,7 @@ from __future__ import division
 import numpy as np
 import pandas as pd
 import category_encoders.utils as util
+from category_encoders.ordinal import OrdinalEncoder
 
 from copy import copy
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -11,8 +12,9 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 __author__ = 'joshua t. dunn'
 
-# COUNT_ENCODER BRANCH
+
 class CountEncoder(BaseEstimator, TransformerMixin):
+
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
                  return_df=True, handle_unknown='value',
                  handle_missing='value',
@@ -118,6 +120,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
         self.feature_names = None
+        self.ordinal_encoder = None
 
         self._check_set_create_attrs()
 
@@ -157,9 +160,17 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            handle_unknown='value',
+            handle_missing='value'
+        )
+        self.ordinal_encoder = self.ordinal_encoder.fit(X)
+        X_ordinal = self.ordinal_encoder.transform(X)
         self._check_set_create_dict_attrs()
 
-        self._fit_count_encode(X, y)
+        self._fit_count_encode(X_ordinal, y)
 
         X_temp = self.transform(X, override_return_df=True)
         self.feature_names = list(X_temp.columns)
@@ -235,28 +246,11 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.mapping = {}
 
         for col in self.cols:
-            if X[col].isnull().any():
-                if self._handle_missing[col] == 'error':
-                    raise ValueError(
-                        'Missing data found in column %s at fit time.'
-                        % (col,)
-                    )
-
-                elif self._handle_missing[col] not in ['value', 'return_nan',  'error', None]:
-                    raise ValueError(
-                        '%s key in `handle_missing` should be one of: '
-                        ' `value`, `return_nan` and `error` not `%s`.'
-                        % (col, str(self._handle_missing[col]))
-                    )
-
-            self.mapping[col] = X[col].value_counts(
-                normalize=self._normalize[col],
-                dropna=False
-            )
-
-            self.mapping[col].index = self.mapping[col].index.astype(object)
-
-
+            mapping_values = X[col].value_counts(normalize=self._normalize[col])
+            ordinal_encoding = [m["mapping"] for m in self.ordinal_encoder.mapping if m["col"] == col][0]
+            reversed_ordinal_enc = {v: k for k, v in ordinal_encoding.to_dict().items()}
+            mapping_values.index = mapping_values.index.map(reversed_ordinal_enc)
+            self.mapping[col] = mapping_values
 
             if self._handle_missing[col] == 'return_nan':
                 self.mapping[col][np.NaN] = np.NaN
@@ -272,15 +266,15 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         X = X_in.copy(deep=True)
 
         for col in self.cols:
-
-            X[col] = X.fillna(value=np.nan)[col]
+            # Treat None as np.nan
+            X[col] = pd.Series([el if el is not None else np.NaN for el in X[col]], index=X[col].index)
+            if self.handle_missing == "value":
+                if not util.is_category(X[col].dtype):
+                    X[col] = X[col].fillna(np.nan)
 
             if self._min_group_size is not None:
                 if col in self._min_group_categories.keys():
-                    X[col] = (
-                        X[col].map(self._min_group_categories[col])
-                        .fillna(X[col])
-                    )
+                    X[col] = X[col].map(self._min_group_categories[col]).fillna(X[col])
             
             X[col] = X[col].astype(object).map(self.mapping[col])
             if isinstance(self._handle_unknown[col], (int, np.integer)):
