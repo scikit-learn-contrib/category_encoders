@@ -253,8 +253,7 @@ class BaseNEncoder(BaseEstimator, TransformerMixin):
         X_out = self.basen_encode(X_out, cols=self.cols)
 
         if self.drop_invariant:
-            for col in self.drop_cols:
-                X_out.drop(col, 1, inplace=True)
+            X_out = X_out.drop(columns=self.drop_cols)
 
         # impute missing values only in the generated columns
         # generated_cols = util.get_generated_cols(X, X_out, self.cols)

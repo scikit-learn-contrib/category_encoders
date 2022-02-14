@@ -202,8 +202,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 # Always get df and check it after merge all data parts
                 data_part = self.hashing_trick(X_in=data_part, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
                 if self.drop_invariant:
-                    for col in self.drop_cols:
-                        data_part.drop(col, 1, inplace=True)
+                    data_part = data_part.drop(columns=self.drop_cols)
                 part_index = int(math.ceil(end_index / self.max_sample))
                 hashing_parts.put({part_index: data_part})
                 if self.verbose == 5:
@@ -308,8 +307,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         X = self.hashing_trick(X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
 
         if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
+            X = X.drop(columns=self.drop_cols)
 
         if self.return_df or override_return_df:
             return X

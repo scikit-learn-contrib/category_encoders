@@ -212,8 +212,7 @@ class SumEncoder(BaseEstimator, TransformerMixin):
         X = self.sum_coding(X, mapping=self.mapping)
 
         if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
+            X = X.drop(columns=self.drop_cols)
 
         if self.return_df or override_return_df:
             return X
