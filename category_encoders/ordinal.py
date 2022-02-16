@@ -38,6 +38,9 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     handle_missing: str
         options are 'error', 'return_nan', and 'value, default to 'value', which treat nan as a category at fit time,
         or -2 at transform time if nan is not a category during fit.
+    min_group_size: int
+        the minimal count threshold of a group needed to ensure it is not combined into a "leftovers" group. 
+        Default value is 1.
     Example
     -------
     >>> from category_encoders import *
