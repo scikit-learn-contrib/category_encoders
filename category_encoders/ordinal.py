@@ -14,8 +14,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed
     in; in this case, we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
     are assumed to have no true order and integers are selected at random.
+
     Parameters
     ----------
+
     verbose: int
         integer indicating verbosity of the output. 0 for none.
     cols: list
@@ -71,14 +73,16 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     dtypes: float64(11), int64(2)
     memory usage: 51.5 KB
     None
+
     References
     ----------
+
     .. [1] Contrast Coding Systems for Categorical Variables, from
     https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
+
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
     """
-
     def __init__(self, verbose=0, mapping=None, cols=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value', min_group_size=1):
         self.return_df = return_df
@@ -99,19 +103,22 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None, **kwargs):
         """Fit encoder according to X and y.
+
         Parameters
         ----------
+
         X : array-like, shape = [n_samples, n_features]
             Training vectors, where n_samples is the number of samples
             and n_features is the number of features.
         y : array-like, shape = [n_samples]
             Target values.
+
         Returns
         -------
+
         self : encoder
             Returns self.
         """
-
         # first check the type
         X = util.convert_input(X)
 
@@ -159,15 +166,18 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         """Perform the transformation to new categorical data.
         Will use the mapping (if available) and the column list (if available, otherwise every column) to encode the
         data ordinarily.
+
         Parameters
         ----------
+
         X : array-like, shape = [n_samples, n_features]
+
         Returns
         -------
+
         p : array, shape = [n_samples, n_numeric + N]
             Transformed values with encoding applied.
         """
-
         if self.handle_missing == 'error':
             if X[self.cols].isnull().any().any():
                 raise ValueError('Columns to be encoded can not contain null')
@@ -208,14 +218,17 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         Perform the inverse transformation to encoded data. Will attempt best case reconstruction, which means
         it will return nan for handle_missing and handle_unknown settings that break the bijection. We issue
         warnings when some of those cases occur.
+
         Parameters
         ----------
+
         X_in : array-like, shape = [n_samples, n_features]
+
         Returns
         -------
+
         p: array, the same size of X_in
         """
-
         # fail fast
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
@@ -260,7 +273,6 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes
         are assumed to have no true order and integers are selected at random.
         """
-
         return_nan_series = pd.Series(data=[np.nan], index=[-2])
 
         X = X_in.copy(deep=True)
@@ -315,7 +327,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                         categories += [np.nan]
 
                 index = pd.Series(categories).fillna(nan_identity).unique()
-                mask = cnts > min_group_size
+                mask = cnts >= min_group_size
 
                 data = pd.Series(index=index[mask], data=range(1, np.sum(mask) + 1))
                 data = pd.concat([data, pd.Series(index=index[~mask], data=data.max() + 1)], axis=0)
@@ -332,8 +344,10 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
     def get_feature_names(self):
         """
         Returns the names of all transformed / added columns.
+
         Returns
         -------
+
         feature_names: list
             A list with all feature names transformed or added.
             Note: potentially dropped features are not included!
