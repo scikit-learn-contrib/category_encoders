@@ -41,7 +41,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
         options are 'error', 'return_nan', and 'value, default to 'value', which treat nan as a category at fit time,
         or -2 at transform time if nan is not a category during fit.
     min_group_size: int
-        the minimal count threshold of a group needed to ensure it is not combined into a "leftovers" group. 
+        the minimal count threshold of a group needed to ensure it is not combined into a "leftovers" group.
         Default value is 1.
     Example
     -------
@@ -315,7 +315,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 nan_identity = np.nan
 
                 # to preserve alphabetical order
-                cnts = X[col].value_counts().sort_index()
+                cnts = X[col].value_counts(dropna=False).sort_index()
                 categories = list(cnts.index)
                 if util.is_category(X[col].dtype):
                     # Avoid using pandas category dtype meta-data if possible, see #235, #238.
@@ -329,7 +329,7 @@ class OrdinalEncoder(BaseEstimator, TransformerMixin):
                 index = pd.Series(categories).fillna(nan_identity).unique()
                 mask = cnts >= min_group_size
 
-                data = pd.Series(index=index[mask], data=range(1, np.sum(mask) + 1))
+                data = pd.Series(index=index[mask], data=range(1, np.sum(mask) + 1), dtype=np.float64)
                 data = pd.concat([data, pd.Series(index=index[~mask], data=data.max() + 1)], axis=0)
 
                 if handle_missing == 'value' and ~data.index.isnull().any():
