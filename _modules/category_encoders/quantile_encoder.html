@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.quantile_encoder &mdash; Category Encoders 2.3.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>category_encoders.quantile_encoder &mdash; Category Encoders 2.4.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
@@ -26,7 +26,7 @@
             <a href="../../index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.3.0
+                2.4.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -327,8 +327,7 @@
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantile_encode</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span><span class="p">:</span>
-                <span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="ow">or</span> <span class="n">override_return_df</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">X</span>
@@ -397,23 +396,30 @@
 <span class="sd">    &gt;&gt;&gt; print(numeric_dataset.info())</span>
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    RangeIndex: 506 entries, 0 to 505</span>
-<span class="sd">    Data columns (total 13 columns):</span>
-<span class="sd">    CRIM       506 non-null float64</span>
-<span class="sd">    ZN         506 non-null float64</span>
-<span class="sd">    INDUS      506 non-null float64</span>
-<span class="sd">    CHAS       506 non-null float64</span>
-<span class="sd">    NOX        506 non-null float64</span>
-<span class="sd">    RM         506 non-null float64</span>
-<span class="sd">    AGE        506 non-null float64</span>
-<span class="sd">    DIS        506 non-null float64</span>
-<span class="sd">    RAD        506 non-null float64</span>
-<span class="sd">    TAX        506 non-null float64</span>
-<span class="sd">    PTRATIO    506 non-null float64</span>
-<span class="sd">    B          506 non-null float64</span>
-<span class="sd">    LSTAT      506 non-null float64</span>
-<span class="sd">    dtypes: float64(13)</span>
-<span class="sd">    memory usage: 51.5 KB</span>
-<span class="sd">    None</span>
+<span class="sd">    Data columns (total 19 columns):</span>
+<span class="sd">    #   Column   Non-Null Count  Dtype  </span>
+<span class="sd">    ---  ------   --------------  -----  </span>
+<span class="sd">    0   CRIM     506 non-null    float64</span>
+<span class="sd">    1   ZN       506 non-null    float64</span>
+<span class="sd">    2   INDUS    506 non-null    float64</span>
+<span class="sd">    3   CHAS     506 non-null    float64</span>
+<span class="sd">    4   NOX      506 non-null    float64</span>
+<span class="sd">    5   RM       506 non-null    float64</span>
+<span class="sd">    6   AGE      506 non-null    float64</span>
+<span class="sd">    7   DIS      506 non-null    float64</span>
+<span class="sd">    8   RAD      506 non-null    float64</span>
+<span class="sd">    9   TAX      506 non-null    float64</span>
+<span class="sd">    10  PTRATIO  506 non-null    float64</span>
+<span class="sd">    11  B        506 non-null    float64</span>
+<span class="sd">    12  LSTAT    506 non-null    float64</span>
+<span class="sd">    13  CHAS_25  506 non-null    float64</span>
+<span class="sd">    14  RAD_25   506 non-null    float64</span>
+<span class="sd">    15  CHAS_50  506 non-null    float64</span>
+<span class="sd">    16  RAD_50   506 non-null    float64</span>
+<span class="sd">    17  CHAS_75  506 non-null    float64</span>
+<span class="sd">    18  RAD_75   506 non-null    float64</span>
+<span class="sd">    dtypes: float64(19)</span>
+<span class="sd">    memory usage: 75.2 KB</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
