@@ -1,3 +1,15 @@
+v2.4.0
+======
+
+* improved documentation
+* fix bug in CatBoost encoder
+* fix future warnings with pandas
+* added tests for python 3.9 and 3.10 in pipeline
+* fix treating np.NaN and python None equal
+* only build docs on release
+* unified conversion of inputs pandas objects that are used internally including some bugfixes.
+* added quantile encoder and summary encoder
+ 
 v2.3.0
 ======
 
