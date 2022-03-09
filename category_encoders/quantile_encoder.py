@@ -310,23 +310,30 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 506 entries, 0 to 505
-    Data columns (total 13 columns):
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    CHAS       506 non-null float64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
-    RAD        506 non-null float64
-    TAX        506 non-null float64
-    PTRATIO    506 non-null float64
-    B          506 non-null float64
-    LSTAT      506 non-null float64
-    dtypes: float64(13)
-    memory usage: 51.5 KB
-    None
+    Data columns (total 19 columns):
+    #   Column   Non-Null Count  Dtype  
+    ---  ------   --------------  -----  
+    0   CRIM     506 non-null    float64
+    1   ZN       506 non-null    float64
+    2   INDUS    506 non-null    float64
+    3   CHAS     506 non-null    float64
+    4   NOX      506 non-null    float64
+    5   RM       506 non-null    float64
+    6   AGE      506 non-null    float64
+    7   DIS      506 non-null    float64
+    8   RAD      506 non-null    float64
+    9   TAX      506 non-null    float64
+    10  PTRATIO  506 non-null    float64
+    11  B        506 non-null    float64
+    12  LSTAT    506 non-null    float64
+    13  CHAS_25  506 non-null    float64
+    14  RAD_25   506 non-null    float64
+    15  CHAS_50  506 non-null    float64
+    16  RAD_50   506 non-null    float64
+    17  CHAS_75  506 non-null    float64
+    18  RAD_75   506 non-null    float64
+    dtypes: float64(19)
+    memory usage: 75.2 KB
 
     References
     ----------
