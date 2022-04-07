@@ -10,7 +10,7 @@ __author__ = 'Jan Motl'
 
 
 class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
-    """CatBoost coding for categorical features.
+    """CatBoost Encoding for categorical features.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
 
