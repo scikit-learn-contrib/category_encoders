@@ -2,7 +2,7 @@
 
 import pandas as pd
 import numpy as np
-from scipy.sparse.csr import csr_matrix
+from scipy.sparse import csr_matrix
 
 __author__ = 'willmcginnis'
 
