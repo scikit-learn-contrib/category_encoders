@@ -1,3 +1,9 @@
+v2.4.1
+======
+
+* Fixed a bug with categorical data type in LeaveOneOut encoder
+* Do not install examples as a package on its own
+ 
 v2.4.0
 ======
 
