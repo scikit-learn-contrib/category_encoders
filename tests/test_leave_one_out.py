@@ -116,3 +116,23 @@ class TestLeaveOneOutEncoder(TestCase):
         obtained = ce_leave.transform(test, test_target)
 
         self.assertEqual([1.0, .6], list(obtained['color']))
+
+    def test_leave_one_out_categorical(self):
+        """
+        test that if the input is a pd.Categorical the output is the same as for string columns
+        :return:
+        """
+        df = pd.DataFrame({
+            'color_str': ["a", "a", "a", "b", "b", "b"],
+            'color_num_cat': pd.Categorical([1.0, 1.0, 1.0, 2.0, 2.0, 2.0]),
+            'color_str_cat': pd.Categorical(["a", "a", "a", "b", "b", "b"]),
+            'outcome': [1, 0, 0, 1, 0, 1]})
+
+        X = df.drop('outcome', axis=1)
+        y = df["outcome"]
+
+        ce_leave = encoders.LeaveOneOutEncoder()
+        obtained = ce_leave.fit_transform(X, y)
+
+        for col in obtained.columns:
+            self.assertEqual([0.0, 0.5, 0.5, 0.5, 1.0, 0.5], list(obtained[col]))
