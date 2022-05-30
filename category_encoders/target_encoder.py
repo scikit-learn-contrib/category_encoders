@@ -51,7 +51,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = TargetEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> enc = TargetEncoder(cols=['CHAS', 'RAD'], min_samples_leaf=20, smoothing=10).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
@@ -93,11 +93,13 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.min_samples_leaf = min_samples_leaf
         if min_samples_leaf == 1:
             warnings.warn("Default parameter min_samples_leaf will change in version 2.6."
-                          "See https://github.com/scikit-learn-contrib/category_encoders/issues/327")
+                          "See https://github.com/scikit-learn-contrib/category_encoders/issues/327",
+                          category=FutureWarning)
         self.smoothing = smoothing
         if min_samples_leaf == 1.0:
             warnings.warn("Default parameter smoothing will change in version 2.6."
-                          "See https://github.com/scikit-learn-contrib/category_encoders/issues/327")
+                          "See https://github.com/scikit-learn-contrib/category_encoders/issues/327",
+                          category=FutureWarning)
         self._dim = None
         self.mapping = None
         self.handle_unknown = handle_unknown
@@ -177,6 +179,7 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
             smoove = 1 / (1 + np.exp(-(stats['count'] - self.min_samples_leaf) / self.smoothing))
             smoothing = prior * (1 - smoove) + stats['mean'] * smoove
+            # @ToDo delete this in version 2.6
             smoothing[stats['count'] == 1] = prior
 
             if self.handle_unknown == 'return_nan':
