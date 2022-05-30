@@ -6,19 +6,17 @@ import numpy as np
 import category_encoders as encoders
 
 
-np_X = th.create_array(n_rows=100)
-np_X_t = th.create_array(n_rows=50, extras=True)
-np_y = np.random.randn(np_X.shape[0]) > 0.5
-np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
-X = th.create_dataset(n_rows=100)
-X_t = th.create_dataset(n_rows=50, extras=True)
-y = pd.DataFrame(np_y)
-y_t = pd.DataFrame(np_y_t)
-
-
 class TestTargetEncoder(TestCase):
 
     def test_target_encoder(self):
+        np_X = th.create_array(n_rows=100)
+        np_X_t = th.create_array(n_rows=50, extras=True)
+        np_y = np.random.randn(np_X.shape[0]) > 0.5
+        np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
+        X = th.create_dataset(n_rows=100)
+        X_t = th.create_dataset(n_rows=50, extras=True)
+        y = pd.DataFrame(np_y)
+        y_t = pd.DataFrame(np_y_t)
 
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2)
         enc.fit(X, y)
