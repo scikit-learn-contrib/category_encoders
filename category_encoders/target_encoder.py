@@ -1,4 +1,5 @@
 """Target Encoder"""
+import warnings
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator
@@ -35,10 +36,12 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     handle_unknown: str
         options are 'error', 'return_nan' and 'value', defaults to 'value', which returns the target mean.
     min_samples_leaf: int
-        minimum samples to take category average into account.
+        For regularization the weighted average between category mean and global mean is taken. The weight is
+        an S-shaped curve between 0 and 1 with the number of samples for a category on the x-axis.
+        The curve reaches 0.5 at min_samples_leaf. (parameter k in the original paper)
     smoothing: float
         smoothing effect to balance categorical average vs prior. Higher value means stronger regularization.
-        The value must be strictly bigger than 0.
+        The value must be strictly bigger than 0. Higher values mean a flatter S-curve (see min_samples_leaf).
 
     Example
     -------
@@ -88,7 +91,13 @@ class TargetEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.cols = cols
         self.ordinal_encoder = None
         self.min_samples_leaf = min_samples_leaf
-        self.smoothing = float(smoothing)  # Make smoothing a float so that python 2 does not treat as integer division
+        if min_samples_leaf == 1:
+            warnings.warn("Default parameter min_samples_leaf will change in version 2.6."
+                          "See https://github.com/scikit-learn-contrib/category_encoders/issues/327")
+        self.smoothing = smoothing
+        if min_samples_leaf == 1.0:
+            warnings.warn("Default parameter smoothing will change in version 2.6."
+                          "See https://github.com/scikit-learn-contrib/category_encoders/issues/327")
         self._dim = None
         self.mapping = None
         self.handle_unknown = handle_unknown

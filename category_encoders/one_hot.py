@@ -238,7 +238,6 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             if self.handle_missing == 'return_nan':
                 base_df.loc[-2] = np.nan
             elif self.handle_missing == 'value':
-                print(base_df.info())
                 base_df.loc[-2] = 0
 
             mapping.append({'col': col, 'mapping': base_df})
