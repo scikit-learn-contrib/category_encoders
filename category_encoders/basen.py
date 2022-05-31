@@ -159,7 +159,6 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return mappings_out
 
     def _transform(self, X):
-
         X_out = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
