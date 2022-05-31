@@ -133,7 +133,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             digits = self.calc_required_digits(values)
             X_unique = pd.DataFrame(index=values,
-                                    columns=[f"{col}_x" for x in range(digits)],
+                                    columns=[f"{col}_{x}" for x in range(digits)],
                                     data=np.array([self.col_transform(x, digits) for x in range(1, len(values) + 1)]))
 
             if self.handle_unknown == 'return_nan':
