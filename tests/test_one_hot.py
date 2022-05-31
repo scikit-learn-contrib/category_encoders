@@ -6,11 +6,19 @@ import tests.helpers as th
 import category_encoders as encoders
 
 
+np_X = th.create_array(n_rows=100)
+np_X_t = th.create_array(n_rows=50, extras=True)
+np_y = np.random.randn(np_X.shape[0]) > 0.5
+np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
+X = th.create_dataset(n_rows=100)
+X_t = th.create_dataset(n_rows=50, extras=True)
+y = pd.DataFrame(np_y)
+y_t = pd.DataFrame(np_y_t)
+
+
 class TestOneHotEncoderTestCase(TestCase):
 
     def test_one_hot(self):
-        X = th.create_dataset(n_rows=100)
-        X_t = th.create_dataset(n_rows=50, extras=True)
         enc = encoders.OneHotEncoder(verbose=1, return_df=False)
         enc.fit(X)
         self.assertEqual(enc.transform(X_t).shape[1],

@@ -6,17 +6,19 @@ import numpy as np
 import category_encoders as encoders
 
 
+np_X = th.create_array(n_rows=100)
+np_X_t = th.create_array(n_rows=50, extras=True)
+np_y = np.random.randn(np_X.shape[0]) > 0.5
+np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
+X = th.create_dataset(n_rows=100)
+X_t = th.create_dataset(n_rows=50, extras=True)
+y = pd.DataFrame(np_y)
+y_t = pd.DataFrame(np_y_t)
+
+
 class TestLeaveOneOutEncoder(TestCase):
 
     def test_leave_one_out(self):
-        np_X = th.create_array(n_rows=100)
-        np_X_t = th.create_array(n_rows=50, extras=True)
-        np_y = np.random.randn(np_X.shape[0]) > 0.5
-        np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
-        X = th.create_dataset(n_rows=100)
-        X_t = th.create_dataset(n_rows=50, extras=True)
-        y = pd.DataFrame(np_y)
-        y_t = pd.DataFrame(np_y_t)
         enc = encoders.LeaveOneOutEncoder(verbose=1, sigma=0.1)
         enc.fit(X, y)
         th.verify_numeric(enc.transform(X_t))

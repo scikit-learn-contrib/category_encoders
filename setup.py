@@ -33,7 +33,7 @@ setup(
       'scikit-learn>=0.20.0',
       'scipy>=1.0.0',
       'statsmodels>=0.9.0',
-      'pandas>=1.0.5',
+      'pandas>=0.21.1',
       'patsy>=0.5.1',
     ],
     author_email='will@pedalwrencher.com'

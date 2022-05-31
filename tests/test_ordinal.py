@@ -5,37 +5,38 @@ import numpy as np
 import category_encoders as encoders
 
 
+np_X = th.create_array(n_rows=100)
+np_X_t = th.create_array(n_rows=50, extras=True)
+np_y = np.random.randn(np_X.shape[0]) > 0.5
+np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
+X = th.create_dataset(n_rows=100)
+X_t = th.create_dataset(n_rows=50, extras=True)
+y = pd.DataFrame(np_y)
+y_t = pd.DataFrame(np_y_t)
+
+
 class TestOrdinalEncoder(TestCase):
 
-    def setUp(self) -> None:
-        np_X = th.create_array(n_rows=100)
-        np_X_t = th.create_array(n_rows=50, extras=True)
-        np_y = np.random.randn(np_X.shape[0]) > 0.5
-        np_y_t = np.random.randn(np_X_t.shape[0]) > 0.5
-        self.X = th.create_dataset(n_rows=100)
-        self.X_t = th.create_dataset(n_rows=50, extras=True)
-        self.y = pd.DataFrame(np_y)
-        self.y_t = pd.DataFrame(np_y_t)
-
     def test_ordinal(self):
+
         enc = encoders.OrdinalEncoder(verbose=1, return_df=True)
-        enc.fit(self.X)
-        out = enc.transform(self.X_t)
+        enc.fit(X)
+        out = enc.transform(X_t)
         self.assertEqual(len(set(out['extra'].values)), 4)
         self.assertIn(-1, set(out['extra'].values))
         self.assertFalse(enc.mapping is None)
         self.assertTrue(len(enc.mapping) > 0)
 
         enc = encoders.OrdinalEncoder(verbose=1, mapping=enc.mapping, return_df=True)
-        enc.fit(self.X)
-        out = enc.transform(self.X_t)
+        enc.fit(X)
+        out = enc.transform(X_t)
         self.assertEqual(len(set(out['extra'].values)), 4)
         self.assertIn(-1, set(out['extra'].values))
         self.assertTrue(len(enc.mapping) > 0)
 
         enc = encoders.OrdinalEncoder(verbose=1, return_df=True, handle_unknown='return_nan')
-        enc.fit(self.X)
-        out = enc.transform(self.X_t)
+        enc.fit(X)
+        out = enc.transform(X_t)
         out_cats = [x for x in set(out['extra'].values) if np.isfinite(x)]
         self.assertEqual(len(out_cats), 3)
         self.assertFalse(enc.mapping is None)
@@ -240,13 +241,12 @@ class TestOrdinalEncoder(TestCase):
         pd.testing.assert_frame_equal(expected, original)
 
     def test_inverse_with_mapping(self):
-        df = self.X.copy(deep=True)
+        df = X.copy(deep=True)
         categoricals = ['unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321]
-        mapping = [{'col': c, 'mapping': pd.Series(data=range(len(df[c].unique())), index=df[c].unique()),
-                    'data_type': self.X[c].dtype} for c in categoricals]
+        mapping = [{'col': c, 'mapping': pd.Series(data=range(len(df[c].unique())), index=df[c].unique()), 'data_type': X[c].dtype} for c in categoricals]
         enc = encoders.OrdinalEncoder(cols=categoricals, handle_unknown='ignore', mapping=mapping, return_df=True)
         df[categoricals] = enc.fit_transform(df[categoricals])
 
         recovered = enc.inverse_transform(df[categoricals])
 
-        pd.testing.assert_frame_equal(self.X[categoricals], recovered)
+        pd.testing.assert_frame_equal(X[categoricals], recovered)
