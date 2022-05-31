@@ -149,10 +149,10 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
             if self.drop_invariant:
-                raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "be False when transforming the data" % (X.shape[1],))
+                raise ValueError(f"Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should "
+                                 "be False when transforming the data")
             else:
-                raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
+                raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
             return X if self.return_df else X.values
@@ -161,13 +161,13 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             for col in self.cols:
                 if any(X[col] == -1):
                     warnings.warn("inverse_transform is not supported because transform impute "
-                                  "the unknown category -1 when encode %s" % (col,))
+                                  f"the unknown category -1 when encode {col}")
 
         if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
             for col in self.cols:
                 if X[col].isnull().any():
                     warnings.warn("inverse_transform is not supported because transform impute "
-                                  "the unknown category nan when encode %s" % (col,))
+                                  f"the unknown category nan when encode {col}")
 
         for switch in self.mapping:
             column_mapping = switch.get('mapping')
@@ -214,7 +214,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 elif handle_unknown == 'error':
                     missing = X[column].isnull()
                     if any(missing):
-                        raise ValueError('Unexpected categories found in column %s' % column)
+                        raise ValueError(f'Unexpected categories found in column {column}')
 
                 if handle_missing == 'return_nan':
                     X[column] = X[column].map(return_nan_series).where(X[column] == -2, X[column])

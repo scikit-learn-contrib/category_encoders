@@ -347,4 +347,4 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     @staticmethod
     def _get_col_name(col: str, quantile: float) -> str:
         percentile = round(quantile * 100)
-        return "{}_{}".format(col, percentile)
+        return f"{col}_{percentile}"

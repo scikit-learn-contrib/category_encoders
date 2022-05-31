@@ -166,7 +166,7 @@ class BackwardDifferenceEncoder(util.BaseEncoder, util.UnsupervisedTransformerMi
 
         backwards_difference_matrix = Diff().code_without_intercept(values_to_encode)
         df = pd.DataFrame(data=backwards_difference_matrix.matrix, index=values_to_encode,
-                          columns=[str(col) + '_%d' % (i, ) for i in range(len(backwards_difference_matrix.column_suffixes))])
+                          columns=[f"{col}_{i}" for i in range(len(backwards_difference_matrix.column_suffixes))])
 
         if handle_unknown == 'return_nan':
             df.loc[-1] = np.nan

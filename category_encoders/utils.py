@@ -102,7 +102,7 @@ def convert_input(X, columns=None, deep=False, index=None):
             elif isinstance(X, csr_matrix):
                 X = pd.DataFrame(X.todense(), columns=columns, copy=deep, index=index)
             else:
-                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+                raise ValueError(f'Unexpected input type: {type(X)}')
     elif deep:
         X = X.copy(deep=True)
 
@@ -127,7 +127,7 @@ def convert_input_vector(y, index):
         elif len(np.shape(y))==2 and np.shape(y)[1]==1:  # single column in a matrix
             return pd.Series(y[:, 0], name='target', index=index)
         else:
-            raise ValueError('Unexpected input shape: %s' % (str(np.shape(y))))
+            raise ValueError(f'Unexpected input shape: {np.shape(y)}')
     elif np.isscalar(y):
         return pd.Series([y], name='target', index=index)
     elif isinstance(y, list):
@@ -150,7 +150,7 @@ def convert_input_vector(y, index):
         if len(list(y))==1: # a single column
             return y.iloc[:, 0]
         else:
-            raise ValueError('Unexpected input shape: %s' % (str(y.shape)))
+            raise ValueError(f'Unexpected input shape: {y.shape}')
     else:
         return pd.Series(y, name='target', index=index)  # this covers tuples and other directly convertible types
 
@@ -228,13 +228,7 @@ class BaseEncoder(BaseEstimator):
         if self.drop_invariant:
             generated_cols = get_generated_cols(X, X_temp, self.cols)
             self.invariant_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.invariant_cols]
-            except KeyError as e:
-                print("entered except clause")
-                if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                          "Not found in generated cols.\n{}".format(e))
+            self.feature_names = [x for x in self.feature_names if x not in self.invariant_cols]
 
         return self
 
@@ -248,7 +242,7 @@ class BaseEncoder(BaseEstimator):
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+            raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
     def _drop_invariants(self, X: pd.DataFrame, override_return_df: bool) -> Union[np.ndarray, pd.DataFrame]:
         if self.drop_invariant:

@@ -148,7 +148,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     def _transform(self, X):
         """Perform the transform count encoding."""
         for col in self.cols:
-            X[col] = X.fillna(value=np.nan)[col]
+            X[col] = X[col].fillna(value=np.nan)
 
             if self._min_group_size is not None:
                 if col in self._min_group_categories.keys():

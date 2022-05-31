@@ -194,10 +194,10 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         # make sure that it is the right size
         if X.shape[1] != self._dim:
             if self.drop_invariant:
-                raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "be False when transforming the data" % (X.shape[1],))
+                raise ValueError(f"Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should "
+                                 "be False when transforming the data")
             else:
-                raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
+                raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
             return X if self.return_df else X.values

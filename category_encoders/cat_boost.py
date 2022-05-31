@@ -187,7 +187,7 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                 # In case of pd.Categorical columns setting values that are not seen in pd.Categorical gives an error.
                 nan_cond = is_nan & unseen_values.isnull().any()
                 if nan_cond.any():
-                    X.loc[is_nan & unseen_values.isnull().any(), col] = self._mean
+                    X.loc[nan_cond, col] = self._mean
             elif self.handle_missing == 'return_nan':
                 X.loc[is_nan, col] = np.nan
 
@@ -205,7 +205,7 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         codes[codes == -1] = len(categories)
         categories = np.append(categories, np.nan)
 
-        return_map = pd.Series(dict([(code, category) for code, category in enumerate(categories)]))
+        return_map = pd.Series(dict(enumerate(categories)))
 
         result = y.groupby(codes).agg(['sum', 'count'])
         return result.rename(return_map)
