@@ -4,9 +4,9 @@ from abc import abstractmethod
 import pandas as pd
 import numpy as np
 import sklearn.base
-from scipy.sparse.csr import csr_matrix
 from sklearn.base import BaseEstimator, TransformerMixin
 from typing import Dict, List, Optional, Union
+from scipy.sparse import csr_matrix
 
 __author__ = 'willmcginnis'
 

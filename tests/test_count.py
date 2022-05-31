@@ -62,7 +62,7 @@ class TestCountEncoder(TestCase):
 
     def test_count_handle_missing_dict(self):
         """Test the handle_missing dict on 'none' and 'na_categorical'. 
-        We want to see differing behavour between 'none' and 'na_cat' cols."""
+        We want to see differing behaviour between 'none' and 'na_cat' cols."""
         enc = encoders.CountEncoder(
             handle_missing={'na_categorical': 'return_nan'}
         )
@@ -169,7 +169,7 @@ class TestCountEncoder(TestCase):
         self.assertTrue(pd.Series([9, 7, 4]).isin(out['na_categorical']).all())
         self.assertEqual(out['na_categorical'].unique().shape[0], 3)
         self.assertTrue(enc.mapping is not None)
-        self.assertIn(np.nan, enc.mapping['na_categorical'])
+        self.assertIn(np.NaN, enc.mapping['na_categorical'])
 
     def test_count_combine_min_nan_groups_dict(self):
         """Test the combine_min_nan_groups dict  on 'none' and 'na_categorical'."""

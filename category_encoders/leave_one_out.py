@@ -152,7 +152,8 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             is_unknown_value = X[col].isin(unseen_values.dropna().astype(object))
 
             if X[col].dtype.name == 'category': # Pandas 0.24 tries hard to preserve categorical data type
-                X[col] = X[col].astype(str)
+                index_dtype = X[col].dtype.categories.dtype
+                X[col] = X[col].astype(index_dtype)
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
                 raise ValueError('Columns to be encoded can not contain new values')

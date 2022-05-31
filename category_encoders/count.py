@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import category_encoders.utils as util
+from category_encoders.ordinal import OrdinalEncoder
 
 from copy import copy
 
@@ -10,7 +11,7 @@ __author__ = 'joshua t. dunn'
 
 
 class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
-    prefit_ordinal = False
+    prefit_ordinal = True
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
                  return_df=True, handle_unknown='value',
@@ -118,6 +119,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
         self.feature_names = None
+        self.ordinal_encoder = None
 
         self._check_set_create_attrs()
 
@@ -130,13 +132,40 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         self._handle_missing = {}
 
     def _fit(self, X, y=None, **kwargs):
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            handle_unknown='value',
+            handle_missing='value'
+        )
+        self.ordinal_encoder = self.ordinal_encoder.fit(X)
+        X_ordinal = self.ordinal_encoder.transform(X)
+
         self._check_set_create_dict_attrs()
-        self._fit_count_encode(X)
+        self._fit_count_encode(X_ordinal, y)
+
+        X_temp = self.transform(X, override_return_df=True)
+        self.feature_names = list(X_temp.columns)
+
+        if self.drop_invariant:
+            self.drop_cols = []
+            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
+            self.drop_cols = [
+                x for x in generated_cols if X_temp[x].var() <= 10e-5
+            ]
+
+            try:
+                [self.feature_names.remove(x) for x in self.drop_cols]
+            except KeyError as e:
+                if self.verbose > 0:
+                    print("Could not remove column from feature names."
+                          "Not found in generated cols.\n{}".format(e))
+
+        return self
 
     def _transform(self, X):
         """Perform the transform count encoding."""
         for col in self.cols:
-
             X[col] = X.fillna(value=np.nan)[col]
 
             if self._min_group_size is not None:
@@ -167,7 +196,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 )
         return X
 
-    def _fit_count_encode(self, X_in):
+    def _fit_count_encode(self, X_in, y):
         """Perform the count encoding."""
         X = X_in.copy(deep=True)
 
@@ -177,26 +206,11 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         self.mapping = {}
 
         for col in self.cols:
-            if X[col].isnull().any():
-                if self._handle_missing[col] == 'error':
-                    raise ValueError(
-                        'Missing data found in column %s at fit time.'
-                        % (col,)
-                    )
-
-                elif self._handle_missing[col] not in ['value', 'return_nan',  'error', None]:
-                    raise ValueError(
-                        '%s key in `handle_missing` should be one of: '
-                        ' `value`, `return_nan` and `error` not `%s`.'
-                        % (col, str(self._handle_missing[col]))
-                    )
-
-            self.mapping[col] = X[col].value_counts(
-                normalize=self._normalize[col],
-                dropna=False
-            )
-
-            self.mapping[col].index = self.mapping[col].index.astype(object)
+            mapping_values = X[col].value_counts(normalize=self._normalize[col])
+            ordinal_encoding = [m["mapping"] for m in self.ordinal_encoder.mapping if m["col"] == col][0]
+            reversed_ordinal_enc = {v: k for k, v in ordinal_encoding.to_dict().items()}
+            mapping_values.index = mapping_values.index.map(reversed_ordinal_enc)
+            self.mapping[col] = mapping_values
 
             if self._handle_missing[col] == 'return_nan':
                 self.mapping[col][np.NaN] = np.NaN

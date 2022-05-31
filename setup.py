@@ -25,7 +25,7 @@ setup(
       'Programming Language :: Python :: 3',
     ],
     keywords='python data science machine learning pandas sklearn',
-    packages=find_packages(exclude=['tests*']),
+    packages=find_packages(include=['category_encoders']),
     include_package_data=True,
     author='Will McGinnis',
     install_requires=[

@@ -9,7 +9,7 @@ __author__ = 'Jan Motl'
 
 
 class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
-    """CatBoost coding for categorical features.
+    """CatBoost Encoding for categorical features.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
 
@@ -160,7 +160,7 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                 raise ValueError('Columns to be encoded can not contain new values')
 
             if y is None:    # Replace level with its mean target; if level occurs only once, use global mean
-                level_means = ((colmap['sum'] + self._mean) / (colmap['count'] + self.a)).where(level_notunique, self._mean)
+                level_means = ((colmap['sum'] + self._mean * self.a) / (colmap['count'] + self.a)).where(level_notunique, self._mean)
                 X[col] = X[col].map(level_means)
             else:
                 # Simulation of CatBoost implementation, which calculates leave-one-out on the fly.
@@ -173,7 +173,7 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                 # As a workaround, we cast the grouping column as string.
                 # See: issue #209
                 temp = y.groupby(X[col].astype(str)).agg(['cumsum', 'cumcount'])
-                X[col] = (temp['cumsum'] - y + self._mean) / (temp['cumcount'] + self.a)
+                X[col] = (temp['cumsum'] - y + self._mean * self.a) / (temp['cumcount'] + self.a)
 
             if self.handle_unknown == 'value':
                 if X[col].dtype.name == 'category':
