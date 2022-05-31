@@ -137,24 +137,16 @@ class JamesSteinEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """
     prefit_ordinal = True
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
-                 handle_unknown='value', handle_missing='value', model='independent', random_state=None, randomized=False, sigma=0.05):
-        self.verbose = verbose
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.invariant_cols = []
-        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
-        self.cols = cols
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_unknown='value',
+                 handle_missing='value', model='independent', random_state=None, randomized=False, sigma=0.05):
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.ordinal_encoder = None
-        self._dim = None
         self.mapping = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
         self.random_state = random_state
         self.randomized = randomized
         self.sigma = sigma
         self.model = model
-        self.feature_names = None
 
     def _fit(self, X, y, **kwargs):
 

@@ -82,13 +82,9 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     prefit_ordinal = True
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
-                     handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.invariant_cols = []
-        self.verbose = verbose
-        self.cols = cols
-        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
+                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.ordinal_encoder = None
         self.min_samples_leaf = min_samples_leaf
         if min_samples_leaf == 1:
@@ -102,12 +98,8 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             warnings.warn("Default parameter smoothing will change in version 2.6."
                           "See https://github.com/scikit-learn-contrib/category_encoders/issues/327",
                           category=FutureWarning)
-        self._dim = None
         self.mapping = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
         self._mean = None
-        self.feature_names = None
 
     def _fit(self, X, y, **kwargs):
         self.ordinal_encoder = OrdinalEncoder(

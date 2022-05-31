@@ -104,21 +104,13 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         ----------
 
         """
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.invariant_cols = []
-        self.verbose = verbose
-        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
-        self.cols = cols
-        self._dim = None
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
         self.normalize = normalize
         self.min_group_size = min_group_size
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
-        self.feature_names = None
         self.ordinal_encoder = None
 
         self._check_set_create_attrs()
@@ -172,10 +164,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     and X[col].isnull().any()
             ):
 
-                raise ValueError(
-                    'Missing data found in column %s at transform time.'
-                    % (col,)
-                )
+                raise ValueError(f'Missing data found in column {col} at transform time.')
         return X
 
     def _fit_count_encode(self, X_in, y):
@@ -327,26 +316,17 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             ):
                 raise ValueError(
                     "Cannot have `handle_missing` == 'return_nan' and "
-                    "'combine_min_nan_groups' == 'force' for columns `%s`."
-                    % (col,)
+                    f"'combine_min_nan_groups' == 'force' for columns `{col}`."
                 )
             
             if (
                 self._combine_min_nan_groups[col] is not True
                 and self._min_group_size[col] is None
             ):
-                raise ValueError(
-                    "`combine_min_nan_groups` only works when `min_group_size`"
-                    "is set for column %s."
-                    % (col,)
-                )
+                raise ValueError(f"`combine_min_nan_groups` only works when `min_group_size` is set for column {col}.")
 
             if (
                 self._min_group_name[col] is not None
                 and self._min_group_size[col] is None
             ):
-                raise ValueError(
-                    "`min_group_name` only works when `min_group_size`"
-                    "is set for column %s."
-                    % (col,)
-                )
+                raise ValueError(f"`min_group_name` only works when `min_group_size` is set for column {col}.")

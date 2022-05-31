@@ -104,7 +104,10 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     """
     prefit_ordinal = False
 
-    def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
+    def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False,
+                 return_df=True, hash_method='md5'):
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown="does not apply", handle_missing="does not apply")
 
         if max_process not in range(1, 128):
             if platform.system == 'Windows':
@@ -122,18 +125,8 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         self.data_lines = 0
         self.X = None
 
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.invariant_cols = []
-        self.verbose = verbose
         self.n_components = n_components
-        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
-        self.cols = cols
         self.hash_method = hash_method
-        self._dim = None
-        self.feature_names = None
-        self.handle_missing = "does not apply"
-        self.handle_unknown = "does not apply"
 
     def _fit(self, X, y=None, **kwargs):
         pass

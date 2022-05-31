@@ -191,9 +191,48 @@ class BaseEncoder(BaseEstimator):
     verbose: int
     drop_invariant: bool
     invariant_cols: List[str] = []
-    feature_names: List[str] = []
+    feature_names: None | List[str] = None
     return_df: bool
     supervised: bool
+
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
+                 handle_unknown='value', handle_missing='value', **kwargs):
+        """
+
+        Parameters
+        ----------
+
+        verbose: int
+            integer indicating verbosity of output. 0 for none.
+        cols: list
+            a list of columns to encode, if None, all string and categorical columns
+            will be encoded.
+        drop_invariant: bool
+            boolean for whether or not to drop columns with 0 variance.
+        return_df: bool
+            boolean for whether to return a pandas DataFrame from transform and inverse transform
+            (otherwise it will be a numpy array).
+        handle_missing: str
+            how to handle missing values at fit time. Options are 'error', 'return_nan',
+            and 'value'. Default 'value', which treat NaNs as a countable category at
+            fit time.
+        handle_unknown: str, int or dict of {column : option, ...}.
+            how to handle unknown labels at transform time. Options are 'error'
+            'return_nan', 'value' and int. Defaults to None which uses NaN behaviour
+            specified at fit time. Passing an int will fill with this int value.
+        kwargs: encoder specific parameters.
+        """
+        self.return_df = return_df
+        self.drop_invariant = drop_invariant
+        self.invariant_cols = []
+        self.verbose = verbose
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
+        self.cols = cols
+        self.mapping = None
+        self.handle_unknown = handle_unknown
+        self.handle_missing = handle_missing
+        self.feature_names = None
+        self._dim = None
 
     def fit(self, X, y=None, **kwargs):
 

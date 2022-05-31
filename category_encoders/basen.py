@@ -100,19 +100,11 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True, base=2,
                  handle_unknown='value', handle_missing='value'):
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.invariant_cols = []
-        self.verbose = verbose
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
-        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
-        self.cols = cols
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping = mapping
         self.ordinal_encoder = None
-        self._dim = None
         self.base = base
-        self.feature_names = None
 
     def _fit(self, X, y=None, **kwargs):
         # train an ordinal pre-encoder
@@ -141,7 +133,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             digits = self.calc_required_digits(values)
             X_unique = pd.DataFrame(index=values,
-                                    columns=[str(col) + '_%d' % x for x in range(digits)],
+                                    columns=[f"{col}_x" for x in range(digits)],
                                     data=np.array([self.col_transform(x, digits) for x in range(1, len(values) + 1)]))
 
             if self.handle_unknown == 'return_nan':
@@ -211,7 +203,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 for col in self.cols:
                     if X[switch.get('col')].isnull().any():
                         warnings.warn("inverse_transform is not supported because transform impute "
-                                      "the unknown category nan when encode %s" % (col,))
+                                      f"the unknown category nan when encode {col}")
 
         return X if self.return_df else X.values
 

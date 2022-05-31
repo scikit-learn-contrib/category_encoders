@@ -85,18 +85,10 @@ class BackwardDifferenceEncoder(util.BaseEncoder, util.UnsupervisedTransformerMi
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.drop_cols = []
-        self.verbose = verbose
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping = mapping
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
-        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
-        self.cols = cols
         self.ordinal_encoder = None
-        self._dim = None
-        self.feature_names = None
 
 
         # todo think about docstrings

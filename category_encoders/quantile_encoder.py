@@ -91,18 +91,10 @@ class QuantileEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         quantile=0.5,
         m=1.0,
     ):
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.invariant_cols = []
-        self.verbose = verbose
-        self.cols = cols
-        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.ordinal_encoder = None
-        self._dim = None
         self.mapping = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
-        self.feature_names = None
         self.quantile = quantile
         self.m = m
 

@@ -93,20 +93,12 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value', random_state=None, sigma=None, a=1):
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.invariant_cols = []
-        self.verbose = verbose
-        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
-        self.cols = cols
-        self._dim = None
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
         self._mean = None
         self.random_state = random_state
         self.sigma = sigma
-        self.feature_names = None
         self.a = a
 
     def _fit(self, X, y, **kwargs):
