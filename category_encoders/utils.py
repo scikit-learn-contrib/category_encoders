@@ -191,7 +191,7 @@ class BaseEncoder(BaseEstimator):
     verbose: int
     drop_invariant: bool
     invariant_cols: List[str] = []
-    feature_names: None | List[str] = None
+    feature_names: Union[None,  List[str]] = None
     return_df: bool
     supervised: bool
 
