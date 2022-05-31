@@ -175,8 +175,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 [self.feature_names.remove(x) for x in self.drop_cols]
             except KeyError as e:
                 if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                          "Not found in generated cols.\n{}".format(e))
+                    print(f"Could not remove column from feature names. Not found in generated cols.\n{e}")
 
         return self
 
@@ -228,7 +227,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         # then make sure that it is the right size
         if self.X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (self.X.shape[1], self._dim, ))
+            raise ValueError(f'Unexpected input dimension {self.X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
             return self.X
@@ -299,7 +298,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+            raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
             return X
@@ -350,18 +349,9 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         for Large Scale Multitask Learning. Proc. ICML.
 
         """
-
-        try:
-            if hashing_method not in hashlib.algorithms_available:
-                raise ValueError('Hashing Method: %s Not Available. Please use one from: [%s]' % (
-                    hashing_method,
-                    ', '.join([str(x) for x in hashlib.algorithms_available])
-                ))
-        except Exception as e:
-            try:
-                _ = hashlib.new(hashing_method)
-            except Exception as e:
-                raise ValueError('Hashing Method: %s Not Found.')
+        if hashing_method not in hashlib.algorithms_available:
+            raise ValueError(f"Hashing Method: {hashing_method} not Available. "
+                             f"Please use one from: [{', '.join([str(x) for x in hashlib.algorithms_available])}]")
 
         if make_copy:
             X = X_in.copy(deep=True)
@@ -383,7 +373,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                     tmp[int(hasher.hexdigest(), 16) % N] += 1
             return pd.Series(tmp, index=new_cols)
 
-        new_cols = ['col_%d' % d for d in range(N)]
+        new_cols = [f'col_{d}' for d in range(N)]
 
         X_cat = X.loc[:, cols]
         X_num = X.loc[:, [x for x in X.columns.values if x not in cols]]

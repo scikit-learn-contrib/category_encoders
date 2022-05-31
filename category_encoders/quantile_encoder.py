@@ -159,7 +159,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                 [self.feature_names.remove(x) for x in self.drop_cols]
             except KeyError as e:
                 if self.verbose > 0:
-                    print("Could not remove column from feature names." "Not found in generated cols.\n{}".format(e))
+                    print(f"Could not remove column from feature names. Not found in generated cols.\n{e}")
 
         return self
 
@@ -221,13 +221,7 @@ class QuantileEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError(
-                "Unexpected input dimension %d, expected %d"
-                % (
-                    X.shape[1],
-                    self._dim,
-                )
-            )
+            raise ValueError(f"Unexpected input dimension {X.shape[1]}, expected {self._dim}")
 
         if not list(self.cols):
             return X
@@ -450,4 +444,4 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     @staticmethod
     def _get_col_name(col: str, quantile: float) -> str:
         percentile = round(quantile * 100)
-        return "{}_{}".format(col, percentile)
+        return f"{col}_{percentile}"

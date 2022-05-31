@@ -165,8 +165,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
                 [self.feature_names.remove(x) for x in self.drop_cols]
             except KeyError as e:
                 if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                    "Not found in generated cols.\n{}".format(e))
+                    print(f"Could not remove column from feature names. Not found in generated cols.\n{e}")
 
         return self
 
@@ -198,7 +197,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
+            raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
             return X
@@ -234,7 +233,7 @@ class PolynomialEncoder(BaseEstimator, TransformerMixin):
 
         polynomial_contrast_matrix = Poly().code_without_intercept(values_to_encode)
         df = pd.DataFrame(data=polynomial_contrast_matrix.matrix, index=values_to_encode,
-                          columns=[str(col) + '_%d' % (i, ) for i in range(len(polynomial_contrast_matrix.column_suffixes))])
+                          columns=[f"{col}_{i}" for i in range(len(polynomial_contrast_matrix.column_suffixes))])
 
         if handle_unknown == 'return_nan':
             df.loc[-1] = np.nan

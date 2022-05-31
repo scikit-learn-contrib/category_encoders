@@ -186,8 +186,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 [self.feature_names.remove(x) for x in self.drop_cols]
             except KeyError as e:
                 if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                    "Not found in generated cols.\n{}".format(e))
+                    print(f"Could not remove column from feature names. Not found in generated cols.\n{e}")
 
         return self
 
@@ -290,11 +289,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 self._handle_unknown[col] == 'error'
                 and X[col].isnull().any()
             ):
-
-                raise ValueError(
-                    'Missing data found in column %s at transform time.'
-                    % (col,)
-                )
+                raise ValueError(f'Missing data found in column {col} at transform time.')
 
         return X, self.mapping
 

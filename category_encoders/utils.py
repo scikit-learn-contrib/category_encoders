@@ -95,7 +95,7 @@ def convert_input(X, columns=None, deep=False, index=None):
             elif isinstance(X, csr_matrix):
                 X = pd.DataFrame(X.todense(), columns=columns, copy=deep, index=index)
             else:
-                raise ValueError('Unexpected input type: %s' % (str(type(X))))
+                raise ValueError(f'Unexpected input type: {type(X)}')
     elif deep:
         X = X.copy(deep=True)
 
@@ -120,7 +120,7 @@ def convert_input_vector(y, index):
         elif len(np.shape(y))==2 and np.shape(y)[1]==1:  # single column in a matrix
             return pd.Series(y[:, 0], name='target', index=index)
         else:
-            raise ValueError('Unexpected input shape: %s' % (str(np.shape(y))))
+            raise ValueError(f'Unexpected input shape: {np.shape(y)}')
     elif np.isscalar(y):
         return pd.Series([y], name='target', index=index)
     elif isinstance(y, list):
@@ -143,7 +143,7 @@ def convert_input_vector(y, index):
         if len(list(y))==1: # a single column
             return y.iloc[:, 0]
         else:
-            raise ValueError('Unexpected input shape: %s' % (str(y.shape)))
+            raise ValueError(f'Unexpected input shape: {y.shape}')
     else:
         return pd.Series(y, name='target', index=index)  # this covers tuples and other directly convertible types
 
