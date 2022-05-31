@@ -165,7 +165,6 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     'Missing data found in column %s at transform time.'
                     % (col,)
                 )
-
         return X
 
     def _fit_count_encode(self, X_in):

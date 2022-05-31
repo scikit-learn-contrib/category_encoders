@@ -219,7 +219,6 @@ class JamesSteinEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
         # Loop over columns and replace nominal values with WOE
         X = self._score(X, y)
-        # Note: We should not even convert invariant columns.
         return X
 
     def _train_pooled(self, X, y):

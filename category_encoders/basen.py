@@ -169,7 +169,6 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         X_out = self.basen_encode(X_out, cols=self.cols)
         return X_out
 
-
     def inverse_transform(self, X_in):
         """
         Perform the inverse transformation to encoded data.

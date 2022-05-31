@@ -252,8 +252,7 @@ class BaseEncoder(BaseEstimator):
 
     def _drop_invariants(self, X: pd.DataFrame, override_return_df: bool) -> Union[np.ndarray, pd.DataFrame]:
         if self.drop_invariant:
-            for col in self.invariant_cols:
-                X.drop(col, 1, inplace=True)
+            X = X.drop(columns=self.invariant_cols)
 
         if self.return_df or override_return_df:
             return X

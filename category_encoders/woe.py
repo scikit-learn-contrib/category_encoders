@@ -147,7 +147,6 @@ class WOEEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
         # Loop over columns and replace nominal values with WOE
         X = self._score(X, y)
-        # Note: we should not even convert columns that are invariant
         return X
 
     def _train(self, X, y):
