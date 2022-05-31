@@ -146,7 +146,7 @@ class PolynomialEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         polynomial_contrast_matrix = Poly().code_without_intercept(values_to_encode)
         df = pd.DataFrame(data=polynomial_contrast_matrix.matrix, index=values_to_encode,
-                          columns=[str(col) + '_%d' % (i, ) for i in range(len(polynomial_contrast_matrix.column_suffixes))])
+                          columns=[f"{col}_{i}" for i in range(len(polynomial_contrast_matrix.column_suffixes))])
 
         if handle_unknown == 'return_nan':
             df.loc[-1] = np.nan

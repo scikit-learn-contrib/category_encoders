@@ -161,8 +161,7 @@ class HelmertEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         helmert_contrast_matrix = Helmert().code_without_intercept(values_to_encode)
         df = pd.DataFrame(data=helmert_contrast_matrix.matrix, index=values_to_encode,
-                          columns=[str(col) + '_%d' % (i,) for i in
-                                   range(len(helmert_contrast_matrix.column_suffixes))])
+                          columns=[f"{col}_{i}" for i in range(len(helmert_contrast_matrix.column_suffixes))])
 
         if handle_unknown == 'return_nan':
             df.loc[-1] = np.nan

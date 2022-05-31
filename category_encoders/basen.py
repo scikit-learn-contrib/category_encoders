@@ -141,7 +141,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             digits = self.calc_required_digits(values)
             X_unique = pd.DataFrame(index=values,
-                                    columns=[str(col) + '_%d' % x for x in range(digits)],
+                                    columns=[f"{col}_{x}" for x in range(digits)],
                                     data=np.array([self.col_transform(x, digits) for x in range(1, len(values) + 1)]))
 
             if self.handle_unknown == 'return_nan':
@@ -159,7 +159,6 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return mappings_out
 
     def _transform(self, X):
-
         X_out = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -195,10 +194,10 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         # make sure that it is the right size
         if X.shape[1] != self._dim:
             if self.drop_invariant:
-                raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "be False when transforming the data" % (X.shape[1],))
+                raise ValueError(f"Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should "
+                                 "be False when transforming the data")
             else:
-                raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim,))
+                raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
             return X if self.return_df else X.values

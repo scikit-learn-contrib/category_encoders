@@ -156,18 +156,18 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     append_nan_to_index = class_
                     continue
                 if self.use_cat_names:
-                    n_col_name = str(col) + '_%s' % (cat_name,)
+                    n_col_name = f"{col}_{cat_name}"
                     found_count = found_column_counts.get(n_col_name, 0)
                     found_column_counts[n_col_name] = found_count + 1
                     n_col_name += '#' * found_count
                 else:
-                    n_col_name = str(col) + '_%s' % (class_,)
+                    n_col_name = f"{col}_{class_}"
 
                 index.append(class_)
                 new_columns.append(n_col_name)
 
             if self.handle_unknown == 'indicator':
-                n_col_name = str(col) + '_%s' % (-1,)
+                n_col_name = f"{col}_-1"
                 if self.use_cat_names:
                     found_count = found_column_counts.get(n_col_name, 0)
                     found_column_counts[n_col_name] = found_count + 1
@@ -232,11 +232,10 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
             if self.drop_invariant:
-                raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "be False when transforming the data" % (X.shape[1],))
+                raise ValueError(f"Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should "
+                                 "be False when transforming the data")
             else:
-                raise ValueError('Unexpected input dimension %d, expected %d' % (
-                    X.shape[1], self._dim, ))
+                raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
             return X if self.return_df else X.values
@@ -250,7 +249,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 for col in self.cols:
                     if X[switch.get('col')].isnull().any():
                         warnings.warn("inverse_transform is not supported because transform impute "
-                                      "the unknown category nan when encode %s" % (col,))
+                                      f"the unknown category nan when encode {col}")
 
         return X if self.return_df else X.values
 
