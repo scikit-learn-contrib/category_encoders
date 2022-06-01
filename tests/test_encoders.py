@@ -7,7 +7,7 @@ import sklearn
 import tests.helpers as th
 from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted
 from sklearn.compose import ColumnTransformer
-from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest import TestCase
 from copy import deepcopy
 
 import category_encoders as encoders
@@ -67,15 +67,14 @@ class TestEncoders(TestCase):
                 self.assertTrue(isinstance(enc.transform(X_t), np.ndarray))
                 self.assertEqual(enc.transform(X_t).shape[0], X_t.shape[0], 'Row count must not change')
 
-                # documented in issue #122
-                # when we use the same encoder on two different datasets, it should not explode
-                # X_a = pd.DataFrame(data=['1', '2', '2', '2', '2', '2'], columns=['col_a'])
-                # X_b = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col_b']) # different values and name
-                # y_dummy = [True, False, True, False, True, False]
-                # enc = getattr(encoders, encoder_name)()
-                # enc.fit(X_a, y_dummy)
-                # enc.fit(X_b, y_dummy)
-                # verify_numeric(enc.transform(X_b))
+                # encoders should be re-fittable (c.f. issue 122)
+                X_a = pd.DataFrame(data=['1', '2', '2', '2', '2', '2'], columns=['col_a'])
+                X_b = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col_b']) # different values and name
+                y_dummy = [True, False, True, False, True, False]
+                enc = getattr(encoders, encoder_name)()
+                enc.fit(X_a, y_dummy)
+                enc.fit(X_b, y_dummy)
+                th.verify_numeric(enc.transform(X_b))
 
     def test_deepcopy(self):
         # Generate instance of evert encoder and test deepcopyable

@@ -249,6 +249,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.drop_cols = []
         self.verbose = verbose
         self.cols = cols
+        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
         self.ordinal_encoder = None
         self._dim = None
         self.mapping = None
@@ -262,7 +263,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     def fit(self, X, y):
         X, y = util.convert_inputs(X, y)
 
-        if self.cols is None:
+        if self.use_default_cols:
             self.cols = util.get_obj_cols(X)
         else:
             self.cols = util.convert_cols_to_list(self.cols)

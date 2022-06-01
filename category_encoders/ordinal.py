@@ -88,6 +88,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                  handle_unknown='value', handle_missing='value'):
         super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
                          handle_unknown=handle_unknown, handle_missing=handle_missing)
+        self.mapping_supplied = mapping is not None
         self.mapping = mapping
 
     @property
@@ -95,6 +96,9 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return self.mapping
 
     def _fit(self, X, y=None, **kwargs):
+        # reset mapping in case of refit
+        if not self.mapping_supplied:
+            self.mapping = None
         _, categories = self.ordinal_encoding(
             X,
             mapping=self.mapping,

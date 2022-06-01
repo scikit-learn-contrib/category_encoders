@@ -235,21 +235,11 @@ class BaseEncoder(BaseEstimator):
         self._dim = None
 
     def fit(self, X, y=None, **kwargs):
-
-        # first check the type
-        if self.supervised:
-            X, y = convert_inputs(X, y)
-        else:
-            X = convert_input(X)
+        self._check_fit_inputs(X, y)
+        X, y = convert_inputs(X, y)
 
         self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        # todo this is a construct from LOO that applies to all encoders. However we should look for a proper way to make encoders re-fitable
-        if self.use_default_cols:
-            self.cols = get_obj_cols(X)
-        else:
-            self.cols = convert_cols_to_list(self.cols)
+        self._get_fit_columns(X)
 
         if self.handle_missing == 'error':
             if X[self.cols].isnull().any().any():
@@ -257,10 +247,8 @@ class BaseEncoder(BaseEstimator):
 
         self._fit(X, y, **kwargs)
 
-        # if self.supervised:
-        #     X_temp = self.transform(X, y, override_return_df=True)
-        # else:
-        X_temp = self.transform(X, override_return_df=True)  # for finding invariant columns transform as if it was the test set
+        # for finding invariant columns transform as if it was the test set
+        X_temp = self.transform(X, override_return_df=True)
         self.feature_names = X_temp.columns.tolist()
 
         # drop all output columns with 0 variance.
@@ -270,6 +258,10 @@ class BaseEncoder(BaseEstimator):
             self.feature_names = [x for x in self.feature_names if x not in self.invariant_cols]
 
         return self
+
+    def _check_fit_inputs(self, X, y):
+        if self._get_tags().get('supervised_encoder') and y is None:
+            raise ValueError('Supervised encoders need a target for the fitting. The target cannot be None')
 
     def _check_transform_inputs(self, X):
         if self.handle_missing == 'error':
@@ -291,6 +283,20 @@ class BaseEncoder(BaseEstimator):
             return X
         else:
             return X.values
+
+    def _get_fit_columns(self, X: pd.DataFrame) -> None:
+        """ Determine columns used by encoder.
+
+        Note that the implementation also deals with re-fitting the same encoder object with different columns.
+
+        :param X: input data frame
+        :return: none, sets self.cols as a side effect
+        """
+        # if columns aren't passed, just use every string column
+        if self.use_default_cols:
+            self.cols = get_obj_cols(X)
+        else:
+            self.cols = convert_cols_to_list(self.cols)
 
     def get_feature_names(self) -> List[str]:
         """
@@ -314,7 +320,9 @@ class BaseEncoder(BaseEstimator):
 
 
 class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
-    supervised = True
+
+    def _more_tags(self):
+        return {'supervised_encoder': False}
 
     def transform(self, X, y=None, override_return_df=False):
 
@@ -351,7 +359,6 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
 
 
 class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
-    supervised = False
 
     def transform(self, X, override_return_df=False):
 
@@ -371,6 +378,10 @@ class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
 
 
 class TransformerWithTargetMixin:
+
+    def _more_tags(self):
+        return {'supervised_encoder': True}
+
     def fit_transform(self, X, y=None, **fit_params):
         """
         Encoders that utilize the target must make sure that the training data are transformed with:
