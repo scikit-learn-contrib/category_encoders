@@ -322,7 +322,7 @@ class BaseEncoder(BaseEstimator):
 class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
 
     def _more_tags(self):
-        return {'supervised_encoder': False}
+        return {'supervised_encoder': True}
 
     def transform(self, X, y=None, override_return_df=False):
 
