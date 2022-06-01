@@ -79,6 +79,7 @@ class QuantileEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     .. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/
     """
     prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(
         self,
@@ -232,6 +233,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     .. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
     .. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/
     """
+    encoding_relation = util.EncodingRelation.ONE_TO_M
 
     def __init__(
         self,
@@ -261,6 +263,24 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.encoder_list = None
 
     def fit(self, X, y):
+        """Fits the encoder according to X and y by fitting the individual encoders.
+
+        Parameters
+        ----------
+
+        X : array-like, shape = [n_samples, n_features]
+            Training vectors, where n_samples is the number of samples
+            and n_features is the number of features.
+        y : array-like, shape = [n_samples]
+            Target values.
+
+        Returns
+        -------
+
+        self : encoder
+            Returns self.
+
+        """
         X, y = util.convert_inputs(X, y)
 
         if self.use_default_cols:

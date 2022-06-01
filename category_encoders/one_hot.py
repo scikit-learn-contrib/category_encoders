@@ -94,6 +94,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     """
     prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_N_UNIQUE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_missing='value', handle_unknown='value', use_cat_names=False):
@@ -187,7 +188,6 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         return mapping
 
-    # todo output shape documentation
     def _transform(self, X):
         X = self.ordinal_encoder.transform(X)
 

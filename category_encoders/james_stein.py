@@ -136,6 +136,7 @@ class JamesSteinEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     """
     prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_unknown='value',
                  handle_missing='value', model='independent', random_state=None, randomized=False, sigma=0.05):
@@ -182,27 +183,7 @@ class JamesSteinEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         else:
             raise ValueError("model='" + str(self.model) + "' is not a recognized option")
 
-    # todo docstring
     def _transform(self, X, y=None):
-        """Perform the transformation to new categorical data. When the data are used for model training,
-        it is important to also pass the target in order to apply leave one out.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples] when transform by leave one out
-            None, when transform without target information (such as transform test set)
-
-
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -212,6 +193,11 @@ class JamesSteinEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         # Loop over columns and replace nominal values with WOE
         X = self._score(X, y)
         return X
+
+    def _more_tags(self):
+        tags = super()._more_tags()
+        tags["predict_depends_on_y"] = True
+        return tags
 
     def _train_pooled(self, X, y):
         # Implemented based on reference [1]

@@ -103,6 +103,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     """
     prefit_ordinal = False
+    encoding_relation = util.EncodingRelation.ONE_TO_M
 
     def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False,
                  return_df=True, hash_method='md5'):

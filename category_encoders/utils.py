@@ -1,5 +1,6 @@
 """A collection of shared utilities for all encoders, not intended for external use."""
 from abc import abstractmethod
+from enum import Enum, auto
 
 import pandas as pd
 import numpy as np
@@ -182,6 +183,29 @@ def get_generated_cols(X_original, X_transformed, to_transform):
     return current_cols
 
 
+class EncodingRelation(Enum):
+    # one input feature get encoded into one output feature
+    ONE_TO_ONE = auto()
+    # one input feature get encoded into as many output features as it has distinct values
+    ONE_TO_N_UNIQUE = auto()
+    # one input feature get encoded into m output features that are not the number of distinct values
+    ONE_TO_M = auto()
+    # all N input features are encoded into M output features.
+    # The encoding is done globally on all the input not on a per-feature basis
+    N_TO_M = auto()
+
+
+def get_docstring_output_shape(in_out_relation: EncodingRelation):
+    if in_out_relation == EncodingRelation.ONE_TO_ONE:
+        return "n_features"
+    elif in_out_relation == EncodingRelation.ONE_TO_N_UNIQUE:
+        return "n_features * respective cardinality"
+    elif in_out_relation == EncodingRelation.ONE_TO_M:
+        return "M features (n_features < M)"
+    elif in_out_relation == EncodingRelation.N_TO_M:
+        return "M features (M can be anything)"
+
+
 class BaseEncoder(BaseEstimator):
     _dim: Optional[int]
     cols: List[str]
@@ -194,6 +218,9 @@ class BaseEncoder(BaseEstimator):
     feature_names: Union[None,  List[str]] = None
     return_df: bool
     supervised: bool
+    encoding_relation: EncodingRelation
+
+    INVARIANCE_THRESHOLD = 10e-5  # columns with variance less than this will be considered constant / invariant
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value', **kwargs):
@@ -220,7 +247,8 @@ class BaseEncoder(BaseEstimator):
             how to handle unknown labels at transform time. Options are 'error'
             'return_nan', 'value' and int. Defaults to None which uses NaN behaviour
             specified at fit time. Passing an int will fill with this int value.
-        kwargs: encoder specific parameters.
+        kwargs: dict.
+            additional encoder specific parameters like regularisation.
         """
         self.return_df = return_df
         self.drop_invariant = drop_invariant
@@ -235,6 +263,24 @@ class BaseEncoder(BaseEstimator):
         self._dim = None
 
     def fit(self, X, y=None, **kwargs):
+        """Fits the encoder according to X and y.
+
+        Parameters
+        ----------
+
+        X : array-like, shape = [n_samples, n_features]
+            Training vectors, where n_samples is the number of samples
+            and n_features is the number of features.
+        y : array-like, shape = [n_samples]
+            Target values.
+
+        Returns
+        -------
+
+        self : encoder
+            Returns self.
+
+        """
         self._check_fit_inputs(X, y)
         X, y = convert_inputs(X, y)
 
@@ -247,14 +293,14 @@ class BaseEncoder(BaseEstimator):
 
         self._fit(X, y, **kwargs)
 
-        # for finding invariant columns transform as if it was the test set
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = X_temp.columns.tolist()
+        # for finding invariant columns transform without y (as is done on the test set)
+        X_transformed = self.transform(X, override_return_df=True)
+        self.feature_names = X_transformed.columns.tolist()
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
-            generated_cols = get_generated_cols(X, X_temp, self.cols)
-            self.invariant_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
+            generated_cols = get_generated_cols(X, X_transformed, self.cols)
+            self.invariant_cols = [x for x in generated_cols if X_transformed[x].var() <= self.INVARIANCE_THRESHOLD]
             self.feature_names = [x for x in self.feature_names if x not in self.invariant_cols]
 
         return self
@@ -325,7 +371,26 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
         return {'supervised_encoder': True}
 
     def transform(self, X, y=None, override_return_df=False):
+        f"""Perform the transformation to new categorical data.
+ 
+        {"In training also pass y since this encoder behaves differently whether y is given or not. This is to avoid overfitting." if self._get_tags().get("predict_depends_on_y") else ""}
+        
+        Parameters
+        ----------
 
+        X : array-like, shape = [n_samples, n_features]
+        y : array-like, shape = [n_samples] or None
+            {"None, when transform without target information (such as transform test set)." if self._get_tags().get("predict_depends_on_y") else "Can always safely set to None"}
+        override_return_df : bool
+            override self.return_df to force to return a data frame
+
+        Returns
+        -------
+
+        p : array or DataFrame, shape = [n_samples, {get_docstring_output_shape(self.encoding_relation)}]
+            Transformed values with encoding applied.
+
+        """
         # first check the type
         X, y = convert_inputs(X, y, deep=True)
         self._check_transform_inputs(X)
@@ -335,11 +400,6 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
 
         X = self._transform(X, y)
 
-        # todo check if this is really after _transform or within transform. Some encoder (backward_difference)
-        #  do ordinal encoding first and only then check for unknowns. If it's in the middle of the process it is hard to generalize
-        # if self.handle_unknown == 'error':
-        #     if X[self.cols].isin([-1]).any().any():
-        #         raise ValueError('Columns to be encoded can not contain new values')
         return self._drop_invariants(X, override_return_df)
 
     @abstractmethod
@@ -361,7 +421,22 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
 class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
 
     def transform(self, X, override_return_df=False):
+        f"""Perform the transformation to new categorical data.
 
+        Parameters
+        ----------
+
+        X : array-like, shape = [n_samples, n_features]
+        override_return_df : bool
+            override self.return_df to force to return a data frame
+
+        Returns
+        -------
+
+        p : array or DataFrame, shape = [n_samples, {get_docstring_output_shape(self.encoding_relation)}]
+            Transformed values with encoding applied.
+
+        """
         # first check the type
         X = convert_input(X, deep=True)
         self._check_transform_inputs(X)

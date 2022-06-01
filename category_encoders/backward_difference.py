@@ -82,6 +82,7 @@ class BackwardDifferenceEncoder(util.BaseEncoder, util.UnsupervisedTransformerMi
 
     """
     prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_N_UNIQUE
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
@@ -89,28 +90,6 @@ class BackwardDifferenceEncoder(util.BaseEncoder, util.UnsupervisedTransformerMi
                          handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping = mapping
         self.ordinal_encoder = None
-
-
-        # todo think about docstrings
-        """Fits an ordinal encoder to produce a consistent mapping across applications and optionally finds
-        generally invariant columns to drop consistently.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
 
     def _fit(self, X, y=None, **kwargs):
         # train an ordinal pre-encoder

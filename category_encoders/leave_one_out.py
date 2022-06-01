@@ -75,6 +75,7 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     """
     prefit_ordinal = False
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value', random_state=None, sigma=None):
@@ -102,6 +103,11 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             mapping=self.mapping
         )
         return X
+
+    def _more_tags(self):
+        tags = super()._more_tags()
+        tags["predict_depends_on_y"] = True
+        return tags
 
     def fit_leave_one_out(self, X_in, y, cols=None):
         X = X_in.copy(deep=True)

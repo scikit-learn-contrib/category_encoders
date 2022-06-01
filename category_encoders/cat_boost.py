@@ -90,6 +90,7 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     """
     prefit_ordinal = False
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value', random_state=None, sigma=None, a=1):
@@ -112,26 +113,7 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self._mean = y.mean()
         self.mapping = {col: self._fit_column_map(X[col], y) for col in cols}
 
-    # todo check docstring
     def _transform(self, X, y=None):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples] when transform by leave one out
-            None, when transform without target information (such as transform test set)
-
-
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
         random_state_ = check_random_state(self.random_state)
 
         # Prepare the data
@@ -187,6 +169,11 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                 X[col] = X[col] * random_state_.normal(1., self.sigma, X[col].shape[0])
 
         return X
+
+    def _more_tags(self):
+        tags = super()._more_tags()
+        tags["predict_depends_on_y"] = True
+        return tags
 
     def _fit_column_map(self, series, y):
         category = pd.Categorical(series)

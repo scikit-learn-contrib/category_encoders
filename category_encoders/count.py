@@ -12,6 +12,7 @@ __author__ = 'joshua t. dunn'
 
 class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
                  return_df=True, handle_unknown='value',

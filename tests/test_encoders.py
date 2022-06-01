@@ -1,4 +1,3 @@
-import unittest
 import warnings
 from datetime import timedelta
 

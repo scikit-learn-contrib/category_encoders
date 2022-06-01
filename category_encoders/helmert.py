@@ -83,6 +83,7 @@ class HelmertEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     """
     prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):
@@ -113,22 +114,7 @@ class HelmertEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         self.mapping = mappings_out
 
-    # todo output shape in docstring
     def _transform(self, X):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':

@@ -82,12 +82,12 @@ Contents:
    onehot
    ordinal
    polynomial
+   quantile
    sum
+   summary
    targetencoder
    woe
    wrapper
-   quantile
-   summary
 
 
 Indices and tables

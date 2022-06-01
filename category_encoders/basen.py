@@ -97,6 +97,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     """
 
     prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.N_TO_M
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True, base=2,
                  handle_unknown='value', handle_missing='value'):

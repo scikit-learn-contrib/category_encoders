@@ -3,6 +3,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 
 import category_encoders as ce
+from category_encoders import utils
 
 __author__ = 'willmcginnis'
 
@@ -68,6 +69,7 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     None
 
     """
+    encoding_relation = utils.EncodingRelation.ONE_TO_M
 
     def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value'):

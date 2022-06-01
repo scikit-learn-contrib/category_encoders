@@ -95,6 +95,7 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     """
     prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_unknown='value',
                  handle_missing='value', random_state=None, randomized=False, sigma=0.05, binomial_target=None):
@@ -122,27 +123,7 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         # Training
         self.mapping = self._train(X_ordinal, y)
 
-    # todo docstring
     def _transform(self, X, y=None):
-        """Perform the transformation to new categorical data.
-
-        When the data are used for model training, it is important to also pass the target in order to apply leave one out.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples] when transform by leave one out
-            None, when transform without target information (such as transform test set)
-
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -151,9 +132,12 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
         # Loop over the columns and replace the nominal values with the numbers
         X = self._score(X, y)
-
-        # Note: It would be faster to not even convert the invariant columns
         return X
+
+    def _more_tags(self):
+        tags = super()._more_tags()
+        tags["predict_depends_on_y"] = True
+        return tags
 
     def _train(self, X, y):
         # Initialize the output

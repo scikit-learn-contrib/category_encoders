@@ -80,6 +80,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     """
     prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
                  handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
