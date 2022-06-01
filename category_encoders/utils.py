@@ -264,7 +264,7 @@ class BaseEncoder(BaseEstimator):
 
     def fit(self, X, y=None, **kwargs):
         """Fits the encoder according to X and y.
-
+        
         Parameters
         ----------
 
@@ -371,23 +371,24 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
         return {'supervised_encoder': True}
 
     def transform(self, X, y=None, override_return_df=False):
-        f"""Perform the transformation to new categorical data.
- 
-        {"In training also pass y since this encoder behaves differently whether y is given or not. This is to avoid overfitting." if self._get_tags().get("predict_depends_on_y") else ""}
-        
+        """Perform the transformation to new categorical data.
+
+        Some encoders behave differently on whether y is given or not. This is mainly due to regularisation
+        in order to avoid overfitting.
+        On training data transform should be called with y, on test data without.
+
         Parameters
         ----------
 
         X : array-like, shape = [n_samples, n_features]
         y : array-like, shape = [n_samples] or None
-            {"None, when transform without target information (such as transform test set)." if self._get_tags().get("predict_depends_on_y") else "Can always safely set to None"}
         override_return_df : bool
             override self.return_df to force to return a data frame
 
         Returns
         -------
 
-        p : array or DataFrame, shape = [n_samples, {get_docstring_output_shape(self.encoding_relation)}]
+        p : array or DataFrame, shape = [n_samples, n_features_out]
             Transformed values with encoding applied.
 
         """
@@ -421,7 +422,7 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
 class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
 
     def transform(self, X, override_return_df=False):
-        f"""Perform the transformation to new categorical data.
+        """Perform the transformation to new categorical data.
 
         Parameters
         ----------
@@ -433,7 +434,7 @@ class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
         Returns
         -------
 
-        p : array or DataFrame, shape = [n_samples, {get_docstring_output_shape(self.encoding_relation)}]
+        p : array or DataFrame, shape = [n_samples, n_features_out]
             Transformed values with encoding applied.
 
         """
