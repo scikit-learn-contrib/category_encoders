@@ -1,3 +1,16 @@
+v2.5.0
+======
+
+* Introduce base class for encoders
+* Introduce tagging system on encoders and use it to parametrize tests
+* Drop support for python 3.5 and python 3.6
+* Require pandas >=1.0
+* Introduce f-strings
+* Make BinaryEncoder a BaseNEncoder for base=2
+* FutureWarning for TargetEncoder's default parameters
+* Made all encoders re-fittable on different datasets (c.f. issue 122)
+* Introduced tox.ini file for easier version testing
+ 
 v2.4.1
 ======
 

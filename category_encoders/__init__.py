@@ -25,7 +25,7 @@ from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.glmm import GLMMEncoder
 from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
 
-__version__ = '2.4.1'
+__version__ = '2.5.0'
 
 __author__ = "willmcginnis", "cmougan"
 
