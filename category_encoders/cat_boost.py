@@ -105,13 +105,8 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     def _fit(self, X, y, **kwargs):
         X = X.copy(deep=True)
 
-        if self.cols is None:
-            cols = X.columns.values
-        else:
-            cols = self.cols
-
         self._mean = y.mean()
-        self.mapping = {col: self._fit_column_map(X[col], y) for col in cols}
+        self.mapping = {col: self._fit_column_map(X[col], y) for col in self.cols}
 
     def _transform(self, X, y=None):
         random_state_ = check_random_state(self.random_state)

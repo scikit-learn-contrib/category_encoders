@@ -139,16 +139,16 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return self
 
     def _transform(self, X):
-        """Perform the transform count encoding."""
         for col in self.cols:
-            X[col] = X[col].fillna(value=np.nan)
+            # Treat None as np.nan
+            X[col] = pd.Series([el if el is not None else np.NaN for el in X[col]], index=X[col].index)
+            if self.handle_missing == "value":
+                if not util.is_category(X[col].dtype):
+                    X[col] = X[col].fillna(np.nan)
 
             if self._min_group_size is not None:
                 if col in self._min_group_categories.keys():
-                    X[col] = (
-                        X[col].map(self._min_group_categories[col])
-                            .fillna(X[col])
-                    )
+                    X[col] = X[col].map(self._min_group_categories[col]).fillna(X[col])
 
             X[col] = X[col].astype(object).map(self.mapping[col])
             if isinstance(self._handle_unknown[col], (int, np.integer)):
@@ -164,7 +164,6 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     self._handle_unknown[col] == 'error'
                     and X[col].isnull().any()
             ):
-
                 raise ValueError(f'Missing data found in column {col} at transform time.')
         return X
 

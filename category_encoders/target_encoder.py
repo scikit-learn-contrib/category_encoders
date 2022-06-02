@@ -89,13 +89,11 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self.ordinal_encoder = None
         self.min_samples_leaf = min_samples_leaf
         if min_samples_leaf == 1:
-            self.smoothing = float(
-                smoothing)  # Make smoothing a float so that python 2 does not treat as integer division
             warnings.warn("Default parameter min_samples_leaf will change in version 2.6."
                           "See https://github.com/scikit-learn-contrib/category_encoders/issues/327",
                           category=FutureWarning)
         self.smoothing = smoothing
-        if min_samples_leaf == 1.0:
+        if smoothing == 1.0:
             warnings.warn("Default parameter smoothing will change in version 2.6."
                           "See https://github.com/scikit-learn-contrib/category_encoders/issues/327",
                           category=FutureWarning)
