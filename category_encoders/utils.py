@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import sklearn.base
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.exceptions import NotFittedError
 from typing import Dict, List, Optional, Union
 from scipy.sparse import csr_matrix
 
@@ -315,7 +316,7 @@ class BaseEncoder(BaseEstimator):
                 raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
+            raise NotFittedError('Must train encoder before it can be used to transform data.')
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
@@ -356,7 +357,7 @@ class BaseEncoder(BaseEstimator):
 
         """
         if not isinstance(self.feature_names, list):
-            raise ValueError("Estimator has to be fitted to return feature names.")
+            raise NotFittedError("Estimator has to be fitted to return feature names.")
         else:
             return self.feature_names
 
