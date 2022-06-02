@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CatBoost Encoder &mdash; Category Encoders 2.4.1 documentation</title>
+  <title>CatBoost Encoder &mdash; Category Encoders 2.5.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,6 +13,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -29,7 +30,7 @@
             <a href="index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.4.1
+                2.5.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -54,12 +55,12 @@
 <li class="toctree-l1"><a class="reference internal" href="onehot.html">One Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="polynomial.html">Polynomial Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantile.html">Quantile Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sum.html">Sum Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="targetencoder.html">Target Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="woe.html">Weight of Evidence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="wrapper.html">Wrappers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quantile.html">Quantile Encoder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary Encoder</a></li>
 </ul>
 
         </div>
@@ -87,7 +88,7 @@
            <div itemprop="articleBody">
              
   <div class="section" id="catboost-encoder">
-<h1>CatBoost Encoder<a class="headerlink" href="#catboost-encoder" title="Permalink to this headline"></a></h1>
+<h1>CatBoost Encoder<a class="headerlink" href="#catboost-encoder" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.cat_boost.CatBoostEncoder">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.cat_boost.</span></span><span class="sig-name descname"><span class="pre">CatBoostEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_invariant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_unknown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/cat_boost.html#CatBoostEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder" title="Permalink to this definition"></a></dt>
@@ -141,6 +142,13 @@ sigma gives the standard deviation (spread or “width”) of the normal distrib
 </dd>
 </dl>
 <p><a class="reference external" href="https://arxiv.org/abs/1706.09516">https://arxiv.org/abs/1706.09516</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>feature_names</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <colgroup>
@@ -148,19 +156,77 @@ sigma gives the standard deviation (spread or “width”) of the normal distrib
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.fit" title="category_encoders.cat_boost.CatBoostEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y, **kwargs)</p></td>
-<td><p>Fit encoder according to X and y.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.fit" title="category_encoders.cat_boost.CatBoostEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<td><p>Fits the encoder according to X and y.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code>(X[, y])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.fit_transform" title="category_encoders.cat_boost.CatBoostEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
 <td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.get_feature_names" title="category_encoders.cat_boost.CatBoostEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>()</p></td>
 <td><p>Returns the names of all transformed / added columns.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.get_params" title="category_encoders.cat_boost.CatBoostEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.set_params" title="category_encoders.cat_boost.CatBoostEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.transform" title="category_encoders.cat_boost.CatBoostEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y, override_return_df])</p></td>
+<td><p>Perform the transformation to new categorical data.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of output. 0 for none.</p>
+</dd>
+<dt><strong>cols: list</strong></dt><dd><p>a list of columns to encode, if None, all string and categorical columns
+will be encoded.</p>
+</dd>
+<dt><strong>drop_invariant: bool</strong></dt><dd><p>boolean for whether or not to drop columns with 0 variance.</p>
+</dd>
+<dt><strong>return_df: bool</strong></dt><dd><p>boolean for whether to return a pandas DataFrame from transform and inverse transform
+(otherwise it will be a numpy array).</p>
+</dd>
+<dt><strong>handle_missing: str</strong></dt><dd><p>how to handle missing values at fit time. Options are ‘error’, ‘return_nan’,
+and ‘value’. Default ‘value’, which treat NaNs as a countable category at
+fit time.</p>
+</dd>
+<dt><strong>handle_unknown: str, int or dict of {column</strong><span class="classifier">option, …}.</span></dt><dd><p>how to handle unknown labels at transform time. Options are ‘error’
+‘return_nan’, ‘value’ and int. Defaults to None which uses NaN behaviour
+specified at fit time. Passing an int will fill with this int value.</p>
+</dd>
+<dt><strong>kwargs: dict.</strong></dt><dd><p>additional encoder specific parameters like regularisation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>feature_names</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.fit" title="category_encoders.cat_boost.CatBoostEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<td><p>Fits the encoder according to X and y.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.fit_transform" title="category_encoders.cat_boost.CatBoostEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
+<td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.get_feature_names" title="category_encoders.cat_boost.CatBoostEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>()</p></td>
+<td><p>Returns the names of all transformed / added columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.get_params" title="category_encoders.cat_boost.CatBoostEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.set_params" title="category_encoders.cat_boost.CatBoostEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.cat_boost.CatBoostEncoder.transform" title="category_encoders.cat_boost.CatBoostEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y, override_return_df])</p></td>
@@ -170,8 +236,8 @@ sigma gives the standard deviation (spread or “width”) of the normal distrib
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.cat_boost.CatBoostEncoder.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/cat_boost.html#CatBoostEncoder.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder.fit" title="Permalink to this definition"></a></dt>
-<dd><p>Fit encoder according to X and y.</p>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fits the encoder according to X and y.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -192,14 +258,70 @@ and n_features is the number of features.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.cat_boost.CatBoostEncoder.fit_transform">
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder.fit_transform" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Encoders that utilize the target must make sure that the training data are transformed with:</dt><dd><p>transform(X, y)</p>
+</dd>
+<dt>and not with:</dt><dd><p>transform(X)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.cat_boost.CatBoostEncoder.get_feature_names">
-<span class="sig-name descname"><span class="pre">get_feature_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/cat_boost.html#CatBoostEncoder.get_feature_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder.get_feature_names" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_feature_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder.get_feature_names" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the names of all transformed / added columns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
 <dt>feature_names: list</dt><dd><p>A list with all feature names transformed or added.
-Note: potentially dropped features are not included!</p>
+Note: potentially dropped features (because the feature is constant/invariant) are not included!</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.cat_boost.CatBoostEncoder.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder.get_params" title="Permalink to this definition"></a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>deep</strong><span class="classifier">bool, default=True</span></dt><dd><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>params</strong><span class="classifier">dict</span></dt><dd><p>Parameter names mapped to their values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.cat_boost.CatBoostEncoder.set_params">
+<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder.set_params" title="Permalink to this definition"></a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as <code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code>). The latter have
+parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
+possible to update each component of a nested object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>**params</strong><span class="classifier">dict</span></dt><dd><p>Estimator parameters.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">estimator instance</span></dt><dd><p>Estimator instance.</p>
 </dd>
 </dl>
 </dd>
@@ -208,19 +330,23 @@ Note: potentially dropped features are not included!</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.cat_boost.CatBoostEncoder.transform">
-<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/cat_boost.html#CatBoostEncoder.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder.transform" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.cat_boost.CatBoostEncoder.transform" title="Permalink to this definition"></a></dt>
 <dd><p>Perform the transformation to new categorical data.</p>
+<p>Some encoders behave differently on whether y is given or not. This is mainly due to regularisation
+in order to avoid overfitting.
+On training data transform should be called with y, on test data without.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd></dd>
-<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples] when transform by leave one out</span></dt><dd><p>None, when transform without target information (such as transform test set)</p>
+<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples] or None</span></dt><dd></dd>
+<dt><strong>override_return_df</strong><span class="classifier">bool</span></dt><dd><p>override self.return_df to force to return a data frame</p>
 </dd>
 </dl>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>p</strong><span class="classifier">array, shape = [n_samples, n_numeric + N]</span></dt><dd><p>Transformed values with encoding applied.</p>
+<dt><strong>p</strong><span class="classifier">array or DataFrame, shape = [n_samples, n_features_out]</span></dt><dd><p>Transformed values with encoding applied.</p>
 </dd>
 </dl>
 </dd>
@@ -242,7 +368,7 @@ Note: potentially dropped features are not included!</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2016, Will McGinnis.</p>
+    <p>&#169; Copyright 2022, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

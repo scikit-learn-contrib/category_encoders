@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.glmm &mdash; Category Encoders 2.4.1 documentation</title>
+  <title>category_encoders.glmm &mdash; Category Encoders 2.5.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,6 +13,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -27,7 +28,7 @@
             <a href="../../index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.4.1
+                2.5.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -52,12 +53,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../onehot.html">One Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../polynomial.html">Polynomial Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quantile.html">Quantile Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../sum.html">Sum Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../summary.html">Summary Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../targetencoder.html">Target Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../woe.html">Weight of Evidence</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../wrapper.html">Wrappers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../quantile.html">Quantile Encoder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../summary.html">Summary Encoder</a></li>
 </ul>
 
         </div>
@@ -90,7 +91,6 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span>
 <span class="kn">from</span> <span class="nn">sklearn.utils.random</span> <span class="kn">import</span> <span class="n">check_random_state</span>
 <span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
 <span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
@@ -100,18 +100,20 @@
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jan Motl&#39;</span>
 
 
-<div class="viewcode-block" id="GLMMEncoder"><a class="viewcode-back" href="../../glmm.html#category_encoders.glmm.GLMMEncoder">[docs]</a><span class="k">class</span> <span class="nc">GLMMEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">TransformerWithTargetMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="GLMMEncoder"><a class="viewcode-back" href="../../glmm.html#category_encoders.glmm.GLMMEncoder">[docs]</a><span class="k">class</span> <span class="nc">GLMMEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Generalized linear mixed model.</span>
 
 <span class="sd">    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</span>
 
 <span class="sd">    This is a supervised encoder similar to TargetEncoder or MEstimateEncoder, but there are some advantages:</span>
-<span class="sd">    1) Solid statistical theory behind the technique. Mixed effects models are a mature branch of statistics.</span>
-<span class="sd">    2) No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation process.</span>
-<span class="sd">    In short, the less observations a category has and/or the more the outcome varies for a category</span>
-<span class="sd">    then the higher the regularization towards &quot;the prior&quot; or &quot;grand mean&quot;.</span>
-<span class="sd">    3) The technique is applicable for both continuous and binomial targets. If the target is continuous,</span>
-<span class="sd">    the encoder returns regularized difference of the observation&#39;s category from the global mean.</span>
+
+<span class="sd">        1. Solid statistical theory behind the technique. Mixed effects models are a mature branch of statistics.</span>
+<span class="sd">        2. No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation</span>
+<span class="sd">        process. In short, the less observations a category has and/or the more the outcome varies for a category</span>
+<span class="sd">        then the higher the regularization towards &quot;the prior&quot; or &quot;grand mean&quot;.</span>
+<span class="sd">        3. The technique is applicable for both continuous and binomial targets. If the target is continuous,</span>
+<span class="sd">        the encoder returns regularized difference of the observation&#39;s category from the global mean.</span>
+
 <span class="sd">    If the target is binomial, the encoder returns regularized log odds per category.</span>
 
 <span class="sd">    In comparison to JamesSteinEstimator, this encoder utilizes generalized linear mixed models from statsmodels library.</span>
@@ -180,60 +182,22 @@
 <span class="sd">    https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prefit_ordinal</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_ONE</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">randomized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">binomial_target</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="o">=</span> <span class="n">return_df</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span> <span class="o">=</span> <span class="n">drop_invariant</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">cols</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
+                 <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">randomized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">binomial_target</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
+                         <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">=</span> <span class="n">handle_unknown</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">=</span> <span class="n">handle_missing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">randomized</span> <span class="o">=</span> <span class="n">randomized</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">binomial_target</span> <span class="o">=</span> <span class="n">binomial_target</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1"># noinspection PyUnusedLocal</span>
-<div class="viewcode-block" id="GLMMEncoder.fit"><a class="viewcode-back" href="../../glmm.html#category_encoders.glmm.GLMMEncoder.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fit encoder according to X and binary y.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
-<span class="sd">            Training vectors, where n_samples is the number of samples</span>
-<span class="sd">            and n_features is the number of features.</span>
-<span class="sd">        y : array-like, shape = [n_samples]</span>
-<span class="sd">            Binary target values.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        self : encoder</span>
-<span class="sd">            Returns self.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Unite parameters into pandas types</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">convert_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-        <span class="c1"># If columns aren&#39;t passed, just use every string column</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">get_obj_cols</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">convert_cols_to_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns to be encoded can not contain null&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="p">(</span>
             <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
@@ -247,60 +211,7 @@
         <span class="c1"># Training</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train</span><span class="p">(</span><span class="n">X_ordinal</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-        <span class="n">X_temp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">override_return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="n">X_temp</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-
-        <span class="c1"># Store column names with approximately constant variance on the training data</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="n">generated_cols</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">get_generated_cols</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X_temp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">generated_cols</span> <span class="k">if</span> <span class="n">X_temp</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">var</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mf">10e-5</span><span class="p">]</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span><span class="p">]</span>
-            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not remove column from feature names.&quot;</span>
-                    <span class="s2">&quot;Not found in generated cols.</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
-
-<div class="viewcode-block" id="GLMMEncoder.transform"><a class="viewcode-back" href="../../glmm.html#category_encoders.glmm.GLMMEncoder.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">override_return_df</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Perform the transformation to new categorical data.</span>
-
-<span class="sd">        When the data are used for model training, it is important to also pass the target in order to apply leave one out.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-
-<span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
-<span class="sd">        y : array-like, shape = [n_samples] when transform by leave one out</span>
-<span class="sd">            None, when transform without target information (such as transform test set)</span>
-
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        p : array, shape = [n_samples, n_numeric + N]</span>
-<span class="sd">            Transformed values with encoding applied.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns to be encoded can not contain null&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must train encoder before it can be used to transform data.&#39;</span><span class="p">)</span>
-
-        <span class="c1"># Unite the input into pandas types</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">convert_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="c1"># Then make sure that it is the right size</span>
-        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unexpected input dimension </span><span class="si">%d</span><span class="s1">, expected </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span><span class="p">,))</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">X</span>
-
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
@@ -309,16 +220,12 @@
 
         <span class="c1"># Loop over the columns and replace the nominal values with the numbers</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X</span>
 
-        <span class="c1"># Postprocessing</span>
-        <span class="c1"># Note: We should not even convert these columns.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span><span class="p">:</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="ow">or</span> <span class="n">override_return_df</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">X</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span></div>
+    <span class="k">def</span> <span class="nf">_more_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_more_tags</span><span class="p">()</span>
+        <span class="n">tags</span><span class="p">[</span><span class="s2">&quot;predict_depends_on_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">tags</span>
 
     <span class="k">def</span> <span class="nf">_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="c1"># Initialize the output</span>
@@ -396,22 +303,6 @@
 
         <span class="k">return</span> <span class="n">X</span>
 
-<div class="viewcode-block" id="GLMMEncoder.get_feature_names"><a class="viewcode-back" href="../../glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the names of all transformed / added columns.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        feature_names: list</span>
-<span class="sd">            A list with all feature names transformed or added.</span>
-<span class="sd">            Note: potentially dropped features are not included!</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Estimator has to be fitted to return feature names.&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span></div>
-
     <span class="k">def</span> <span class="nf">_rename_and_merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Statsmodels requires:</span>
@@ -433,7 +324,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2016, Will McGinnis.</p>
+    <p>&#169; Copyright 2022, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
