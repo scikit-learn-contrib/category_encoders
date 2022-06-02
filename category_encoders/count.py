@@ -1,19 +1,18 @@
 """Count Encoder"""
-from __future__ import division
-
 import numpy as np
 import pandas as pd
 import category_encoders.utils as util
 from category_encoders.ordinal import OrdinalEncoder
 
 from copy import copy
-from sklearn.base import BaseEstimator, TransformerMixin
 
 
 __author__ = 'joshua t. dunn'
 
 
-class CountEncoder(BaseEstimator, TransformerMixin):
+class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+    prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
                  return_df=True, handle_unknown='value',
@@ -106,20 +105,13 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         ----------
 
         """
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.drop_cols = []
-        self.verbose = verbose
-        self.cols = cols
-        self._dim = None
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
         self.normalize = normalize
         self.min_group_size = min_group_size
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
-        self.feature_names = None
         self.ordinal_encoder = None
 
         self._check_set_create_attrs()
@@ -132,34 +124,7 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self._handle_unknown = {}
         self._handle_missing = {}
 
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X.
-
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-        self : encoder
-            Returns self.
-        """
-
-        # first check the type
-        X = util.convert_input(X)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
+    def _fit(self, X, y=None, **kwargs):
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
@@ -168,72 +133,39 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
+
         self._check_set_create_dict_attrs()
-
         self._fit_count_encode(X_ordinal, y)
-
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = list(X_temp.columns)
-
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [
-                x for x in generated_cols if X_temp[x].var() <= 10e-5
-            ]
-
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print(f"Could not remove column from feature names. Not found in generated cols.\n{e}")
-
         return self
 
-    def transform(self, X, y=None, override_return_df=False):
-        """Perform the transformation to new categorical data.
+    def _transform(self, X):
+        for col in self.cols:
+            # Treat None as np.nan
+            X[col] = pd.Series([el if el is not None else np.NaN for el in X[col]], index=X[col].index)
+            if self.handle_missing == "value":
+                if not util.is_category(X[col].dtype):
+                    X[col] = X[col].fillna(np.nan)
 
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples]
-            
-        Returns
-        -------
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-        """
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
+            if self._min_group_size is not None:
+                if col in self._min_group_categories.keys():
+                    X[col] = X[col].map(self._min_group_categories[col]).fillna(X[col])
 
-        if self._dim is None:
-            raise ValueError(
-                'Must train encoder before it can be used to transform data.'
-            )
+            X[col] = X[col].astype(object).map(self.mapping[col])
+            if isinstance(self._handle_unknown[col], (int, np.integer)):
+                X[col] = X[col].fillna(self._handle_unknown[col])
 
-        # first check the type
-        X = util.convert_input(X)
+            elif (self._handle_unknown[col] == 'value'
+                  and X[col].isna().any()
+                  and self._handle_missing[col] != 'return_nan'
+            ):
+                X[col].replace(np.nan, 0, inplace=True)
 
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError(
-                'Unexpected input dimension %d, expected %d'
-                % (X.shape[1], self._dim,)
-            )
-
-        if not list(self.cols):
-            return X
-
-        X, _ = self._transform_count_encode(X, y)
-
-        if self.drop_invariant:
-            X = X.drop(columns=self.drop_cols)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.values
+            elif (
+                    self._handle_unknown[col] == 'error'
+                    and X[col].isnull().any()
+            ):
+                raise ValueError(f'Missing data found in column {col} at transform time.')
+        return X
 
     def _fit_count_encode(self, X_in, y):
         """Perform the count encoding."""
@@ -259,39 +191,6 @@ class CountEncoder(BaseEstimator, TransformerMixin):
 
         if any([val is not None for val in self._min_group_size.values()]):
             self.combine_min_categories(X)
-
-    def _transform_count_encode(self, X_in, y):
-        """Perform the transform count encoding."""
-        X = X_in.copy(deep=True)
-
-        for col in self.cols:
-            # Treat None as np.nan
-            X[col] = pd.Series([el if el is not None else np.NaN for el in X[col]], index=X[col].index)
-            if self.handle_missing == "value":
-                if not util.is_category(X[col].dtype):
-                    X[col] = X[col].fillna(np.nan)
-
-            if self._min_group_size is not None:
-                if col in self._min_group_categories.keys():
-                    X[col] = X[col].map(self._min_group_categories[col]).fillna(X[col])
-            
-            X[col] = X[col].astype(object).map(self.mapping[col])
-            if isinstance(self._handle_unknown[col], (int, np.integer)):
-                X[col] = X[col].fillna(self._handle_unknown[col])
-            
-            elif (self._handle_unknown[col] == 'value'
-                    and X[col].isna().any()
-                    and self._handle_missing[col] != 'return_nan'
-                 ):
-                 X[col].replace(np.nan, 0, inplace=True)
- 
-            elif (
-                self._handle_unknown[col] == 'error'
-                and X[col].isnull().any()
-            ):
-                raise ValueError(f'Missing data found in column {col} at transform time.')
-
-        return X, self.mapping
 
     def combine_min_categories(self, X):
         """Combine small categories into a single category."""
@@ -417,42 +316,17 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             ):
                 raise ValueError(
                     "Cannot have `handle_missing` == 'return_nan' and "
-                    "'combine_min_nan_groups' == 'force' for columns `%s`."
-                    % (col,)
+                    f"'combine_min_nan_groups' == 'force' for columns `{col}`."
                 )
             
             if (
                 self._combine_min_nan_groups[col] is not True
                 and self._min_group_size[col] is None
             ):
-                raise ValueError(
-                    "`combine_min_nan_groups` only works when `min_group_size`"
-                    "is set for column %s."
-                    % (col,)
-                )
+                raise ValueError(f"`combine_min_nan_groups` only works when `min_group_size` is set for column {col}.")
 
             if (
                 self._min_group_name[col] is not None
                 and self._min_group_size[col] is None
             ):
-                raise ValueError(
-                    "`min_group_name` only works when `min_group_size`"
-                    "is set for column %s."
-                    % (col,)
-                )
-    
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-        if not isinstance(self.feature_names, list):
-            raise ValueError("CountEncoder has to be fitted to return feature names.")
-        else:
-            return self.feature_names
+                raise ValueError(f"`min_group_name` only works when `min_group_size` is set for column {col}.")

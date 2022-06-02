@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Category Encoders'
-copyright = '2016, Will McGinnis'
+copyright = '2022, Will McGinnis'
 author = 'Will McGinnis'
 
 # The version info for the project you're documenting, acts as replacement for

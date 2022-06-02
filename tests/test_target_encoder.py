@@ -17,7 +17,6 @@ class TestTargetEncoder(TestCase):
         X_t = th.create_dataset(n_rows=50, extras=True)
         y = pd.DataFrame(np_y)
         y_t = pd.DataFrame(np_y_t)
-
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2)
         enc.fit(X, y)
         th.verify_numeric(enc.transform(X_t))

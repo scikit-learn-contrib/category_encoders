@@ -2,14 +2,13 @@
 
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
 
 __author__ = 'Jan Motl'
 
 
-class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """CatBoost Encoding for categorical features.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
@@ -90,159 +89,26 @@ class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     https://arxiv.org/abs/1706.09516
 
     """
+    prefit_ordinal = False
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_unknown='value', handle_missing='value', random_state=None, sigma=None, a=1):
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.drop_cols = []
-        self.verbose = verbose
-        self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
-        self.cols = cols
-        self._dim = None
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
         self._mean = None
         self.random_state = random_state
         self.sigma = sigma
-        self.feature_names = None
         self.a = a
 
-    def fit(self, X, y, **kwargs):
-        """Fit encoder according to X and y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.use_default_cols:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        categories = self._fit(
-            X, y,
-            cols=self.cols
-        )
-        self.mapping = categories
-
-        X_temp = self.transform(X, y, override_return_df=True)
-        self.feature_names = X_temp.columns.tolist()
-
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print(f"Could not remove column from feature names. Not found in generated cols.\n{e}")
-
-        return self
-
-    def transform(self, X, y=None, override_return_df=False):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples] when transform by leave one out
-            None, when transform without target information (such as transform test set)
-
-
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
-
-        # unite the input into pandas types
-        X, y = util.convert_inputs(X, y)
-
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
-
-        if not list(self.cols):
-            return X
-        X = self._transform(
-            X, y,
-            mapping=self.mapping
-        )
-
-        if self.drop_invariant:
-            X = X.drop(columns=self.drop_cols)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.values
-
-    def _fit(self, X_in, y, cols=None):
-        X = X_in.copy(deep=True)
-
-        if cols is None:
-            cols = X.columns.values
+    def _fit(self, X, y, **kwargs):
+        X = X.copy(deep=True)
 
         self._mean = y.mean()
+        self.mapping = {col: self._fit_column_map(X[col], y) for col in self.cols}
 
-        return {col: self._fit_column_map(X[col], y) for col in cols}
-
-    def _fit_column_map(self, series, y):
-        category = pd.Categorical(series)
-
-        categories = category.categories
-        codes = category.codes.copy()
-
-        codes[codes == -1] = len(categories)
-        categories = np.append(categories, np.nan)
-
-        return_map = pd.Series(dict([(code, category) for code, category in enumerate(categories)]))
-
-        result = y.groupby(codes).agg(['sum', 'count'])
-        return result.rename(return_map)
-
-    def _transform(self, X_in, y, mapping=None):
-        """
-        The model uses a single column of floats to represent the means of the target variables.
-        """
-        X = X_in.copy(deep=True)
+    def _transform(self, X, y=None):
         random_state_ = check_random_state(self.random_state)
 
         # Prepare the data
@@ -250,14 +116,14 @@ class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             # Convert bools to numbers (the target must be summable)
             y = y.astype('double')
 
-        for col, colmap in mapping.items():
+        for col, colmap in self.mapping.items():
             level_notunique = colmap['count'] > 1
 
             unique_train = colmap.index
-            unseen_values = pd.Series([x for x in X_in[col].unique() if x not in unique_train], dtype=unique_train.dtype)
+            unseen_values = pd.Series([x for x in X[col].unique() if x not in unique_train], dtype=unique_train.dtype)
 
-            is_nan = X_in[col].isnull()
-            is_unknown_value = X_in[col].isin(unseen_values.dropna().astype(object))
+            is_nan = X[col].isnull()
+            is_unknown_value = X[col].isin(unseen_values.dropna().astype(object))
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
                 raise ValueError('Columns to be encoded can not contain new values')
@@ -286,7 +152,11 @@ class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                 X.loc[is_unknown_value, col] = np.nan
 
             if self.handle_missing == 'value':
-                X.loc[is_nan & unseen_values.isnull().any(), col] = self._mean
+                # only set value if there are actually missing values.
+                # In case of pd.Categorical columns setting values that are not seen in pd.Categorical gives an error.
+                nan_cond = is_nan & unseen_values.isnull().any()
+                if nan_cond.any():
+                    X.loc[nan_cond, col] = self._mean
             elif self.handle_missing == 'return_nan':
                 X.loc[is_nan, col] = np.nan
 
@@ -295,19 +165,21 @@ class CatBoostEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         return X
 
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
+    def _more_tags(self):
+        tags = super()._more_tags()
+        tags["predict_depends_on_y"] = True
+        return tags
 
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
+    def _fit_column_map(self, series, y):
+        category = pd.Categorical(series)
 
-        """
+        categories = category.categories
+        codes = category.codes.copy()
 
-        if not isinstance(self.feature_names, list):
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names
+        codes[codes == -1] = len(categories)
+        categories = np.append(categories, np.nan)
+
+        return_map = pd.Series(dict(enumerate(categories)))
+
+        result = y.groupby(codes).agg(['sum', 'count'])
+        return result.rename(return_map)

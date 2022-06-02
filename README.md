@@ -137,7 +137,7 @@ References
  1. Kilian Weinberger; Anirban Dasgupta; John Langford; Alex Smola; Josh Attenberg (2009). Feature Hashing for Large Scale Multitask Learning. Proc. ICML.
  2. Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. From https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
  3. Gregory Carey (2003). Coding Categorical Variables. From http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
- 4. Strategies to encode categorical variables with many categories. From https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154.
+ 4. Owen Zhang - Leave One Out Encoding. From https://datascience.stackexchange.com/questions/10839/what-is-difference-between-one-hot-encoding-and-leave-one-out-encoding
  5. Beyond One-Hot: an exploration of categorical variables. From http://www.willmcginnis.com/2015/11/29/beyond-one-hot-an-exploration-of-categorical-variables/
  6. BaseN Encoding and Grid Search in categorical variables. From http://www.willmcginnis.com/2016/12/18/basen-encoding-grid-search-category_encoders/
  7. Daniele Miccii-Barreca (2001). A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. SIGKDD Explor. Newsl. 3, 1. From http://dx.doi.org/10.1145/507533.507538

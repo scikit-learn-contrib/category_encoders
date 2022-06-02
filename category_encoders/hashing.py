@@ -2,7 +2,6 @@
 
 import sys
 import hashlib
-from sklearn.base import BaseEstimator, TransformerMixin
 import category_encoders.utils as util
 import multiprocessing
 import pandas as pd
@@ -12,7 +11,7 @@ import platform
 __author__ = 'willmcginnis', 'LiuShulun'
 
 
-class HashingEncoder(BaseEstimator, TransformerMixin):
+class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     """ A multivariate hashing implementation with configurable dimensionality/precision.
 
@@ -103,12 +102,17 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
     https://booking.ai/dont-be-tricked-by-the-hashing-trick-192a6aae3087
 
     """
+    prefit_ordinal = False
+    encoding_relation = util.EncodingRelation.ONE_TO_M
 
-    def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False, return_df=True, hash_method='md5'):
+    def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False,
+                 return_df=True, hash_method='md5'):
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown="does not apply", handle_missing="does not apply")
 
         if max_process not in range(1, 128):
             if platform.system == 'Windows':
-                max_process = 1
+                self.max_process = 1
             else:
                 self.max_process = int(math.ceil(multiprocessing.cpu_count() / 2))
                 if self.max_process < 1:
@@ -122,62 +126,11 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         self.data_lines = 0
         self.X = None
 
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.drop_cols = []
-        self.verbose = verbose
         self.n_components = n_components
-        self.cols = cols
         self.hash_method = hash_method
-        self._dim = None
-        self.feature_names = None
 
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X and y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        # first check the type
-        X = util.convert_input(X)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = X_temp.columns.tolist()
-
-        # drop all output columns with 0 variance.
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print(f"Could not remove column from feature names. Not found in generated cols.\n{e}")
-
-        return self
+    def _fit(self, X, y=None, **kwargs):
+        pass
 
     @staticmethod
     def require_data(self, data_lock, new_start, done_index, hashing_parts, cols, process_index):
@@ -200,8 +153,6 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 data_part = self.X.iloc[start_index: end_index]
                 # Always get df and check it after merge all data parts
                 data_part = self.hashing_trick(X_in=data_part, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
-                if self.drop_invariant:
-                    data_part = data_part.drop(columns=self.drop_cols)
                 part_index = int(math.ceil(end_index / self.max_sample))
                 hashing_parts.put({part_index: data_part})
                 if self.verbose == 5:
@@ -214,23 +165,13 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         else:
             data_lock.release()
 
-    def transform(self, X, override_return_df=False):
+    def _transform(self, X):
         """
-        Call _transform() if you want to use single CPU with all samples
+        Call _transform_single_cpu() if you want to use single CPU with all samples
         """
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
+        self.X = X
 
-        # first check the type
-        self.X = util.convert_input(X)
         self.data_lines = len(self.X)
-
-        # then make sure that it is the right size
-        if self.X.shape[1] != self._dim:
-            raise ValueError(f'Unexpected input dimension {self.X.shape[1]}, expected {self._dim}')
-
-        if not list(self.cols):
-            return self.X
 
         data_lock = multiprocessing.Manager().Lock()
         new_start = multiprocessing.Manager().Value('d', True)
@@ -268,13 +209,9 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
                 sort_data.append(list_data[part_index])
             if sort_data:
                 data = pd.concat(sort_data)
-        # Check if is_return_df
-        if self.return_df or override_return_df:
-            return data
-        else:
-            return data.values
+        return data
 
-    def _transform(self, X, override_return_df=False):
+    def _transform_single_cpu(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
 
         Parameters
@@ -306,7 +243,7 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         X = self.hashing_trick(X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
 
         if self.drop_invariant:
-            X = X.drop(columns=self.drop_cols)
+            X = X.drop(columns=self.invariant_cols)
 
         if self.return_df or override_return_df:
             return X
@@ -384,20 +321,3 @@ class HashingEncoder(BaseEstimator, TransformerMixin):
         X = pd.concat([X_cat, X_num], axis=1)
 
         return X
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names

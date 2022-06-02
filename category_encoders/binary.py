@@ -1,14 +1,12 @@
 """Binary encoding"""
-
-import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
-
-import category_encoders as ce
+from functools import partialmethod
+from category_encoders import utils
+from category_encoders.basen import BaseNEncoder
 
 __author__ = 'willmcginnis'
 
 
-class BinaryEncoder(BaseEstimator, TransformerMixin):
+class BinaryEncoder(BaseNEncoder):
     """Binary encoding for categorical variables, similar to onehot, but stores categories as binary bitstrings.
 
     Parameters
@@ -68,88 +66,5 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     None
 
     """
-
-    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
-                 handle_unknown='value', handle_missing='value'):
-        self.verbose = verbose
-        self.cols = cols
-        self.mapping = mapping
-        self.drop_invariant = drop_invariant
-        self.return_df = return_df
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
-        self.base_n_encoder = ce.BaseNEncoder(base=2, verbose=self.verbose, cols=self.cols, mapping=self.mapping,
-                                              drop_invariant=self.drop_invariant, return_df=self.return_df,
-                                              handle_unknown=self.handle_unknown, handle_missing=self.handle_missing)
-
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X and y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        self.base_n_encoder.fit(X, y, **kwargs)
-
-        return self
-
-    def transform(self, X, override_return_df=False):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
-
-        return self.base_n_encoder.transform(X)
-
-    def inverse_transform(self, X_in):
-        """
-        Perform the inverse transformation to encoded data.
-
-        Parameters
-        ----------
-        X_in : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        p: array, the same size of X_in
-
-        """
-
-        return self.base_n_encoder.inverse_transform(X_in)
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        return self.base_n_encoder.get_feature_names()
+    encoding_relation = utils.EncodingRelation.ONE_TO_M
+    __init__ = partialmethod(BaseNEncoder.__init__, base=2)

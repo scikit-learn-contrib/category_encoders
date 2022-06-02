@@ -3,7 +3,6 @@ import warnings
 import re
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
 from sklearn.utils.random import check_random_state
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
@@ -13,18 +12,20 @@ from statsmodels.genmod.bayes_mixed_glm import BinomialBayesMixedGLM as bgmm
 __author__ = 'Jan Motl'
 
 
-class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """Generalized linear mixed model.
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
 
     This is a supervised encoder similar to TargetEncoder or MEstimateEncoder, but there are some advantages:
-    1) Solid statistical theory behind the technique. Mixed effects models are a mature branch of statistics.
-    2) No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation process.
-    In short, the less observations a category has and/or the more the outcome varies for a category
-    then the higher the regularization towards "the prior" or "grand mean".
-    3) The technique is applicable for both continuous and binomial targets. If the target is continuous,
-    the encoder returns regularized difference of the observation's category from the global mean.
+
+        1. Solid statistical theory behind the technique. Mixed effects models are a mature branch of statistics.
+        2. No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation
+        process. In short, the less observations a category has and/or the more the outcome varies for a category
+        then the higher the regularization towards "the prior" or "grand mean".
+        3. The technique is applicable for both continuous and binomial targets. If the target is continuous,
+        the encoder returns regularized difference of the observation's category from the global mean.
+
     If the target is binomial, the encoder returns regularized log odds per category.
 
     In comparison to JamesSteinEstimator, this encoder utilizes generalized linear mixed models from statsmodels library.
@@ -93,60 +94,22 @@ class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf
 
     """
+    prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_unknown='value', handle_missing='value', random_state=None, randomized=False, sigma=0.05, binomial_target=None):
-        self.verbose = verbose
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.drop_cols = []
-        self.cols = cols
+    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_unknown='value',
+                 handle_missing='value', random_state=None, randomized=False, sigma=0.05, binomial_target=None):
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.ordinal_encoder = None
-        self._dim = None
         self.mapping = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
         self.random_state = random_state
         self.randomized = randomized
         self.sigma = sigma
         self.binomial_target = binomial_target
-        self.feature_names = None
 
-    # noinspection PyUnusedLocal
-    def fit(self, X, y, **kwargs):
-        """Fit encoder according to X and binary y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Binary target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        # Unite parameters into pandas types
-        X, y = util.convert_inputs(X, y)
+    def _fit(self, X, y, **kwargs):
         y = y.astype(float)
-
-        self._dim = X.shape[1]
-
-        # If columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
 
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
@@ -160,59 +123,7 @@ class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         # Training
         self.mapping = self._train(X_ordinal, y)
 
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = X_temp.columns.tolist()
-
-        # Store column names with approximately constant variance on the training data
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print(f"Could not remove column from feature names. Not found in generated cols.\n{e}")
-        return self
-
-    def transform(self, X, y=None, override_return_df=False):
-        """Perform the transformation to new categorical data.
-
-        When the data are used for model training, it is important to also pass the target in order to apply leave one out.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples] when transform by leave one out
-            None, when transform without target information (such as transform test set)
-
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
-
-        # Unite the input into pandas types
-        X, y = util.convert_inputs(X, y, deep=True)
-
-        # Then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
-
-        if not list(self.cols):
-            return X
-
+    def _transform(self, X, y=None):
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -221,16 +132,12 @@ class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         # Loop over the columns and replace the nominal values with the numbers
         X = self._score(X, y)
+        return X
 
-        # Postprocessing
-        # Note: We should not even convert these columns.
-        if self.drop_invariant:
-            X = X.drop(columns=self.drop_cols)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.values
+    def _more_tags(self):
+        tags = super()._more_tags()
+        tags["predict_depends_on_y"] = True
+        return tags
 
     def _train(self, X, y):
         # Initialize the output
@@ -307,22 +214,6 @@ class GLMMEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                 X[col] = (X[col] * random_state_generator.normal(1., self.sigma, X[col].shape[0]))
 
         return X
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-        if not isinstance(self.feature_names, list):
-            raise ValueError("Estimator has to be fitted to return feature names.")
-        else:
-            return self.feature_names
 
     def _rename_and_merge(self, X, y, col):
         """
