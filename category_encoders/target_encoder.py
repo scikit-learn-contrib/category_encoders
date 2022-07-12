@@ -1,19 +1,22 @@
 """Target Encoder"""
 import numpy as np
 from category_encoders.ordinal import OrdinalEncoder
+from category_encoders.one_hot import OneHotEncoder
 import category_encoders.utils as util
+import pandas as pd
 import warnings
 
-__author__ = 'chappers'
+__author__ = 'chappers, nercisla'
 
 
 class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """Target encoding for categorical features.
 
-    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+    Supported targets: binomial, multi-class and continuous. For polynomial target support, see PolynomialWrapper.
 
     For the case of categorical target: features are replaced with a blend of posterior probability of the target
-    given particular categorical value and the prior probability of the target over all the training data.
+    given particular categorical value and the prior probability of the target over all the training data.  Multiclass
+    targets are allowed.
 
     For the case of continuous target: features are replaced with a blend of the expected value of the target
     given particular categorical value and the expected value of the target over all the training data.
@@ -83,7 +86,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
-                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
+                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0, multiclass_target=False):
         super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
                          handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.ordinal_encoder = None
@@ -99,8 +102,24 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                           category=FutureWarning)
         self.mapping = None
         self._mean = None
+        self.y_colnames = None
+        self.X_colnames = None
+        self.multiclass_target = multiclass_target
 
     def _fit(self, X, y, **kwargs):
+
+        if len(y.unique()) > 2 and self.multiclass_target == True:
+            warnings.warn("The target is multiclass and will be one hot encoded.", category=UserWarning)
+            ohe_encoder = OneHotEncoder(
+                verbose=self.verbose,
+                handle_unknown='error',
+                handle_missing='error'
+            )
+            ohe_encoder = ohe_encoder.fit(y.astype(str))
+            y = ohe_encoder.transform(y.astype(str))
+            self.y_colnames = y.columns
+            self.X_colnames = [col + "_" + ycol for ycol in y.columns for col in self.cols]
+        
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
@@ -109,51 +128,65 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
+
+        if self.y_colnames is None:
+            self.y_colnames = ['y']
+            self.X_colnames = self.cols
         self.mapping = self.fit_target_encoding(X_ordinal, y)
 
     def fit_target_encoding(self, X, y):
         mapping = {}
 
         for switch in self.ordinal_encoder.category_mapping:
+
             col = switch.get('col')
             values = switch.get('mapping')
 
-            prior = self._mean = y.mean()
+            y = pd.DataFrame({'target': y}) if len(y.shape) == 1 else y
+            for i in range(y.shape[1]):
+                yi = y.iloc[:, i]
+                ycol = None if y.shape[1] == 1 else y.columns[i]
 
-            stats = y.groupby(X[col]).agg(['count', 'mean'])
+                prior = self._mean = yi.mean()
 
-            smoove = 1 / (1 + np.exp(-(stats['count'] - self.min_samples_leaf) / self.smoothing))
-            smoothing = prior * (1 - smoove) + stats['mean'] * smoove
-            smoothing[stats['count'] == 1] = prior
+                stats = yi.groupby(X[col]).agg(['count', 'mean'])
 
-            if self.handle_unknown == 'return_nan':
-                smoothing.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                smoothing.loc[-1] = prior
+                smoove = 1 / (1 + np.exp(-(stats['count'] - self.min_samples_leaf) / self.smoothing))
+                smoothing = prior * (1 - smoove) + stats['mean'] * smoove
+                smoothing[stats['count'] == 1] = prior
 
-            if self.handle_missing == 'return_nan':
-                smoothing.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                smoothing.loc[-2] = prior
+                if self.handle_unknown == 'return_nan':
+                    smoothing.loc[-1] = np.nan
+                elif self.handle_unknown == 'value':
+                    smoothing.loc[-1] = prior
 
-            mapping[col] = smoothing
+                if self.handle_missing == 'return_nan':
+                    smoothing.loc[values.loc[np.nan]] = np.nan
+                elif self.handle_missing == 'value':
+                    smoothing.loc[-2] = prior
+
+                colname = col+"_"+ycol if ycol is not None else col
+                mapping[colname] = smoothing
 
         return mapping
 
     def _transform(self, X, y=None):
         X = self.ordinal_encoder.transform(X)
+        
+        X_rep = pd.concat([X[self.cols]]*len(self.y_colnames),axis=1)
+        X_rep.columns = self.X_colnames
 
         if self.handle_unknown == 'error':
             if X[self.cols].isin([-1]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
-        X = self.target_encode(X)
+        X = self.target_encode(X_rep)
         return X
 
     def target_encode(self, X_in):
         X = X_in.copy(deep=True)
 
-        for col in self.cols:
+        for col in self.X_colnames:
             X[col] = X[col].map(self.mapping[col])
 
         return X
