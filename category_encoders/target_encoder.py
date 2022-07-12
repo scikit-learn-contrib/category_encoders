@@ -119,6 +119,8 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             y = ohe_encoder.transform(y.astype(str))
             self.y_colnames = y.columns
             self.X_colnames = [col + "_" + ycol for ycol in y.columns for col in self.cols]
+        else:
+            warnings.warn("The target is multiclass but multiclass_target == False.", category=UserWarning)
         
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
@@ -129,7 +131,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
 
-        if self.y_colnames is None:
+        if self.multiclass_target == False:
             self.y_colnames = ['y']
             self.X_colnames = self.cols
         self.mapping = self.fit_target_encoding(X_ordinal, y)
@@ -175,12 +177,13 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         
         X_rep = pd.concat([X[self.cols]]*len(self.y_colnames),axis=1)
         X_rep.columns = self.X_colnames
+        X = pd.concat([X_rep, X[X.columns.difference(self.cols, sort=False)]], axis=1)
 
         if self.handle_unknown == 'error':
             if X[self.cols].isin([-1]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
-        X = self.target_encode(X_rep)
+        X = self.target_encode(X)
         return X
 
     def target_encode(self, X_in):
