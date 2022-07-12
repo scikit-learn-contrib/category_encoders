@@ -112,3 +112,40 @@ class TestTargetEncoder(TestCase):
         obtained = enc.transform(test, test_target)
 
         self.assertEqual(.6, list(obtained['color'])[0])
+
+    def test_target_encoder_multiclass(self):
+        data = pd.DataFrame({'x': ['a', 'a', 'a', 'b', 'b', 'c', 'c', 'c', 'c'], 'y': [1, 2, 3, 1, 2, 3, 1, 2, 3]})
+        result = encoders.TargetEncoder(cols=['x'], multiclass_target=True).fit_transform(data[['x']], data['y'])
+        expected = pd.DataFrame({
+            'x_y_1': [0.333, 0.333, 0.333, 0.455, 0.455, 0.254, 0.254, 0.254, 0.254],
+            'x_y_2': [0.333, 0.333, 0.333, 0.455, 0.455, 0.254, 0.254, 0.254, 0.254],
+            'x_y_3': [0.333, 0.333, 0.333, 0.09, 0.09, 0.492, 0.492, 0.492, 0.492]
+        })
+        self.assertTrue(np.allclose(result, expected, rtol=1e-2))
+
+    def test_target_encoder_two_column_multiclass(self):
+        data = pd.DataFrame({
+            'x1': ['a', 'a', 'a', 'b', 'b', 'c', 'c', 'c', 'c'],
+            'x2': ['a', 'a', 'b', 'b', 'b', 'c', 'c', 'c', 'd'],
+            'y': [1, 1, 2, 2, 3, 3, 1, 2, 3]
+        })
+        result = encoders.TargetEncoder(cols=['x1','x2'], multiclass_target=True).fit_transform(data[['x1','x2']], data['y'])
+        expected = pd.DataFrame({
+            'x1_y_1': [0.627, 0.627, 0.627, 0.09, 0.09, 0.254, 0.254, 0.254, 0.254],
+            'x2_y_1': [0.821, 0.821, 0.04, 0.04, 0.04, 0.333, 0.333, 0.333, 0.333],
+            'x1_y_2': [0.333, 0.333, 0.333, 0.455, 0.455, 0.254, 0.254, 0.254, 0.254],
+            'x2_y_2': [0.09, 0.09, 0.627, 0.627, 0.627, 0.333, 0.333, 0.333, 0.333],
+            'x1_y_3': [0.04, 0.04, 0.04, 0.455, 0.455, 0.492, 0.492, 0.492, 0.492],
+            'x2_y_3': [0.09, 0.09, 0.333, 0.333, 0.333, 0.333, 0.333, 0.333, 0.333]
+        })
+        self.assertTrue(np.allclose(result, expected, rtol=1e-2))
+
+    def test_target_encoder_noncontiguous_index_multiclass(self):
+        data = pd.DataFrame({'x': ['a', 'a', 'a', np.nan, 'b', 'b', 'c', 'c', 'c', 'c'], 'y': [1, 2, 3, 1, 1, 2, 3, 1, 2, 3]}).dropna()
+        result = encoders.TargetEncoder(cols=['x'],multiclass_target=True).fit_transform(data[['x']], data['y'])
+        expected = pd.DataFrame({
+            'x_y_1': [0.333, 0.333, 0.333, 0.455, 0.455, 0.254, 0.254, 0.254, 0.254],
+            'x_y_2': [0.333, 0.333, 0.333, 0.455, 0.455, 0.254, 0.254, 0.254, 0.254],
+            'x_y_3': [0.333, 0.333, 0.333, 0.09, 0.09, 0.492, 0.492, 0.492, 0.492]
+        })
+        self.assertTrue(np.allclose(result, expected, rtol=1e-2))
