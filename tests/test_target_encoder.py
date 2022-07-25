@@ -112,3 +112,33 @@ class TestTargetEncoder(TestCase):
         obtained = enc.transform(test, test_target)
 
         self.assertEqual(.6, list(obtained['color'])[0])
+
+    def test_hierarchical_smoothing(self):
+        heirarchical_cat_example = pd.DataFrame(
+            {
+                # 'Compass': ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'],
+                'Compass': ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W',
+                            'W', 'W'],
+                'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
+            }, columns=['Compass', 'target'])
+        heirarchical_map = {
+            'Compass': {
+                'N': 'N',
+                'NE': 'N',
+                'SE': 'S',
+                'S': 'S',
+                'W': 'W'
+            },
+            'Animal': {
+                'Cat': 'Feline',
+                'Tiger': 'Feline',
+                'Cougar': 'Feline',
+                'Dog': 'Canine',
+                'Wolf': 'Canine'
+            },
+        }
+
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, heirarchy=heirarchical_map)
+        enc.fit(heirarchical_cat_example['Compass'], heirarchical_cat_example['target'])
+        print(enc.mapping)
+        print(enc.transform(heirarchical_cat_example['Compass']))

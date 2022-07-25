@@ -83,7 +83,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
-                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
+                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0, heirarchy=None):
         super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
                          handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.ordinal_encoder = None
@@ -99,8 +99,19 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                           category=FutureWarning)
         self.mapping = None
         self._mean = None
+        self.heirarchy = heirarchy
 
     def _fit(self, X, y, **kwargs):
+        if self.heirarchy:
+            # mapping_out = []
+            # for switch in self.heirarchy:
+            #     print(switch)
+            #     mapping_out.append({'col': switch, 'mapping': self.heirarchy[switch], 'data_type': 'str'}, )
+            #
+            #     new_column = 'HEIR_'+switch
+            #     X[new_column] = X[switch].map(mapping_out)
+            print("hello")
+
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
@@ -110,6 +121,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
         self.mapping = self.fit_target_encoding(X_ordinal, y)
+        print("EEK")
 
     def fit_target_encoding(self, X, y):
         mapping = {}
