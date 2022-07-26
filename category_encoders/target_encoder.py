@@ -103,52 +103,57 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     def _fit(self, X, y, **kwargs):
         if self.heirarchy:
-            # mapping_out = []
-            # for switch in self.heirarchy:
-            #     print(switch)
-            #     mapping_out.append({'col': switch, 'mapping': self.heirarchy[switch], 'data_type': 'str'}, )
-            #
-            #     new_column = 'HEIR_'+switch
-            #     X[new_column] = X[switch].map(mapping_out)
-            print("hello")
+            self.cols_heir = []
+            for switch in self.heirarchy:
+                if switch in X.columns:
+                    new_column = 'HEIR_'+switch
+                    X[new_column] = X[switch].map(self.heirarchy[switch])
+                    self.cols_heir.append(new_column)
 
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
-            cols=self.cols,
+            cols=self.cols + self.cols_heir,
             handle_unknown='value',
             handle_missing='value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
         self.mapping = self.fit_target_encoding(X_ordinal, y)
-        print("EEK")
 
     def fit_target_encoding(self, X, y):
         mapping = {}
 
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
-            values = switch.get('mapping')
+            if 'HEIR_' not in col:
+                values = switch.get('mapping')
 
-            prior = self._mean = y.mean()
+                scalar = self._mean = y.mean()
+                stats = y.groupby(X[col]).agg(['count', 'mean'])
+                smoove = self._weighting(stats['count'])
 
-            stats = y.groupby(X[col]).agg(['count', 'mean'])
+                if self.heirarchy:
+                # TODO: also check if column is in heirarchical mapping??
+                    col_heir = 'HEIR_'+col
+                    stats_heir = y.groupby(X[col_heir]).agg(['count', 'mean'])
+                    smoove_heir = self._weighting(stats_heir['count'])
+                    # TODO: check scalar_heir
+                    scalar = scalar * (1 - smoove_heir) + stats_heir['mean'] * smoove_heir
 
-            smoove = 1 / (1 + np.exp(-(stats['count'] - self.min_samples_leaf) / self.smoothing))
-            smoothing = prior * (1 - smoove) + stats['mean'] * smoove
-            smoothing[stats['count'] == 1] = prior
+                smoothing = scalar * (1 - smoove) + stats['mean'] * smoove
+                smoothing[stats['count'] == 1] = scalar
 
-            if self.handle_unknown == 'return_nan':
-                smoothing.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                smoothing.loc[-1] = prior
+                if self.handle_unknown == 'return_nan':
+                    smoothing.loc[-1] = np.nan
+                elif self.handle_unknown == 'value':
+                    smoothing.loc[-1] = prior
 
-            if self.handle_missing == 'return_nan':
-                smoothing.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                smoothing.loc[-2] = prior
+                if self.handle_missing == 'return_nan':
+                    smoothing.loc[values.loc[np.nan]] = np.nan
+                elif self.handle_missing == 'value':
+                    smoothing.loc[-2] = prior
 
-            mapping[col] = smoothing
+                mapping[col] = smoothing
 
         return mapping
 
@@ -169,3 +174,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             X[col] = X[col].map(self.mapping[col])
 
         return X
+
+    def _weighting(self, n):
+        # monotonically increasing function on n bounded between 0 and 1
+        return 1 / (1 + np.exp(-(n - self.min_samples_leaf) / self.smoothing))
