@@ -100,14 +100,15 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self.mapping = None
         self._mean = None
         self.heirarchy = heirarchy
+        self.cols_heir = []
 
     def _fit(self, X, y, **kwargs):
+        X_heir = X.copy()
         if self.heirarchy:
-            self.cols_heir = []
             for switch in self.heirarchy:
-                if switch in X.columns:
+                if switch in X_heir.columns:
                     new_column = 'HEIR_'+switch
-                    X[new_column] = X[switch].map(self.heirarchy[switch])
+                    X_heir[new_column] = X_heir[switch].map(self.heirarchy[switch])
                     self.cols_heir.append(new_column)
 
         self.ordinal_encoder = OrdinalEncoder(
@@ -116,29 +117,35 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             handle_unknown='value',
             handle_missing='value'
         )
-        self.ordinal_encoder = self.ordinal_encoder.fit(X)
-        X_ordinal = self.ordinal_encoder.transform(X)
+        self.ordinal_encoder = self.ordinal_encoder.fit(X_heir)
+        X_ordinal = self.ordinal_encoder.transform(X_heir)
         self.mapping = self.fit_target_encoding(X_ordinal, y)
 
     def fit_target_encoding(self, X, y):
         mapping = {}
+        prior = self._mean = y.mean()
 
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
             if 'HEIR_' not in col:
                 values = switch.get('mapping')
 
-                scalar = self._mean = y.mean()
                 stats = y.groupby(X[col]).agg(['count', 'mean'])
                 smoove = self._weighting(stats['count'])
 
-                if self.heirarchy:
-                # TODO: also check if column is in heirarchical mapping??
-                    col_heir = 'HEIR_'+col
-                    stats_heir = y.groupby(X[col_heir]).agg(['count', 'mean'])
-                    smoove_heir = self._weighting(stats_heir['count'])
-                    # TODO: check scalar_heir
-                    scalar = scalar * (1 - smoove_heir) + stats_heir['mean'] * smoove_heir
+                scalar = prior
+                # if self.heirarchy:
+                # # TODO: also check if column is in heirarchical mapping??
+                #     col_heir = 'HEIR_'+col
+                #     stats_heir = y.groupby(X[col_heir]).agg(['count', 'mean'])
+                #     smoove_heir = self._weighting(stats_heir['count'])
+                #     # TODO: check scalar_heir
+                #     scalar_heir = scalar * (1 - smoove_heir) + stats_heir['mean'] * smoove_heir
+                #     # scalar_heir_long = X[[col, col_heir]].drop_duplicates().set_index([pd.Index([1, 2, 3, 4, 5])])
+                #     joe = range(1,6)
+                #     scalar_heir_long = X[[col, col_heir]].drop_duplicates()
+                #     scalar_heir_long.index = np.arange(1, 6)
+                #     scalar = scalar_heir_long[col_heir].map(scalar_heir.to_dict())
 
                 smoothing = scalar * (1 - smoove) + stats['mean'] * smoove
                 smoothing[stats['count'] == 1] = scalar

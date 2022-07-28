@@ -139,6 +139,7 @@ class TestTargetEncoder(TestCase):
         }
 
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, heirarchy=heirarchical_map)
+        # enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2)
         enc.fit(heirarchical_cat_example['Compass'], heirarchical_cat_example['target'])
         print(enc.mapping)
         print(enc.transform(heirarchical_cat_example['Compass']))
