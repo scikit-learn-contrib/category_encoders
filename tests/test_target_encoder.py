@@ -116,7 +116,6 @@ class TestTargetEncoder(TestCase):
     def test_hierarchical_smoothing(self):
         heirarchical_cat_example = pd.DataFrame(
             {
-                # 'Compass': ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'],
                 'Compass': ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W',
                             'W', 'W'],
                 'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
@@ -138,8 +137,11 @@ class TestTargetEncoder(TestCase):
             },
         }
 
-        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, heirarchy=heirarchical_map)
-        # enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2)
-        enc.fit(heirarchical_cat_example['Compass'], heirarchical_cat_example['target'])
-        print(enc.mapping)
-        print(enc.transform(heirarchical_cat_example['Compass']))
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, heirarchy=heirarchical_map, cols=['Compass'])
+        result = enc.fit_transform(heirarchical_cat_example, heirarchical_cat_example['target'])
+        values = result['Compass'].values
+        self.assertAlmostEqual(0.6226, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.9038, values[2], delta=1e-4)
+        self.assertAlmostEqual(0.1766, values[5], delta=1e-4)
+        self.assertAlmostEqual(0.4605, values[7], delta=1e-4)
+        self.assertAlmostEqual(0.4033, values[11], delta=1e-4)
