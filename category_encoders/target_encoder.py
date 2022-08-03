@@ -103,7 +103,9 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self.cols_heir = []
 
     def _fit(self, X, y, **kwargs):
+        # Is this needed?
         X = X.copy()
+
         if self.heirarchy:
             for switch in self.heirarchy:
                 if switch in X.columns:
@@ -111,9 +113,11 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                     X[new_column] = X[switch].map(self.heirarchy[switch])
                     self.cols_heir.append(new_column)
 
+        # self.cols not declared before here? X Has all required columns ------
+        self.cols = X.columns.tolist()
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
-            cols=self.cols + self.cols_heir,
+            cols=self.cols,
             handle_unknown='value',
             handle_missing='value'
         )
@@ -140,8 +144,10 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                     scalar_heir_long.index = np.arange(1, scalar_heir_long.shape[0]+1)
                     scalar = scalar_heir_long[col_heir].map(scalar_heir.to_dict())
                     X.drop([col_heir], axis=1, inplace=True)
+                    # Added line to reduce dimension of ordinal encoder - Whats the third dimension?
                     self.ordinal_encoder._dim -= 1
                     self.ordinal_encoder.cols.remove(col_heir)
+
 
                 stats = y.groupby(X[col]).agg(['count', 'mean'])
                 smoove = self._weighting(stats['count'])
@@ -166,6 +172,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         return mapping
 
     def _transform(self, X, y=None):
+        # Now X is the correct dimensions it works with pre fitted ordinal encoder
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -178,6 +185,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     def target_encode(self, X_in):
         X = X_in.copy(deep=True)
 
+        # Was not mapping extra columns as self.cols did not include new column
         for col in self.cols:
             X[col] = X[col].map(self.mapping[col])
 
