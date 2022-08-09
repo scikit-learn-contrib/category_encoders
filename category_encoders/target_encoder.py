@@ -83,7 +83,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
-                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0, heirarchy=None):
+                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0, hierarchy=None):
         super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
                          handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.ordinal_encoder = None
@@ -99,26 +99,27 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                           category=FutureWarning)
         self.mapping = None
         self._mean = None
-        self.heirarchy = heirarchy
-        self.cols_heir = []
+        self.hierarchy = hierarchy
+        self.cols_hier = []
 
     def _fit(self, X, y, **kwargs):
-        X = X.copy()
-        if self.heirarchy:
-            for switch in self.heirarchy:
-                if switch in X.columns:
-                    new_column = 'HEIR_'+switch
-                    X[new_column] = X[switch].map(self.heirarchy[switch])
-                    self.cols_heir.append(new_column)
+        X_local = X.copy()
+        if self.hierarchy:
+            for switch in self.hierarchy:
+                if switch in self.cols:
+                    new_column = 'HIER_'+str(switch)
+                    X_local[new_column] = X_local[str(switch)].map(self.hierarchy[str(switch)])
+                    self.cols_hier.append(new_column)
+             # TODO: call OrdinalEncoder for HIER cols here instead of all at once?
 
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
-            cols=self.cols + self.cols_heir,
+            cols=self.cols + self.cols_hier,
             handle_unknown='value',
             handle_missing='value'
         )
-        self.ordinal_encoder = self.ordinal_encoder.fit(X)
-        X_ordinal = self.ordinal_encoder.transform(X)
+        self.ordinal_encoder = self.ordinal_encoder.fit(X_local)
+        X_ordinal = self.ordinal_encoder.transform(X_local)
         self.mapping = self.fit_target_encoding(X_ordinal, y)
 
     def fit_target_encoding(self, X, y):
@@ -127,21 +128,21 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
-            if 'HEIR_' not in col:
+            if 'HIER_' not in str(col):
                 values = switch.get('mapping')
 
                 scalar = prior
-                if self.heirarchy and col in self.heirarchy:
-                    col_heir = 'HEIR_'+col
-                    stats_heir = y.groupby(X[col_heir]).agg(['count', 'mean'])
-                    smoove_heir = self._weighting(stats_heir['count'])
-                    scalar_heir = scalar * (1 - smoove_heir) + stats_heir['mean'] * smoove_heir
-                    scalar_heir_long = X[[col, col_heir]].drop_duplicates()
-                    scalar_heir_long.index = np.arange(1, scalar_heir_long.shape[0]+1)
-                    scalar = scalar_heir_long[col_heir].map(scalar_heir.to_dict())
-                    X.drop([col_heir], axis=1, inplace=True)
+                if self.hierarchy and col in self.hierarchy:
+                    col_hier = 'HIER_'+str(col)
+                    stats_hier = y.groupby(X[col_hier]).agg(['count', 'mean'])
+                    smoove_hier = self._weighting(stats_hier['count'])
+                    scalar_hier = scalar * (1 - smoove_hier) + stats_hier['mean'] * smoove_hier
+                    scalar_hier_long = X[[col, col_hier]].drop_duplicates()
+                    scalar_hier_long.index = np.arange(1, scalar_hier_long.shape[0]+1)
+                    scalar = scalar_hier_long[col_hier].map(scalar_hier.to_dict())
+                    X = X.drop([col_hier], axis=1)
                     self.ordinal_encoder._dim -= 1
-                    self.ordinal_encoder.cols.remove(col_heir)
+                    self.ordinal_encoder.cols.remove(col_hier)
 
                 stats = y.groupby(X[col]).agg(['count', 'mean'])
                 smoove = self._weighting(stats['count'])
@@ -161,7 +162,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
                 mapping[col] = smoothing
 
-        self.ordinal_encoder.mapping = [map for map in self.ordinal_encoder.mapping if not "HEIR_" in map['col']]
+        self.ordinal_encoder.mapping = [map for map in self.ordinal_encoder.mapping if not 'HIER_' in str(map['col'])]
 
         return mapping
 
