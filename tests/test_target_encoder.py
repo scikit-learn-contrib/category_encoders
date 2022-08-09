@@ -8,6 +8,33 @@ import category_encoders as encoders
 
 class TestTargetEncoder(TestCase):
 
+    def setUp(self):
+        self.hierarchical_cat_example = pd.DataFrame(
+            {
+                'Compass': ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W', 'W', 'W'],
+                'Speed': ['slow', 'slow', 'slow', 'slow', 'medium', 'medium', 'medium', 'fast', 'fast', 'fast', 'fast',
+                          'fast', 'fast', 'fast', 'fast', 'fast'],
+                'Animal': ['Cat', 'Cat', 'Cat', 'Cat', 'Cat', 'Dog', 'Dog', 'Dog', 'Dog',
+                           'Dog', 'Dog', 'Tiger', 'Tiger', 'Wolf', 'Wolf', 'Cougar'],
+                'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
+            }, columns=['Compass', 'Speed', 'Animal', 'target'])
+        self.hierarchical_map = {
+            'Compass': {
+                'N': 'N',
+                'NE': 'N',
+                'SE': 'S',
+                'S': 'S',
+                'W': 'W'
+            },
+            'Animal': {
+                'Cat': 'Feline',
+                'Tiger': 'Feline',
+                'Cougar': 'Feline',
+                'Dog': 'Canine',
+                'Wolf': 'Canine'
+            },
+        }
+
     def test_target_encoder(self):
         np_X = th.create_array(n_rows=100)
         np_X_t = th.create_array(n_rows=50, extras=True)
@@ -114,27 +141,9 @@ class TestTargetEncoder(TestCase):
         self.assertEqual(.6, list(obtained['color'])[0])
 
     def test_hierarchical_smoothing(self):
-        hierarchical_cat_example = pd.DataFrame(
-            {
-                'Compass': ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W',
-                            'W', 'W'],
-                'Speed': ['s', 's', 's', 's', 'm', 'm', 'm', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f'],
-                'Animal': ['Cat', 'Cat', 'Cat', 'Cat', 'Cat', 'Dog', 'Dog', 'Dog', 'Dog',
-                           'Dog', 'Dog', 'Tiger', 'Tiger', 'Wolf', 'Wolf', 'Cougar'],
-                'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
-            }, columns=['Compass', 'target'])
-        hierarchical_map = {
-            'Compass': {
-                'N': 'N',
-                'NE': 'N',
-                'SE': 'S',
-                'S': 'S',
-                'W': 'W'
-            }
-        }
 
-        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map, cols=['Compass'])
-        result = enc.fit_transform(hierarchical_cat_example, hierarchical_cat_example['target'])
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map, cols=['Compass'])
+        result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
         values = result['Compass'].values
         self.assertAlmostEqual(0.6226, values[0], delta=1e-4)
         self.assertAlmostEqual(0.9038, values[2], delta=1e-4)
@@ -143,36 +152,9 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.4033, values[11], delta=1e-4)
 
     def test_hierarchical_smoothing_multi(self):
-        hierarchical_cat_example = pd.DataFrame(
-            {
-                'Compass': ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W',
-                            'W', 'W'],
-                'Speed': ['s', 's', 's', 's', 'm', 'm', 'm', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f'],
-                'Animal': ['Cat', 'Cat', 'Cat', 'Cat', 'Cat', 'Dog', 'Dog', 'Dog', 'Dog',
-                           'Dog', 'Dog', 'Tiger', 'Tiger', 'Wolf', 'Wolf', 'Cougar'],
-                'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
-            }, columns=['Compass', 'Speed', 'Animal',  'target'])
 
-
-        hierarchical_map = {
-            'Compass': {
-                'N': 'N',
-                'NE': 'N',
-                'SE': 'S',
-                'S': 'S',
-                'W': 'W'
-            },
-            'Animal': {
-                'Cat': 'Feline',
-                'Tiger': 'Feline',
-                'Cougar': 'Feline',
-                'Dog': 'Canine',
-                'Wolf': 'Canine'
-            },
-        }
-
-        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map, cols=['Compass', 'Speed', 'Animal'])
-        result = enc.fit_transform(hierarchical_cat_example, hierarchical_cat_example['target'])
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map, cols=['Compass', 'Speed', 'Animal'])
+        result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
 
         values = result['Compass'].values
         self.assertAlmostEqual(0.6226, values[0], delta=1e-4)
@@ -194,26 +176,9 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.7381, values[15], delta=1e-4)
 
     def test_hierarchical_part_named_cols(self):
-        hierarchical_cat_example = pd.DataFrame(
-            {
-                'Compass': ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W',
-                            'W', 'W'],
-                'Speed': ['s', 's', 's', 's', 'm', 'm', 'm', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f'],
-                'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
-            }, columns=['Compass', 'Speed',  'target'])
 
-        hierarchical_map = {
-            'Compass': {
-                'N': 'N',
-                'NE': 'N',
-                'SE': 'S',
-                'S': 'S',
-                'W': 'W'
-            },
-        }
-
-        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map, cols=['Compass'])
-        result = enc.fit_transform(hierarchical_cat_example, hierarchical_cat_example['target'])
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map, cols=['Compass'])
+        result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
 
         values = result['Compass'].values
         self.assertAlmostEqual(0.6226, values[0], delta=1e-4)
@@ -233,7 +198,7 @@ class TestTargetEncoder(TestCase):
         }, columns=pd.Index(['hello', 'world']))
         cols = df.select_dtypes(include='object').columns
 
-        hierarchical_map = {
+        self.hierarchical_map = {
             'hello': {
                 'a': 'A',
                 'b': 'A',
@@ -242,7 +207,7 @@ class TestTargetEncoder(TestCase):
             },
         }
 
-        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map)
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map)
         result = enc.fit_transform(df, df['world'])
 
         values = result['hello'].values
