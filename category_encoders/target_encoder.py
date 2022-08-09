@@ -40,6 +40,9 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     smoothing: float
         smoothing effect to balance categorical average vs prior. Higher value means stronger regularization.
         The value must be strictly bigger than 0. Higher values mean a flatter S-curve (see min_samples_leaf).
+    hierarchy: dict
+        a dictionary of columns to map into hierarchies.  Dictionary key(s) should be the column name from X
+        which requires mapping.  For multiple hierarchical maps, this should be a dictionary of dictionaries.
 
     Example
     -------
@@ -144,6 +147,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                     self.ordinal_encoder._dim -= 1
                     self.ordinal_encoder.cols.remove(col_hier)
 
+
                 stats = y.groupby(X[col]).agg(['count', 'mean'])
                 smoove = self._weighting(stats['count'])
 
@@ -167,6 +171,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         return mapping
 
     def _transform(self, X, y=None):
+        # Now X is the correct dimensions it works with pre fitted ordinal encoder
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -179,6 +184,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     def target_encode(self, X_in):
         X = X_in.copy(deep=True)
 
+        # Was not mapping extra columns as self.cols did not include new column
         for col in self.cols:
             X[col] = X[col].map(self.mapping[col])
 

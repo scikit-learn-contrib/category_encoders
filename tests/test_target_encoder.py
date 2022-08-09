@@ -118,6 +118,9 @@ class TestTargetEncoder(TestCase):
             {
                 'Compass': ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W',
                             'W', 'W'],
+                'Speed': ['s', 's', 's', 's', 'm', 'm', 'm', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f'],
+                'Animal': ['Cat', 'Cat', 'Cat', 'Cat', 'Cat', 'Dog', 'Dog', 'Dog', 'Dog',
+                           'Dog', 'Dog', 'Tiger', 'Tiger', 'Wolf', 'Wolf', 'Cougar'],
                 'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
             }, columns=['Compass', 'target'])
         hierarchical_map = {
