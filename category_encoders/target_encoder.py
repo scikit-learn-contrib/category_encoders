@@ -1,5 +1,6 @@
 """Target Encoder"""
 import numpy as np
+import pandas as pd
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 import warnings
@@ -106,24 +107,34 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self.cols_hier = []
 
     def _fit(self, X, y, **kwargs):
-        X_local = X.copy()
         if self.hierarchy:
+            X_hier = pd.DataFrame()
             for switch in self.hierarchy:
                 if switch in self.cols:
                     new_column = 'HIER_'+str(switch)
-                    X_local[new_column] = X_local[str(switch)].map(self.hierarchy[str(switch)])
+                    X_hier[new_column] = X[str(switch)].map(self.hierarchy[str(switch)])
                     self.cols_hier.append(new_column)
-             # TODO: call OrdinalEncoder for HIER cols here instead of all at once?
+            enc_hier = OrdinalEncoder(
+                verbose=self.verbose,
+                cols=X_hier.columns,
+                handle_unknown='value',
+                handle_missing='value'
+            )
+            enc_hier = enc_hier.fit(X_hier)
+            X_hier_ordinal = enc_hier.transform(X_hier)
 
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
-            cols=self.cols + self.cols_hier,
+            cols=self.cols,
             handle_unknown='value',
             handle_missing='value'
         )
-        self.ordinal_encoder = self.ordinal_encoder.fit(X_local)
-        X_ordinal = self.ordinal_encoder.transform(X_local)
-        self.mapping = self.fit_target_encoding(X_ordinal, y)
+        self.ordinal_encoder = self.ordinal_encoder.fit(X)
+        X_ordinal = self.ordinal_encoder.transform(X)
+        if self.hierarchy:
+            self.mapping = self.fit_target_encoding(pd.concat([X_ordinal, X_hier_ordinal], axis=1), y)
+        else:
+            self.mapping = self.fit_target_encoding(X_ordinal, y)
 
     def fit_target_encoding(self, X, y):
         mapping = {}
@@ -143,10 +154,6 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                     scalar_hier_long = X[[col, col_hier]].drop_duplicates()
                     scalar_hier_long.index = np.arange(1, scalar_hier_long.shape[0]+1)
                     scalar = scalar_hier_long[col_hier].map(scalar_hier.to_dict())
-                    X = X.drop([col_hier], axis=1)
-                    self.ordinal_encoder._dim -= 1
-                    self.ordinal_encoder.cols.remove(col_hier)
-
 
                 stats = y.groupby(X[col]).agg(['count', 'mean'])
                 smoove = self._weighting(stats['count'])

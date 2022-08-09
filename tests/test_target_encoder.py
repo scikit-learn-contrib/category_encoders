@@ -224,3 +224,30 @@ class TestTargetEncoder(TestCase):
 
         values = result['Speed'].values
         self.assertEqual('s', values[0])
+
+    def test_hierarchy_pandas_index(self):
+        # see https://github.com/scikit-learn-contrib/categorical-encoding/pull/224
+        df = pd.DataFrame({
+            'hello': ['a', 'b', 'c', 'a', 'a', 'b', 'c', 'd', 'd'],
+            'world': [0, 1, 0, 0, 1, 0, 0, 1, 1]
+        }, columns=pd.Index(['hello', 'world']))
+        cols = df.select_dtypes(include='object').columns
+
+        hierarchical_map = {
+            'hello': {
+                'a': 'A',
+                'b': 'A',
+                'c': 'B',
+                'd': 'B'
+            },
+        }
+
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map)
+        result = enc.fit_transform(df, df['world'])
+
+        values = result['hello'].values
+        self.assertAlmostEqual(0.3616, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.4541, values[1], delta=1e-4)
+        self.assertAlmostEqual(0.2425, values[2], delta=1e-4)
+        self.assertAlmostEqual(0.7425, values[7], delta=1e-4)
+
