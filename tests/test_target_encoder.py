@@ -256,3 +256,16 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.5, values[4], delta=1e-4)
         self.assertAlmostEqual(0.5, values[8], delta=1e-4)
         self.assertAlmostEqual(0.3172, values[12], delta=1e-4)
+
+    def test_hierarchy_error(self):
+        hierarchical_map = {
+            'Plant': {
+                'Rose': {'Yellow': '1', 'Red': '2', 'Pink': '3'},
+                'Daisy': 'Daisy',
+                'Daffodil': 'Daffodil',
+                'Bluebell': 'Bluebell'
+            }
+        }
+        with self.assertRaises(ValueError):
+            encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map,
+                                     cols=['Plant'])

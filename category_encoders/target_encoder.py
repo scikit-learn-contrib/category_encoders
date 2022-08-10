@@ -103,8 +103,14 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                           category=FutureWarning)
         self.mapping = None
         self._mean = None
+        if hierarchy:
+            if self._depth(hierarchy) > 2:
+                raise ValueError('Hierarchy mapping contains too many levels')
         self.hierarchy = hierarchy
         self.cols_hier = []
+
+    def _depth(self, d):
+        return max(self._depth(v) if isinstance(v, dict) else 0 for v in d.values()) + 1
 
     def _fit(self, X, y, **kwargs):
         if self.hierarchy:
