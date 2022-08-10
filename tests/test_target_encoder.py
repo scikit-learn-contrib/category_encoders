@@ -16,8 +16,10 @@ class TestTargetEncoder(TestCase):
                           'fast', 'fast', 'fast', 'fast', 'fast'],
                 'Animal': ['Cat', 'Cat', 'Cat', 'Cat', 'Cat', 'Dog', 'Dog', 'Dog', 'Dog',
                            'Dog', 'Dog', 'Tiger', 'Tiger', 'Wolf', 'Wolf', 'Cougar'],
+                'Plant': ['Rose', 'Rose', 'Rose', 'Rose', 'Daisy', 'Daisy', 'Daisy', 'Daisy', 'Daffodil',
+                          'Daffodil', 'Daffodil', 'Daffodil', 'Bluebell', 'Bluebell', 'Bluebell', 'Bluebell'],
                 'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
-            }, columns=['Compass', 'Speed', 'Animal', 'target'])
+            }, columns=['Compass', 'Speed', 'Animal', 'Plant', 'target'])
         self.hierarchical_map = {
             'Compass': {
                 'N': 'N',
@@ -32,6 +34,14 @@ class TestTargetEncoder(TestCase):
                 'Cougar': 'Feline',
                 'Dog': 'Canine',
                 'Wolf': 'Canine'
+            },
+            'Plant': {
+                'Rose': 'Flower',
+                'Daisy': 'Flower',
+                'Daffodil': 'Flower',
+                'Bluebell': 'Flower',
+                'Ash': 'Tree',
+                'Birch': 'Tree'
             },
         }
 
@@ -191,7 +201,6 @@ class TestTargetEncoder(TestCase):
         self.assertEqual('slow', values[0])
 
     def test_hierarchy_pandas_index(self):
-        # see https://github.com/scikit-learn-contrib/categorical-encoding/pull/224
         df = pd.DataFrame({
             'hello': ['a', 'b', 'c', 'a', 'a', 'b', 'c', 'd', 'd'],
             'world': [0, 1, 0, 0, 1, 0, 0, 1, 1]
@@ -216,3 +225,34 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.2425, values[2], delta=1e-4)
         self.assertAlmostEqual(0.7425, values[7], delta=1e-4)
 
+    def test_hierarchy_single_mapping(self):
+
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map,
+                                     cols=['Plant'])
+        result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
+
+        values = result['Plant'].values
+        self.assertAlmostEqual(0.6828, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.5, values[4], delta=1e-4)
+        self.assertAlmostEqual(0.5, values[8], delta=1e-4)
+        self.assertAlmostEqual(0.3172, values[12], delta=1e-4)
+
+    def test_hierarchy_no_mapping(self):
+        hierarchical_map = {
+            'Plant': {
+                'Rose': 'Rose',
+                'Daisy': 'Daisy',
+                'Daffodil': 'Daffodil',
+                'Bluebell': 'Bluebell'
+            }
+        }
+
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map,
+                                     cols=['Plant'])
+        result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
+
+        values = result['Plant'].values
+        self.assertAlmostEqual(0.6828, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.5, values[4], delta=1e-4)
+        self.assertAlmostEqual(0.5, values[8], delta=1e-4)
+        self.assertAlmostEqual(0.3172, values[12], delta=1e-4)

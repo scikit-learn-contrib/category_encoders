@@ -143,17 +143,19 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
             if 'HIER_' not in str(col):
+                # TODO: Add multi-hierarchical mapping with for loop
                 values = switch.get('mapping')
 
                 scalar = prior
                 if self.hierarchy and col in self.hierarchy:
                     col_hier = 'HIER_'+str(col)
-                    stats_hier = y.groupby(X[col_hier]).agg(['count', 'mean'])
-                    smoove_hier = self._weighting(stats_hier['count'])
-                    scalar_hier = scalar * (1 - smoove_hier) + stats_hier['mean'] * smoove_hier
-                    scalar_hier_long = X[[col, col_hier]].drop_duplicates()
-                    scalar_hier_long.index = np.arange(1, scalar_hier_long.shape[0]+1)
-                    scalar = scalar_hier_long[col_hier].map(scalar_hier.to_dict())
+                    if not X[col].equals(X[col_hier]) and len(X[col_hier].unique())>1:
+                        stats_hier = y.groupby(X[col_hier]).agg(['count', 'mean'])
+                        smoove_hier = self._weighting(stats_hier['count'])
+                        scalar_hier = scalar * (1 - smoove_hier) + stats_hier['mean'] * smoove_hier
+                        scalar_hier_long = X[[col, col_hier]].drop_duplicates()
+                        scalar_hier_long.index = np.arange(1, scalar_hier_long.shape[0]+1)
+                        scalar = scalar_hier_long[col_hier].map(scalar_hier.to_dict())
 
                 stats = y.groupby(X[col]).agg(['count', 'mean'])
                 smoove = self._weighting(stats['count'])
@@ -172,8 +174,6 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                     smoothing.loc[-2] = prior
 
                 mapping[col] = smoothing
-
-        self.ordinal_encoder.mapping = [map for map in self.ordinal_encoder.mapping if not 'HIER_' in str(map['col'])]
 
         return mapping
 
