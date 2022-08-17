@@ -104,9 +104,12 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self.mapping = None
         self._mean = None
         if hierarchy:
-            if self._depth(hierarchy) > 2:
-                raise ValueError('Hierarchy mapping contains too many levels')
+            self.hierarchy_depth = self._depth(hierarchy)
+        #  TODO: remove these lines for multi-level
+        #     if self._depth(hierarchy) > 2:
+        #         raise ValueError('Hierarchy mapping contains too many levels')
         self.hierarchy = hierarchy
+        df = pd.json_normalize(hierarchy, sep='_')
         self.cols_hier = []
 
     def _depth(self, d):

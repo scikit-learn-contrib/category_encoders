@@ -269,3 +269,33 @@ class TestTargetEncoder(TestCase):
         with self.assertRaises(ValueError):
             encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map,
                                      cols=['Plant'])
+
+    def test_hierarchy_multi_level(self):
+        hierarchy_multi_level_df = pd.DataFrame(
+            {
+                'Compass': ['Cat', 'Cat', 'Dog', 'Dog', 'Dog', 'Osprey', 'Kite', 'Kite', 'Carp', 'Carp', 'Carp',
+                            'Clownfish', 'Clownfish', 'Lizard', 'Snake', 'Snake'],
+                'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
+            }, columns=['Compass', 'target'])
+        hierarchy_multi_level = {
+            'Animal': {
+                'Warm-Blooded':
+                    {'Mammals': {'Cat', 'Dog'},
+                     'Birds': {'Osprey', 'Kite'},
+                     'Fish': {'Carp', 'Clownfish'}
+                    },
+                'Cold-Blooded':
+                    {'Reptiles': {'Lizard'},
+                     'Amphibians': {'Snake', 'Frog'}
+                    }
+            }}
+
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchy_multi_level,
+                                     cols=['Animal'])
+        result = enc.fit_transform(hierarchy_multi_level_df, hierarchy_multi_level_df['target'])
+
+        values = result['Plant'].values
+        self.assertAlmostEqual(0.6261, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.9065, values[2], delta=1e-4)
+        self.assertAlmostEqual(0.2557, values[5], delta=1e-4)
+        self.assertAlmostEqual(0.4554, values[6], delta=1e-4)
