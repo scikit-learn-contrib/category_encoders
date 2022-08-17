@@ -22,26 +22,17 @@ class TestTargetEncoder(TestCase):
             }, columns=['Compass', 'Speed', 'Animal', 'Plant', 'target'])
         self.hierarchical_map = {
             'Compass': {
-                'N': 'N',
-                'NE': 'N',
-                'SE': 'S',
-                'S': 'S',
+                'N': {'N', 'NE'},
+                'S': {'S', 'SE'},
                 'W': 'W'
             },
             'Animal': {
-                'Cat': 'Feline',
-                'Tiger': 'Feline',
-                'Cougar': 'Feline',
-                'Dog': 'Canine',
-                'Wolf': 'Canine'
+                'Feline': {'Cat', 'Tiger', 'Cougar'},
+                'Canine': {'Dog', 'Wolf'}
             },
             'Plant': {
-                'Rose': 'Flower',
-                'Daisy': 'Flower',
-                'Daffodil': 'Flower',
-                'Bluebell': 'Flower',
-                'Ash': 'Tree',
-                'Birch': 'Tree'
+                'Flower': {'Rose', 'Daisy', 'Daffodil', 'Bluebell'},
+                'Tree': {'Ash', 'Birch'}
             },
         }
 
@@ -209,10 +200,8 @@ class TestTargetEncoder(TestCase):
 
         self.hierarchical_map = {
             'hello': {
-                'a': 'A',
-                'b': 'A',
-                'c': 'B',
-                'd': 'B'
+                'A': {'a', 'b'},
+                'B': {'c', 'd'}
             },
         }
 
@@ -260,10 +249,8 @@ class TestTargetEncoder(TestCase):
     def test_hierarchy_error(self):
         hierarchical_map = {
             'Plant': {
-                'Rose': {'Yellow': '1', 'Red': '2', 'Pink': '3'},
-                'Daisy': 'Daisy',
-                'Daffodil': 'Daffodil',
-                'Bluebell': 'Bluebell'
+                'Flower': {'Rose', 'Daisy', 'Daffodil', 'Bluebell'},
+                'Tree': 'Ash'
             }
         }
         with self.assertRaises(ValueError):
