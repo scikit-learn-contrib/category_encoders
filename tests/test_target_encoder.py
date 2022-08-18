@@ -200,8 +200,8 @@ class TestTargetEncoder(TestCase):
 
         self.hierarchical_map = {
             'hello': {
-                'A': {'a', 'b'},
-                'B': {'c', 'd'}
+                'A': ('a', 'b'),
+                'B': ('c', 'd')
             },
         }
 
@@ -249,7 +249,7 @@ class TestTargetEncoder(TestCase):
     def test_hierarchy_error(self):
         hierarchical_map = {
             'Plant': {
-                'Flower': {'Rose', 'Daisy', 'Daffodil', 'Bluebell'},
+                'Flower': {'Rose': ('Pink', 'Yellow', 'Red')},
                 'Tree': 'Ash'
             }
         }
@@ -260,20 +260,20 @@ class TestTargetEncoder(TestCase):
     def test_hierarchy_multi_level(self):
         hierarchy_multi_level_df = pd.DataFrame(
             {
-                'Compass': ['Cat', 'Cat', 'Dog', 'Dog', 'Dog', 'Osprey', 'Kite', 'Kite', 'Carp', 'Carp', 'Carp',
+                'Animal': ['Cat', 'Cat', 'Dog', 'Dog', 'Dog', 'Osprey', 'Kite', 'Kite', 'Carp', 'Carp', 'Carp',
                             'Clownfish', 'Clownfish', 'Lizard', 'Snake', 'Snake'],
                 'target': [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
-            }, columns=['Compass', 'target'])
+            }, columns=['Animal', 'target'])
         hierarchy_multi_level = {
             'Animal': {
                 'Warm-Blooded':
-                    {'Mammals': {'Cat', 'Dog'},
-                     'Birds': {'Osprey', 'Kite'},
-                     'Fish': {'Carp', 'Clownfish'}
+                    {'Mammals': ('Cat', 'Dog'),
+                     'Birds': ('Osprey', 'Kite'),
+                     'Fish': ('Carp', 'Clownfish')
                     },
                 'Cold-Blooded':
-                    {'Reptiles': {'Lizard'},
-                     'Amphibians': {'Snake', 'Frog'}
+                    {'Reptiles': ('Lizard'),
+                     'Amphibians': ('Snake', 'Frog')
                     }
             }}
 
@@ -281,8 +281,11 @@ class TestTargetEncoder(TestCase):
                                      cols=['Animal'])
         result = enc.fit_transform(hierarchy_multi_level_df, hierarchy_multi_level_df['target'])
 
-        values = result['Plant'].values
+        values = result['Animal'].values
         self.assertAlmostEqual(0.6261, values[0], delta=1e-4)
         self.assertAlmostEqual(0.9065, values[2], delta=1e-4)
-        self.assertAlmostEqual(0.2557, values[5], delta=1e-4)
-        self.assertAlmostEqual(0.4554, values[6], delta=1e-4)
+        self.assertAlmostEqual(0.4107, values[5], delta=1e-4)
+        self.assertAlmostEqual(0.3680, values[8], delta=1e-4)
+        self.assertAlmostEqual(0.4626, values[11], delta=1e-4)
+        self.assertAlmostEqual(0.2466, values[13], delta=1e-4)
+        self.assertAlmostEqual(0.4741, values[14], delta=1e-4)

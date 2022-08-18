@@ -105,30 +105,33 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self.mapping = None
         self._mean = None
         if hierarchy:
-            self.hierarchy_depth = self._depth(hierarchy)
-        #  TODO: remove these lines for multi-level
-        #     if self._depth(hierarchy) > 2:
-        #         raise ValueError('Hierarchy mapping contains too many levels')
-
-        self.hierarchy = {}
-        for switch in hierarchy:
-            D = fd.flatten(hierarchy[switch], inverse=True)
-            self.hierarchy[switch] = {(k if type(t) is tuple else t): v for t, v in D.items() for k in t}
-
+            self.hierarchy = {}
+            self.hierarchy_depth = {}
+            for switch in hierarchy:
+                D = fd.flatten(hierarchy[switch], inverse=True)
+                hierarchy_check = self._check_dict_key_tuples(D)
+                self.hierarchy_depth[switch] = hierarchy_check[1]
+                if not hierarchy_check[0]:
+                    raise ValueError('Hierarchy mapping contains different levels for key "' + switch + '"')
+                self.hierarchy[switch] = {(k if type(t) is tuple else t): v for t, v in D.items() for k in t}
+        else:
+            self.hierarchy = hierarchy
         self.cols_hier = []
 
-    def _depth(self, d):
-        return max(self._depth(v) if isinstance(v, dict) else 0 for v in d.values()) + 1
+    def _check_dict_key_tuples(self, d):
+        min_tuple_size = min(len(v) for v in d.values())
+        max_tuple_size = max(len(v) for v in d.values())
+        return True if min_tuple_size == max_tuple_size else False, min_tuple_size
 
     def _fit(self, X, y, **kwargs):
         if self.hierarchy:
             X_hier = pd.DataFrame()
             for switch in self.hierarchy:
                 if switch in self.cols:
-                    for i in range(self.hierarchy_depth-1):
-                        new_column = 'HIER_'+ i + '_' + str(switch)
-                        X_hier[new_column] = X[str(switch)].map(self.hierarchy[str(switch)])
-                        self.cols_hier.append(new_column)
+                    colnames = ['HIER_' + str(switch) + '_' + str(i+1) for i in range(self.hierarchy_depth[switch])]
+                    df = pd.DataFrame(X[str(switch)].map(self.hierarchy[str(switch)]).tolist(), index=X.index, columns=colnames)
+                    X_hier = pd.concat([X_hier, df], axis=1)
+
             enc_hier = OrdinalEncoder(
                 verbose=self.verbose,
                 cols=X_hier.columns,
@@ -158,19 +161,20 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
             if 'HIER_' not in str(col):
-                # TODO: Add multi-hierarchical mapping with for loop
                 values = switch.get('mapping')
-
+                
                 scalar = prior
                 if self.hierarchy and col in self.hierarchy:
-                    col_hier = 'HIER_'+str(col)
-                    if not X[col].equals(X[col_hier]) and len(X[col_hier].unique())>1:
-                        stats_hier = y.groupby(X[col_hier]).agg(['count', 'mean'])
-                        smoove_hier = self._weighting(stats_hier['count'])
-                        scalar_hier = scalar * (1 - smoove_hier) + stats_hier['mean'] * smoove_hier
-                        scalar_hier_long = X[[col, col_hier]].drop_duplicates()
-                        scalar_hier_long.index = np.arange(1, scalar_hier_long.shape[0]+1)
-                        scalar = scalar_hier_long[col_hier].map(scalar_hier.to_dict())
+                    for i in range(self.hierarchy_depth[col]):
+                        col_hier = 'HIER_'+str(col)+'_'+str(i+1)
+                        col_hier_m1 = col if i == self.hierarchy_depth[col]-1 else 'HIER_'+str(col)+'_'+str(i+2)
+                        if not X[col].equals(X[col_hier]) and len(X[col_hier].unique())>1:
+                            stats_hier = y.groupby(X[col_hier]).agg(['count', 'mean'])
+                            smoove_hier = self._weighting(stats_hier['count'])
+                            scalar_hier = scalar * (1 - smoove_hier) + stats_hier['mean'] * smoove_hier
+                            scalar_hier_long = X[[col_hier_m1, col_hier]].drop_duplicates()
+                            scalar_hier_long.index = np.arange(1, scalar_hier_long.shape[0]+1)
+                            scalar = scalar_hier_long[col_hier].map(scalar_hier.to_dict())
 
                 stats = y.groupby(X[col]).agg(['count', 'mean'])
                 smoove = self._weighting(stats['count'])
