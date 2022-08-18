@@ -22,17 +22,17 @@ class TestTargetEncoder(TestCase):
             }, columns=['Compass', 'Speed', 'Animal', 'Plant', 'target'])
         self.hierarchical_map = {
             'Compass': {
-                'N': {'N', 'NE'},
-                'S': {'S', 'SE'},
+                'N': ('N', 'NE'),
+                'S': ('S', 'SE'),
                 'W': 'W'
             },
             'Animal': {
-                'Feline': {'Cat', 'Tiger', 'Cougar'},
-                'Canine': {'Dog', 'Wolf'}
+                'Feline': ('Cat', 'Tiger', 'Cougar'),
+                'Canine': ('Dog', 'Wolf')
             },
             'Plant': {
-                'Flower': {'Rose', 'Daisy', 'Daffodil', 'Bluebell'},
-                'Tree': {'Ash', 'Birch'}
+                'Flower': ('Rose', 'Daisy', 'Daffodil', 'Bluebell'),
+                'Tree': ('Ash', 'Birch')
             },
         }
 

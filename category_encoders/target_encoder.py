@@ -4,6 +4,7 @@ import pandas as pd
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 import warnings
+import flatten_dict as fd
 
 __author__ = 'chappers'
 
@@ -108,8 +109,12 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         #  TODO: remove these lines for multi-level
         #     if self._depth(hierarchy) > 2:
         #         raise ValueError('Hierarchy mapping contains too many levels')
-        self.hierarchy = hierarchy
-        df = pd.json_normalize(hierarchy, sep='_')
+
+        self.hierarchy = {}
+        for switch in hierarchy:
+            D = fd.flatten(hierarchy[switch], inverse=True)
+            self.hierarchy[switch] = {(k if type(t) is tuple else t): v for t, v in D.items() for k in t}
+
         self.cols_hier = []
 
     def _depth(self, d):
@@ -120,9 +125,10 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             X_hier = pd.DataFrame()
             for switch in self.hierarchy:
                 if switch in self.cols:
-                    new_column = 'HIER_'+str(switch)
-                    X_hier[new_column] = X[str(switch)].map(self.hierarchy[str(switch)])
-                    self.cols_hier.append(new_column)
+                    for i in range(self.hierarchy_depth-1):
+                        new_column = 'HIER_'+ i + '_' + str(switch)
+                        X_hier[new_column] = X[str(switch)].map(self.hierarchy[str(switch)])
+                        self.cols_hier.append(new_column)
             enc_hier = OrdinalEncoder(
                 verbose=self.verbose,
                 cols=X_hier.columns,
