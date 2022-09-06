@@ -257,6 +257,20 @@ class TestTargetEncoder(TestCase):
             encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map,
                                      cols=['Plant'])
 
+    def test_trivial_hierarchy(self):
+        trivial_hierarchical_map = {
+            'Plant': {
+                'Plant': ('Rose', 'Daisy', 'Daffodil', 'Bluebell')
+            }
+        }
+
+        enc_hier = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=trivial_hierarchical_map,
+                                     cols=['Plant'])
+        result_hier = enc_hier.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
+        enc_no_hier = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, cols=['Plant'])
+        result_no_hier = enc_no_hier.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
+        pd.testing.assert_series_equal(result_hier["Plant"], result_no_hier["Plant"])
+
     def test_hierarchy_multi_level(self):
         hierarchy_multi_level_df = pd.DataFrame(
             {
