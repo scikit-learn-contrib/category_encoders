@@ -4,7 +4,6 @@ import pandas as pd
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 import warnings
-import flatten_dict as fd
 
 __author__ = 'chappers'
 
@@ -118,7 +117,8 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             self.hierarchy = {}
             self.hierarchy_depth = {}
             for switch in hierarchy:
-                flattened_hierarchy = fd.flatten(hierarchy[switch], inverse=True)
+                flattened_hierarchy = util.flatten_reverse_dict(hierarchy[switch])
+
                 hierarchy_check = self._check_dict_key_tuples(flattened_hierarchy)
                 self.hierarchy_depth[switch] = hierarchy_check[1]
                 if not hierarchy_check[0]:
