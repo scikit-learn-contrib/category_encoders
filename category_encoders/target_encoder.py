@@ -108,12 +108,12 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             self.hierarchy = {}
             self.hierarchy_depth = {}
             for switch in hierarchy:
-                D = fd.flatten(hierarchy[switch], inverse=True)
-                hierarchy_check = self._check_dict_key_tuples(D)
+                flattened_hierarchy = fd.flatten(hierarchy[switch], inverse=True)
+                hierarchy_check = self._check_dict_key_tuples(flattened_hierarchy)
                 self.hierarchy_depth[switch] = hierarchy_check[1]
                 if not hierarchy_check[0]:
                     raise ValueError('Hierarchy mapping contains different levels for key "' + switch + '"')
-                self.hierarchy[switch] = {(k if type(t) is tuple else t): v for t, v in D.items() for k in t}
+                self.hierarchy[switch] = {(k if isinstance(t, tuple) else t): v for t, v in flattened_hierarchy.items() for k in t}
         else:
             self.hierarchy = hierarchy
         self.cols_hier = []
@@ -121,14 +121,17 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     def _check_dict_key_tuples(self, d):
         min_tuple_size = min(len(v) for v in d.values())
         max_tuple_size = max(len(v) for v in d.values())
-        return True if min_tuple_size == max_tuple_size else False, min_tuple_size
+        if min_tuple_size == max_tuple_size:
+            return True, min_tuple_size
+        else:
+            return False, min_tuple_size
 
     def _fit(self, X, y, **kwargs):
         if self.hierarchy:
             X_hier = pd.DataFrame()
             for switch in self.hierarchy:
                 if switch in self.cols:
-                    colnames = ['HIER_' + str(switch) + '_' + str(i+1) for i in range(self.hierarchy_depth[switch])]
+                    colnames = [f'HIER_{str(switch)}_{str(i + 1)}' for i in range(self.hierarchy_depth[switch])]
                     df = pd.DataFrame(X[str(switch)].map(self.hierarchy[str(switch)]).tolist(), index=X.index, columns=colnames)
                     X_hier = pd.concat([X_hier, df], axis=1)
 
