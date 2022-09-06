@@ -46,7 +46,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         a dictionary of columns to map into hierarchies.  Dictionary key(s) should be the column name from X
         which requires mapping.  For multiple hierarchical maps, this should be a dictionary of dictionaries.
 
-    Example
+    Examples
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
@@ -76,6 +76,16 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     dtypes: float64(13)
     memory usage: 51.5 KB
     None
+
+    >>> X = ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W', 'W', 'W']
+    >>> hierarchical_map = {'Compass': {'N': ('N', 'NE'), 'S': ('S', 'SE'), 'W': 'W'}}
+    >>> y = [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
+    >>> enc = TargetEncoder(hierarchy=hierarchical_map).fit(X, y)
+    >>> hierarchy_dataset = enc.transform(X)
+    >>> print(hierarchy_dataset[0].values)
+    [0.5        0.5        0.94039854 0.94039854 0.94039854 0.13447071
+    0.13447071 0.5        0.5        0.5        0.5        0.40179862
+    0.40179862 0.40179862 0.40179862 0.40179862]
 
     References
     ----------
