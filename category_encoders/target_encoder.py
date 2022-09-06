@@ -1,5 +1,6 @@
 """Target Encoder"""
 import numpy as np
+import pandas as pd
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 import warnings
@@ -40,8 +41,11 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     smoothing: float
         smoothing effect to balance categorical average vs prior. Higher value means stronger regularization.
         The value must be strictly bigger than 0. Higher values mean a flatter S-curve (see min_samples_leaf).
+    hierarchy: dict
+        a dictionary of columns to map into hierarchies.  Dictionary key(s) should be the column name from X
+        which requires mapping.  For multiple hierarchical maps, this should be a dictionary of dictionaries.
 
-    Example
+    Examples
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
@@ -72,6 +76,16 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     memory usage: 51.5 KB
     None
 
+    >>> X = ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W', 'W', 'W']
+    >>> hierarchical_map = {'Compass': {'N': ('N', 'NE'), 'S': ('S', 'SE'), 'W': 'W'}}
+    >>> y = [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
+    >>> enc = TargetEncoder(hierarchy=hierarchical_map).fit(X, y)
+    >>> hierarchy_dataset = enc.transform(X)
+    >>> print(hierarchy_dataset[0].values)
+    [0.5        0.5        0.94039854 0.94039854 0.94039854 0.13447071
+    0.13447071 0.5        0.5        0.5        0.5        0.40179862
+    0.40179862 0.40179862 0.40179862 0.40179862]
+
     References
     ----------
 
@@ -83,7 +97,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
-                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0):
+                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0, hierarchy=None):
         super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
                          handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.ordinal_encoder = None
@@ -99,8 +113,47 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                           category=FutureWarning)
         self.mapping = None
         self._mean = None
+        if hierarchy:
+            self.hierarchy = {}
+            self.hierarchy_depth = {}
+            for switch in hierarchy:
+                flattened_hierarchy = util.flatten_reverse_dict(hierarchy[switch])
+
+                hierarchy_check = self._check_dict_key_tuples(flattened_hierarchy)
+                self.hierarchy_depth[switch] = hierarchy_check[1]
+                if not hierarchy_check[0]:
+                    raise ValueError('Hierarchy mapping contains different levels for key "' + switch + '"')
+                self.hierarchy[switch] = {(k if isinstance(t, tuple) else t): v for t, v in flattened_hierarchy.items() for k in t}
+        else:
+            self.hierarchy = hierarchy
+        self.cols_hier = []
+
+    def _check_dict_key_tuples(self, d):
+        min_tuple_size = min(len(v) for v in d.values())
+        max_tuple_size = max(len(v) for v in d.values())
+        if min_tuple_size == max_tuple_size:
+            return True, min_tuple_size
+        else:
+            return False, min_tuple_size
 
     def _fit(self, X, y, **kwargs):
+        if self.hierarchy:
+            X_hier = pd.DataFrame()
+            for switch in self.hierarchy:
+                if switch in self.cols:
+                    colnames = [f'HIER_{str(switch)}_{str(i + 1)}' for i in range(self.hierarchy_depth[switch])]
+                    df = pd.DataFrame(X[str(switch)].map(self.hierarchy[str(switch)]).tolist(), index=X.index, columns=colnames)
+                    X_hier = pd.concat([X_hier, df], axis=1)
+
+            enc_hier = OrdinalEncoder(
+                verbose=self.verbose,
+                cols=X_hier.columns,
+                handle_unknown='value',
+                handle_missing='value'
+            )
+            enc_hier = enc_hier.fit(X_hier)
+            X_hier_ordinal = enc_hier.transform(X_hier)
+
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
@@ -109,38 +162,55 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
-        self.mapping = self.fit_target_encoding(X_ordinal, y)
+        if self.hierarchy:
+            self.mapping = self.fit_target_encoding(pd.concat([X_ordinal, X_hier_ordinal], axis=1), y)
+        else:
+            self.mapping = self.fit_target_encoding(X_ordinal, y)
 
     def fit_target_encoding(self, X, y):
         mapping = {}
+        prior = self._mean = y.mean()
 
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
-            values = switch.get('mapping')
+            if 'HIER_' not in str(col):
+                values = switch.get('mapping')
+                
+                scalar = prior
+                if self.hierarchy and col in self.hierarchy:
+                    for i in range(self.hierarchy_depth[col]):
+                        col_hier = 'HIER_'+str(col)+'_'+str(i+1)
+                        col_hier_m1 = col if i == self.hierarchy_depth[col]-1 else 'HIER_'+str(col)+'_'+str(i+2)
+                        if not X[col].equals(X[col_hier]) and len(X[col_hier].unique())>1:
+                            stats_hier = y.groupby(X[col_hier]).agg(['count', 'mean'])
+                            smoove_hier = self._weighting(stats_hier['count'])
+                            scalar_hier = scalar * (1 - smoove_hier) + stats_hier['mean'] * smoove_hier
+                            scalar_hier_long = X[[col_hier_m1, col_hier]].drop_duplicates()
+                            scalar_hier_long.index = np.arange(1, scalar_hier_long.shape[0]+1)
+                            scalar = scalar_hier_long[col_hier].map(scalar_hier.to_dict())
 
-            prior = self._mean = y.mean()
+                stats = y.groupby(X[col]).agg(['count', 'mean'])
+                smoove = self._weighting(stats['count'])
 
-            stats = y.groupby(X[col]).agg(['count', 'mean'])
+                smoothing = scalar * (1 - smoove) + stats['mean'] * smoove
+                smoothing[stats['count'] == 1] = scalar
 
-            smoove = 1 / (1 + np.exp(-(stats['count'] - self.min_samples_leaf) / self.smoothing))
-            smoothing = prior * (1 - smoove) + stats['mean'] * smoove
-            smoothing[stats['count'] == 1] = prior
+                if self.handle_unknown == 'return_nan':
+                    smoothing.loc[-1] = np.nan
+                elif self.handle_unknown == 'value':
+                    smoothing.loc[-1] = prior
 
-            if self.handle_unknown == 'return_nan':
-                smoothing.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                smoothing.loc[-1] = prior
+                if self.handle_missing == 'return_nan':
+                    smoothing.loc[values.loc[np.nan]] = np.nan
+                elif self.handle_missing == 'value':
+                    smoothing.loc[-2] = prior
 
-            if self.handle_missing == 'return_nan':
-                smoothing.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                smoothing.loc[-2] = prior
-
-            mapping[col] = smoothing
+                mapping[col] = smoothing
 
         return mapping
 
     def _transform(self, X, y=None):
+        # Now X is the correct dimensions it works with pre fitted ordinal encoder
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -153,7 +223,12 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     def target_encode(self, X_in):
         X = X_in.copy(deep=True)
 
+        # Was not mapping extra columns as self.cols did not include new column
         for col in self.cols:
             X[col] = X[col].map(self.mapping[col])
 
         return X
+
+    def _weighting(self, n):
+        # monotonically increasing function on n bounded between 0 and 1
+        return 1 / (1 + np.exp(-(n - self.min_samples_leaf) / self.smoothing))
