@@ -184,6 +184,13 @@ def get_generated_cols(X_original, X_transformed, to_transform):
     return current_cols
 
 
+def flatten_reverse_dict(d):
+    sep = "___"
+    [flat_dict] = pd.json_normalize(d, sep=sep).to_dict(orient='records')
+    reversed_flat_dict = {v: tuple(k.split(sep)) for k,v in flat_dict.items()}
+    return reversed_flat_dict
+
+
 class EncodingRelation(Enum):
     # one input feature get encoded into one output feature
     ONE_TO_ONE = auto()
