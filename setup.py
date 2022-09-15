@@ -36,5 +36,6 @@ setup(
       'pandas>=1.0.5',
       'patsy>=0.5.1',
     ],
-    author_email='will@pedalwrencher.com'
+    author_email='will@pedalwrencher.com',
+    package_data={'': ['datasets/data/*.csv']},
 )

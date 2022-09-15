@@ -5,6 +5,31 @@ Base IO code for datasets
 import pkg_resources
 import pandas as pd
 
+def load_compass():
+    """Return a dataframe for target encoding with 100 UK postcodes and hierarchy.
+
+    Contains the following fields:
+        index                16 non-null int64
+        compass              16 non-null object
+        HIER_compass_1       16 non-null object
+        target               16 non-null int64
+
+    Returns
+    -------
+    X: A dataframe containing features
+    y: A dataframe containing the target variable
+
+    """
+    data_filename = "data/compass.csv"
+    stream = pkg_resources.resource_filename(__name__, data_filename)
+
+    with open(stream) as f:
+        df = pd.read_csv(f, encoding='latin-1')
+    X = df[['index', 'compass', 'HIER_compass_1']]
+    y = df['target']
+    return X, y
+
+
 def load_postcodes(target_type='binary'):
     """Return a dataframe for target encoding with 100 UK postcodes and hierarchy.
 
@@ -30,8 +55,11 @@ def load_postcodes(target_type='binary'):
     y: A dataframe containing the target variable
 
     """
-    stream = pkg_resources.resource_stream(__name__, 'data/postcode_dataset_100.csv')
-    df = pd.read_csv(stream, encoding='latin-1')
+    data_filename = "data/postcode_dataset_100.csv"
+    stream = pkg_resources.resource_filename(__name__, data_filename)
+
+    with open(stream) as f:
+        df = pd.read_csv(f, encoding='latin-1')
     X = df[df.columns[~df.columns.str.startswith('target')]]
     y = df[f'target_{target_type}']
     return X, y

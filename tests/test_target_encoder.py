@@ -2,7 +2,7 @@ import pandas as pd
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import tests.helpers as th
 import numpy as np
-import category_encoders.datasets.base as data
+from category_encoders.datasets import load_postcodes, load_compass
 
 import category_encoders as encoders
 
@@ -292,6 +292,53 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.4741, values[14], delta=1e-4)
 
 
-    def test_dataset(self):
-        X, y = data.load_postcodes('binary')
-        print(y)
+    def test_hierarchy_columnwise_compass(self):
+        X, y = load_compass()
+        cols = X.columns[~X.columns.str.startswith('HIER')]
+        HIER_cols = X.columns[X.columns.str.startswith('HIER')]
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=X[HIER_cols],
+                                     cols=['compass'])
+        result = enc.fit_transform(X[cols], y)
+
+        values = result['compass'].values
+        self.assertAlmostEqual(0.6226, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.9038, values[2], delta=1e-4)
+        self.assertAlmostEqual(0.1766, values[5], delta=1e-4)
+        self.assertAlmostEqual(0.4605, values[7], delta=1e-4)
+        self.assertAlmostEqual(0.4033, values[11], delta=1e-4)
+
+
+    def test_hierarchy_columnwise_postcodes(self):
+        X, y = load_postcodes('binary')
+        cols = X.columns[~X.columns.str.startswith('HIER')]
+        HIER_cols = X.columns[X.columns.str.startswith('HIER')]
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=X[HIER_cols],
+                                     cols=['postcode'])
+        result = enc.fit_transform(X[cols], y)
+
+        values = result['postcode'].values
+        self.assertAlmostEqual(0.7506, values[0], delta=1e-4)
+
+
+    def test_hierarchy_columnwise_missing_level(self):
+        X, y = load_postcodes('binary')
+        HIER_cols = ['HIER_postcode_1', 'HIER_postcode_2', 'HIER_postcode_4']
+        with self.assertRaises(ValueError):
+            encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=X[HIER_cols],
+                                   cols=['postcode'])
+
+
+    def test_hierarchy_mapping_no_cols(self):
+        hierarchical_map = {'Compass': {'N': ('N', 'NE'), 'S': ('S', 'SE'), 'W': 'W'}}
+        with self.assertRaises(ValueError):
+            encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map)
+
+
+    def test_hierarchy_mapping_cols_missing(self):
+        X = ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W', 'W', 'W']
+        hierarchical_map = {'Compass': {'N': ('N', 'NE'), 'S': ('S', 'SE'), 'W': 'W'}}
+        y = [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map,
+                                                        cols=['Compass'])
+        with self.assertRaises(ValueError):
+            enc.fit_transform(X, y)
