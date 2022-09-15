@@ -1,4 +1,4 @@
-,postcode,HIER_postcode1,HIER_postcode2,HIER_postcode3,HIER_postcode4,target_binary,target_non_binary,target_categorical
+index,postcode,HIER_postcode1,HIER_postcode2,HIER_postcode3,HIER_postcode4,target_binary,target_non_binary,target_categorical
 0,S4 2FQ,S,S4,S4 2,S4 2F,1,1,dog
 1,S9 2UE,S,S9,S9 2,S9 2U,1,1,dog
 2,S4 6UA,S,S4,S4 6,S4 6U,1,1,dog
@@ -99,8 +99,3 @@
 97,L2 4RR,L,L2,L2 4,L2 4R,0,5,hamster
 98,S8 3EP,S,S8,S8 3,S8 3E,0,5,hamster
 99,L4 6ND,L,L4,L4 6,L4 6N,0,5,hamster
-,,,,,,,,
-,,,,,,,,
-,,,,,,,,
-,,,,,,,,
-,,,s,,,,,

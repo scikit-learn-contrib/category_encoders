@@ -2,6 +2,7 @@ import pandas as pd
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import tests.helpers as th
 import numpy as np
+import category_encoders.datasets.base as data
 
 import category_encoders as encoders
 
@@ -289,3 +290,8 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.4626, values[11], delta=1e-4)
         self.assertAlmostEqual(0.2466, values[13], delta=1e-4)
         self.assertAlmostEqual(0.4741, values[14], delta=1e-4)
+
+
+    def test_dataset(self):
+        X, y = data.load_postcodes('binary')
+        print(y)
