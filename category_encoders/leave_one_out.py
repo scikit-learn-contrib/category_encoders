@@ -128,7 +128,7 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         codes[codes == -1] = len(categories)
         categories = np.append(categories, np.nan)
 
-        return_map = pd.Series(dict([(code, category) for code, category in enumerate(categories)]))
+        return_map = pd.Series({code: category for code, category in enumerate(categories)})
 
         result = y.groupby(codes).agg(['sum', 'count'])
         return result.rename(return_map)
