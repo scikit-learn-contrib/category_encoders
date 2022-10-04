@@ -206,7 +206,7 @@ class TestTargetEncoder(TestCase):
             },
         }
 
-        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map)
+        enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map, cols=cols)
         result = enc.fit_transform(df, df['world'])
 
         values = result['hello'].values
