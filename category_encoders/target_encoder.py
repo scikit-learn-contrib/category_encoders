@@ -152,10 +152,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     def _check_dict_key_tuples(self, d):
         min_tuple_size = min(len(v) for v in d.values())
         max_tuple_size = max(len(v) for v in d.values())
-        if min_tuple_size == max_tuple_size:
-            return True, min_tuple_size
-        else:
-            return False, min_tuple_size
+        return min_tuple_size == max_tuple_size, min_tuple_size
 
     def _fit(self, X, y, **kwargs):
         if isinstance(self.hierarchy, dict):
