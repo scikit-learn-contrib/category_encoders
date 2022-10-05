@@ -6,6 +6,7 @@ from patsy.contrasts import ContrastMatrix
 import numpy as np
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
+import warnings
 
 __author__ = 'paulwestenthanner'
 
@@ -122,6 +123,8 @@ class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         # See issue 370 if it is necessary to add an intercept or not.
         X['intercept'] = pd.Series([1] * X.shape[0], index=X.index)
+        warnings.warn("Intercept column might not be added anymore in future releases (c.f. issue #370)",
+                      category=FutureWarning)
 
         for switch in mapping:
             col = switch.get('col')

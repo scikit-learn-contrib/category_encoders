@@ -25,9 +25,9 @@ from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.glmm import GLMMEncoder
 from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
 
-__version__ = '2.5.0'
+__version__ = '2.5.1'
 
-__author__ = "willmcginnis", "cmougan"
+__author__ = "willmcginnis", "cmougan", "paulwestenthanner"
 
 __all__ = [
     "BackwardDifferenceEncoder",

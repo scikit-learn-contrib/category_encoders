@@ -16,7 +16,7 @@ def load_compass():
 
     Returns
     -------
-    X: A pandas series containing features
+    X: A pandas data frame containing features
     y: A pandas series containing the target variable
 
     """
@@ -51,7 +51,7 @@ def load_postcodes(target_type='binary'):
 
     Returns
     -------
-    X: A pandas series containing features
+    X: A pandas data frame containing features
     y: A pandas series containing the target variable
 
     """

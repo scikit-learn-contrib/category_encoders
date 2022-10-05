@@ -1,5 +1,8 @@
 unreleased
 ==========
+
+v2.5.1
+==========
 * Added base class for contrast coding schemes in order to make them more maintainable
 * Added hierarchical column feature in target encoder
 * Fixed maximum recursion depth bug in hashing encoder
