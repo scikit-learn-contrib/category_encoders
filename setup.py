@@ -1,8 +1,7 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
-from category_encoders import __version__
-
+import re
 
 here = path.abspath(path.dirname(__file__))
 
@@ -10,10 +9,14 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+# Get the version from the __init__.py file
+with open(path.join(here, 'category_encoders/__init__.py'), encoding='utf-8') as f:
+    __version__ = re.findall('''__version__ = ['"](.*)['"]''', f.read())[0]
+
 setup(
     name='category_encoders',
     version=__version__,
-    description='A collection sklearn transformers to encode categorical variables as numeric',
+    description='A collection of sklearn transformers to encode categorical variables as numeric',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/scikit-learn-contrib/category_encoders',
@@ -25,7 +28,7 @@ setup(
       'Programming Language :: Python :: 3',
     ],
     keywords='python data science machine learning pandas sklearn',
-    packages=find_packages(include=['category_encoders']),
+    packages=find_packages(include=['category_encoders', 'category_encoders.datasets']),
     include_package_data=True,
     author='Will McGinnis',
     install_requires=[
