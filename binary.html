@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Binary &mdash; Category Encoders 2.5.0 documentation</title>
+  <title>Binary &mdash; Category Encoders 2.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -30,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.0
+                2.5.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -43,7 +44,22 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="backward_difference.html">Backward Difference Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="basen.html">BaseN</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Binary</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Binary</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.basen_encode"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.basen_encode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.basen_to_integer"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.basen_to_integer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.col_transform"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.col_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.fit"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.get_feature_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.inverse_transform"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.inverse_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.set_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.binary.BinaryEncoder.transform"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>

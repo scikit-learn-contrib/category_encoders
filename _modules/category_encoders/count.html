@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.count &mdash; Category Encoders 2.5.0 documentation</title>
+  <title>category_encoders.count &mdash; Category Encoders 2.5.1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -15,6 +15,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -28,7 +29,7 @@
             <a href="../../index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.0
+                2.5.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -252,7 +253,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_handle_unknown</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span>
                     <span class="ow">and</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
             <span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Missing data found in column </span><span class="si">{col}</span><span class="s1"> at transform time.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Missing data found in column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1"> at transform time.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">X</span>
 
     <span class="k">def</span> <span class="nf">_fit_count_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -404,20 +405,20 @@
             <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;Cannot have `handle_missing` == &#39;return_nan&#39; and &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;&#39;combine_min_nan_groups&#39; == &#39;force&#39; for columns `</span><span class="si">{col}</span><span class="s2">`.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;&#39;combine_min_nan_groups&#39; == &#39;force&#39; for columns `</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">`.&quot;</span>
                 <span class="p">)</span>
             
             <span class="k">if</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_combine_min_nan_groups</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span>
                 <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`combine_min_nan_groups` only works when `min_group_size` is set for column </span><span class="si">{col}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`combine_min_nan_groups` only works when `min_group_size` is set for column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_name</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`min_group_name` only works when `min_group_size` is set for column </span><span class="si">{col}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`min_group_name` only works when `min_group_size` is set for column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

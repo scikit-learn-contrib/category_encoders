@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Helmert Coding &mdash; Category Encoders 2.5.0 documentation</title>
+  <title>Helmert Coding &mdash; Category Encoders 2.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -30,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.0
+                2.5.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -48,7 +49,18 @@
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Helmert Coding</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Helmert Coding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#category_encoders.helmert.HelmertEncoder"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.helmert.HelmertEncoder.fit"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.helmert.HelmertEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.helmert.HelmertEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.get_feature_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.helmert.HelmertEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.helmert.HelmertEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.set_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.helmert.HelmertEncoder.transform"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="leaveoneout.html">Leave One Out</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mestimate.html">M-estimate</a></li>
@@ -164,14 +176,17 @@ unexpected changes in dimension in some cases.</p>
 </table>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 69%" />
-<col style="width: 31%" />
+<col style="width: 74%" />
+<col style="width: 26%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>fit_helmert_coding</strong></p></td>
+<tr class="row-odd"><td><p><strong>fit_contrast_coding</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>helmert_coding</strong></p></td>
+<tr class="row-even"><td><p><strong>get_contrast_matrix</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>transform_contrast_coding</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -236,14 +251,17 @@ specified at fit time. Passing an int will fill with this int value.</p>
 </table>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 69%" />
-<col style="width: 31%" />
+<col style="width: 74%" />
+<col style="width: 26%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>fit_helmert_coding</strong></p></td>
+<tr class="row-odd"><td><p><strong>fit_contrast_coding</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>helmert_coding</strong></p></td>
+<tr class="row-even"><td><p><strong>get_contrast_matrix</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>transform_contrast_coding</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -332,11 +350,6 @@ contained subobjects that are estimators.</p>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="category_encoders.helmert.HelmertEncoder.helmert_coding">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">helmert_coding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/helmert.html#HelmertEncoder.helmert_coding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.helmert.HelmertEncoder.helmert_coding" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.helmert.HelmertEncoder.set_params">

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>James-Stein Encoder &mdash; Category Encoders 2.5.0 documentation</title>
+  <title>James-Stein Encoder &mdash; Category Encoders 2.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -30,7 +31,7 @@
             <a href="index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.0
+                2.5.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -49,7 +50,18 @@
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helmert.html">Helmert Coding</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">James-Stein Encoder</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">James-Stein Encoder</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.fit"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_feature_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.set_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.transform"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="leaveoneout.html">Leave One Out</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mestimate.html">M-estimate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onehot.html">One Hot</a></li>
