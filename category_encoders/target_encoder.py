@@ -41,9 +41,17 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     smoothing: float
         smoothing effect to balance categorical average vs prior. Higher value means stronger regularization.
         The value must be strictly bigger than 0. Higher values mean a flatter S-curve (see min_samples_leaf).
-    hierarchy: dict
-        a dictionary of columns to map into hierarchies.  Dictionary key(s) should be the column name from X
+    hierarchy: dict or dataframe
+        A dictionary or a dataframe to define the hierarchy for mapping.
+        
+        If a dictionary, this contains a dict of columns to map into hierarchies.  Dictionary key(s) should be the column name from X
         which requires mapping.  For multiple hierarchical maps, this should be a dictionary of dictionaries.
+        
+        If dataframe: a dataframe defining columns to be used for the hierarchies.  Column names must take the form:
+            HIER_colA_1, ... HIER_colA_N, HIER_colB_1, ... HIER_colB_M, ...
+        where [colA, colB, ...] are given columns in cols list.  
+        1:N and 1:M define the hierarchy for each column where 1 is the highest hierarchy (top of the tree).  A single column or multiple 
+        can be used, as relevant.
 
     Examples
     -------
@@ -75,16 +83,24 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     dtypes: float64(13)
     memory usage: 51.5 KB
     None
-
-    >>> X = ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W', 'W', 'W']
-    >>> hierarchical_map = {'Compass': {'N': ('N', 'NE'), 'S': ('S', 'SE'), 'W': 'W'}}
-    >>> y = [1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1]
-    >>> enc = TargetEncoder(hierarchy=hierarchical_map).fit(X, y)
-    >>> hierarchy_dataset = enc.transform(X)
-    >>> print(hierarchy_dataset[0].values)
-    [0.5        0.5        0.94039854 0.94039854 0.94039854 0.13447071
-    0.13447071 0.5        0.5        0.5        0.5        0.40179862
-    0.40179862 0.40179862 0.40179862 0.40179862]
+   
+    >>> from category_encoders.datasets import load_compass
+    >>> X, y = load_compass()
+    >>> hierarchical_map = {'compass': {'N': ('N', 'NE'), 'S': ('S', 'SE'), 'W': 'W'}}
+    >>> enc = TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map, cols=['compass']).fit(X.loc[:,['compass']], y)
+    >>> hierarchy_dataset = enc.transform(X.loc[:,['compass']])
+    >>> print(hierarchy_dataset['compass'].values)
+    [0.62263617 0.62263617 0.90382995 0.90382995 0.90382995 0.17660024
+     0.17660024 0.46051953 0.46051953 0.46051953 0.46051953 0.40332791
+     0.40332791 0.40332791 0.40332791 0.40332791]
+    >>> X, y = load_postcodes('binary')
+    >>> cols = ['postcode']
+    >>> HIER_cols = ['HIER_postcode_1','HIER_postcode_2','HIER_postcode_3','HIER_postcode_4']
+    >>> enc = TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=X[HIER_cols], cols=['postcode']).fit(X['postcode'], y)
+    >>> hierarchy_dataset = enc.transform(X['postcode'])
+    >>> print(hierarchy_dataset.loc[0:10, 'postcode'].values)
+    [0.75063473 0.90208756 0.88328833 0.77041254 0.68891504 0.85012847
+    0.76772574 0.88742357 0.7933824  0.63776756 0.9019973 ]
 
     References
     ----------
@@ -113,19 +129,33 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                           category=FutureWarning)
         self.mapping = None
         self._mean = None
-        if hierarchy:
+        if isinstance(hierarchy, (dict, pd.DataFrame)) and cols is None:
+            raise ValueError('Hierarchy is defined but no columns are named for encoding')
+        if isinstance(hierarchy, dict):
             self.hierarchy = {}
             self.hierarchy_depth = {}
             for switch in hierarchy:
                 flattened_hierarchy = util.flatten_reverse_dict(hierarchy[switch])
-
                 hierarchy_check = self._check_dict_key_tuples(flattened_hierarchy)
                 self.hierarchy_depth[switch] = hierarchy_check[1]
                 if not hierarchy_check[0]:
                     raise ValueError('Hierarchy mapping contains different levels for key "' + switch + '"')
                 self.hierarchy[switch] = {(k if isinstance(t, tuple) else t): v for t, v in flattened_hierarchy.items() for k in t}
-        else:
+        elif isinstance(hierarchy, pd.DataFrame):
             self.hierarchy = hierarchy
+            self.hierarchy_depth = {}
+            for col in self.cols:
+                HIER_cols = self.hierarchy.columns[self.hierarchy.columns.str.startswith(f'HIER_{col}')].values
+                HIER_levels = [int(i.replace(f'HIER_{col}_', '')) for i in HIER_cols]
+                if np.array_equal(sorted(HIER_levels), np.arange(1, max(HIER_levels)+1)):
+                    self.hierarchy_depth[col] = max(HIER_levels)
+                else:
+                    raise ValueError(f'Hierarchy columns are not complete for column {col}')
+        elif hierarchy is None:
+            self.hierarchy = hierarchy
+        else:
+            raise ValueError('Given hierarchy mapping is neither a dictionary nor a dataframe')
+
         self.cols_hier = []
 
     def _check_dict_key_tuples(self, d):
@@ -134,14 +164,17 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         return min_tuple_size == max_tuple_size, min_tuple_size
 
     def _fit(self, X, y, **kwargs):
-        if self.hierarchy:
+        if isinstance(self.hierarchy, dict):
             X_hier = pd.DataFrame()
             for switch in self.hierarchy:
                 if switch in self.cols:
                     colnames = [f'HIER_{str(switch)}_{str(i + 1)}' for i in range(self.hierarchy_depth[switch])]
                     df = pd.DataFrame(X[str(switch)].map(self.hierarchy[str(switch)]).tolist(), index=X.index, columns=colnames)
                     X_hier = pd.concat([X_hier, df], axis=1)
+        elif isinstance(self.hierarchy, pd.DataFrame):
+            X_hier = self.hierarchy
 
+        if isinstance(self.hierarchy, (dict, pd.DataFrame)):
             enc_hier = OrdinalEncoder(
                 verbose=self.verbose,
                 cols=X_hier.columns,
@@ -159,7 +192,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
-        if self.hierarchy:
+        if self.hierarchy is not None:
             self.mapping = self.fit_target_encoding(pd.concat([X_ordinal, X_hier_ordinal], axis=1), y)
         else:
             self.mapping = self.fit_target_encoding(X_ordinal, y)
@@ -174,7 +207,8 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                 values = switch.get('mapping')
                 
                 scalar = prior
-                if self.hierarchy and col in self.hierarchy:
+                if (isinstance(self.hierarchy, dict) and col in self.hierarchy) or \
+                                    (isinstance(self.hierarchy, pd.DataFrame)):
                     for i in range(self.hierarchy_depth[col]):
                         col_hier = 'HIER_'+str(col)+'_'+str(i+1)
                         col_hier_m1 = col if i == self.hierarchy_depth[col]-1 else 'HIER_'+str(col)+'_'+str(i+2)
