@@ -295,6 +295,9 @@ class BaseEncoder(BaseEstimator):
         self._dim = X.shape[1]
         self._get_fit_columns(X)
 
+        if not set(self.cols).issubset(X.columns):
+            raise ValueError('X does not contain the columns listed in cols')
+
         if self.handle_missing == 'error':
             if X[self.cols].isnull().any().any():
                 raise ValueError('Columns to be encoded can not contain null')

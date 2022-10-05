@@ -165,8 +165,6 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     def _fit(self, X, y, **kwargs):
         if isinstance(self.hierarchy, dict):
-            if not set(self.cols).issubset(X.columns):
-                raise ValueError('X does not contain the columns listed in cols')
             X_hier = pd.DataFrame()
             for switch in self.hierarchy:
                 if switch in self.cols:
