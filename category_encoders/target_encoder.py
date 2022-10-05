@@ -41,9 +41,17 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     smoothing: float
         smoothing effect to balance categorical average vs prior. Higher value means stronger regularization.
         The value must be strictly bigger than 0. Higher values mean a flatter S-curve (see min_samples_leaf).
-    hierarchy: dict
-        a dictionary of columns to map into hierarchies.  Dictionary key(s) should be the column name from X
+    hierarchy: dict or dataframe
+        A dictionary or a dataframe to define the hierarchy for mapping.
+        
+        If a dictionary, this contains a dict of columns to map into hierarchies.  Dictionary key(s) should be the column name from X
         which requires mapping.  For multiple hierarchical maps, this should be a dictionary of dictionaries.
+        
+        If dataframe: a dataframe defining columns to be used for the hierarchies.  Column names must take the form:
+            HIER_colA_1, ... HIER_colA_N, HIER_colB_1, ... HIER_colB_M, ...
+        where [colA, colB, ...] are given columns in cols list.  
+        1:N and 1:M define the hierarchy for each column where 1 is the highest hierarchy (top of the tree).  A single column or multiple 
+        can be used, as relevant.
 
     Examples
     -------
@@ -75,7 +83,8 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     dtypes: float64(13)
     memory usage: 51.5 KB
     None
-
+   
+    >>> from category_encoders.datasets import load_compass
     >>> X, y = load_compass()
     >>> hierarchical_map = {'compass': {'N': ('N', 'NE'), 'S': ('S', 'SE'), 'W': 'W'}}
     >>> enc = TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map, cols=['compass']).fit(X.loc[:,['compass']], y)
