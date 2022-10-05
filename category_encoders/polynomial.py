@@ -1,15 +1,14 @@
 """Polynomial contrast coding"""
 
+from patsy.contrasts import ContrastMatrix, Poly
 import numpy as np
-import pandas as pd
-from patsy.contrasts import Poly
-from category_encoders.ordinal import OrdinalEncoder
-import category_encoders.utils as util
 
-__author__ = 'willmcginnis'
+from category_encoders.base_contrast_encoder import BaseContrastEncoder
+
+__author__ = 'paulwestenthanner'
 
 
-class PolynomialEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+class PolynomialEncoder(BaseContrastEncoder):
     """Polynomial contrast coding for the encoding of categorical features.
 
     Parameters
@@ -81,100 +80,5 @@ class PolynomialEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
     """
-    prefit_ordinal = True
-    encoding_relation = util.EncodingRelation.ONE_TO_N_UNIQUE
-
-    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
-                 handle_unknown='value', handle_missing='value'):
-        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
-                         handle_unknown=handle_unknown, handle_missing=handle_missing)
-        self.mapping = mapping
-        self.ordinal_encoder = None
-
-    def _fit(self, X, y=None, **kwargs):
-
-        # train an ordinal pre-encoder
-        self.ordinal_encoder = OrdinalEncoder(
-            verbose=self.verbose,
-            cols=self.cols,
-            handle_unknown='value',
-            handle_missing='value'
-        )
-        self.ordinal_encoder = self.ordinal_encoder.fit(X)
-
-        ordinal_mapping = self.ordinal_encoder.category_mapping
-
-        mappings_out = []
-        for switch in ordinal_mapping:
-            values = switch.get('mapping')
-            col = switch.get('col')
-            column_mapping = self.fit_polynomial_coding(col, values, self.handle_missing, self.handle_unknown)
-            mappings_out.append({'col': switch.get('col'), 'mapping': column_mapping, })
-
-        self.mapping = mappings_out
-
-    def _transform(self, X):
-
-        X = self.ordinal_encoder.transform(X)
-
-        if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
-                raise ValueError('Columns to be encoded can not contain new values')
-
-        X = self.polynomial_coding(X, self.mapping)
-        return X
-
-    @staticmethod
-    def fit_polynomial_coding(col, values, handle_missing, handle_unknown):
-        if handle_missing == 'value':
-            values = values[values > 0]
-
-        values_to_encode = values.values
-
-        if len(values) < 2:
-            return pd.DataFrame(index=values_to_encode)
-
-        if handle_unknown == 'indicator':
-            values_to_encode = np.append(values_to_encode, -1)
-
-        polynomial_contrast_matrix = Poly().code_without_intercept(values_to_encode)
-        df = pd.DataFrame(data=polynomial_contrast_matrix.matrix, index=values_to_encode,
-                          columns=[f"{col}_{i}" for i in range(len(polynomial_contrast_matrix.column_suffixes))])
-
-        if handle_unknown == 'return_nan':
-            df.loc[-1] = np.nan
-        elif handle_unknown == 'value':
-            df.loc[-1] = np.zeros(len(values_to_encode) - 1)
-
-        if handle_missing == 'return_nan':
-            df.loc[values.loc[np.nan]] = np.nan
-        elif handle_missing == 'value':
-            df.loc[-2] = np.zeros(len(values_to_encode) - 1)
-
-        return df
-
-    @staticmethod
-    def polynomial_coding(X_in, mapping):
-        """
-        """
-
-        X = X_in.copy(deep=True)
-
-        cols = X.columns.values.tolist()
-
-        X['intercept'] = pd.Series([1] * X.shape[0], index=X.index)
-
-        for switch in mapping:
-            col = switch.get('col')
-            mod = switch.get('mapping')
-
-            base_df = mod.reindex(X[col])
-            base_df.set_index(X.index, inplace=True)
-            X = pd.concat([base_df, X], axis=1)
-
-            old_column_index = cols.index(col)
-            cols[old_column_index: old_column_index + 1] = mod.columns
-
-        cols = ['intercept'] + cols
-
-        return X.reindex(columns=cols)
+    def get_contrast_matrix(self, values_to_encode: np.array) -> ContrastMatrix:
+        return Poly().code_without_intercept(values_to_encode)
