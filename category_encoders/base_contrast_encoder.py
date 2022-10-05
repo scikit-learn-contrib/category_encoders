@@ -117,15 +117,10 @@ class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return df
 
     @staticmethod
-    def transform_contrast_coding(X_in, mapping):
-        """
-        """
-
-        X = X_in.copy(deep=True)
-
+    def transform_contrast_coding(X, mapping):
         cols = X.columns.values.tolist()
 
-        # todo why is this necessary
+        # See issue 370 if it is necessary to add an intercept or not.
         X['intercept'] = pd.Series([1] * X.shape[0], index=X.index)
 
         for switch in mapping:
@@ -140,6 +135,8 @@ class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             old_column_index = cols.index(col)
             cols[old_column_index: old_column_index + 1] = mod.columns
 
+        # this could lead to problems if an intercept column is already present
+        # (e.g. if another column has been encoded with another contrast coding scheme)
         cols = ['intercept'] + cols
 
         return X.reindex(columns=cols)

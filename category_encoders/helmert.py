@@ -6,7 +6,7 @@ import numpy as np
 
 from category_encoders.base_contrast_encoder import BaseContrastEncoder
 
-__author__ = 'willmcginnis'
+__author__ = 'paulwestenthanner'
 
 
 class HelmertEncoder(BaseContrastEncoder):
