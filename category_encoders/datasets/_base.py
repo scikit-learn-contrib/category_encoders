@@ -6,7 +6,7 @@ import pkg_resources
 import pandas as pd
 
 def load_compass():
-    """Return a dataframe for target encoding with 100 UK postcodes and hierarchy.
+    """Return a dataframe for target encoding with 16 rows of compass directions.
 
     Contains the following fields:
         index                16 non-null int64
@@ -16,8 +16,8 @@ def load_compass():
 
     Returns
     -------
-    X: A dataframe containing features
-    y: A dataframe containing the target variable
+    X: A pandas series containing features
+    y: A pandas series containing the target variable
 
     """
     data_filename = "data/compass.csv"
@@ -51,8 +51,8 @@ def load_postcodes(target_type='binary'):
 
     Returns
     -------
-    X: A dataframe containing features
-    y: A dataframe containing the target variable
+    X: A pandas series containing features
+    y: A pandas series containing the target variable
 
     """
     data_filename = "data/postcode_dataset_100.csv"
