@@ -54,7 +54,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         6C12T CPU with 100,000 samples makes max_sample=16,666.
         It is not recommended to set it larger than the default value.
     n_components: int
-        how many bits to use to represent the feature. By default we use 8 bits.
+        how many bits to use to represent the feature. By default, we use 8 bits.
         For high-cardinality features, consider using up-to 32 bits.
 
     Example
@@ -132,38 +132,39 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     def _fit(self, X, y=None, **kwargs):
         pass
 
-    @staticmethod
-    def require_data(self, data_lock, new_start, done_index, hashing_parts, cols, process_index):
-        if data_lock.acquire():
-            if new_start.value:
-                end_index = 0
-                new_start.value = False
-            else:
-                end_index = done_index.value
-
-            if all([self.data_lines > 0, end_index < self.data_lines]):
-                start_index = end_index
-                if (self.data_lines - end_index) <= self.max_sample:
-                    end_index = self.data_lines
+    def require_data(self, data_lock, new_start, done_index, hashing_parts, process_index):
+        is_finished = False
+        while not is_finished:
+            if data_lock.acquire():
+                if new_start.value:
+                    end_index = 0
+                    new_start.value = False
                 else:
-                    end_index += self.max_sample
-                done_index.value = end_index
-                data_lock.release()
+                    end_index = done_index.value
 
-                data_part = self.X.iloc[start_index: end_index]
-                # Always get df and check it after merge all data parts
-                data_part = self.hashing_trick(X_in=data_part, hashing_method=self.hash_method, N=self.n_components, cols=self.cols)
-                part_index = int(math.ceil(end_index / self.max_sample))
-                hashing_parts.put({part_index: data_part})
-                if self.verbose == 5:
-                    print("Process - " + str(process_index),
-                          "done hashing data : " + str(start_index) + "~" + str(end_index))
-                if end_index < self.data_lines:
-                    self.require_data(self, data_lock, new_start, done_index, hashing_parts, cols=cols, process_index=process_index)
+                if all([self.data_lines > 0, end_index < self.data_lines]):
+                    start_index = end_index
+                    if (self.data_lines - end_index) <= self.max_sample:
+                        end_index = self.data_lines
+                    else:
+                        end_index += self.max_sample
+                    done_index.value = end_index
+                    data_lock.release()
+
+                    data_part = self.X.iloc[start_index: end_index]
+                    # Always get df and check it after merge all data parts
+                    data_part = self.hashing_trick(X_in=data_part, hashing_method=self.hash_method,
+                                                   N=self.n_components, cols=self.cols)
+                    part_index = int(math.ceil(end_index / self.max_sample))
+                    hashing_parts.put({part_index: data_part})
+                    is_finished = end_index >= self.data_lines
+                    if self.verbose == 5:
+                        print(f"Process - {process_index} done hashing data : {start_index} ~ {end_index}")
+                else:
+                    data_lock.release()
+                    is_finished = True
             else:
                 data_lock.release()
-        else:
-            data_lock.release()
 
     def _transform(self, X):
         """
@@ -184,12 +185,12 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             if self.max_sample == 0:
                 self.max_sample = 1
         if self.max_process == 1:
-            self.require_data(self, data_lock, new_start, done_index, hashing_parts, cols=self.cols, process_index=1)
+            self.require_data(data_lock, new_start, done_index, hashing_parts, process_index=1)
         else:
             n_process = []
-            for thread_index in range(self.max_process):
+            for thread_idx in range(self.max_process):
                 process = multiprocessing.Process(target=self.require_data,
-                                                  args=(self, data_lock, new_start, done_index, hashing_parts, self.cols, thread_index + 1))
+                                                  args=(data_lock, new_start, done_index, hashing_parts, thread_idx + 1))
                 process.daemon = True
                 n_process.append(process)
             for process in n_process:
