@@ -624,13 +624,17 @@ class TestEncoders(TestCase):
                 result5 = enc5.fit_transform(x5, y)
                 self.assertTrue((result1.values == result5.values).all())
 
-                enc6 = getattr(encoders, encoder_name)()
-                result6 = enc6.fit_transform(x6, y)
-                self.assertTrue((result1.values == result6.values).all())
+                # gray encoder re-orders inputs so that nan is last, hence the output is changed
+                if encoder_name != "GrayEncoder":
+                    enc6 = getattr(encoders, encoder_name)()
+                    result6 = enc6.fit_transform(x6, y)
+                    self.assertTrue((result1.values == result6.values).all())
 
-                enc7 = getattr(encoders, encoder_name)()
-                result7 = enc7.fit_transform(x7, y)
-                self.assertTrue((result1.values == result7.values).all())
+                # gray encoder actually does re-order inputs
+                if encoder_name != "GrayEncoder":
+                    enc7 = getattr(encoders, encoder_name)()
+                    result7 = enc7.fit_transform(x7, y)
+                    self.assertTrue((result1.values == result7.values).all())
 
                 # Arguments
                 enc9 = getattr(encoders, encoder_name)(return_df=False)
