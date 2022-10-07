@@ -1,5 +1,6 @@
 unreleased
 ==========
+* added gray encoder
 
 v2.5.1.post0
 ============

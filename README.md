@@ -20,6 +20,7 @@ __Unsupervised:__
  * Backward Difference Contrast [2][3]
  * BaseN [6]
  * Binary [5]
+ * Gray [14]
  * Count [10]
  * Hashing [1]
  * Helmert Contrast [2][3]
@@ -147,4 +148,4 @@ References
  11. Transforming categorical features to numerical features. From https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
  12. Andrew Gelman and Jennifer Hill (2006). Data Analysis Using Regression and Multilevel/Hierarchical Models. From https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf
  13. Carlos Mougan, David Masip, Jordi Nin and Oriol Pujol (2021). Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems. https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14
- 
+ 14. Gray Encoding. From https://en.wikipedia.org/wiki/Gray_code 

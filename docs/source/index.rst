@@ -44,6 +44,7 @@ To use:
     encoder = ce.CatBoostEncoder(cols=[...])
     encoder = ce.CountEncoder(cols=[...])
     encoder = ce.GLMMEncoder(cols=[...])
+    encoder = ce.GrayEncoder(cols=[...])
     encoder = ce.HashingEncoder(cols=[...])
     encoder = ce.HelmertEncoder(cols=[...])
     encoder = ce.JamesSteinEncoder(cols=[...])
@@ -74,6 +75,7 @@ Contents:
    catboost
    count
    glmm
+   gray
    hashing
    helmert
    jamesstein
