@@ -8,6 +8,7 @@
 
 from category_encoders.backward_difference import BackwardDifferenceEncoder
 from category_encoders.binary import BinaryEncoder
+from category_encoders.gray import GrayEncoder
 from category_encoders.count import CountEncoder
 from category_encoders.hashing import HashingEncoder
 from category_encoders.helmert import HelmertEncoder
@@ -32,6 +33,7 @@ __author__ = "willmcginnis", "cmougan", "paulwestenthanner"
 __all__ = [
     "BackwardDifferenceEncoder",
     "BinaryEncoder",
+    "GrayEncoder",
     "CountEncoder",
     "HashingEncoder",
     "HelmertEncoder",
