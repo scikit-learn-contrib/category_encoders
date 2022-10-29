@@ -1,6 +1,7 @@
 """Target Encoder"""
 import numpy as np
 import pandas as pd
+from scipy.special import expit
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 import warnings
@@ -261,5 +262,6 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         return X
 
     def _weighting(self, n):
-        # monotonically increasing function on n bounded between 0 and 1
-        return 1 / (1 + np.exp(-(n - self.min_samples_leaf) / self.smoothing))
+        # monotonically increasing function of n bounded between 0 and 1
+        # sigmoid in this case, using scipy.expit for numerical stability
+        return expit((n - self.min_samples_leaf) / self.smoothing)
