@@ -13,19 +13,22 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
 
-    This is very similar to leave-one-out encoding, but calculates the
-    values "on-the-fly". Consequently, the values naturally vary
-    during the training phase and it is not necessary to add random noise.
+    CatBoost encoder is the variation of target encoding. It supports
+    time-aware encoding, regularization and online learning.
 
-    Beware, the training data have to be randomly permutated. E.g.:
+    This implementation is time-aware (similar to CatBoos 'has_time=True'),
+    so no random permutations are used. This makes this encoder sensitive to
+    ordering of the data and suitable for time series problems. If your data
+    does not have time dependency it should still work just fine assuming
+    sorting of the data won't leak any information.
 
-        # Random permutation
-        perm = np.random.permutation(len(X))
-        X = X.iloc[perm].reset_index(drop=True)
-        y = y.iloc[perm].reset_index(drop=True)
+    Regularization (parameter a) is achieved by adding it to running counts
+    (so called pseudocounts).
 
-    This is necessary because some data sets are sorted based on the target
-    value and this coder encodes the features on-the-fly in a single pass.
+    NOTE: behavior of the transformer would differ in transform and fit_transform
+    methods depending if y values are passed. If no target is passed then
+    encoder will map the last value of running mean to each category. If y is passed
+    then it will continue to update running mean and encode it to passed feature columns.
 
     Parameters
     ----------
