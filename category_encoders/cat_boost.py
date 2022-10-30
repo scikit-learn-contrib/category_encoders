@@ -22,8 +22,10 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     does not have time dependency it should still work just fine assuming
     sorting of the data won't leak any information.
 
-    Regularization (parameter a) is achieved by adding it to running counts
-    (so called pseudocounts).
+    Regularization (parameter a) is achieved by adding this imcrement to running counts
+    (in this case so called pseudocounts).
+    Regularization (parameter sigma) is achieved by adding gaussian noise to
+    the output.
 
     NOTE: behavior of the transformer would differ in transform and fit_transform
     methods depending if y values are passed. If no target is passed then
