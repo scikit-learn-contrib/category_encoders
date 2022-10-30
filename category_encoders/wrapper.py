@@ -62,7 +62,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
         labels = labels.iloc[:, 1:]  # drop one label
 
         # train the feature encoders
-        for class_name, label in labels.iteritems():
+        for class_name, label in labels.items():
             self.feature_encoders[class_name] = copy.deepcopy(self.feature_encoder).fit(X, label)
 
     def transform(self, X):
@@ -109,7 +109,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
         all_new_features = pd.DataFrame()
 
         # fit_transform the feature encoders
-        for class_name, label in labels.iteritems():
+        for class_name, label in labels.items():
             feature_encoder = copy.deepcopy(self.feature_encoder)
             encoded = feature_encoder.fit_transform(X, label)
 

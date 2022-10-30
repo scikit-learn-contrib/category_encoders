@@ -142,7 +142,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             new_columns = []
 
             append_nan_to_index = False
-            for cat_name, class_ in values.iteritems():
+            for cat_name, class_ in values.items():
                 if pd.isna(cat_name) and self.handle_missing == 'return_nan':
                     # we don't want a mapping column if return_nan
                     # but do add the index to the end
