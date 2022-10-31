@@ -17,15 +17,11 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     time-aware encoding, regularization and online learning.
 
     This implementation is time-aware (similar to CatBoos 'has_time=True'),
-    so no random permutations are used. This makes this encoder sensitive to
+    so no random permutations are used. It makes this encoder sensitive to
     ordering of the data and suitable for time series problems. If your data
     does not have time dependency it should still work just fine assuming
-    sorting of the data won't leak any information.
-
-    Regularization (parameter a) is achieved by adding this imcrement to running counts
-    (in this case so called pseudocounts).
-    Regularization (parameter sigma) is achieved by adding gaussian noise to
-    the output.
+    sorting of the data won't leak any information outside training scope
+    (i.e. no data leakage).
 
     NOTE: behavior of the transformer would differ in transform and fit_transform
     methods depending if y values are passed. If no target is passed then
