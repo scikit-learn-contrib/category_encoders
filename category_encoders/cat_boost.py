@@ -11,21 +11,23 @@ __author__ = 'Jan Motl'
 class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """CatBoost Encoding for categorical features.
 
-    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
 
-    This is very similar to leave-one-out encoding, but calculates the
-    values "on-the-fly". Consequently, the values naturally vary
-    during the training phase and it is not necessary to add random noise.
+    CatBoostEncoder is the variation of target encoding. It supports
+    time-aware encoding, regularization, and online learning.
 
-    Beware, the training data have to be randomly permutated. E.g.:
+    This implementation is time-aware (similar to CatBoost's parameter 'has_time=True'),
+    so no random permutations are used. It makes this encoder sensitive to
+    ordering of the data and suitable for time series problems. If your data
+    does not have time dependency, it should still work just fine, assuming
+    sorting of the data won't leak any information outside the training scope
+    (i.e., no data leakage). When data leakage is a possibility, it is wise to
+    eliminate it first (for example, shuffle or resample the data).
 
-        # Random permutation
-        perm = np.random.permutation(len(X))
-        X = X.iloc[perm].reset_index(drop=True)
-        y = y.iloc[perm].reset_index(drop=True)
-
-    This is necessary because some data sets are sorted based on the target
-    value and this coder encodes the features on-the-fly in a single pass.
+    NOTE: behavior of the transformer would differ in transform and fit_transform
+    methods depending if y values are passed. If no target is passed, then
+    encoder will map the last value of the running mean to each category. If y is passed
+    then it will map all values of the running mean to each category's occurrences.
 
     Parameters
     ----------
