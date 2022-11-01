@@ -11,22 +11,23 @@ __author__ = 'Jan Motl'
 class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """CatBoost Encoding for categorical features.
 
-    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
 
-    CatBoost encoder is the variation of target encoding. It supports
-    time-aware encoding, regularization and online learning.
+    CatBoostEncoder is the variation of target encoding. It supports
+    time-aware encoding, regularization, and online learning.
 
-    This implementation is time-aware (similar to CatBoos 'has_time=True'),
-    so no random permutations are used. It makes this encoder sensitive to
-    ordering of the data and suitable for time series problems. If your data
-    does not have time dependency it should still work just fine assuming
-    sorting of the data won't leak any information outside training scope
-    (i.e. no data leakage).
+    This implementation is time-aware (similar to CatBoost's parameter 'has_time=True'),
+    so no random permutations are used. It makes this encoder sensitive to
+    ordering of the data and suitable for time series problems. If your data
+    does not have time dependency, it should still work just fine, assuming
+    sorting of the data won't leak any information outside the training scope
+    (i.e., no data leakage). When data leakage is a possibility, it is wise to
+    eliminate it first (for example, shuffle or resample the data).
 
-    NOTE: behavior of the transformer would differ in transform and fit_transform
-    methods depending if y values are passed. If no target is passed then
-    encoder will map the last value of running mean to each category. If y is passed
-    then it will continue to update running mean and encode it to passed feature columns.
+    NOTE: behavior of the transformer would differ in transform and fit_transform
+    methods depending if y values are passed. If no target is passed, then
+    encoder will map the last value of the running mean to each category. If y is passed
+    then it will map all values of the running mean to each category's occurrences.
 
     Parameters
     ----------
