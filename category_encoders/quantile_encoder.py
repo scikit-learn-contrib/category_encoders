@@ -1,13 +1,17 @@
 """Quantile Encoder"""
 __author__ = "david26694", "cmougan"
 
-import numpy as np
-from category_encoders.ordinal import OrdinalEncoder
-from sklearn.base import BaseEstimator
-import category_encoders.utils as util
-import pandas as pd
 from functools import reduce
 import operator
+from typing import List
+import warnings
+
+import numpy as np
+import pandas as pd
+from sklearn.base import BaseEstimator
+
+import category_encoders.utils as util
+from category_encoders.ordinal import OrdinalEncoder
 
 
 class QuantileEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
@@ -334,7 +338,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             else:
                 new_feat = X_encoded[[c for c in X_encoded.columns if c not in orig_cols]]
                 transformed_df = pd.concat([transformed_df, new_feat], axis=1)
-        feature_order = [c for c in self.get_feature_names() if c in transformed_df]
+        feature_order = [c for c in self.get_feature_names_out() if c in transformed_df]
         transformed_df = transformed_df[feature_order]
 
         if self.return_df or override_return_df:
@@ -342,7 +346,12 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         else:
             return transformed_df.values
 
-    def get_feature_names(self):
+    def get_feature_names(self) -> List[str]:
+        warnings.warn("`get_feature_names` is deprecated in all of sklearn. Use `get_feature_names_out` instead.",
+                      category=FutureWarning)
+        return self.get_feature_names_out()
+
+    def get_feature_names_out(self):
         """
         Returns the names of all transformed / added columns.
         Returns

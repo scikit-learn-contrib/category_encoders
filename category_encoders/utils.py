@@ -1,6 +1,7 @@
 """A collection of shared utilities for all encoders, not intended for external use."""
 from abc import abstractmethod
 from enum import Enum, auto
+import warnings
 
 import pandas as pd
 import numpy as np
@@ -356,6 +357,11 @@ class BaseEncoder(BaseEstimator):
             self.cols = convert_cols_to_list(self.cols)
 
     def get_feature_names(self) -> List[str]:
+        warnings.warn("`get_feature_names` is deprecated in all of sklearn. Use `get_feature_names_out` instead.",
+                      category=FutureWarning)
+        return self.get_feature_names_out()
+
+    def get_feature_names_out(self) -> List[str]:
         """
         Returns the names of all transformed / added columns.
 
