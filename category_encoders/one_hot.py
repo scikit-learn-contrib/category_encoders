@@ -48,7 +48,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
     >>> enc = OneHotEncoder(cols=['CHAS', 'RAD'], handle_unknown='indicator').fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
@@ -217,7 +217,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
         # first check the type and make deep copy
-        X = util.convert_input(X_in, columns=self.feature_names, deep=True)
+        X = util.convert_input(X_in, columns=self.feature_names_out_, deep=True)
 
         X = self.reverse_dummies(X, self.mapping)
 

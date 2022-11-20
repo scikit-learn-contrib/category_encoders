@@ -5,6 +5,7 @@ from sklearn.model_selection import StratifiedKFold
 import category_encoders as encoders
 import pandas as pd
 import numpy as np
+from typing import Dict
 
 
 class PolynomialWrapper(BaseEstimator, TransformerMixin):
@@ -37,7 +38,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
     >>> bunch = load_boston()
     >>> y = bunch.target
     >>> y = (y/10).round().astype(int)  # we create 6 artificial classes
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
     >>> enc = TargetEncoder(cols=['CHAS', 'RAD'])
     >>> wrapper = PolynomialWrapper(enc)
     >>> encoded = wrapper.fit_transform(X, y)
@@ -46,7 +47,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
 
     def __init__(self, feature_encoder):
         self.feature_encoder = feature_encoder
-        self.feature_encoders = {}
+        self.feature_encoders: Dict[str, utils.BaseEncoder] = {}
         self.label_encoder = None
 
     def fit(self, X, y, **kwargs):
@@ -85,7 +86,8 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
             all_new_features = pd.concat((all_new_features, new_features), axis=1)
 
         # add features that were not encoded
-        result = pd.concat((encoded[encoded.columns[~encoded.columns.isin(feature_encoder.cols)]], all_new_features), axis=1)
+        result = pd.concat((encoded[encoded.columns[~encoded.columns.isin(feature_encoder.cols)]],
+                            all_new_features), axis=1)
 
         return result
 
@@ -121,7 +123,8 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
             self.feature_encoders[class_name] = feature_encoder
 
         # add features that were not encoded
-        result = pd.concat((encoded[encoded.columns[~encoded.columns.isin(feature_encoder.cols)]], all_new_features), axis=1)
+        result = pd.concat((encoded[encoded.columns[~encoded.columns.isin(feature_encoder.cols)]],
+                            all_new_features), axis=1)
 
         return result
 
@@ -189,7 +192,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
     >>> y = bunch.target
     >>> # we create 6 artificial classes and a train/validation/test split
     >>> y = (y/10).round().astype(int)
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
     >>> X_train, X_test, y_train, _ = train_test_split(X, y)
     >>> X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train)
     >>> # Define the nested CV encoder for a supervised encoder

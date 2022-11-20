@@ -47,7 +47,7 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
     >>> y = bunch.target > 22.5
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
     >>> enc = MEstimateEncoder(cols=['CHAS', 'RAD']).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())

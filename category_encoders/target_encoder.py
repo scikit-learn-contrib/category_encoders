@@ -61,7 +61,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
     >>> enc = TargetEncoder(cols=['CHAS', 'RAD'], min_samples_leaf=20, smoothing=10).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
@@ -255,7 +255,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     def target_encode(self, X_in):
         X = X_in.copy(deep=True)
 
-        # Was not mapping extra columns as self.cols did not include new column
+        # Was not mapping extra columns as self.featuer_names_in did not include new column
         for col in self.cols:
             X[col] = X[col].map(self.mapping[col])
 

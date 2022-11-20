@@ -63,7 +63,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     >>> import pandas as pd
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
     >>> y = bunch.target
     >>> he = HashingEncoder(cols=['CHAS', 'RAD']).fit(X, y)
     >>> data = he.transform(X)
