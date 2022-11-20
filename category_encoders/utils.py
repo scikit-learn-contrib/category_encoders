@@ -168,7 +168,7 @@ def get_generated_cols(X_original, X_transformed, to_transform):
         X_transformed: df
             the transformed (current) DataFrame.
         to_transform: [str]
-            a list of columns that were transformed (as in the original DataFrame), commonly self.cols.
+            a list of columns that were transformed (as in the original DataFrame), commonly self.feature_names_in.
 
     Output:
         a list of columns that were transformed (as in the current DataFrame).
@@ -188,7 +188,7 @@ def get_generated_cols(X_original, X_transformed, to_transform):
 def flatten_reverse_dict(d):
     sep = "___"
     [flat_dict] = pd.json_normalize(d, sep=sep).to_dict(orient='records')
-    reversed_flat_dict = {v: tuple(k.split(sep)) for k,v in flat_dict.items()}
+    reversed_flat_dict = {v: tuple(k.split(sep)) for k, v in flat_dict.items()}
     return reversed_flat_dict
 
 
@@ -224,7 +224,7 @@ class BaseEncoder(BaseEstimator):
     verbose: int
     drop_invariant: bool
     invariant_cols: List[str] = []
-    feature_names: Union[None,  List[str]] = None
+    feature_names_out_: Union[None, List[str]] = None
     return_df: bool
     supervised: bool
     encoding_relation: EncodingRelation
@@ -264,11 +264,11 @@ class BaseEncoder(BaseEstimator):
         self.invariant_cols = []
         self.verbose = verbose
         self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
-        self.cols = cols
+        self.cols = cols  # This cannot be called `feature_names_in_` since it is a parameter. This does not feel right
+        self.feature_names_out_ = None
         self.mapping = None
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
-        self.feature_names = None
         self._dim = None
 
     def fit(self, X, y=None, **kwargs):
@@ -294,7 +294,7 @@ class BaseEncoder(BaseEstimator):
         X, y = convert_inputs(X, y)
 
         self._dim = X.shape[1]
-        self._get_fit_columns(X)
+        self._determine_fit_columns(X)
 
         if not set(self.cols).issubset(X.columns):
             raise ValueError('X does not contain the columns listed in cols')
@@ -307,13 +307,13 @@ class BaseEncoder(BaseEstimator):
 
         # for finding invariant columns transform without y (as is done on the test set)
         X_transformed = self.transform(X, override_return_df=True)
-        self.feature_names = X_transformed.columns.tolist()
+        self.feature_names_out_ = X_transformed.columns.tolist()
 
         # drop all output columns with 0 variance.
         if self.drop_invariant:
             generated_cols = get_generated_cols(X, X_transformed, self.cols)
             self.invariant_cols = [x for x in generated_cols if X_transformed[x].var() <= self.INVARIANCE_THRESHOLD]
-            self.feature_names = [x for x in self.feature_names if x not in self.invariant_cols]
+            self.feature_names_out_ = [x for x in self.feature_names_out_ if x not in self.invariant_cols]
 
         return self
 
@@ -342,7 +342,7 @@ class BaseEncoder(BaseEstimator):
         else:
             return X.values
 
-    def _get_fit_columns(self, X: pd.DataFrame) -> None:
+    def _determine_fit_columns(self, X: pd.DataFrame) -> None:
         """ Determine columns used by encoder.
 
         Note that the implementation also deals with re-fitting the same encoder object with different columns.
@@ -372,10 +372,20 @@ class BaseEncoder(BaseEstimator):
             Note: potentially dropped features (because the feature is constant/invariant) are not included!
 
         """
-        if not isinstance(self.feature_names, list):
+        if not isinstance(self.feature_names_out_, list):
             raise NotFittedError("Estimator has to be fitted to return feature names.")
         else:
-            return self.feature_names
+            return self.feature_names_out_
+
+    def get_feature_names_in(self) -> List[str]:
+        """
+        Returns the names of all input columns present when fitting.
+        These columns are necessary for the transform step.
+       """
+        if not isinstance(self.cols, list):
+            raise NotFittedError("Estimator has to be fitted to return feature names.")
+        else:
+            return self.cols
 
     @abstractmethod
     def _fit(self, X: pd.DataFrame, y: Optional[pd.Series], **kwargs):

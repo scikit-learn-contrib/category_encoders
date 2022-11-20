@@ -64,8 +64,8 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         combine_min_nan_groups: bool or dict of {column : bool, ...}.
             whether to combine the leftovers group with NaN group. Default True. Can
             also be forced to combine with 'force' meaning small groups are effectively
-            counted as NaNs. Force can only used when 'handle_missing' is 'value' or 'error'.
-            Note: Will not force if it creates an binary or invariant column.
+            counted as NaNs. Force can only be used when 'handle_missing' is 'value' or 'error'.
+            Note: Will not force if it creates a binary or invariant column.
 
 
         Example
@@ -76,7 +76,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         >>> bunch = load_boston()
         >>> y = bunch.target
-        >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+        >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
         >>> enc = CountEncoder(cols=['CHAS', 'RAD']).fit(X, y)
         >>> numeric_dataset = enc.transform(X)
 

@@ -9,6 +9,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator
+from sklearn.exceptions import NotFittedError
 
 import category_encoders.utils as util
 from category_encoders.ordinal import OrdinalEncoder
@@ -49,7 +50,7 @@ class QuantileEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
     >>> enc = QuantileEncoder(cols=['CHAS', 'RAD'], quantile=0.5, m=1.0).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
@@ -198,7 +199,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     >>> from sklearn.datasets import load_boston
     >>> bunch = load_boston()
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
     >>> enc = SummaryEncoder(cols=["CHAS", "RAD"], quantiles=[0.25, 0.5, 0.75]).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
@@ -261,7 +262,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.mapping = None
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
-        self.feature_names = None
+        self.feature_names_out_ = None
         self.quantiles = quantiles
         self.m = m
         self.encoder_list = None
@@ -311,7 +312,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             enc.fit(X.copy(), y)
             encoder_list.append(enc)
             self.drop_cols += enc.invariant_cols
-        self.feature_names = reduce(
+        self.feature_names_out_ = reduce(
             operator.add,
             [
                 [self._get_col_name(c, enc.quantile) for enc in encoder_list if c not in enc.invariant_cols]
@@ -361,10 +362,20 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             Note: potentially dropped features are not included!
         """
 
-        if not isinstance(self.feature_names, list):
-            raise ValueError("Must fit data first. Affected feature names are not known before.")
+        if not isinstance(self.feature_names_out_, list):
+            raise NotFittedError("Must fit data first. Affected feature names are not known before.")
         else:
-            return self.feature_names
+            return self.feature_names_out_
+
+    def get_feature_names_in(self) -> List[str]:
+        """
+        Returns the names of all input columns present when fitting.
+        These columns are necessary for the transform step.
+       """
+        if not isinstance(self.cols, list):
+            raise NotFittedError("Estimator has to be fitted to return feature names.")
+        else:
+            return self.cols
 
     @staticmethod
     def _get_col_name(col: str, quantile: float) -> str:
