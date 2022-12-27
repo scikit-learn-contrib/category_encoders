@@ -4,7 +4,6 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import StratifiedKFold
 import category_encoders as encoders
 import pandas as pd
-import numpy as np
 from typing import Dict
 
 
@@ -33,16 +32,42 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
+    >>> from sklearn.datasets import fetch_openml
     >>> from category_encoders.wrapper import PolynomialWrapper
-    >>> bunch = load_boston()
-    >>> y = bunch.target
-    >>> y = (y/10).round().astype(int)  # we create 6 artificial classes
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
-    >>> enc = TargetEncoder(cols=['CHAS', 'RAD'])
+    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
+    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> # need more than one column
+    >>> y = bunch.target.map(lambda x: int(min([x, 300000])/50000))
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
+    >>> enc = TargetEncoder(cols=['CentralAir', 'Heating'])
     >>> wrapper = PolynomialWrapper(enc)
     >>> encoded = wrapper.fit_transform(X, y)
     >>> print(encoded.info())
+    <class 'pandas.core.frame.DataFrame'>
+    RangeIndex: 1460 entries, 0 to 1459
+    Data columns (total 17 columns):
+     #   Column        Non-Null Count  Dtype  
+    ---  ------        --------------  -----  
+     0   Id            1460 non-null   float64
+     1   MSSubClass    1460 non-null   float64
+     2   MSZoning      1460 non-null   object 
+     3   LotFrontage   1201 non-null   float64
+     4   YearBuilt     1460 non-null   float64
+     5   CentralAir_3  1460 non-null   float64
+     6   Heating_3     1460 non-null   float64
+     7   CentralAir_2  1460 non-null   float64
+     8   Heating_2     1460 non-null   float64
+     9   CentralAir_5  1460 non-null   float64
+     10  Heating_5     1460 non-null   float64
+     11  CentralAir_6  1460 non-null   float64
+     12  Heating_6     1460 non-null   float64
+     13  CentralAir_1  1460 non-null   float64
+     14  Heating_1     1460 non-null   float64
+     15  CentralAir_0  1460 non-null   float64
+     16  Heating_0     1460 non-null   float64
+    dtypes: float64(16), object(1)
+    memory usage: 194.0+ KB
+    None
     """
 
     def __init__(self, feature_encoder):
@@ -96,7 +121,8 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
 
         # unite the input into pandas types
         X, y = utils.convert_inputs(X, y)
-        y = pd.DataFrame(y, columns=['target'])
+        y = y.to_frame()
+        y.columns = ["target"]
 
         # apply one-hot-encoder on the label
         self.label_encoder = encoders.OneHotEncoder(handle_missing='error', handle_unknown='error', cols=['target'], drop_invariant=True,
@@ -184,22 +210,37 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
 
     Example
     -------
+    >>> import pandas as pd
     >>> from category_encoders import *
     >>> from category_encoders.wrapper import NestedCVWrapper
-    >>> from sklearn.datasets import load_boston
+    >>> from sklearn.datasets import fetch_openml
     >>> from sklearn.model_selection import GroupKFold, train_test_split
-    >>> bunch = load_boston()
-    >>> y = bunch.target
-    >>> # we create 6 artificial classes and a train/validation/test split
-    >>> y = (y/10).round().astype(int)
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
-    >>> X_train, X_test, y_train, _ = train_test_split(X, y)
-    >>> X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train)
+    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
+    >>> y = bunch.target > 200000
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
+    >>> X_train, X_test, y_train, _ = train_test_split(X, y, random_state=42)
+    >>> X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, random_state=42)
     >>> # Define the nested CV encoder for a supervised encoder
-    >>> enc_nested = NestedCVWrapper(TargetEncoder(cols=['CHAS', 'RAD']), random_state=42)
+    >>> enc_nested = NestedCVWrapper(TargetEncoder(cols=['CentralAir', 'Heating']), random_state=42)
     >>> # Encode the X data for train, valid & test
     >>> X_train_enc, X_valid_enc, X_test_enc = enc_nested.fit_transform(X_train, y_train, X_test=(X_valid, X_test))
     >>> print(X_train_enc.info())
+    <class 'pandas.core.frame.DataFrame'>
+    Int64Index: 821 entries, 1390 to 896
+    Data columns (total 7 columns):
+     #   Column       Non-Null Count  Dtype  
+    ---  ------       --------------  -----  
+     0   Id           821 non-null    float64
+     1   MSSubClass   821 non-null    float64
+     2   MSZoning     821 non-null    object 
+     3   LotFrontage  672 non-null    float64
+     4   YearBuilt    821 non-null    float64
+     5   Heating      821 non-null    float64
+     6   CentralAir   821 non-null    float64
+    dtypes: float64(6), object(1)
+    memory usage: 51.3+ KB
+    None
     """
 
     def __init__(self, feature_encoder, cv=5, shuffle=True, random_state=None):
@@ -208,7 +249,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         self.shuffle = shuffle
         self.random_state = random_state
 
-        if type(cv) == int:
+        if isinstance(cv, int):
             self.cv = StratifiedKFold(n_splits=cv, shuffle=shuffle, random_state=random_state)
         else:
             self.cv = cv
@@ -244,14 +285,12 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         X, y = utils.convert_inputs(X, y)
 
         # Get out-of-fold encoding for the training data
-        out_of_fold = np.zeros(X.shape)
+        out_of_fold = pd.DataFrame()
 
         for trn_idx, oof_idx in self.cv.split(X, y, groups):
             feature_encoder = copy.deepcopy(self.feature_encoder)
             feature_encoder.fit(X.iloc[trn_idx], y.iloc[trn_idx])
-            out_of_fold[oof_idx] = feature_encoder.transform(X.iloc[oof_idx])
-
-        out_of_fold = pd.DataFrame(out_of_fold, columns=X.columns)
+            out_of_fold = pd.concat([out_of_fold, feature_encoder.transform(X.iloc[oof_idx])])
 
         # Train the encoder on all the training data for testing data
         self.feature_encoder = copy.deepcopy(self.feature_encoder)
@@ -260,7 +299,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         if X_test is None:
             return out_of_fold
         else:
-            if type(X_test) == tuple:
+            if isinstance(X_test, tuple):
                 encoded_data = (out_of_fold, )
                 for dataset in X_test:
                     encoded_data = encoded_data + (self.feature_encoder.transform(dataset), )
