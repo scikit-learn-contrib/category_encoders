@@ -61,37 +61,34 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     -------
     >>> from category_encoders.hashing import HashingEncoder
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
+    >>> from sklearn.datasets import fetch_openml
+    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
     >>> y = bunch.target
-    >>> he = HashingEncoder(cols=['CHAS', 'RAD']).fit(X, y)
-    >>> data = he.transform(X)
-    >>> print(data.info())
+    >>> he = HashingEncoder(cols=['CentralAir', 'Heating']).fit(X, y)
+    >>> numeric_dataset = he.transform(X)
+    >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 506 entries, 0 to 505
-    Data columns (total 19 columns):
-    col_0      506 non-null int64
-    col_1      506 non-null int64
-    col_2      506 non-null int64
-    col_3      506 non-null int64
-    col_4      506 non-null int64
-    col_5      506 non-null int64
-    col_6      506 non-null int64
-    col_7      506 non-null int64
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
-    TAX        506 non-null float64
-    PTRATIO    506 non-null float64
-    B          506 non-null float64
-    LSTAT      506 non-null float64
-    dtypes: float64(11), int64(8)
-    memory usage: 75.2 KB
+    RangeIndex: 1460 entries, 0 to 1459
+    Data columns (total 13 columns):
+     #   Column       Non-Null Count  Dtype  
+    ---  ------       --------------  -----  
+     0   col_0        1460 non-null   int64  
+     1   col_1        1460 non-null   int64  
+     2   col_2        1460 non-null   int64  
+     3   col_3        1460 non-null   int64  
+     4   col_4        1460 non-null   int64  
+     5   col_5        1460 non-null   int64  
+     6   col_6        1460 non-null   int64  
+     7   col_7        1460 non-null   int64  
+     8   Id           1460 non-null   float64
+     9   MSSubClass   1460 non-null   float64
+     10  MSZoning     1460 non-null   object 
+     11  LotFrontage  1201 non-null   float64
+     12  YearBuilt    1460 non-null   float64
+    dtypes: float64(4), int64(8), object(1)
+    memory usage: 148.4+ KB
     None
 
     References

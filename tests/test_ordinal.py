@@ -242,7 +242,7 @@ class TestOrdinalEncoder(TestCase):
 
     def test_inverse_with_mapping(self):
         df = X.copy(deep=True)
-        categoricals = ['unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321]
+        categoricals = ['unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra']
         mapping = [{'col': c, 'mapping': pd.Series(data=range(len(df[c].unique())), index=df[c].unique()), 'data_type': X[c].dtype} for c in categoricals]
         enc = encoders.OrdinalEncoder(cols=categoricals, handle_unknown='ignore', mapping=mapping, return_df=True)
         df[categoricals] = enc.fit_transform(df[categoricals])

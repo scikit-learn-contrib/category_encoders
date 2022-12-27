@@ -48,7 +48,7 @@ class TestEncoders(TestCase):
     def test_classification(self):
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical', 'categorical_int']
+                cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 'categorical', 'na_categorical', 'categorical_int']
 
                 enc = getattr(encoders, encoder_name)(cols=cols)
                 enc.fit(X, np_y)
@@ -249,7 +249,7 @@ class TestEncoders(TestCase):
         # we do not allow None in these data (but "none" column without any missing value is ok)
         X = th.create_dataset(n_rows=100, has_missing=False)
         X_t = th.create_dataset(n_rows=50, has_missing=False)
-        cols = ['underscore', 'none', 321, 'categorical', 'categorical_int']
+        cols = ['underscore', 'none', 'categorical', 'categorical_int']
 
         for encoder_name in ['BaseNEncoder', 'BinaryEncoder', 'OneHotEncoder', 'OrdinalEncoder']:
             with self.subTest(encoder_name=encoder_name):
@@ -403,7 +403,7 @@ class TestEncoders(TestCase):
     def test_cols(self):
         # Test cols argument with different data types, which are array-like or scalars
         cols_list = ['extra', 'invariant']
-        cols_types = [cols_list, pd.Series(cols_list), np.array(cols_list), 'extra', 321, set(cols_list),
+        cols_types = [cols_list, pd.Series(cols_list), np.array(cols_list), 'extra', set(cols_list),
                       ('extra', 'invariant'), pd.Categorical(cols_list, categories=cols_list)]
 
         for encoder_name in encoders.__all__:
@@ -432,14 +432,17 @@ class TestEncoders(TestCase):
     def test_string_index(self):
         # https://github.com/scikit-learn-contrib/categorical-encoding/issues/131
 
-        bunch = sklearn.datasets.load_boston()
-        y = (bunch.target > 20)
+        bunch = sklearn.datasets.fetch_openml(name="house_prices", as_frame=True)
+        y = (bunch.target > 200000).values
         X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
         X.index = X.index.values.astype(str)
 
+        display_cols = ["Id", "MSSubClass", "MSZoning", "YearBuilt", "Heating", "CentralAir"]
+        X = X[display_cols]
+
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                enc = getattr(encoders, encoder_name)(cols=['CHAS', 'RAD'])
+                enc = getattr(encoders, encoder_name)(cols=['CentralAir', 'Heating'])
                 result = enc.fit_transform(X, y)
                 self.assertFalse(result.isnull().values.any(), 'There should not be any missing value!')
 
@@ -710,7 +713,6 @@ class TestEncoders(TestCase):
         self.assertTrue(result['float'].min() < 1, 'should still be a number and untouched')
         self.assertTrue(result['float_edge'].min() < 1, 'should still be a number and untouched')
         self.assertTrue(result['unique_int'].min() < 1, 'should still be a number and untouched')
-        self.assertTrue(result[321].min() < 1, 'should still be a number')
 
     def test_ignored_columns_are_untouched(self):
         # Make sure None values in ignored columns are preserved.

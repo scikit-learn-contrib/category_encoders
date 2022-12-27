@@ -47,7 +47,7 @@ class TestOneHotEncoderTestCase(TestCase):
         # test inverse_transform
         X_i = th.create_dataset(n_rows=100, has_missing=False)
         X_i_t = th.create_dataset(n_rows=50, has_missing=False)
-        cols = ['underscore', 'none', 'extra', 321, 'categorical']
+        cols = ['underscore', 'none', 'extra', 'categorical']
 
         enc = encoders.OneHotEncoder(verbose=1, use_cat_names=True, cols=cols)
         enc.fit(X_i)

@@ -47,31 +47,28 @@ class QuantileEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
+    >>> from sklearn.datasets import fetch_openml
+    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
-    >>> enc = QuantileEncoder(cols=['CHAS', 'RAD'], quantile=0.5, m=1.0).fit(X, y)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
+    >>> enc = QuantileEncoder(cols=["CentralAir", "Heating"], quantile=0.5, m=1.0).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 506 entries, 0 to 505
-    Data columns (total 13 columns):
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    CHAS       506 non-null float64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
-    RAD        506 non-null float64
-    TAX        506 non-null float64
-    PTRATIO    506 non-null float64
-    B          506 non-null float64
-    LSTAT      506 non-null float64
-    dtypes: float64(13)
-    memory usage: 51.5 KB
+    RangeIndex: 1460 entries, 0 to 1459
+    Data columns (total 7 columns):
+     #   Column       Non-Null Count  Dtype  
+    ---  ------       --------------  -----  
+     0   Id           1460 non-null   float64
+     1   MSSubClass   1460 non-null   float64
+     2   MSZoning     1460 non-null   object 
+     3   LotFrontage  1201 non-null   float64
+     4   YearBuilt    1460 non-null   float64
+     5   Heating      1460 non-null   float64
+     6   CentralAir   1460 non-null   float64
+    dtypes: float64(6), object(1)
+    memory usage: 80.0+ KB
     None
 
     References
@@ -196,39 +193,33 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
+    >>> from sklearn.datasets import fetch_openml
+    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
-    >>> enc = SummaryEncoder(cols=["CHAS", "RAD"], quantiles=[0.25, 0.5, 0.75]).fit(X, y)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
+    >>> enc = SummaryEncoder(cols=["CentralAir", "Heating"], quantiles=[0.25, 0.5, 0.75]).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 506 entries, 0 to 505
-    Data columns (total 19 columns):
-    #   Column   Non-Null Count  Dtype  
-    ---  ------   --------------  -----  
-    0   CRIM     506 non-null    float64
-    1   ZN       506 non-null    float64
-    2   INDUS    506 non-null    float64
-    3   CHAS     506 non-null    float64
-    4   NOX      506 non-null    float64
-    5   RM       506 non-null    float64
-    6   AGE      506 non-null    float64
-    7   DIS      506 non-null    float64
-    8   RAD      506 non-null    float64
-    9   TAX      506 non-null    float64
-    10  PTRATIO  506 non-null    float64
-    11  B        506 non-null    float64
-    12  LSTAT    506 non-null    float64
-    13  CHAS_25  506 non-null    float64
-    14  RAD_25   506 non-null    float64
-    15  CHAS_50  506 non-null    float64
-    16  RAD_50   506 non-null    float64
-    17  CHAS_75  506 non-null    float64
-    18  RAD_75   506 non-null    float64
-    dtypes: float64(19)
-    memory usage: 75.2 KB
+    RangeIndex: 1460 entries, 0 to 1459
+    Data columns (total 11 columns):
+     #   Column         Non-Null Count  Dtype  
+    ---  ------         --------------  -----  
+     0   Id             1460 non-null   float64
+     1   MSSubClass     1460 non-null   float64
+     2   MSZoning       1460 non-null   object 
+     3   LotFrontage    1201 non-null   float64
+     4   YearBuilt      1460 non-null   float64
+     5   Heating_25     1460 non-null   float64
+     6   Heating_50     1460 non-null   float64
+     7   Heating_75     1460 non-null   float64
+     8   CentralAir_25  1460 non-null   float64
+     9   CentralAir_50  1460 non-null   float64
+     10  CentralAir_75  1460 non-null   float64
+    dtypes: float64(10), object(1)
+    memory usage: 125.6+ KB
+    None
 
     References
     ----------

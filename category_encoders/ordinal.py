@@ -45,31 +45,28 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
+    >>> from sklearn.datasets import fetch_openml
+    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names_out_)
-    >>> enc = OrdinalEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
+    >>> enc = OrdinalEncoder(cols=['CentralAir', 'Heating']).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 506 entries, 0 to 505
-    Data columns (total 13 columns):
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    CHAS       506 non-null int64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
-    RAD        506 non-null int64
-    TAX        506 non-null float64
-    PTRATIO    506 non-null float64
-    B          506 non-null float64
-    LSTAT      506 non-null float64
-    dtypes: float64(11), int64(2)
-    memory usage: 51.5 KB
+    RangeIndex: 1460 entries, 0 to 1459
+    Data columns (total 7 columns):
+     #   Column       Non-Null Count  Dtype  
+    ---  ------       --------------  -----  
+     0   Id           1460 non-null   float64
+     1   MSSubClass   1460 non-null   float64
+     2   MSZoning     1460 non-null   object 
+     3   LotFrontage  1201 non-null   float64
+     4   YearBuilt    1460 non-null   float64
+     5   Heating      1460 non-null   int64  
+     6   CentralAir   1460 non-null   int64  
+    dtypes: float64(4), int64(2), object(1)
+    memory usage: 80.0+ KB
     None
 
     References
@@ -219,9 +216,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         else:
             mapping_out = []
             for col in cols:
-
                 nan_identity = np.nan
-                
                 categories = list(X[col].unique())
                 if util.is_category(X[col].dtype):
                     # Avoid using pandas category dtype meta-data if possible, see #235, #238.
