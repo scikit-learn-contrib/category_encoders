@@ -432,14 +432,17 @@ class TestEncoders(TestCase):
     def test_string_index(self):
         # https://github.com/scikit-learn-contrib/categorical-encoding/issues/131
 
-        bunch = sklearn.datasets.load_boston()
-        y = (bunch.target > 20)
+        bunch = sklearn.datasets.fetch_openml(name="house_prices", as_frame=True)
+        y = (bunch.target > 200000).values
         X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
         X.index = X.index.values.astype(str)
 
+        display_cols = ["Id", "MSSubClass", "MSZoning", "YearBuilt", "Heating", "CentralAir"]
+        X = X[display_cols]
+
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                enc = getattr(encoders, encoder_name)(cols=['CHAS', 'RAD'])
+                enc = getattr(encoders, encoder_name)(cols=['CentralAir', 'Heating'])
                 result = enc.fit_transform(X, y)
                 self.assertFalse(result.isnull().values.any(), 'There should not be any missing value!')
 

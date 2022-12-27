@@ -46,13 +46,12 @@ def create_dataset(n_rows=1000, extras=False, has_missing=True, random_seed=2001
         random.choice(['A', 'B_b', 'C_c_c']),                                                   # Strings with underscores to test reverse_dummies()
         random.choice(['A', 'B', 'C', np.NaN]) if has_missing else random.choice(['A', 'B', 'C']), # None
         random.choice(['A', 'B', 'C', 'D']) if extras else random.choice(['A', 'B', 'C']),      # With a new string value
-        random.choice([12, 43, -32]),                                                           # Number in the column name
         random.choice(['A', 'B', 'C']),                                                         # What is going to become the categorical column
         random.choice(['A', 'B', 'C', np.nan]),                                                 # Categorical with missing values
         random.choice([1, 2, 3])                                                                # Ordinal integers
     ] for row in range(n_rows)]
 
-    df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 321, 'categorical', 'na_categorical', 'categorical_int'])
+    df = pd.DataFrame(ds, columns=['float', 'float_edge', 'unique_int', 'unique_str', 'invariant', 'underscore', 'none', 'extra', 'categorical', 'na_categorical', 'categorical_int'])
     df['categorical'] = pd.Categorical(df['categorical'], categories=['A', 'B', 'C'])
     df['na_categorical'] = pd.Categorical(df['na_categorical'], categories=['A', 'B', 'C'])
     df['categorical_int'] = pd.Categorical(df['categorical_int'], categories=[1, 2, 3])
