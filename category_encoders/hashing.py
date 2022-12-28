@@ -306,14 +306,14 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     else:
                         hasher.update(bytes(str(val), 'utf-8'))
                     tmp[int(hasher.hexdigest(), 16) % N] += 1
-            return pd.Series(tmp, index=new_cols)
+            return tmp
 
         new_cols = [f'col_{d}' for d in range(N)]
 
         X_cat = X.loc[:, cols]
         X_num = X.loc[:, [x for x in X.columns.values if x not in cols]]
 
-        X_cat = X_cat.apply(hash_fn, axis=1)
+        X_cat = X_cat.apply(hash_fn, axis=1, result_type='expand')
         X_cat.columns = new_cols
 
         X = pd.concat([X_cat, X_num], axis=1)
