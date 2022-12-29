@@ -51,20 +51,37 @@ class TestMultiClassWrapper(TestCase):
 
         # combination fit() + transform()
         wrapper.fit(x, y)
-        result = wrapper.transform(x)
-        print(result)
+        result = wrapper.transform(x, y)
         self.assertEqual(len(result.columns), 4, 'We expect 2 untouched features + f2 target encoded into 2 features')
 
         # directly fit_transform()
         wrapper = PolynomialWrapper(encoders.LeaveOneOutEncoder(cols=['f2']))
         result2 = wrapper.fit_transform(x, y)
-        print(result2)
         self.assertEqual(len(result2.columns), 4, 'We expect 2 untouched features + f2 target encoded into 2 features')
 
-        # in the case of leave-one-out, we expect different results, because leave-one-out principle
-        # is applied only on the training data (to decrease overfitting) while the testing data
-        # use the whole statistics (to be as accurate as possible).
-        self.assertFalse(result.iloc[0, 3] == result2.iloc[0, 3])
+        pd.testing.assert_frame_equal(result, result2)
+
+    def test_refit_stateless(self):
+        # test that when the encoder is fitted multiple times no old state is carried
+        x = pd.DataFrame([
+            ['a', 'b', 'c'],
+            ['a', 'b', 'c'],
+            ['b', 'b', 'c'],
+            ['b', 'b', 'b'],
+            ['b', 'b', 'b'],
+            ['a', 'b', 'a'],
+        ], columns=['f1', 'f2', 'f3'])
+        y1 = ['bee', 'cat', 'dog', 'dog', 'dog', 'dog']
+        y2 = ['bee', 'cat', 'duck', 'duck', 'duck', 'duck']
+        wrapper = PolynomialWrapper(encoders.TargetEncoder())
+        result_first_fit = wrapper.fit_transform(x, y1)
+        expected_categories_1 = {"cat", "dog"}  # 'bee' is dropped since first label is always dropped
+        expected_categories_2 = {"cat", "duck"}
+        self.assertEqual(set(wrapper.label_encoder.category_mapping[0]["mapping"].index), {"bee", "cat", "dog"})
+        self.assertEqual(set(wrapper.feature_encoders.keys()), expected_categories_1)
+        result_second_fit = wrapper.fit_transform(x, y2)
+        self.assertEqual(set(wrapper.label_encoder.category_mapping[0]["mapping"].index), {"bee", "cat", "duck"})
+        self.assertEqual(set(wrapper.feature_encoders.keys()), expected_categories_2)
 
 
 class TestNestedCVWrapper(TestCase):

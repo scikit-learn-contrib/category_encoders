@@ -4,7 +4,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import StratifiedKFold
 import category_encoders as encoders
 import pandas as pd
-from typing import Dict
+from typing import Dict, Optional
 
 
 class PolynomialWrapper(BaseEstimator, TransformerMixin):
@@ -70,10 +70,10 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
     None
     """
 
-    def __init__(self, feature_encoder):
-        self.feature_encoder = feature_encoder
+    def __init__(self, feature_encoder: utils.BaseEncoder):
+        self.feature_encoder: utils.BaseEncoder = feature_encoder
         self.feature_encoders: Dict[str, utils.BaseEncoder] = {}
-        self.label_encoder = None
+        self.label_encoder: Optional[encoders.OneHotEncoder] = None
 
     def fit(self, X, y, **kwargs):
         # unite the input into pandas types
@@ -81,17 +81,21 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
         y = pd.DataFrame(y, columns=['target'])
 
         # apply one-hot-encoder on the label
-        self.label_encoder = encoders.OneHotEncoder(handle_missing='error', handle_unknown='error', cols=['target'], drop_invariant=True,
+        self.label_encoder = encoders.OneHotEncoder(handle_missing='error',
+                                                    handle_unknown='error',
+                                                    cols=['target'],
+                                                    drop_invariant=True,
                                                     use_cat_names=True)
         labels = self.label_encoder.fit_transform(y)
         labels.columns = [column[7:] for column in labels.columns]
         labels = labels.iloc[:, 1:]  # drop one label
 
-        # train the feature encoders
+        # train the feature encoders, it is important to reset feature encoders first
+        self.feature_encoders = {}
         for class_name, label in labels.items():
             self.feature_encoders[class_name] = copy.deepcopy(self.feature_encoder).fit(X, label)
 
-    def transform(self, X):
+    def transform(self, X, y=None):
         # unite the input into pandas types
         X = utils.convert_input(X)
 
@@ -101,8 +105,14 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
         all_new_features = pd.DataFrame()
 
         # transform the features
+        if y is not None:
+            y = self.label_encoder.transform(pd.DataFrame({"target": y}))
         for class_name, feature_encoder in self.feature_encoders.items():
-            encoded = feature_encoder.transform(X)
+            if y is not None:
+                y_transform = y[f"target_{class_name}"]
+            else:
+                y_transform = None
+            encoded = feature_encoder.transform(X, y_transform)
 
             # decorate the encoded features with the label class suffix
             new_features = encoded[feature_encoder.cols]
@@ -117,42 +127,8 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
         return result
 
     def fit_transform(self, X, y=None, **fit_params):
-        # When we are training the feature encoders, we have to use fit_transform() method on the features.
-
-        # unite the input into pandas types
-        X, y = utils.convert_inputs(X, y)
-        y = y.to_frame()
-        y.columns = ["target"]
-
-        # apply one-hot-encoder on the label
-        self.label_encoder = encoders.OneHotEncoder(handle_missing='error', handle_unknown='error', cols=['target'], drop_invariant=True,
-                                                    use_cat_names=True)
-        labels = self.label_encoder.fit_transform(y)
-        labels.columns = [column[7:] for column in labels.columns]
-        labels = labels.iloc[:, 1:]  # drop one label
-
-        # initialization of the feature encoders
-        encoded = None
-        feature_encoder = None
-        all_new_features = pd.DataFrame()
-
-        # fit_transform the feature encoders
-        for class_name, label in labels.items():
-            feature_encoder = copy.deepcopy(self.feature_encoder)
-            encoded = feature_encoder.fit_transform(X, label)
-
-            # decorate the encoded features with the label class suffix
-            new_features = encoded[feature_encoder.cols]
-            new_features.columns = [str(column) + '_' + class_name for column in new_features.columns]
-
-            all_new_features = pd.concat((all_new_features, new_features), axis=1)
-            self.feature_encoders[class_name] = feature_encoder
-
-        # add features that were not encoded
-        result = pd.concat((encoded[encoded.columns[~encoded.columns.isin(feature_encoder.cols)]],
-                            all_new_features), axis=1)
-
-        return result
+        self.fit(X, y, **fit_params)
+        return self.transform(X, y)
 
 
 class NestedCVWrapper(BaseEstimator, TransformerMixin):
