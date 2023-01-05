@@ -1,6 +1,6 @@
 import pandas as pd
-from unittest2 import TestCase  # or `from unittest import ...` if on Python 3.4+
-import category_encoders.tests.helpers as th
+from unittest import TestCase
+import tests.helpers as th
 import numpy as np
 import category_encoders as encoders
 
@@ -14,10 +14,11 @@ X_t = th.create_dataset(n_rows=50, extras=True)
 y = pd.DataFrame(np_y)
 y_t = pd.DataFrame(np_y_t)
 
+
 class TestRankHotEncoder(TestCase):
 
     def test_handleNaNvalue(self):
-        enc = encoders.RankHotEncoder(handle_unknown='ignore', cols=['none'])
+        enc = encoders.RankHotEncoder(handle_unknown='value', cols=['none'])
         enc.fit(X)
         t_f = enc.transform(X)
         inv_tf = enc.inverse_transform(t_f)
@@ -33,7 +34,7 @@ class TestRankHotEncoder(TestCase):
         self.assertTupleEqual(inv_tf.shape, X.shape)
 
     def test_naCatagoricalValue(self):
-        enc = encoders.RankHotEncoder(handle_unknown='ignore', cols=['na_categorical'])
+        enc = encoders.RankHotEncoder(handle_unknown='value', cols=['na_categorical'])
         enc.fit(X)
         t_f = enc.transform(X)
         inv_tf = enc.inverse_transform(t_f)
@@ -42,17 +43,17 @@ class TestRankHotEncoder(TestCase):
     def test_extraValue(self):
         train = pd.DataFrame({'city': ['chicago', 'st louis']})
         test = pd.DataFrame({'city': ['chicago', 'los angeles']})
-        enc = encoders.RankHotEncoder(handle_unknown='ignore')
+        enc = encoders.RankHotEncoder(handle_unknown='value')
         enc.fit(train)
         t_f = enc.transform(test)
         inv_tf = enc.inverse_transform(t_f)
         self.assertEqual(t_f.shape[1] - (train.shape[1] - 1), len(test.city.unique()), "All the extra values are displayed as None after inverse transform")
         self.assertTupleEqual(inv_tf.shape, train.shape)
 
-    def test_invarient(self):
-        enc = encoders.RankHotEncoder(cols=['invariant'], drop_invariant = True)
+    def test_invariant(self):
+        enc = encoders.RankHotEncoder(cols=['invariant'], drop_invariant=True)
         enc.fit(X)
-        self.assertNotEqual(X.shape[1], len(enc.feature_names))
+        self.assertNotEqual(X.shape[1], len(enc.feature_names_out_))
 
     def test_categoricalNaming(self):
         train = pd.DataFrame({'city': ['chicago', 'st louis']})
