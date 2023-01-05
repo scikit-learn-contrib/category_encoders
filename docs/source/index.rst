@@ -42,6 +42,9 @@ To use:
     encoder = ce.BaseNEncoder(cols=[...])
     encoder = ce.BinaryEncoder(cols=[...])
     encoder = ce.CatBoostEncoder(cols=[...])
+    encoder = ce.CountEncoder(cols=[...])
+    encoder = ce.GLMMEncoder(cols=[...])
+    encoder = ce.GrayEncoder(cols=[...])
     encoder = ce.HashingEncoder(cols=[...])
     encoder = ce.HelmertEncoder(cols=[...])
     encoder = ce.JamesSteinEncoder(cols=[...])
@@ -53,6 +56,7 @@ To use:
     encoder = ce.PolynomialEncoder(cols=[...])
     encoder = ce.TargetEncoder(cols=[...])
     encoder = ce.WOEEncoder(cols=[...])
+    encoder = ce.QuantileEncoder(cols=[...])
 
     encoder.fit(X, y)
     X_cleaned = encoder.transform(X_dirty)
@@ -69,6 +73,9 @@ Contents:
    basen
    binary
    catboost
+   count
+   glmm
+   gray
    hashing
    helmert
    jamesstein
@@ -77,9 +84,12 @@ Contents:
    onehot
    ordinal
    polynomial
+   quantile
    sum
+   summary
    targetencoder
    woe
+   wrapper
 
 
 Indices and tables

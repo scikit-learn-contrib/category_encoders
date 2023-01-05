@@ -1,0 +1,45 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: 1
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-benford
+
+@attribute Digit {1,2,3,4,5,6,7,8,9}
+@attribute Return {126,148,169,175,200,266,273,432,735}
+@attribute Large.return {92,108,124,136,162,228,232,387,698}
+@attribute Small.return {34,37,38,39,40,41,45}
+@attribute Return.thirty {434,508,550,642,734,859,963,1302,2392}
+@attribute Large.return.thirty {303,380,429,514,623,738,836,1172,2276}
+@attribute Small.return.thirty {111,116,121,127,128,130,131}
+
+@data
+1,735,698,37,2392,2276,116
+2,432,387,45,1302,1172,130
+3,273,232,41,963,836,127
+4,266,228,38,859,738,121
+5,200,162,38,734,623,111
+6,175,136,39,642,514,128
+7,169,124,45,550,429,121
+8,148,108,40,508,380,128
+9,126,92,34,434,303,131

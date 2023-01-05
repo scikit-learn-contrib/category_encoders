@@ -1,0 +1,1339 @@
+% The AAUP dataset for the ASA Statistical Graphics Section's 1995
+% Data Analysis Exposition contains information on faculty salaries
+% for 1161 American colleges and universities.  The data may be
+% obtained in either of two formats.
+% 
+% AAUP.DATA contains the raw data in comma delimited fields with a
+% single data line for each school. The order of variables is the
+% same as given below for the fixed column version, although the
+% spacing varies for each school.
+% 
+% AAUP2.DATA has the data arranged in fixed columns, with two data
+% lines for each school and a maximum line length of 80 characters.
+% 
+% This dataset is taken from the March-April 1994 issue of Academe.
+% Thanks to Maryse Eymonerie, Consultant to AAUP, for assistance in
+% supplying the data.  Faculty salary data are for the 1993-94
+% school year. You may wish to consult a copy of the special issue
+% of Academe for more detailed descriptions of the variables.
+% 
+% Data Revised: Wed Jan 18 1995
+% 
+% VARIABLE DESCRIPTIONS (AAUP2.DAT)
+% Fixed column format with two data lines per school
+% 
+% Line #1
+%   1 -  5   FICE (Federal ID number)
+%   7 - 37   College name
+%  38 - 39   State (postal code)
+%  40 - 43   Type  (I, IIA, or IIB)
+%  44 - 48   Average salary - full professors
+%  49 - 52   Average salary - associate professors
+%  53 - 56   Average salary - assistant professors
+%  57 - 60   Average salary - all ranks
+%  61 - 65   Average compensation - full professors
+%  66 - 69   Average compensation - associate professors
+%  70 - 73   Average compensation - assistant professors
+%  74 - 78   Average compensation - all ranks
+% 
+% Line #2
+%   1 -  4   Number of full professors
+%   5 -  8   Number of associate professors
+%   9 - 12   Number of assistant professors
+%  13 - 16   Number of instructors
+%  17 - 21   Number of faculty - all ranks
+% 
+% Missing values are denoted with *
+% All salary and compensation figures are yearly in $100's
+% 
+% **************************************************************
+% To obtain the dataset from Statlib, send one of the single line
+% messages below to the address statlib@lib.stat.cmu.edu
+% 
+%     send aaup.data from colleges
+% or
+%     send aaup2.data from colleges
+% 
+% 
+% For more information on the ASA Statistical Graphics Section's
+% 1995 Data Analysis Exposition send the message
+% 
+%     send readme from colleges
+%
+%%%%%%%%%%%%%%%
+% INFORMATION %
+%%%%%%%%%%%%%%%
+%
+%     WHAT'S WHAT AMONG AMERICAN COLLEGES AND UNIVERSITIES?
+% 
+% This is the subject of the 1995 Data Analysis Exposition
+% sponsored by the Statistical Graphics Section of the American
+% Statistical Association.  The purpose of the Exposition is to
+% encourage statisticians to demonstrate techniques, especially
+% graphical, for analyzing data and displaying the results of an
+% analysis.  Individuals and groups will work with the same set of
+% data and present their analyses at a special session as part of
+% the annual Joint Statistical Meetings in Orlando, Florida on
+% August 13th-17th, 1995.  The datasets for 1995 are drawn from two
+% sources, U.S. News & World Report's Guide to Americas Best
+% Colleges and the AAUP (American Association of University
+% Professors) 1994 Salary Survey which appeared in the March-April
+% 1994 issue of Academe.
+% 
+% The U.S. News data contains information on tuition, room & board
+% costs, SAT or ACT scores, application/acceptance rates,
+% graduation rate, student/faculty ratio, spending per student, and
+% a number of other variables for 1300+ schools. The AAUP data
+% includes average salary, overall compensation, and number of
+% faculty broken down by full, associate, and assistant professor
+% ranks.
+% 
+% The raw data and documentation are contained in the files
+% described below.  To obtain any of these files send a message to
+% statlib@lib.stat.cmu.edu of the following form  (substituting the
+% file you want for XXXXX)
+% 
+%       send XXXXX from colleges
+% 
+% Available files
+% 
+%    usnews.doc      Documentation for the U.S. News data
+%    usnews.data     U.S. News data in comma delimited format
+%    usnews3.data    U.S. News data in fixed column format
+% 
+%    aaup.doc        Documentation for the AAUP salary data
+%    aaup.data       AAUP salary data in comma delimited format
+%    aaup2.data      AAUP salary data in fixed column format
+% 
+% Two versions of each dataset are provided to accommodate users
+% with different software constraints.  The comma delimited
+% versions (USNEWS.DATA and AAUP.DATA) contain information for each
+% college on a separate line with values delimited by commas.  The
+% fixed column versions (USNEWS3.DATA and AAUP2.DATA) use 2 or 3
+% data lines per school and a maximum line length of 80 characters.
+% 
+% To participate in the 1995 Data Analysis Exposition you must send
+% an abstract form to the American Statistical Association by
+% February 1st, 1995.  Information is available from the ASA
+% Meetings Department by e-mail (meetings@asa.mhs.compuserve.com),
+% phone (703-684-1221), fax (703-684-2037), or surface mail (ASA,
+% 1429 Duke St., Alexandria, VA 22314).  Your initial abstract may
+% be fairly general since you may do the bulk of your analysis
+% after the February 1 deadline.
+% 
+% You may choose your own path to proceed in analyzing the data or
+% use some of the suggested questions below to get started.
+% 
+% ... How well can we model tuition using the other variables?
+% ... How might we cluster colleges into similar comparison groups?
+% ... How can we best display faculty salary structure?
+% ... Can we find a reasonable way to rank the schools?
+% 
+% You may work on your own or put together a team.  Show off the
+% capabilities of your favorite software package or use the data
+% for a class project and display your students results.  You may
+% choose to consider just a subset of schools or examine regional
+% patterns.  The main point is to find innovative ways to display
+% the interesting features of the data.
+% 
+% Further questions about the 1995 Exposition can be directed to
+% Robin Lock, Mathematics Department, St. Lawrence University,
+% Canton, NY 13617  e-mail   rlock@vm.stlawu.edu
+% 
+% If you would like to be informed about any subsequent adjustments
+% or error fixes to the 1995 Exposition data, please send an e-mail
+% message to register your interest to rlock@vm.stlawu.edu.
+% 
+% Special thanks for providing data for the 1995 Exposition to:
+% Robert Morse, Director of Research for America's Best Colleges at
+%               U.S. News & World Report
+% Maryse Eymonerie, Consultant to AAUP.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation colleges-aaup
+
+@attribute FICE INTEGER
+@attribute College_name {Abilene_Christian_University,Adams_State_College,Adrian_College,Agnes_Scott_College,Alabama_Agri_and_Mech_Univ,Alaska_Pacific_University,Albany_State_College,Albertson_Coll_of_Idaho,Albertus_Magnus_College,Albion_College,Albright_College,Alcorn_State_University,Alderson_Broaddus_College,Alfred_University,Allegheny_College,AlltwnCollStFrancis_Sales,Alma_College,Alvernia_College,Alverno_College,American_University,Amherst_College,Anderson_University,Angelo_State_University,Anna_Maria_College,Antioch_University,Appalachian_State_University,Aquinas_College,Arizona_State_University,Arkansas_College_(Lyon_College),Arkansas_State_Univ-Main,Arkansas_Tech_University,Armstrong_State_College,Art_Academy_of_Cincinnati,Ashland_University,Assumption_College,Athens_State_College,Auburn_Univ_at_Montgomery,Auburn_University-_Main,Augsburg_College,Augusta_College,Augustana_College,Aurora_University,Austin_College,Austin_Peay_State_University,Averett_College,Avila_College,Azusa_Pacific_University,Babson_College,Baker_College_of_Flint,Baker_University,Baldwin-Wallace_College,Ball_State_University,Barat_College,Barber-Scotia_College,Bard_College,Barnard_College,Barry_University,Bartlesville_Wesleyan_Coll,Barton_College,Bates_College,Baylor_University,Beaver_College,Belhaven_College,Bellarmine_College,Bellevue_College,Belmont_Abbey_College,Belmont_University,Beloit_College,Bemidji_State_University,Benedict_College,Benedictine_College,Bennett_College,Bennington_College,Bentley_College,Berea_College,Berklee_College_of_Music,Berry_College,Bethany_College,Bethel_College,Biola_University,Birmingham_Southern_College,Black_Hills_State_University,Blackburn_University,Bloomfield_College,Bloomsburg_Univ_of_Penn,Blue_Mountain_College,Bluefield_State_College,Bluffton_College,Boise_State_University,Boston_College,Bowdoin_College,Bowie_State_University,Bowling_Green_State_Univ,Bradford_College,Bradley_University,Brandeis_University,Brescia_College,Briar_Cliff_College,Bridgewater_College,Bridgewater_State_College,Brigham_Young_University,Brown_University,Bryant_College,Bryn_Mawr_College,Bucknell_University,Buena_Vista_College,Butler_University,Cabrini_College,CalPolyStU-Sn_Luis_Obispo,CalPolyStUniv-Pomona,CalStUniv-Bakersfield,CalStUniv-Chico,CalStUniv-Dominguez_Hills,CalStUniv-Fresno,CalStUniv-Fullerton,CalStUniv-Hayward,CalStUniv-Long_Beach,California_Inst_of_Tech,California_Lutheran_Univ,California_Univ_of_Penn,Calumet_College_of_StJoseph,Calvin_College,Cameron_University,Campbellsville_College,Canisius_College,Capital_University,Capitol_College,Carleton_College,Carlow_College,Carnegie-Mellon_University,Carroll_College,Carson-Newman_College,Carthage_College,Case_Western_Reserve_Univ,Castleton_State_College,Catawba_College,Catholic_Univ_of_America,Cazenovia_College,Cedar_Crest_College,Cedarville_College,Centenary_College,Centenary_College_of_La,Center_for_Creative_Studies,Central_Connecticut_StUniv,Central_Methodist_College,Central_Michigan_University,Central_Missouri_State_Univ,Central_University_of_Iowa,Central_Washington_Univ,Central_Wesleyan_College,Centre_College,Chadron_State_College,Chapman_University,Charleston_Southern_Univ,Chatham_College,Chestnut_Hill_College,Cheyney_University_of_Penn,Chicago_State_University,Christendom_College,Christian_Brothers_Univ,Christopher_Newport_Univ,Citadel_Military_Collof_SC,Claremont_McKenna_College,Clarion_University_of_Penn,Clark_University,Clarke_College,Clarkson_College,Clarkson_University,Clemson_University,Cleveland_State_University,Coastal_Carolina_University,Coe_College,Coker_College,Colby-Sawyer_College,Colby_College,Colgate_University,College_Misericordia,College_of_Charleston,College_of_Great_Falls,College_of_Mount_St_Joseph,College_of_Mount_St_Vincent,College_of_New_Rochelle,College_of_Notre_Dame,College_of_Notre_Dame_of_Md,College_of_Saint_Benedict,College_of_Saint_Elizabeth,College_of_Saint_Francis,College_of_Saint_Mary,College_of_Saint_Rose,College_of_St_Catherine,College_of_St_Scholastica,College_of_The_Ozarks,College_of_William_and_Mary,College_of_Wooster,College_of_the_Holy_Cross,Collof_Our_Lady_of_the_Elms,Colorado_Christian_Univ,Colorado_College,Colorado_State_University,Columbia_College,Columbia_Union_College,Columbia_University,Columbus_College,Concord_College,Concordia_College,Concordia_College-Moorhead,Concordia_College-St_Paul,Concordia_Teachers_College,Concordia_Univ_Wisconsin,Concordia_University,Connecticut_College,Converse_College,Cooper_Union_for_AdvSci_and_Art,Coppin_State_College,Cornell_College,Cornell_Univ-Endowed_Colls,Cornell_Univ-Statutory_Clls,Covenant_College,Creighton_University,Culver-Stockton_College,Cumberland_College,DYouville_College,Dakota_State_University,Dakota_Wesleyan_University,Dana_College,Dartmouth_College,David_Lipscomb_University,Davidson_College,Davis_and_Elkins_College,DePaul_University,DePauw_University,Defiance_College_The,Del_Valley_Coll/Sci_and_Agr,Delaware_State_University,Delta_State_University,Denison_University,Dickinson_College,Dickinson_State_University,Dillard_University,Doane_College,Dominican_College,Dordt_College,Dowling_College,Drake_University,Drew_University,Drexel_University,Drury_College,Duke_University,Duquesne_University,Earlham_College,East_Carolina_University,East_Central_University,East_Stroudsburg_University,East_Tennessee_State_Univ,East_Texas_Baptist_Univ,East_Texas_State_U-Texarkana,East_Texas_State_University,Eastern_College,Eastern_Connecticut_StUniv,Eastern_Illinois_University,Eastern_Kentucky_University,Eastern_Mennonite_Coll_and_Sem,Eastern_Michigan_University,Eastern_Montana_College,Eastern_New_Mexico_Univ,Eastern_Oregon_State_College,Eastern_Washington_Univ,Eckerd_College,Edinboro_University_of_Penn,Elizabeth_City_State_Univ,Elizabethtown_College,Elmira_College,Elon_College,Embry-Riddle_Aero_University,Emerson_College,Emory_University,Emory_and_Henry_College,Emporia_State_University,Erskine_College,Eureka_College,Evergreen_State_College,Fairfield_University,Fairleigh_Dickinson_Univ,Fairmont_State_College,Fayetteville_State_Univ,Felician_College,Ferris_State_University,Ferrum_College,Fisk_University,Fitchburg_State_College,Florida_A__and__M_University,Florida_Atlantic_University,Florida_Internatl_Univ,Florida_Southern_College,Florida_State_University,Fordham_University,Fort_Hays_State_University,Fort_Lewis_College,Fort_Valley_State_College,Francis_Marion_University,Franciscan_UnivSteubenville,Franklin_College_of_Indiana,Franklin_Pierce_College,Franklin_University,Franklin_and_Marshall_Coll,Freed-Hardeman_University,Fresno_Pacific_College,Frostburg_State_University,Furman_University,Gallaudet_University,Gannon_University,Gardner-Webb_University,Geneva_College,George_Fox_College,George_Mason_University,George_Washington_University,Georgetown_College,Georgetown_University,Georgia_College,Georgia_Institute_of_Tech,Georgia_Southern_University,Georgia_State_University,Georgian_Court_College,Gettysburg_College,Glenville_State_College,Goldey_Beacom_College,Gonzaga_University,Gordon_College,Goshen_College,Goucher_College,Grace_College,Graceland_College,Grambling_State_University,Grand_Canyon_University,Grand_Rapids_Baptist_College,Grand_Valley_State_Univ,Grand_View_College,Green_Mountain_College,Greensboro_College,Greenville_College,Grinnell_College,Guilford_College,Gustavus_Adolphus_College,Gwynedd-Mercy_College,Hamilton_College,Hamline_University,Hampden-Sydney_College,Hampton_University,Hannibal-LaGrange_College,Hanover_College,Hardin-Simmons_University,Harding_University,Harris-Stowe_State_College,Hartwick_College,Harvard_University,Harvey_Mudd_College,Hastings_College,Haverford_College,Heidelberg_College,Henderson_State_University,Hendrix_College,Heritage_College,High_Point_University,Hilbert_College,Hiram_College,Hobart-William_Smith_Colls,Hofstra_University,Hollins_College,Holy_Family_College,Holy_Names_College,Hood_College,Hope_College,Houghton_College,Houston_Baptist_University,Howard_University,Humboldt_State_University,Huntingdon_College,Huntington_College,Husson_College,Idaho_State_University,Illinois_Benedictine_College,Illinois_College,Illinois_Institute_of_Tech,Illinois_State_University,Illinois_Wesleyan_University,Immaculata_College,Indiana-Purdue_U-Fort_Wayne,Indiana_State_University,Indiana_Univ-Bloomington,Indiana_Univ-East,Indiana_Univ-Indianapolis,Indiana_Univ-Northwest,Indiana_Univ-Southeast,Indiana_Univ_at_Kokomo,Indiana_Univ_at_South_Bend,Indiana_University_of_Penn,Indiana_Wesleyan_University,Iona_College,Iowa_State_University,Ithaca_College,Jackson_State_University,Jacksonville_State_Univ,James_Madison_University,Jersey_City_State_College,John_Brown_University,John_Carroll_University,Johns_Hopkins_University,Johnson_C_Smith_University,Johnson_State_College,Judson_College,Juniata_College,Kalamazoo_College,Kansas_City_Art_Institute,Kansas_State_University,Kansas_Wesleyan_University,Kean_College_of_New_Jersey,Keene_State_College,Kendall_College,Kennesaw_State_College,Kent_State_Univ-Kent_Campus,Kentucky_State_University,Kentucky_Wesleyan_College,Kenyon_College,Keuka_College,Kings_College,Knox_College,Kutztown_Univ_of_Penn,La_Roche_College,La_Salle_University,Lafayette_College,Lake_Forest_College,Lake_Superior_State_Univ,Lakeland_College,Lamar_University-Beaumont,Lambuth_University,Lander_University,Langston_University,Lasell_College,Lawrence_University,LeTourneau_University,Le_Moyne_College,Lebanon_Valley_College,Lee_College,Lehigh_University,Lenoir-Rhyne_College,Lewis-Clark_State_College,Lewis_University,Lewis__and__Clark_College,Liberty_University,Limestone_College,Lincoln_University,Lindenwood_College,Lindsey_Wilson_College,Linfield_College,Livingston_University,Livingstone_College,Lock_Haven_University,Long_Island_University,Longwood_College,Loras_College,Louisiana_College,Louisiana_StUnivShreveport,Louisiana_StUnivand_A_and_M_C,Louisiana_Tech_University,Lourdes_College,Loyola_College_in_Maryland,Loyola_Marymount_University,Loyola_Univ_of_Chicago,Loyola_University,Luther_College,Lycoming_College,Lynchburg_College,Lyndon_State_College,MacMurray_College,Macalester_College,Madonna_University,Malone_College,Manchester_College,Manhattan_College,Mankato_State_University,Mansfield_Univ_of_Penn,Marian_College,Marian_Collof_Fond_du_Lac,Marietta_College,Marist_College,Marquette_University,Mars_Hill_College,Marshall_University,Mary_Baldwin_College,Mary_Washington_College,Marygrove_College,Marymount_Coll_Tarrytown,Marymount_Manhattan_College,Marymount_University,Maryville_College,Maryville_Univ_of_StLouis,Marywood_College,Massachusetts_Inst_of_Tech,Mayville_State_University,McKendree_College,McNeese_State_University,McPherson_College,Medaille_College,Memphis_State_University,Mercer_University-Entire,Mercy_College,Mercyhurst_College,Meredith_College,Merrimack_College,Mesa_State_College,Messiah_College,Methodist_College,Metro_State_Collof_Denver,Miami_University,Michigan_State_University,Michigan_Technological_Univ,Mid-America_Nazarene_College,Middle_Tenn_State_Univ,Middlebury_College,Midland_Lutheran_College,Midwestern_State_University,Millersville_Univ_of_Penn,Milligan_College,Millikin_University,Mills_College,Millsaps_College,Milwaukee_School_of_Engrg,Minot_State_University,Mississippi_State_University,Mississippi_Univ_for_Women,Mississippi_Valley_St_Univ,Missouri_Baptist_College,Missouri_Southern_State_Coll,Missouri_Valley_College,Missouri_Western_State_Coll,Molloy_College,Monmouth_College,Montana_CollMinSci_and__Tech,Montana_State_University,Montclair_State_College,Montreat-Anderson_College,Moorhead_State_University,Moravian_College,Morehead_State_University,Morgan_State_University,Morningside_College,Morris_College,Mount_Holyoke_College,Mount_Mary_College,Mount_Mercy_College,Mount_Saint_Mary_College,Mount_Saint_Marys_Coll_and_Sem,Mount_St_Clare_College,Mount_Union_College,Mount_Vernon_College,Muhlenberg_College,Murray_State_University,Muskingum_College,National-Louis_University,Nazareth_Coll_of_Rochester,Nebraska_Wesleyan_University,Neumann_College,New_England_College,New_Hampshire_College,New_Jersey_Inst_of_Tech,New_Mexico_Highlands_Univ,New_Mexico_Inst_Min_and_Tech,New_Mexico_St_Univ-_Main,New_York_Inst_of_Technology,New_York_University,Newberry_College,Niagara_University,Nicholls_State_University,Norfolk_State_University,North_Adams_State_College,North_Carolina_A_and_T_St_Univ,North_Carolina_Central_Univ,North_Carolina_State_Univ,North_Carolina_Wesleyan_Coll,North_Central_College,North_Dakota_State_Univ,North_Park_College,Northeast_Louisiana_Univ,Northeast_Missouri_St_Univ,Northeastern_Illinois_Univ,Northeastern_State_Univ,Northeastern_University,Northern_Arizona_University,Northern_Illinois_University,Northern_Kentucky_University,Northern_Michigan_University,Northern_Montana_College,Northern_State_University,Northland_College,Northwest_Christian_College,Northwest_Missouri_St_Univ,Northwest_Nazarene_College,Northwestern_College,Northwestern_OklaState_Univ,Northwestern_State_Univ,Northwestern_University,Norwich_University,Notre_Dame_College,Notre_Dame_College_of_Ohio,Oakland_City_College,Oakland_University,Oakwood_College,Oberlin_College,Occidental_College,Oglethorpe_University,Ohio_Northern_University,Ohio_State_Univ-Lima,Ohio_State_Univ-Main_campus,Ohio_State_Univ-Mansfield,Ohio_State_Univ-Marion,Ohio_State_Univ-Newark,Ohio_University-Athens,Ohio_Wesleyan_University,Okla_Christian_U_of_S_and_Arts,Oklahoma_Baptist_University,Oklahoma_Panhandle_StUniv,Oklahoma_State_Univ-Main,Old_Dominion_University,Olivet_College,Olivet_Nazarene_University,Oregon_Institute_of_Tech,Oregon_State_University,Ottawa_University,Otterbein_College,Ouachita_Baptist_University,Our_Lady_of_Holy_Cross_Coll,Our_Lady_of_the_Lake_Univ,Pace_University,Pacific_Lutheran_University,Pacific_Union_College,Pacific_University,Palm_Beach_Atlantic_College,Park_College,Parks_Collof_StLouis_Univ,Pembroke_State_University,Penn_State_Univ-Main_Campus,Pepperdine_University,Peru_State_College,Pfeiffer_College,PhilaCollof_Textiles_and_Sci,Phillips_University,Pikeville_College,Pittsburg_State_University,Pitzer_College,Plymouth_State_College,Point_Loma_Nazarene_College,Point_Park_College,Pomona_College,Portland_State_University,Prairie_View_A_and_M_University,Presbyterian_College,Princeton_University,Principia_College,Providence_College,Purdue_Univ-Main_Campus,Purdue_University-Calumet,Queens_College,Quincy_University,Quinnipiac_College,Radford_University,Ramapo_College_of_New_Jersey,Randolph-Macon_College,Randolph-Macon_Womans_Coll,Reed_College,Regis_College,Regis_University,Rensselaer_Polytechnic_Inst,Rhode_Island_College,Rhode_Island_School_Design,Rhodes_College,Rice_University,Rider_College,Ripon_College,Rivier_College,Roanoke_College,Robert_Morris_College,Rochester_Institute_of_Tech,Rockhurst_College,Roger_Williams_University,Rollins_College,Roosevelt_University,Rosary_College,Rose-Hulman_Inst_of_Tech,Russell_Sage_College,Rust_College,Rutgers_State_Univ-Camden,Rutgers_State_Univ-NBrswck,Rutgers_State_Univ-Newark,SUNY_CollTech_Utica-Rome,SUNY_College_at_Brockport,SUNY_College_at_Buffalo,SUNY_College_at_Cortland,SUNY_College_at_Fredonia,SUNY_College_at_Geneseo,SUNY_College_at_New_Paltz,SUNY_College_at_Old_Westbury,SUNY_College_at_Oneonta,SUNY_College_at_Oswego,SUNY_College_at_Plattsburgh,SUNY_College_at_Potsdam,SUNY_College_at_Purchase,SUNY_Empire_State_College,SUNY_at_Albany,SUNY_at_Binghamton,SUNY_at_Buffalo,SUNY_at_Stony_Brook,Sacred_Heart_University,Saginaw_Valley_State_Univ,Saint_Anselm_College,Saint_Francis_College,Saint_Johns_College,Saint_Johns_College-Main,Saint_Joseph_College,Saint_Josephs_College,Saint_Louis_Univ-Main,Saint_Martins_College,Saint_Mary-of-the-Woods_Coll,Saint_Mary_College,Saint_Marys_Coll_of_Calif,Saint_Marys_Coll_of_Minn,Saint_Marys_College,Saint_Meinrad_College,Saint_Michaels_College,Saint_Pauls_College,Saint_Peters_College,Saint_Vincent_College,Saint_Xavier_University,Salem-Teikyo_University,Salem_College,Salisbury_State_University,Salve_Regina_University,Sam_Houston_State_University,Samford_University,San_Diego_State_University,San_Francisco_State_Univ,San_Jose_State_University,Sangamon_State_University,Santa_Clara_University,Sarah_Lawrence_College,Schreiner_College,Scripps_College,Seattle_Pacific_University,Seattle_University,Seton_Hall_University,Seton_Hill_College,Shaw_University,Shawnee_State_University,Shenandoah_University,Shepherd_College,Shippensburg_University,Shorter_College,Siena_College,Siena_Heights_College,Simmons_College,Simpson_College,Sioux_Falls_College,Skidmore_College,Slippery_Rock_Univ_of_Penn,Smith_College,Sonoma_State_University,South_Carolina_State_College,South_Dakota_SchMin_and__Tech,South_Dakota_State_Univ,Southeast_Missouri_St_Univ,Southeastern_Louisiana_Univ,Southeastern_Okla_St_Univ,Southern_Ark_Univ-Main,Southern_CSeventh-Day_Advts,Southern_Coll_of_Technology,Southern_Conn_State_Univ,Southern_IllUniv-Carbondale,Southern_IllUniv-Edwardsvle,Southern_Methodist_Univ,Southern_Oregon_State_Coll,Southern_UnivA_and_M_Coll-Main,Southern_Univat_New_Orleans,Southern_Utah_University,Southwest_Missouri_St_Univ,Southwest_State_University,Southwest_Texas_State_Univ,Southwestern_College,Southwestern_University,Spalding_University,Spring_Arbor_College,Spring_Hill_College,Springfield_College,StBonaventure_University,StMarys_Collof_Maryland,St_Ambrose_University,St_Cloud_State_University,St_Edwards_University,St_Francis_College,St_John_Fisher_College,St_Johns_University,St_Josephs_University,St_Lawrence_University,St_Marys_University,St_Norbert_College,St_Olaf_College,St_Thomas_Aquinas_College,St_Thomas_University,Stanford_University,Stephen_FAustin_State_Univ,Stephens_College,Stetson_University,Stevens_Institute_of_Tech,Sthwtrn_OklStU-Weatherfrd,Stillman_College,Stockton_State_College,Stonehill_College,Suffolk_University,Sul_Ross_State_University,Susquehanna_University,Swarthmore_College,Sweet_Briar_College,Syracuse_Univ-Utica_College,Syracuse_University,Tabor_College,Tarleton_State_University,Taylor_University,Teikyo_Westmar_University,Temple_University,Tennessee_State_University,Tennessee_Technological_Univ,Texas_A__and__M_University-Main,Texas_A_and_M_Internatl_Univ,Texas_A_and_M_U-Corpus_Christi,Texas_A_and_M_Univ-Kingsville,Texas_A_and_M_Univat_Galveston,Texas_Christian_University,Texas_Lutheran_College,Texas_Southern_University,Texas_Tech_University,Texas_Wesleyan_University,Texas_Womans_University,Thiel_College,Thomas_College,Thomas_Jefferson_University,Thomas_More_College,Tiffin_University,Tougaloo_College,Towson_State_University,Transylvania_University,Trenton_State_College,Tri-State_University,Trinity_College,Trinity_College_of_Vermont,Trinity_University,Troy_State_University-Main,Tufts_University,Tulane_University,Tusculum_College,Tuskegee_University,U_S_Naval_Academy,U_Va_Clinch_Valley_College,Union_College,Union_University,Unity_College,UnivAlaska-Anchorage,UnivAlaska-Fairbanks,UnivAlaska-Southeast,Univ_Alabama_at_Birmingham,Univ_Alabama_in_Huntsville,Univ_Ark_at_Little_Rock,Univ_Ark_at_Monticello,Univ_Arkansas-Fayetteville,Univ_Arkansas_at_Pine_Bluff,Univ_Massachusetts-Boston,Univ_Massachussets-Amherst,Univ_Minnesota-Duluth,Univ_Minnesota-Morris,Univ_Minnesota-Twin_Cities,Univ_New_Mexico-Albuquerque,Univ_South_Carolina-Aiken,Univ_South_Carolina-Main,Univ_South_Carolina-Sprtbrg,Univ_Southwestern_Louisiana,Univ_Wisconsin-Eau_Claire,Univ_Wisconsin-Green_Bay,Univ_Wisconsin-La_Crosse,Univ_Wisconsin-Madison,Univ_Wisconsin-Milwaukee,Univ_Wisconsin-Oshkosh,Univ_Wisconsin-Parkside,Univ_Wisconsin-Platteville,Univ_Wisconsin-River_Falls,Univ_Wisconsin-Stevens_Pnt,Univ_Wisconsin-Stout,Univ_Wisconsin-Superior,Univ_Wisconsin-Whitewater,Univ_of_Akron-_Main_Campus,Univ_of_Central_Arkansas,Univ_of_Colo_at_ColoSprgs,Univ_of_Colorado-_Boulder,Univ_of_Colorado_at_Denver,Univ_of_Hawaii-West_Oahu,Univ_of_Hawaii_at_Hilo,Univ_of_Hawaii_at_Manoa,Univ_of_Houston-Clear_Lake,Univ_of_Houston-Downtown,Univ_of_Houston-Victoria,Univ_of_Illinois-Chicago,Univ_of_Illinois-Urbana,Univ_of_Mass-Dartmouth,Univ_of_Mass_at_Lowell,Univ_of_NC_at_Asheville,Univ_of_NC_at_Chapel_Hill,Univ_of_NC_at_Charlotte,Univ_of_NC_at_Greensboro,Univ_of_NC_at_Wilmington,Univ_of_Nebraska_at_Kearney,Univ_of_Nevada-Las_Vegas,Univ_of_North_Alabama,Univ_of_North_Dakota-Main,Univ_of_Northern_Colorado,Univ_of_Pittsburgh-Bradford,Univ_of_Pittsburgh-Grnsburg,Univ_of_Pittsburgh-Johnstwn,Univ_of_Pittsburgh-Main,Univ_of_Sci_and__Arts_of_Okla,Univ_of_Southern_California,Univ_of_Southern_Indiana,Univ_of_Tennat_Chattanooga,Univ_of_Tennessee-_Memphis,Univ_of_Texas-Pan_AmerUniv,Univ_of_Texas_-Permian_Bsn,Univ_of_Texas_-San_Antonio,Univ_of_Texas_at_Arlington,Univ_of_Texas_at_Austin,Univ_of_Texas_at_Dallas,Univ_of_Texas_at_El_Paso,Univ_of_Texas_at_Tyler,University_Central_Florida,University_Southern_Colorado,University_of_Alabama,University_of_Arizona,University_of_Baltimore,University_of_Bridgeport,University_of_Central_Okla,University_of_Central_Texas,University_of_Charleston,University_of_Chicago,University_of_Dallas,University_of_Dayton,University_of_Delaware,University_of_Denver,University_of_Dubuque,University_of_Evansville,University_of_Findlay,University_of_Florida,University_of_Georgia,University_of_Hartford,University_of_Houston,University_of_Idaho,University_of_Indianapolis,University_of_Iowa,University_of_Kansas-Main,University_of_Kentucky,University_of_La_Verne,University_of_Louisville,University_of_Miami,University_of_Mississippi,University_of_Mobile,University_of_Montana,University_of_Montevallo,University_of_Nevada_-_Reno,University_of_New_England,University_of_New_Hampshire,University_of_New_Haven,University_of_New_Orleans,University_of_North_Florida,University_of_North_Texas,University_of_Northern_Iowa,University_of_Notre_Dame,University_of_Oklahoma,University_of_Oregon,University_of_Pennsylvania,University_of_Portland,University_of_Puget_Sound,University_of_Redlands,University_of_Rhode_Island,University_of_Richmond,University_of_Rochester,University_of_San_Diego,University_of_San_Francisco,University_of_Scranton,University_of_South_Alabama,University_of_South_Dakota,University_of_South_Florida,University_of_St_Thomas,University_of_Tampa,University_of_Toledo,University_of_Tulsa,University_of_Utah,University_of_Vermont,University_of_Virginia,University_of_Washington,University_of_West_Florida,University_of_Wyoming,University_of_the_Ozarks,University_of_the_Pacific,University_of_the_South,Univof_Calif-Berkeley,Univof_Calif-Davis,Univof_Calif-Irvine,Univof_Calif-Los_Angeles,Univof_Calif-Riverside,Univof_Calif-San_Diego,Univof_Calif-San_Francisco,Univof_Calif-Santa_Barbara,Univof_Calif-Santa_Cruz,Univof_Cinti-Main_Campus,Univof_District_Columbia,Univof_Maine_at_Farmington,Univof_Maine_at_Fort_Kent,Univof_Maine_at_Machias,Univof_Maine_at_Orono,Univof_Maine_at_Presque_Isl,Univof_Maine_at_Southern,Univof_Maryland-BaltoCo,Univof_Maryland-Coll_Park,Univof_Maryland-Estrn_Shore,Univof_Michigan-Ann_Arbor,Univof_Michigan-Dearborn,Univof_Michigan-Flint,Univof_Missouri-Columbia,Univof_Missouri-Kansas_City,Univof_Missouri-Rolla,Univof_Missouri-St_Louis,Univof_Nebraska-Lincoln,Univof_Nebraska_at_Omaha,Univof_Southern_Mississippi,Univof_Tennessee-Knoxville,Univof_Tennessee-Martin,Upper_Iowa_University,Urbana_University,Ursinus_College,Ursuline_College,Utah_State_University,Valdosta_State_University,Valley_City_State_University,Valparaiso_University,Vanderbilt_University,Vassar_College,Villanova_University,Virginia_Commonwealth_Univ,Virginia_Intermont_College,Virginia_Military_Institute,Virginia_PolyInst_and_StUniv,Virginia_State_University,Virginia_Union_University,Virginia_Wesleyan_College,Viterbo_College,Voorhees_College,Wabash_College,Wagner_College,Wake_Forest_University,Walla_Walla_College,Walsh_University,Warner_Pacific_College,Warren_Wilson_College,Wartburg_College,Washburn_University,Washington_College,Washington_State_University,Washington_University,Washington__and__Jefferson_Coll,Washington__and__Lee_University,Wayland_Baptist_Univ,Wayne_State_College,Wayne_State_University,Waynesburg_College,Weber_State_University,Webster_University,Wellesley_College,Wells_College,Wesley_College,Wesleyan_University,West_Chester_Univ_of_Penn,West_Georgia_College,West_Liberty_State_College,West_Texas_A_and_M_University,West_Virginia_Inst_of_Tech,West_Virginia_University,West_Virginia_Wesleyan_Coll,Western_Baptist_College,Western_Carolina_University,Western_Conn_State_Univ,Western_Illinois_University,Western_Kentucky_University,Western_Maryland_College,Western_Michigan_University,Western_Montana_Collof_UM,Western_New_England_College,Western_Oregon_State_College,Western_State_Coll_of_Colo,Western_Washington_Univ,Westfield_State_College,Westminster_Coll_SltLkeCy,Westminster_College,Westmont_College,Wheaton_College,Wheeling_Jesuit_College,Wheelock_College,Whitman_College,Whittier_College,Whitworth_College,Wichita_State_University,Widener_University,Wilkes_University,Willamette_University,William_Jewell_College,William_Paterson_College,William_Penn_College,William_Tyndale_College,William_Woods_University,Williams_Baptist_College,Williams_College,Wilmington_College,Wilson_College,Wingate_College,Winona_State_University,Winston-Salem_State_Univ,Winthrop_University,Wittenberg_University,Wofford_College,Woodbury_University,Worcester_Polytechnic_Inst,Worcester_State_College,Wright_State_University-Main,Xavier_University,Xavier_University_of_La,Yale_University,York_College_of_Pennsylvania,Youngstown_State_University}
+@attribute State {AK,AL,AR,AZ,CA,CO,CT,DC,DE,FL,GA,HI,IA,ID,IL,IN,KS,KY,LA,MA,MD,ME,MI,MN,MO,MS,MT,NC,ND,NE,NH,NJ,NM,NV,NY,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VA,VT,WA,WI,WV,WW,WY}
+@attribute Type {I,IIA,IIB,VIIB}
+@attribute Average_salary-full_professors INTEGER
+@attribute Average_salary-associate_professors INTEGER
+@attribute Average_salary-assistant_professors INTEGER
+@attribute Average_salary-all_ranks INTEGER
+@attribute Average_compensation-full_professors INTEGER
+@attribute Average_compensation-associate_professors INTEGER
+@attribute Average_compensation-assistant_professors INTEGER
+@attribute Average_compensation-all_ranks INTEGER
+@attribute Number_of_full_professors INTEGER
+@attribute Number_of_associate_professors INTEGER
+@attribute Number_of_assistant_professors INTEGER
+@attribute Number_of_instructors INTEGER
+@attribute Number_of_faculty-all_ranks INTEGER
+
+@data
+1061,Alaska_Pacific_University,AK,IIB,454,382,362,382,567,485,471,487,6,11,9,4,32
+1063,UnivAlaska-Fairbanks,AK,I,686,560,432,508,914,753,572,677,74,125,118,40,404
+1065,UnivAlaska-Southeast,AK,IIA,533,494,329,415,716,663,442,559,9,26,20,9,70
+11462,UnivAlaska-Anchorage,AK,IIA,612,507,414,498,825,681,557,670,115,124,101,21,392
+1002,Alabama_Agri_and_Mech_Univ,AL,IIA,442,369,310,350,530,444,376,423,59,77,102,24,262
+1004,University_of_Montevallo,AL,IIA,441,385,310,388,542,473,383,477,57,33,35,2,127
+1008,Athens_State_College,AL,IIB,466,394,351,396,558,476,427,478,20,18,30,0,68
+1009,Auburn_University-_Main,AL,I,580,437,374,455,692,527,451,546,366,354,301,66,1109
+1012,Birmingham_Southern_College,AL,IIB,498,379,322,401,655,501,404,523,34,25,27,3,89
+1016,Univ_of_North_Alabama,AL,IIB,506,412,359,411,607,508,445,503,67,40,66,27,200
+1019,Huntingdon_College,AL,IIB,339,303,287,301,421,371,347,366,8,15,19,2,44
+1020,Jacksonville_State_Univ,AL,IIA,461,389,338,386,585,496,436,493,106,42,66,58,272
+1024,Livingston_University,AL,IIB,360,304,258,300,433,369,313,363,27,25,33,4,89
+1029,University_of_Mobile,AL,IIB,354,321,277,291,436,401,346,363,17,19,31,19,86
+1033,Oakwood_College,AL,IIB,301,290,283,290,375,363,355,362,18,28,28,3,77
+1036,Samford_University,AL,IIA,565,425,363,449,710,556,476,578,83,46,77,9,215
+1041,Spring_Hill_College,AL,IIB,431,352,311,373,518,425,374,449,23,17,14,1,55
+1044,Stillman_College,AL,IIB,321,288,251,272,388,354,312,335,13,18,18,10,59
+1047,Troy_State_University-Main,AL,IIA,462,385,322,350,560,467,392,426,25,59,100,19,204
+1050,Tuskegee_University,AL,IIA,410,352,306,327,487,415,362,387,57,65,85,45,254
+1051,University_of_Alabama,AL,I,605,447,382,463,746,563,483,580,267,206,206,76,762
+1052,Univ_Alabama_at_Birmingham,AL,I,633,445,366,461,786,569,475,587,106,163,107,19,406
+1055,Univ_Alabama_in_Huntsville,AL,IIA,636,443,375,451,771,540,455,548,72,87,98,7,282
+1057,University_of_South_Alabama,AL,IIA,542,426,370,418,645,514,450,504,119,103,142,64,434
+8310,Auburn_Univ_at_Montgomery,AL,IIA,519,422,343,403,621,507,411,483,56,54,63,28,201
+1085,Univ_Ark_at_Monticello,AR,IIB,453,363,330,349,561,448,402,428,23,24,48,22,117
+1086,Univ_Arkansas_at_Pine_Bluff,AR,IIB,406,366,332,335,505,457,415,419,40,33,71,46,192
+1088,Arkansas_College_(Lyon_College),AR,IIB,499,?,330,399,618,?,402,488,14,5,21,2,42
+1089,Arkansas_Tech_University,AR,IIB,439,381,337,374,550,479,427,471,44,71,52,13,180
+1090,Arkansas_State_Univ-Main,AR,IIA,520,433,342,398,646,541,431,498,103,87,141,63,394
+1092,Univ_of_Central_Arkansas,AR,IIA,521,416,339,395,632,507,416,482,93,89,82,76,340
+1094,University_of_the_Ozarks,AR,IIB,309,280,274,285,428,383,376,391,14,9,15,2,40
+1098,Henderson_State_University,AR,IIB,447,375,341,375,561,480,435,477,55,42,33,25,155
+1099,Hendrix_College,AR,IIB,485,399,362,421,664,534,453,562,24,26,14,1,65
+1100,John_Brown_University,AR,IIB,372,338,304,341,478,414,375,426,23,22,10,3,58
+1101,Univ_Ark_at_Little_Rock,AR,IIA,536,416,372,415,651,506,450,504,128,117,72,63,398
+1102,Ouachita_Baptist_University,AR,IIB,422,355,289,342,529,445,375,435,36,14,28,19,97
+1106,Williams_Baptist_College,AR,IIB,?,?,264,266,?,?,327,331,4,4,12,4,24
+1107,Southern_Ark_Univ-Main,AR,IIA,461,389,321,362,575,484,402,453,27,31,34,23,115
+1108,Univ_Arkansas-Fayetteville,AR,I,563,436,379,452,686,531,461,550,314,198,225,54,806
+10311,Harding_University,AR,IIB,424,374,335,380,512,461,401,460,80,46,41,8,179
+1074,Grand_Canyon_University,AZ,IIB,358,328,274,299,439,395,332,363,20,18,24,12,74
+1081,Arizona_State_University,AZ,I,603,449,399,489,723,549,489,593,576,445,251,7,1383
+1082,Northern_Arizona_University,AZ,I,511,422,359,412,619,518,446,507,173,192,175,33,608
+1083,University_of_Arizona,AZ,I,648,462,411,537,771,561,498,645,647,377,272,2,1349
+1117,Azusa_Pacific_University,CA,IIA,430,375,318,368,573,494,428,488,43,62,32,12,156
+1122,Biola_University,CA,IIA,455,369,303,370,582,462,371,464,32,57,31,6,126
+1131,California_Inst_of_Tech,CA,I,970,733,576,866,1204,909,717,1075,173,40,44,0,257
+1133,California_Lutheran_Univ,CA,IIB,477,392,335,398,600,501,433,507,32,21,33,6,92
+1137,CalStUniv-Fullerton,CA,IIA,605,493,387,544,760,637,506,690,393,120,105,5,623
+1138,CalStUniv-Hayward,CA,IIA,606,491,384,552,762,629,503,699,258,69,49,7,383
+1139,CalStUniv-Long_Beach,CA,IIA,600,474,401,542,751,610,521,685,491,171,112,6,780
+1141,CalStUniv-Dominguez_Hills,CA,IIA,605,472,392,548,759,606,593,705,178,52,37,1,268
+1143,CalPolyStU-Sn_Luis_Obispo,CA,IIA,607,496,394,571,763,635,514,721,507,102,60,1,670
+1144,CalPolyStUniv-Pomona,CA,IIA,610,492,408,559,766,630,531,707,411,116,79,4,610
+1146,CalStUniv-Chico,CA,IIA,604,482,395,558,758,631,518,707,413,86,73,2,574
+1147,CalStUniv-Fresno,CA,IIA,603,476,382,553,757,612,500,699,459,109,67,14,649
+1149,Humboldt_State_University,CA,IIA,593,468,387,543,746,603,507,688,213,38,50,0,301
+1151,San_Diego_State_University,CA,IIA,602,479,403,547,756,615,524,693,576,223,100,10,909
+1155,San_Jose_State_University,CA,IIA,598,486,404,528,750,623,526,669,431,222,158,8,819
+1156,Sonoma_State_University,CA,IIA,602,459,380,553,755,592,497,699,170,34,29,0,233
+1164,Chapman_University,CA,IIA,578,470,420,491,763,627,573,656,38,37,36,0,111
+1170,Claremont_McKenna_College,CA,IIB,716,516,411,601,892,661,510,751,36,16,12,2,67
+1171,Harvey_Mudd_College,CA,IIB,771,579,454,638,961,739,588,805,34,14,20,0,68
+1172,Pitzer_College,CA,IIB,652,439,381,547,824,572,482,695,31,10,13,0,54
+1173,Pomona_College,CA,IIB,730,525,417,566,909,658,530,708,60,52,40,7,161
+1174,Scripps_College,CA,IIB,611,458,372,511,776,588,495,658,28,10,15,1,54
+1179,College_of_Notre_Dame,CA,IIB,524,421,374,448,630,503,443,535,25,16,15,3,59
+1183,Holy_Names_College,CA,IIB,484,394,275,368,542,443,311,413,10,22,18,1,51
+1216,University_of_La_Verne,CA,IIA,482,392,326,401,602,478,396,494,41,28,41,0,110
+1238,Mills_College,CA,IIA,593,461,407,492,737,571,507,612,28,16,23,2,70
+1249,Occidental_College,CA,IIB,624,469,388,490,806,593,482,621,49,42,33,15,139
+1253,Fresno_Pacific_College,CA,IIB,?,?,?,361,?,?,?,447,0,0,0,0,54
+1258,Pacific_Union_College,CA,IIB,362,333,315,336,441,398,376,403,40,17,41,4,102
+1262,Point_Loma_Nazarene_College,CA,IIB,507,393,358,429,637,523,468,549,43,21,23,7,94
+1264,Pepperdine_University,CA,IIA,715,561,511,637,930,737,645,829,130,72,22,7,231
+1302,Saint_Marys_Coll_of_Calif,CA,IIA,614,494,404,500,754,616,497,618,38,55,42,0,135
+1305,Stanford_University,CA,I,952,658,519,824,1144,814,653,1000,533,139,145,0,834
+1312,Univof_Calif-Berkeley,CA,I,764,513,433,650,939,631,533,799,834,229,209,0,1346
+1313,Univof_Calif-Davis,CA,I,683,478,404,561,840,588,496,689,535,190,234,0,1072
+1314,Univof_Calif-Irvine,CA,I,708,488,423,574,870,599,520,705,319,161,138,0,673
+1315,Univof_Calif-Los_Angeles,CA,I,741,497,421,609,910,611,517,748,817,267,298,0,1499
+1316,Univof_Calif-Riverside,CA,I,670,461,390,514,824,567,479,632,183,80,140,0,441
+1317,Univof_Calif-San_Diego,CA,I,723,487,401,595,888,598,493,732,405,147,130,0,734
+1319,Univof_Calif-San_Francisco,CA,I,624,449,380,520,767,552,467,639,154,83,74,0,314
+1320,Univof_Calif-Santa_Barbara,CA,I,712,473,401,578,875,581,493,711,371,125,145,0,694
+1321,Univof_Calif-Santa_Cruz,CA,I,677,464,391,537,832,570,481,660,186,93,92,0,413
+1322,University_of_Redlands,CA,IIA,566,468,406,488,716,592,495,610,49,19,39,0,109
+1325,University_of_San_Francisco,CA,IIA,617,486,405,514,811,644,538,680,129,59,80,19,287
+1326,Santa_Clara_University,CA,IIA,763,555,487,578,938,704,624,729,85,117,90,0,324
+1328,Univ_of_Southern_California,CA,I,802,574,484,641,1016,751,636,825,485,354,286,27,1165
+1329,University_of_the_Pacific,CA,IIA,542,420,372,459,666,528,468,570,172,92,100,10,377
+1341,Westmont_College,CA,IIB,489,408,339,415,616,524,429,526,30,19,22,3,74
+1342,Whittier_College,CA,IIA,666,499,347,531,808,601,416,642,48,27,24,9,108
+1343,Woodbury_University,CA,IIA,?,373,365,381,?,472,454,478,5,11,6,0,22
+3948,San_Francisco_State_Univ,CA,IIA,599,483,397,541,751,619,518,684,451,133,117,8,709
+7993,CalStUniv-Bakersfield,CA,IIA,597,482,377,499,752,619,495,637,95,48,50,13,206
+10395,University_of_San_Diego,CA,IIA,719,533,452,575,904,678,569,725,105,72,76,12,265
+11649,Loyola_Marymount_University,CA,IIA,722,558,414,589,911,724,543,754,130,90,83,3,310
+1345,Adams_State_College,CO,IIA,436,356,321,360,527,444,400,444,29,21,40,8,98
+1347,Colorado_College,CO,IIB,613,488,398,525,776,621,509,665,63,38,26,1,134
+1349,Univ_of_Northern_Colorado,CO,I,480,390,333,385,565,463,399,458,151,111,129,35,467
+1350,Colorado_State_University,CO,I,598,447,403,517,714,534,481,617,483,255,188,0,926
+1353,Fort_Lewis_College,CO,IIB,439,385,342,392,516,452,402,460,73,35,52,5,165
+1358,Mesa_State_College,CO,IIB,429,353,297,340,508,427,363,410,49,31,37,7,145
+1360,Metro_State_Collof_Denver,CO,IIB,480,406,351,418,568,485,424,498,159,90,111,8,370
+1363,Regis_University,CO,IIB,489,434,349,424,626,531,428,527,16,26,12,2,56
+1365,University_Southern_Colorado,CO,IIA,474,422,360,397,559,498,425,468,47,45,63,15,170
+1370,Univ_of_Colorado-_Boulder,CO,I,652,494,421,528,797,615,519,649,457,301,227,93,1081
+1371,University_of_Denver,CO,I,623,479,430,509,756,588,525,620,142,106,101,6,378
+1372,Western_State_Coll_of_Colo,CO,IIB,452,381,324,402,546,460,406,490,52,25,26,0,103
+4509,Univ_of_Colo_at_ColoSprgs,CO,IIA,522,422,385,451,642,524,480,558,62,56,40,3,161
+6740,Univ_of_Colorado_at_Denver,CO,IIA,596,453,408,467,726,561,508,576,106,108,119,35,368
+9401,Colorado_Christian_Univ,CO,IIB,?,284,251,255,?,356,318,323,3,8,13,8,32
+1374,Albertus_Magnus_College,CT,IIB,391,343,?,340,444,400,?,393,9,7,5,3,24
+1378,Central_Connecticut_StUniv,CT,IIA,666,534,397,518,856,700,536,680,118,119,137,16,390
+1379,Connecticut_College,CT,IIB,619,461,366,499,810,613,477,654,63,35,30,11,140
+1380,Western_Conn_State_Univ,CT,IIA,658,516,477,575,883,711,652,778,90,36,50,2,178
+1385,Fairfield_University,CT,IIA,685,545,452,545,894,733,603,721,62,43,81,6,192
+1397,University_of_New_Haven,CT,IIA,524,450,401,471,656,576,513,596,72,44,30,1,152
+1402,Quinnipiac_College,CT,IIA,697,540,412,553,877,686,531,701,82,51,64,10,207
+1403,Sacred_Heart_University,CT,IIB,546,444,374,435,686,566,478,553,19,55,30,7,111
+1406,Southern_Conn_State_Univ,CT,IIA,644,514,385,522,819,673,516,678,160,125,120,12,417
+1409,Saint_Joseph_College,CT,IIA,548,451,360,430,654,544,432,517,8,34,22,1,65
+1414,Trinity_College,CT,IIB,706,501,394,550,901,650,494,704,57,49,32,0,146
+1416,University_of_Bridgeport,CT,IIA,505,437,360,434,644,551,463,553,32,29,26,1,90
+1422,University_of_Hartford,CT,IIA,529,445,380,439,660,566,492,558,76,131,111,3,329
+1424,Wesleyan_University,CT,IIA,734,504,423,597,936,641,539,761,128,57,66,0,254
+1425,Eastern_Connecticut_StUniv,CT,IIA,650,515,400,535,856,689,547,714,47,47,33,0,127
+1426,Yale_University,CT,I,928,522,444,708,1127,643,548,863,404,118,191,6,767
+1434,American_University,DC,I,746,520,417,555,897,641,505,673,165,119,125,37,446
+1437,Catholic_Univ_of_America,DC,I,611,449,385,482,718,533,459,570,123,141,104,6,374
+1443,Gallaudet_University,DC,IIA,623,480,399,482,814,638,534,637,86,67,70,35,261
+1444,George_Washington_University,DC,I,729,542,447,610,874,653,536,733,316,175,134,12,637
+1445,Georgetown_University,DC,I,857,552,427,618,1080,710,546,785,192,157,154,25,528
+1448,Howard_University,DC,I,656,483,403,481,780,591,494,587,241,282,189,111,891
+1452,Mount_Vernon_College,DC,IIB,?,360,288,330,?,453,364,413,3,10,17,0,30
+1460,Trinity_College,DC,IIB,457,362,293,350,536,435,349,415,12,12,21,2,47
+29100,Univof_District_Columbia,DC,IIA,559,476,390,491,686,586,482,604,184,113,95,8,400
+1428,Delaware_State_University,DE,IIA,545,435,359,379,716,583,491,515,29,47,61,34,183
+1429,Goldey_Beacom_College,DE,IIB,492,405,?,417,613,511,?,528,8,14,3,1,26
+1431,University_of_Delaware,DE,I,723,531,422,556,922,693,554,721,341,319,217,65,953
+1433,Wesley_College,DE,IIB,448,373,334,376,565,449,396,456,14,12,22,1,49
+1466,Barry_University,FL,IIA,488,420,350,394,598,508,424,477,39,77,84,15,215
+1468,St_Thomas_University,FL,IIA,438,482,351,403,520,570,421,480,23,22,37,4,90
+1479,Embry-Riddle_Aero_University,FL,IIA,457,369,310,365,556,452,383,446,70,130,84,7,299
+1480,Florida_A__and__M_University,FL,IIA,524,426,359,424,661,543,460,540,103,123,111,27,364
+1481,Florida_Atlantic_University,FL,IIA,580,426,394,461,750,559,517,601,183,147,159,30,528
+1487,Eckerd_College,FL,IIB,534,424,357,436,676,547,472,563,32,18,37,0,87
+1488,Florida_Southern_College,FL,IIB,440,369,331,369,552,473,409,463,30,18,44,4,96
+1489,Florida_State_University,FL,I,564,399,378,473,729,525,494,616,510,316,192,16,1038
+1515,Rollins_College,FL,IIA,542,420,321,457,678,519,378,564,78,43,26,7,154
+1531,Stetson_University,FL,IIA,622,437,370,477,794,561,467,605,61,52,65,2,185
+1535,University_of_Florida,FL,I,613,430,399,501,790,567,527,653,981,721,510,49,2261
+1536,University_of_Miami,FL,I,693,510,408,513,895,654,514,659,291,200,147,20,769
+1537,University_of_South_Florida,FL,I,571,418,369,455,735,547,483,591,387,319,239,45,1038
+1538,University_of_Tampa,FL,IIB,495,425,371,416,593,513,438,497,36,37,46,4,127
+3954,University_Central_Florida,FL,IIA,560,420,369,435,698,527,465,545,176,207,162,42,593
+3955,University_of_West_Florida,FL,IIA,489,391,350,390,636,505,458,507,59,65,75,22,221
+8849,Palm_Beach_Atlantic_College,FL,IIB,413,369,333,348,491,451,390,412,11,14,28,13,66
+9635,Florida_Internatl_Univ,FL,IIA,558,423,395,433,719,553,509,562,182,261,220,76,767
+9841,University_of_North_Florida,FL,IIB,498,405,343,408,663,544,462,547,73,81,57,19,230
+1542,Agnes_Scott_College,GA,IIB,527,421,356,426,651,528,441,528,19,24,19,4,66
+1544,Albany_State_College,GA,IIB,444,395,335,371,578,519,437,484,38,24,68,8,138
+1546,Armstrong_State_College,GA,IIB,462,367,315,347,588,457,391,434,38,32,119,12,201
+1552,Augusta_College,GA,IIA,503,409,336,383,645,520,431,489,40,43,79,21,183
+1554,Berry_College,GA,IIB,515,403,343,399,650,519,439,509,25,20,38,3,92
+1561,Columbus_College,GA,IIA,456,375,333,396,588,491,437,515,75,50,51,2,178
+1564,Emory_University,GA,I,796,547,451,608,972,686,567,753,203,177,161,8,549
+1566,Fort_Valley_State_College,GA,IIB,471,382,339,379,596,490,439,487,37,39,49,17,142
+1569,Georgia_Institute_of_Tech,GA,I,684,517,462,558,862,665,594,711,235,206,167,17,626
+1570,Southern_Coll_of_Technology,GA,IIB,457,386,360,398,587,496,460,511,44,58,40,4,146
+1572,Georgia_Southern_University,GA,IIA,495,408,328,363,623,509,407,453,105,135,254,109,603
+1574,Georgia_State_University,GA,I,666,474,390,502,817,594,493,624,258,254,241,40,793
+1577,Kennesaw_State_College,GA,IIA,523,428,353,399,661,542,445,506,69,116,111,54,350
+1580,Mercer_University-Entire,GA,IIA,555,423,351,433,686,538,435,540,76,78,81,11,246
+1586,Oglethorpe_University,GA,IIB,516,454,329,450,630,550,390,546,21,9,10,0,44
+1591,Shorter_College,GA,IIB,370,308,294,317,439,368,355,379,16,17,17,5,55
+1598,University_of_Georgia,GA,I,619,444,378,489,768,553,464,607,650,552,391,64,1658
+1599,Valdosta_State_University,GA,IIA,477,386,344,390,603,496,445,500,88,90,114,19,311
+1601,West_Georgia_College,GA,IIA,466,391,353,392,595,502,454,502,98,50,97,27,272
+1602,Georgia_College,GA,IIA,447,388,340,373,571,496,440,479,47,41,80,11,179
+3484,Covenant_College,GA,IIB,429,371,312,388,519,492,390,484,19,12,6,1,38
+1610,Univ_of_Hawaii_at_Manoa,HI,I,713,532,458,570,887,677,587,719,442,285,272,100,1099
+21078,Univ_of_Hawaii-West_Oahu,HI,IIB,513,?,396,449,654,?,512,576,8,4,8,0,20
+29020,Univ_of_Hawaii_at_Hilo,HI,IIB,576,461,414,467,731,591,534,598,43,47,37,14,141
+1846,Briar_Cliff_College,IA,IIB,367,324,286,313,473,412,359,398,16,13,28,3,60
+1847,Buena_Vista_College,IA,IIB,484,416,339,382,606,522,440,486,20,12,30,10,72
+1850,Central_University_of_Iowa,IA,IIB,464,413,334,395,572,507,405,483,23,36,22,8,89
+1852,Clarke_College,IA,IIB,436,361,312,338,512,445,379,407,11,10,25,8,54
+1854,Coe_College,IA,IIB,516,421,340,436,671,541,459,570,30,21,22,0,73
+1856,Cornell_College,IA,IIB,578,426,368,468,693,534,463,574,31,22,17,5,75
+1859,Dordt_College,IA,IIB,411,356,308,355,548,470,406,472,30,14,16,12,72
+1860,Drake_University,IA,IIA,601,458,409,481,762,578,496,600,101,61,107,16,285
+1866,Graceland_College,IA,IIB,411,331,301,345,490,401,366,418,26,11,29,1,70
+1867,Grand_View_College,IA,IIB,385,320,295,329,481,405,377,416,22,31,20,2,75
+1868,Grinnell_College,IA,IIB,642,517,405,513,809,641,496,638,46,36,52,3,139
+1869,Iowa_State_University,IA,I,684,506,404,534,842,635,514,666,467,353,284,84,1188
+1873,Loras_College,IA,IIB,419,363,314,363,531,438,378,445,37,35,31,6,109
+1874,Luther_College,IA,IIB,478,399,347,404,630,548,445,531,63,26,50,16,155
+1879,Morningside_College,IA,IIB,389,331,303,341,495,414,365,425,20,29,16,1,66
+1880,Mount_Mercy_College,IA,IIB,379,356,334,337,465,427,396,405,7,20,28,8,63
+1881,Mount_St_Clare_College,IA,IIA,?,?,?,302,?,?,?,373,0,0,0,0,18
+1883,Northwestern_College,IA,IIB,430,372,311,344,531,477,394,434,9,16,27,6,58
+1887,Simpson_College,IA,IIB,491,377,339,394,645,473,434,504,25,11,17,14,67
+1889,St_Ambrose_University,IA,IIB,431,374,325,362,541,471,401,450,29,15,44,8,98
+1890,University_of_Northern_Iowa,IA,IIA,586,469,390,447,730,591,491,561,155,152,226,89,622
+1891,University_of_Dubuque,IA,IIB,351,315,309,323,443,392,358,396,19,23,14,2,58
+1892,University_of_Iowa,IA,I,706,509,432,579,872,643,549,723,486,308,260,10,1064
+1893,Upper_Iowa_University,IA,IIB,?,?,287,303,?,?,348,366,4,5,6,12,27
+1896,Wartburg_College,IA,IIB,447,370,308,358,564,469,385,451,25,21,29,4,89
+1899,Teikyo_Westmar_University,IA,IIB,?,314,289,292,?,388,355,359,5,13,22,14,54
+1900,William_Penn_College,IA,IIB,351,312,269,294,420,386,335,363,8,11,19,7,45
+1616,Boise_State_University,ID,IIA,448,391,354,391,566,498,453,498,157,111,100,7,427
+1617,Albertson_Coll_of_Idaho,ID,IIB,424,338,266,336,540,430,338,428,16,20,19,1,56
+1620,Idaho_State_University,ID,IIA,466,382,337,368,588,487,433,471,128,99,113,120,460
+1621,Lewis-Clark_State_College,ID,IIB,391,329,292,338,499,425,381,436,39,35,35,1,110
+1624,Northwest_Nazarene_College,ID,IIB,?,?,?,341,?,?,?,448,0,0,0,0,71
+1626,University_of_Idaho,ID,I,514,408,373,438,640,514,472,550,217,165,155,9,546
+1633,Augustana_College,IL,IIB,527,425,362,418,648,523,449,517,41,28,50,18,137
+1634,Aurora_University,IL,IIB,434,379,339,372,528,461,402,447,18,16,19,16,69
+1635,Barat_College,IL,IIB,507,405,333,402,599,473,394,474,9,9,14,0,32
+1639,Blackburn_University,IL,IIB,?,?,?,312,?,?,?,370,0,0,0,0,23
+1641,Bradley_University,IL,IIA,570,464,378,442,679,562,449,529,75,88,100,30,295
+1664,College_of_Saint_Francis,IL,IIB,446,422,345,392,551,524,435,489,12,15,23,0,50
+1665,Columbia_College,IL,IIB,?,?,?,349,?,?,?,446,0,0,0,0,171
+1666,Concordia_University,IL,IIB,399,351,295,351,487,435,374,435,30,23,24,1,78
+1671,DePaul_University,IL,IIA,702,543,427,524,857,681,527,648,120,173,152,55,500
+1674,Eastern_Illinois_University,IL,IIA,442,373,333,364,515,438,393,428,190,161,120,87,560
+1678,Eureka_College,IL,IIB,?,370,315,355,?,458,390,438,5,16,16,0,37
+1684,Greenville_College,IL,IIB,374,331,292,336,466,424,370,422,27,11,15,4,57
+1688,Illinois_College,IL,IIB,522,424,347,424,621,503,410,502,16,18,14,3,51
+1691,Illinois_Institute_of_Tech,IL,I,680,480,452,512,836,606,558,636,93,81,73,11,287
+1692,Illinois_State_University,IL,I,548,436,373,460,638,514,445,541,289,187,244,0,720
+1693,Northeastern_Illinois_Univ,IL,IIA,460,378,359,394,529,439,418,455,139,88,71,0,331
+1694,Chicago_State_University,IL,IIA,446,369,320,345,509,425,371,399,120,65,77,14,351
+1696,Illinois_Wesleyan_University,IL,IIB,570,452,374,445,729,593,477,572,32,42,47,8,129
+1700,Judson_College,IL,IIB,400,358,305,358,486,445,366,438,10,12,6,1,29
+1703,Kendall_College,IL,IIB,?,357,?,319,?,423,?,377,1,11,3,4,19
+1704,Knox_College,IL,IIB,508,414,342,432,650,518,416,544,35,17,20,5,77
+1706,Lake_Forest_College,IL,IIB,644,475,402,495,843,650,543,662,26,22,24,5,81
+1707,Lewis_University,IL,IIA,467,392,330,357,561,481,407,437,37,20,29,52,138
+1710,Loyola_Univ_of_Chicago,IL,I,761,536,433,570,924,664,536,701,164,230,163,6,563
+1717,MacMurray_College,IL,IIB,324,263,250,262,393,334,307,318,13,9,16,31,69
+1722,McKendree_College,IL,IIB,433,397,341,381,539,493,407,467,16,10,16,5,47
+1724,Millikin_University,IL,IIB,478,409,313,386,583,501,383,472,34,38,46,6,124
+1725,Monmouth_College,IL,IIB,443,339,325,381,544,412,385,464,20,12,11,1,44
+1733,National-Louis_University,IL,IIA,490,405,337,348,566,472,394,405,20,51,120,23,253
+1734,North_Central_College,IL,IIB,473,399,348,398,588,501,437,497,24,40,28,5,97
+1735,North_Park_College,IL,IIB,415,337,285,339,540,426,352,431,23,18,18,2,65
+1737,Northern_Illinois_University,IL,I,578,435,375,440,667,509,443,515,314,266,246,112,944
+1739,Northwestern_University,IL,I,860,596,496,712,1045,735,602,868,460,209,203,0,872
+1741,Olivet_Nazarene_University,IL,IIA,391,335,278,320,476,412,346,395,26,22,36,8,92
+1744,Principia_College,IL,IIB,465,400,345,395,572,540,414,490,20,9,13,7,49
+1745,Quincy_University,IL,IIB,372,371,285,345,459,462,351,427,18,21,14,2,55
+1749,Roosevelt_University,IL,IIA,484,405,359,416,610,517,464,531,50,58,42,2,152
+1750,Rosary_College,IL,IIB,448,378,377,382,543,479,454,468,10,25,34,3,72
+1758,Southern_IllUniv-Carbondale,IL,I,564,436,359,422,657,517,431,500,272,255,313,33,977
+1759,Southern_IllUniv-Edwardsvle,IL,IIA,531,442,389,453,616,520,462,531,168,126,95,24,421
+1767,Illinois_Benedictine_College,IL,IIA,463,395,315,409,576,493,403,511,38,36,17,0,91
+1768,Saint_Xavier_University,IL,IIA,551,452,388,439,667,548,471,531,22,78,53,6,159
+1772,Trinity_College,IL,IIB,?,346,291,320,?,406,347,377,5,11,13,2,31
+1774,University_of_Chicago,IL,I,894,586,515,742,1104,724,636,916,467,138,161,36,802
+1775,Univ_of_Illinois-Urbana,IL,I,682,493,421,570,783,574,494,659,927,520,393,1,1868
+1776,Univ_of_Illinois-Chicago,IL,I,656,476,411,513,755,555,483,596,401,369,296,20,1135
+1780,Western_Illinois_University,IL,IIA,506,427,350,421,587,500,414,493,241,171,123,62,606
+1781,Wheaton_College,IL,IIA,510,437,368,452,640,569,461,574,67,54,32,3,156
+3970,Parks_Collof_StLouis_Univ,IL,IIB,576,540,396,487,694,660,480,591,15,12,16,4,47
+9333,Sangamon_State_University,IL,IIA,499,437,370,433,594,516,447,516,50,62,46,5,163
+1785,Anderson_University,IN,IIB,415,340,316,347,532,427,389,437,43,45,36,14,138
+1786,Ball_State_University,IN,I,517,410,332,384,666,537,438,501,297,160,350,155,965
+1787,Bethel_College,IN,IIB,?,?,285,295,?,?,363,376,5,4,26,1,36
+1788,Butler_University,IN,IIA,521,442,366,439,650,551,447,544,72,66,77,3,220
+1792,DePauw_University,IN,IIB,540,433,361,452,695,570,465,587,51,57,38,0,146
+1793,Earlham_College,IN,IIB,514,394,338,445,639,483,414,551,44,13,22,0,79
+1795,University_of_Evansville,IN,IIA,500,415,351,414,602,505,415,496,57,43,58,4,170
+1798,Franklin_College_of_Indiana,IN,IIB,440,363,325,381,549,453,411,477,24,16,20,0,60
+1799,Goshen_College,IN,IIB,388,341,291,345,479,410,344,418,37,19,28,0,84
+1800,Grace_College,IN,IIB,326,264,228,285,439,372,334,395,14,11,6,0,31
+1801,Hanover_College,IN,IIB,555,437,377,432,682,539,455,524,28,16,35,13,92
+1803,Huntington_College,IN,IIB,438,367,305,358,544,455,379,444,11,11,13,3,38
+1804,University_of_Indianapolis,IN,IIA,487,408,358,382,620,515,433,469,16,38,52,19,125
+1808,Univ_of_Southern_Indiana,IN,IIA,493,421,377,384,636,545,477,491,35,38,58,50,181
+1809,Indiana_Univ-Bloomington,IN,I,674,479,399,540,852,615,507,685,624,344,305,1,1361
+1811,Indiana_Univ-East,IN,IIB,?,405,327,341,?,529,424,443,5,12,24,0,59
+1812,Indiana-Purdue_U-Fort_Wayne,IN,IIA,498,408,340,385,648,534,444,503,53,106,123,15,303
+1813,Indiana_Univ-Indianapolis,IN,IIA,643,469,405,469,820,604,514,599,170,217,215,1,688
+1814,Indiana_Univ_at_Kokomo,IN,IIB,519,432,380,397,665,548,482,504,13,21,29,0,81
+1815,Indiana_Univ-Northwest,IN,IIA,544,446,355,410,694,575,449,522,25,63,33,0,152
+1816,Indiana_Univ_at_South_Bend,IN,IIA,544,445,391,420,696,571,495,537,32,56,57,0,175
+1817,Indiana_Univ-Southeast,IN,IIA,529,408,369,422,679,526,470,540,41,24,42,0,125
+1820,Manchester_College,IN,IIB,412,340,289,340,527,416,348,420,24,22,17,11,74
+1821,Marian_College,IN,IIB,420,329,303,330,520,411,379,411,15,23,34,5,79
+1822,Indiana_Wesleyan_University,IN,IIB,396,342,294,335,492,431,367,418,22,23,34,2,81
+1824,Oakland_City_College,IN,IIB,?,282,252,269,?,340,314,328,3,11,10,4,28
+1825,Purdue_Univ-Main_Campus,IN,I,721,485,423,562,920,631,548,722,603,411,400,29,1443
+1827,Purdue_University-Calumet,IN,IIA,519,413,364,405,677,541,479,530,47,105,74,21,247
+1830,Rose-Hulman_Inst_of_Tech,IN,IIB,608,522,447,549,797,679,568,715,51,29,21,0,101
+1832,Saint_Francis_College,IN,IIB,?,334,313,316,?,393,371,373,3,8,21,5,37
+1833,Saint_Josephs_College,IN,IIB,373,374,312,344,486,478,400,443,13,12,19,1,45
+1834,Calumet_College_of_StJoseph,IN,IIB,324,264,235,265,426,350,316,353,6,6,9,2,23
+1835,Saint_Mary-of-the-Woods_Coll,IN,IIB,307,234,199,232,382,295,246,290,11,11,18,4,44
+1836,Saint_Marys_College,IN,IIB,524,391,331,388,675,509,435,505,21,43,52,1,117
+1837,Saint_Meinrad_College,IN,IIB,357,?,?,332,405,?,?,376,6,3,5,1,15
+1838,Taylor_University,IN,IIB,404,352,300,355,555,486,382,480,36,31,25,3,95
+1839,Tri-State_University,IN,IIB,395,324,291,340,485,395,356,415,23,28,10,3,64
+1840,University_of_Notre_Dame,IN,I,798,562,470,637,985,701,573,787,274,195,164,11,644
+1842,Valparaiso_University,IN,IIA,559,423,372,446,681,525,459,548,67,58,74,5,204
+1844,Wabash_College,IN,IIB,612,474,371,501,770,602,482,637,31,22,20,1,74
+9563,Indiana_State_University,IN,I,500,394,343,423,647,513,438,545,248,133,151,16,548
+1903,Baker_University,KS,IIB,369,318,288,327,443,396,346,397,18,18,16,0,52
+1904,Bethany_College,KS,IIB,335,280,248,281,415,360,308,350,16,9,24,2,51
+1905,Bethel_College,KS,IIB,325,285,267,285,408,356,336,358,16,19,8,5,48
+1915,Fort_Hays_State_University,KS,IIA,446,378,325,377,556,475,412,474,84,56,71,21,232
+1926,Pittsburg_State_University,KS,IIA,450,381,331,375,567,484,425,477,103,76,70,4,291
+1927,Emporia_State_University,KS,IIA,435,390,330,367,553,499,427,471,67,67,78,26,238
+1928,Kansas_State_University,KS,I,550,419,368,440,686,530,466,554,305,231,259,63,858
+1929,Kansas_Wesleyan_University,KS,IIB,337,290,265,293,394,343,299,340,11,14,10,3,38
+1933,McPherson_College,KS,IIB,318,274,254,272,397,353,313,342,7,16,11,3,37
+1937,Ottawa_University,KS,IIB,338,292,264,284,410,348,309,338,13,12,22,8,55
+1940,Southwestern_College,KS,IIB,340,318,278,311,415,388,341,380,16,10,10,3,39
+1943,Saint_Mary_College,KS,IIB,336,301,261,282,390,358,313,335,10,11,15,5,43
+1946,Tabor_College,KS,IIB,304,?,222,257,385,?,282,326,8,5,8,3,24
+1948,University_of_Kansas-Main,KS,I,579,422,367,485,714,529,458,603,474,297,204,6,981
+1949,Washburn_University,KS,IIA,594,438,333,457,719,540,416,561,76,55,59,11,201
+1950,Wichita_State_University,KS,IIA,555,417,361,415,679,518,450,514,101,154,188,24,467
+7032,Mid-America_Nazarene_College,KS,IIB,371,305,265,300,457,378,329,372,18,12,24,6,60
+10256,Benedictine_College,KS,IIB,335,316,278,296,374,368,327,342,11,16,16,7,50
+1954,Bellarmine_College,KY,IIA,473,385,326,394,583,480,396,482,32,18,27,7,84
+1955,Berea_College,KY,IIB,552,428,355,436,675,518,421,525,32,43,31,6,112
+1958,Brescia_College,KY,IIB,?,322,273,299,?,390,324,357,4,10,14,4,32
+1959,Campbellsville_College,KY,IIB,342,278,252,277,422,350,318,347,12,11,16,7,46
+1960,Spalding_University,KY,IIB,359,315,289,313,416,370,333,363,15,22,26,3,66
+1961,Centre_College,KY,IIB,521,418,351,431,653,514,423,532,27,21,21,4,73
+1962,Cumberland_College,KY,IIB,354,291,272,286,438,362,337,355,17,23,32,20,97
+1963,Eastern_Kentucky_University,KY,IIA,519,439,371,442,648,551,468,555,237,135,185,29,586
+1964,Georgetown_College,KY,IIB,398,338,297,343,493,418,352,420,29,18,19,6,72
+1968,Kentucky_State_University,KY,IIB,460,403,329,377,576,505,416,474,26,35,52,5,118
+1969,Kentucky_Wesleyan_College,KY,IIB,383,326,292,327,474,404,358,405,17,18,11,5,51
+1972,Lindsey_Wilson_College,KY,IIB,?,359,278,294,?,427,331,349,2,7,11,18,38
+1976,Morehead_State_University,KY,IIA,478,395,322,373,600,498,410,472,87,89,123,37,336
+1977,Murray_State_University,KY,IIA,462,396,342,383,601,520,451,503,95,101,101,7,336
+1980,Pikeville_College,KY,IIB,359,314,275,304,434,377,332,367,8,25,15,3,51
+1987,Transylvania_University,KY,IIB,447,393,318,384,627,526,424,521,18,25,18,2,63
+1988,Union_College,KY,IIB,314,287,255,277,383,353,304,335,11,20,8,9,48
+1989,University_of_Kentucky,KY,I,634,473,418,521,760,574,504,628,470,416,308,6,1200
+1999,University_of_Louisville,KY,I,584,442,368,476,715,547,449,584,276,208,169,12,674
+2001,Thomas_More_College,KY,IIB,352,324,277,312,432,394,345,382,12,30,18,1,62
+2002,Western_Kentucky_University,KY,IIA,485,408,347,413,613,517,442,524,223,135,144,43,553
+9275,Northern_Kentucky_University,KY,IIA,506,427,350,388,623,529,432,478,83,96,90,14,341
+2003,Centenary_College_of_La,LA,IIB,499,380,324,412,625,468,396,512,28,20,16,2,66
+2004,Dillard_University,LA,IIB,494,373,342,350,567,437,398,406,8,15,59,10,96
+2005,Nicholls_State_University,LA,IIB,440,361,316,338,535,439,385,412,72,67,82,40,286
+2006,Grambling_State_University,LA,IIA,442,392,329,349,491,437,369,391,48,48,124,45,265
+2007,Louisiana_College,LA,IIB,375,324,308,338,484,427,401,440,25,13,18,4,60
+2008,Louisiana_Tech_University,LA,IIA,472,408,344,391,549,494,418,467,129,93,131,36,389
+2010,Louisiana_StUnivand_A_and_M_C,LA,I,594,437,379,464,711,527,461,559,561,387,313,178,1439
+2013,Louisiana_StUnivShreveport,LA,IIA,458,414,337,385,539,498,403,458,53,37,48,18,156
+2015,University_of_New_Orleans,LA,IIA,512,378,352,404,609,453,423,483,199,128,116,67,510
+2016,Loyola_University,LA,IIA,593,451,393,476,728,560,482,587,77,103,45,2,241
+2017,McNeese_State_University,LA,IIA,456,374,323,363,554,458,398,446,76,77,104,33,290
+2020,Northeast_Louisiana_Univ,LA,IIA,459,376,325,343,559,458,396,418,88,102,159,100,449
+2021,Northwestern_State_Univ,LA,IIA,418,360,312,335,500,432,375,403,44,47,98,34,223
+2023,Our_Lady_of_Holy_Cross_Coll,LA,IIB,?,306,325,314,?,378,400,385,1,9,9,6,25
+2024,Southeastern_Louisiana_Univ,LA,IIA,468,405,329,348,566,486,398,421,68,68,163,90,389
+2026,Southern_Univat_New_Orleans,LA,IIB,406,329,298,320,487,397,361,387,23,22,64,11,120
+2029,Tulane_University,LA,I,713,514,418,564,876,646,514,699,172,166,115,3,456
+2031,Univ_Southwestern_Louisiana,LA,I,533,409,359,402,633,493,434,483,147,136,167,98,548
+2032,Xavier_University_of_La,LA,IIA,459,389,332,352,546,456,386,413,37,41,91,34,203
+9636,Southern_UnivA_and_M_Coll-Main,LA,IIA,455,392,336,367,538,464,398,434,100,88,210,48,446
+2115,Amherst_College,MA,IIB,726,516,425,610,917,661,546,774,87,23,43,0,153
+2117,Anna_Maria_College,MA,IIB,407,364,318,341,499,470,377,416,6,9,14,4,33
+2118,Assumption_College,MA,IIB,479,400,325,385,610,518,413,492,22,42,40,3,107
+2120,Merrimack_College,MA,IIB,507,393,326,395,652,518,407,510,24,63,38,0,125
+2121,Babson_College,MA,IIB,787,613,557,633,975,769,700,790,31,45,31,3,119
+2124,Bentley_College,MA,IIA,717,566,493,575,894,708,599,712,48,84,56,10,198
+2126,Berklee_College_of_Music,MA,IIB,504,402,329,381,605,491,405,466,17,59,61,2,139
+2128,Boston_College,MA,I,784,569,496,614,964,717,604,761,165,245,126,10,556
+2132,Bradford_College,MA,IIB,447,352,310,346,557,450,384,435,9,18,8,6,41
+2133,Brandeis_University,MA,I,687,493,403,550,859,619,496,686,142,71,40,3,299
+2139,Clark_University,MA,IIA,664,469,395,522,822,593,488,651,58,64,38,0,160
+2140,Collof_Our_Lady_of_the_Elms,MA,IIB,431,353,305,342,524,429,371,415,10,18,19,5,52
+2141,College_of_the_Holy_Cross,MA,IIB,695,506,406,519,875,627,500,644,44,84,54,4,186
+2146,Emerson_College,MA,IIA,669,502,386,488,874,652,494,632,21,33,35,3,92
+2153,Gordon_College,MA,IIB,432,352,319,381,578,467,424,505,35,18,13,5,71
+2155,Harvard_University,MA,I,1009,559,500,793,1236,723,653,989,654,149,255,8,1172
+2158,Lasell_College,MA,IIB,?,336,322,320,?,403,389,387,3,7,13,4,27
+2161,Univ_of_Mass_at_Lowell,MA,I,664,539,464,587,805,662,577,717,223,191,52,10,476
+2178,Massachusetts_Inst_of_Tech,MA,I,903,637,528,757,1124,806,678,951,583,177,164,36,989
+2183,Bridgewater_State_College,MA,IIA,517,440,400,468,672,583,542,617,144,53,41,17,255
+2184,Fitchburg_State_College,MA,IIA,512,429,395,444,644,540,501,560,87,56,70,11,224
+2187,North_Adams_State_College,MA,IIB,510,394,361,428,642,507,468,546,34,34,21,2,91
+2189,Westfield_State_College,MA,IIA,523,419,378,457,662,530,478,578,79,46,44,0,169
+2190,Worcester_State_College,MA,IIA,528,456,370,463,669,585,483,593,81,44,30,13,168
+2192,Mount_Holyoke_College,MA,IIB,694,505,400,541,866,645,496,678,73,47,51,3,191
+2199,Northeastern_University,MA,I,688,525,460,543,880,689,599,705,236,260,176,0,730
+2206,Regis_College,MA,IIB,504,425,345,407,627,542,426,513,9,20,14,1,46
+2208,Simmons_College,MA,IIA,589,471,386,477,724,592,482,593,54,54,53,6,167
+2209,Smith_College,MA,IIA,732,514,405,591,932,646,502,747,127,70,59,6,262
+2210,Univ_of_Mass-Dartmouth,MA,IIA,572,482,420,526,722,611,535,665,203,61,32,1,321
+2211,Springfield_College,MA,IIA,520,404,321,376,643,501,399,467,34,45,78,17,174
+2217,Stonehill_College,MA,IIB,513,428,354,423,657,541,458,539,24,56,36,0,116
+2218,Suffolk_University,MA,IIA,727,548,484,611,925,706,599,777,111,73,33,15,232
+2219,Tufts_University,MA,I,735,549,447,592,964,710,607,777,148,157,98,2,405
+2221,Univ_Massachussets-Amherst,MA,I,704,537,438,607,880,680,557,762,650,306,146,7,1172
+2222,Univ_Massachusetts-Boston,MA,IIA,656,543,445,549,813,679,563,686,154,186,100,1,473
+2224,Wellesley_College,MA,IIB,757,550,453,603,988,712,570,779,97,44,74,4,222
+2226,Western_New_England_College,MA,IIA,659,497,437,543,823,632,545,682,54,42,29,6,131
+2227,Wheaton_College,MA,IIB,602,435,357,486,740,539,448,601,44,16,25,6,91
+2228,Wheelock_College,MA,IIA,545,420,362,415,662,518,433,505,8,20,20,1,49
+2229,Williams_College,MA,IIB,707,503,417,543,923,669,566,719,77,36,88,0,213
+2233,Worcester_Polytechnic_Inst,MA,IIA,659,527,451,546,842,680,557,693,75,70,58,4,212
+1436,Capitol_College,MD,IIB,?,344,?,352,?,406,?,416,5,7,5,0,17
+2062,Bowie_State_University,MD,IIA,510,433,349,401,647,554,452,515,31,28,51,14,127
+2065,College_of_Notre_Dame_of_Md,MD,IIB,443,377,309,362,493,441,365,419,19,25,29,3,76
+2067,Columbia_Union_College,MD,IIB,308,297,293,296,344,329,325,329,17,9,11,5,42
+2068,Coppin_State_College,MD,IIB,557,435,366,431,707,559,476,554,26,32,36,4,103
+2072,Frostburg_State_University,MD,IIA,498,423,366,416,646,538,468,530,76,56,70,8,228
+2073,Goucher_College,MD,IIB,529,387,358,411,661,489,452,518,21,27,23,4,75
+2076,Hood_College,MD,IIA,516,425,352,402,665,530,434,502,14,21,40,1,76
+2077,Johns_Hopkins_University,MD,I,798,542,435,593,972,677,551,734,330,110,160,52,767
+2078,Loyola_College_in_Maryland,MD,IIA,632,500,397,482,802,640,511,617,50,76,89,5,222
+2083,Morgan_State_University,MD,IIA,594,517,439,450,743,651,558,571,26,41,91,42,229
+2086,Mount_Saint_Marys_Coll_and_Sem,MD,IIB,465,384,311,358,563,487,382,448,14,29,34,4,85
+2091,Salisbury_State_University,MD,IIA,543,445,357,404,679,562,458,513,54,63,78,8,240
+2092,Saint_Johns_College-Main,MD,IIB,?,?,?,437,?,?,?,572,0,0,0,0,43
+2095,StMarys_Collof_Maryland,MD,IIB,560,426,347,426,686,533,430,526,24,35,29,9,97
+2099,Towson_State_University,MD,IIA,531,433,388,439,692,565,505,573,141,136,169,25,471
+2101,U_S_Naval_Academy,MD,IIB,595,455,377,492,721,556,466,600,125,100,67,7,299
+2102,University_of_Baltimore,MD,IIA,680,560,490,582,833,693,612,719,62,50,54,0,166
+2103,Univof_Maryland-Coll_Park,MD,I,703,487,406,539,865,608,505,669,535,388,163,133,1285
+2105,Univof_Maryland-BaltoCo,MD,I,638,455,395,464,783,571,491,577,87,119,104,32,353
+2106,Univof_Maryland-Estrn_Shore,MD,IIA,500,455,388,379,630,572,493,482,8,33,25,5,113
+2108,Washington_College,MD,IIB,496,419,348,443,637,532,421,562,33,12,15,0,60
+2109,Western_Maryland_College,MD,IIB,477,379,313,412,612,489,400,530,36,30,10,3,79
+2033,Univof_Maine_at_Presque_Isl,ME,IIB,439,354,302,343,562,453,389,440,15,19,25,4,67
+2036,Bates_College,ME,IIB,671,490,404,518,824,600,494,635,45,31,45,6,127
+2038,Bowdoin_College,ME,IIB,738,527,418,554,918,651,503,682,41,40,35,4,123
+2039,Colby_College,ME,IIB,745,515,383,524,904,622,453,629,43,33,60,4,140
+2040,Univof_Maine_at_Farmington,ME,IIB,464,348,292,385,594,448,377,496,47,26,13,14,101
+2041,Univof_Maine_at_Fort_Kent,ME,IIB,436,347,320,356,555,442,415,456,9,10,12,2,33
+2043,Husson_College,ME,IIB,407,358,302,334,454,401,338,374,12,13,18,6,49
+2050,University_of_New_England,ME,IIA,450,380,323,354,545,468,396,434,11,22,39,4,76
+2051,Saint_Josephs_College,ME,IIB,?,321,283,295,?,391,353,370,4,8,33,0,45
+2052,Thomas_College,ME,IIB,?,338,297,318,?,404,341,374,2,7,8,0,17
+2053,Univof_Maine_at_Orono,ME,I,574,436,366,449,716,552,463,566,122,197,102,19,452
+2055,Univof_Maine_at_Machias,ME,IIB,465,355,284,360,582,459,366,462,7,24,8,0,39
+6858,Unity_College,ME,IIB,355,261,261,285,418,313,313,340,8,7,16,0,31
+9762,Univof_Maine_at_Southern,ME,IIA,584,439,362,459,724,558,459,578,78,144,61,7,291
+2234,Adrian_College,MI,IIB,439,365,316,386,559,466,407,493,37,8,14,7,66
+2235,Albion_College,MI,IIB,562,443,346,462,716,573,437,589,47,27,33,2,109
+2236,Alma_College,MI,IIB,523,408,335,422,645,515,423,527,25,27,21,2,75
+2239,Aquinas_College,MI,IIB,387,313,275,319,491,376,331,392,27,32,27,4,90
+2241,Calvin_College,MI,IIB,471,410,363,446,604,527,461,571,152,33,20,7,212
+2243,Central_Michigan_University,MI,IIA,588,460,397,490,768,612,534,648,230,191,137,23,581
+2247,Concordia_College,MI,IIB,342,304,257,289,428,377,340,369,10,12,15,3,40
+2252,William_Tyndale_College,MI,IIB,309,?,?,295,377,?,?,362,1,2,4,0,7
+2259,Eastern_Michigan_University,MI,IIA,560,447,389,462,722,590,519,605,318,171,160,17,729
+2260,Ferris_State_University,MI,IIA,546,470,409,467,713,631,566,628,143,160,151,10,477
+2266,Grand_Rapids_Baptist_College,MI,IIB,353,287,254,283,474,376,326,371,9,19,12,4,44
+2268,Grand_Valley_State_Univ,MI,IIB,568,479,387,467,726,619,508,604,91,105,118,7,321
+2273,Hope_College,MI,IIB,515,420,350,443,681,559,455,585,70,49,38,2,159
+2275,Kalamazoo_College,MI,IIB,553,440,352,452,696,569,440,571,36,25,24,7,92
+2282,Madonna_University,MI,IIB,482,395,352,382,576,465,430,459,19,12,42,11,84
+2284,Marygrove_College,MI,IIB,433,365,290,348,534,450,358,429,7,26,13,3,49
+2290,Michigan_State_University,MI,I,651,493,413,555,843,663,569,732,949,494,350,47,1840
+2292,Michigan_Technological_Univ,MI,IIA,668,482,420,511,854,638,563,671,99,124,95,11,338
+2293,Lake_Superior_State_Univ,MI,IIB,510,446,357,422,661,596,473,557,32,35,38,7,112
+2301,Northern_Michigan_University,MI,IIA,571,459,347,467,749,609,468,619,149,72,61,21,329
+2307,Oakland_University,MI,IIA,633,518,432,534,831,690,582,710,123,142,85,8,358
+2308,Olivet_College,MI,IIB,400,?,306,329,487,?,357,390,13,4,23,2,44
+2314,Saginaw_Valley_State_Univ,MI,IIA,499,448,364,446,642,586,482,580,91,40,29,6,174
+2316,Siena_Heights_College,MI,IIB,?,342,300,325,?,443,383,418,2,31,23,1,57
+2318,Spring_Arbor_College,MI,IIB,368,321,284,320,455,398,370,400,22,15,19,6,62
+2326,Univof_Michigan-Dearborn,MI,IIA,552,452,408,451,701,583,531,582,70,66,51,0,219
+2327,Univof_Michigan-Flint,MI,IIA,566,460,409,437,708,582,522,555,43,46,57,1,184
+2329,Wayne_State_University,MI,I,683,525,447,535,846,664,560,669,317,267,216,8,925
+2330,Western_Michigan_University,MI,I,603,489,396,502,755,620,505,633,285,233,189,24,731
+4673,Baker_College_of_Flint,MI,IIB,?,?,370,385,?,?,481,496,5,4,25,2,36
+6771,Center_for_Creative_Studies,MI,IIB,401,333,263,360,489,413,331,442,29,11,6,2,48
+9092,Univof_Michigan-Ann_Arbor,MI,I,777,577,460,605,955,731,595,760,850,419,472,9,1968
+2334,Augsburg_College,MN,IIB,432,356,314,357,559,449,387,450,35,29,58,1,123
+2336,Bemidji_State_University,MN,IIA,490,403,341,419,629,520,443,539,91,40,50,11,192
+2340,Carleton_College,MN,IIB,638,486,394,521,807,604,505,659,68,36,45,4,155
+2341,College_of_Saint_Benedict,MN,IIB,493,404,334,381,595,512,405,468,18,50,47,8,125
+2342,College_of_St_Catherine,MN,IIB,428,369,326,356,515,448,385,427,27,53,54,9,143
+2343,College_of_St_Scholastica,MN,IIB,461,374,327,345,568,466,421,436,14,31,50,18,119
+2345,University_of_St_Thomas,MN,IIA,563,429,366,402,702,538,465,508,31,104,146,29,310
+2346,Concordia_College-Moorhead,MN,IIB,527,419,356,413,638,503,426,496,47,38,60,21,166
+2347,Concordia_College-St_Paul,MN,IIB,407,363,319,353,493,443,394,433,14,12,23,1,50
+2353,Gustavus_Adolphus_College,MN,IIB,486,402,338,408,625,507,423,518,59,47,44,12,162
+2354,Hamline_University,MN,IIA,556,451,342,461,706,575,424,583,58,29,27,8,128
+2358,Macalester_College,MN,IIB,639,492,406,514,807,622,500,645,46,32,36,7,121
+2360,Mankato_State_University,MN,IIA,523,441,371,453,662,567,482,580,210,138,125,16,489
+2367,Moorhead_State_University,MN,IIA,512,421,353,419,651,544,461,540,131,65,120,29,345
+2371,Northwestern_College,MN,IIB,373,339,313,333,510,454,406,441,13,16,27,1,57
+2375,Southwest_State_University,MN,IIB,525,417,355,459,686,551,466,602,57,40,19,1,117
+2377,St_Cloud_State_University,MN,IIA,518,417,354,441,662,546,464,570,259,143,146,25,573
+2379,St_Johns_University,MN,IIB,512,412,353,418,672,523,435,532,37,44,38,6,126
+2380,Saint_Marys_Coll_of_Minn,MN,IIA,488,396,295,389,595,483,358,473,28,23,27,3,81
+2382,St_Olaf_College,MN,IIB,551,417,355,446,673,509,430,543,82,93,49,11,235
+2388,Univ_Minnesota-Duluth,MN,IIA,551,446,386,458,719,591,520,606,90,112,72,11,285
+2389,Univ_Minnesota-Morris,MN,IIB,533,399,334,389,697,534,457,522,27,23,45,17,112
+2394,Winona_State_University,MN,IIB,515,420,358,430,652,537,454,547,118,73,85,17,293
+3969,Univ_Minnesota-Twin_Cities,MN,I,662,468,418,557,842,613,552,719,785,468,271,12,1538
+9058,Bethel_College,MN,IIB,430,356,313,375,597,464,404,503,43,48,12,7,110
+2449,Avila_College,MO,IIB,379,340,295,317,459,404,349,377,10,13,17,12,52
+2453,Central_Methodist_College,MO,IIB,402,336,252,310,478,403,308,374,11,20,22,3,56
+2454,Central_Missouri_State_Univ,MO,IIA,517,440,379,429,630,538,467,526,158,103,135,53,451
+2456,Columbia_College,MO,IIB,362,307,273,299,437,375,336,364,10,11,22,3,46
+2460,Culver-Stockton_College,MO,IIB,396,348,297,332,463,406,347,388,9,20,22,1,52
+2461,Drury_College,MO,IIB,448,394,323,375,546,483,400,460,26,23,31,2,87
+2466,Harris-Stowe_State_College,MO,IIB,350,298,302,304,431,370,374,377,12,6,8,14,40
+2473,Kansas_City_Art_Institute,MO,IIB,440,?,299,373,535,?,357,450,26,1,13,7,47
+2479,Lincoln_University,MO,IIA,414,335,282,308,506,413,350,381,22,22,45,30,119
+2480,Lindenwood_College,MO,IIA,416,367,306,340,477,422,354,392,15,27,55,0,97
+2482,Maryville_Univ_of_StLouis,MO,IIA,449,355,310,359,548,434,378,442,26,13,27,12,78
+2488,Missouri_Southern_State_Coll,MO,IIB,489,406,349,389,592,496,430,476,42,50,67,28,187
+2489,Missouri_Valley_College,MO,IIB,?,318,285,302,?,379,334,357,4,18,22,3,47
+2490,Missouri_Western_State_Coll,MO,IIB,473,393,334,385,580,483,414,474,44,44,64,9,161
+2495,Northeast_Missouri_St_Univ,MO,IIA,505,411,342,385,615,502,422,473,54,103,142,27,328
+2496,Northwest_Missouri_St_Univ,MO,IIA,526,404,348,379,634,490,425,461,48,49,85,36,231
+2498,Park_College,MO,IIB,341,320,283,299,407,388,336,356,10,8,24,3,45
+2499,Rockhurst_College,MO,IIB,448,380,350,369,548,460,422,448,15,31,33,9,88
+2500,College_of_The_Ozarks,MO,IIB,446,392,350,393,547,483,425,482,27,25,23,4,79
+2501,Southeast_Missouri_St_Univ,MO,IIA,505,432,359,416,612,527,441,508,113,99,106,45,363
+2503,Southwest_Missouri_St_Univ,MO,IIA,516,422,364,417,617,510,441,502,247,151,180,43,671
+2506,Saint_Louis_Univ-Main,MO,I,657,475,402,500,783,575,484,600,133,111,120,31,395
+2512,Stephens_College,MO,IIB,?,?,?,282,?,?,?,364,0,0,0,0,62
+2516,Univof_Missouri-Columbia,MO,I,603,456,407,485,729,560,499,592,336,256,244,63,899
+2517,Univof_Missouri-Rolla,MO,I,663,508,454,564,802,626,557,686,114,79,56,4,253
+2518,Univof_Missouri-Kansas_City,MO,I,580,445,381,473,702,545,467,577,151,167,107,9,434
+2519,Univof_Missouri-St_Louis,MO,I,576,460,412,476,699,561,503,579,86,103,110,5,304
+2520,Washington_University,MO,I,782,534,451,601,952,652,540,730,264,136,175,18,620
+2521,Webster_University,MO,IIA,505,435,325,395,623,542,414,495,28,29,55,0,115
+2523,Westminster_College,MO,IIB,451,390,298,381,549,481,361,465,17,17,12,4,50
+2524,William_Jewell_College,MO,IIB,422,342,306,364,529,458,391,463,42,12,31,3,88
+2525,William_Woods_University,MO,IIB,370,303,290,312,476,374,350,390,13,13,13,5,45
+7540,Missouri_Baptist_College,MO,IIB,?,294,281,265,?,389,360,344,1,7,10,11,29
+9089,Hannibal-LaGrange_College,MO,IIB,?,284,248,258,?,366,308,324,4,8,21,5,38
+2396,Alcorn_State_University,MS,IIB,419,371,326,320,534,473,414,406,25,35,35,73,168
+2397,Belhaven_College,MS,IIB,364,304,298,314,423,355,348,366,9,8,15,2,34
+2398,Blue_Mountain_College,MS,IIB,284,259,?,263,347,315,?,322,6,12,5,2,25
+2403,Delta_State_University,MS,IIA,400,337,314,337,487,413,386,413,60,32,47,36,175
+2410,Jackson_State_University,MS,IIA,425,391,337,362,511,471,407,436,81,79,114,54,328
+2414,Millsaps_College,MS,IIB,498,376,322,387,615,478,381,475,25,27,29,4,85
+2422,Mississippi_Univ_for_Women,MS,IIA,400,?,306,324,492,?,379,400,33,5,44,30,112
+2423,Mississippi_State_University,MS,I,540,432,389,455,649,521,471,548,278,191,155,40,669
+2424,Mississippi_Valley_St_Univ,MS,IIB,359,331,287,297,456,423,370,382,25,17,38,26,106
+2433,Rust_College,MS,IIB,341,280,302,285,382,313,337,318,11,8,24,18,61
+2439,Tougaloo_College,MS,IIB,300,267,244,262,370,327,289,318,17,22,18,9,66
+2440,University_of_Mississippi,MS,I,558,428,384,440,676,524,471,537,138,111,158,29,439
+2441,Univof_Southern_Mississippi,MS,I,562,438,352,438,664,520,420,520,183,162,160,58,563
+2526,Carroll_College,MT,IIB,394,343,285,326,478,413,344,394,12,23,29,0,64
+2527,College_of_Great_Falls,MT,IIB,361,305,258,299,459,367,312,364,10,19,7,7,43
+2530,Eastern_Montana_College,MT,IIA,409,358,292,348,500,440,364,430,47,41,48,5,141
+2531,Montana_CollMinSci_and__Tech,MT,IIA,481,395,336,420,583,484,416,512,45,17,18,6,86
+2532,Montana_State_University,MT,I,497,397,346,407,602,487,427,498,154,146,144,24,468
+2533,Northern_Montana_College,MT,IIA,403,342,309,332,493,425,384,411,15,19,41,3,79
+2536,University_of_Montana,MT,I,446,365,323,392,537,442,395,474,200,79,95,16,390
+2537,Western_Montana_Collof_UM,MT,IIA,388,330,289,313,473,407,359,386,8,12,22,4,46
+2905,North_Carolina_A_and_T_St_Univ,NC,IIA,524,448,409,432,637,547,496,526,68,106,116,15,361
+2906,Appalachian_State_University,NC,IIA,491,413,366,424,598,505,448,518,249,117,113,19,545
+2907,Univ_of_NC_at_Asheville,NC,IIB,533,436,350,417,647,532,430,510,40,41,37,4,147
+2908,Barton_College,NC,IIB,348,312,299,311,411,372,349,365,18,25,37,3,84
+2909,Barber-Scotia_College,NC,IIB,352,312,287,297,412,360,335,347,13,12,14,13,52
+2910,Belmont_Abbey_College,NC,IIB,348,316,281,309,434,392,350,384,8,21,17,0,46
+2911,Bennett_College,NC,IIB,351,377,300,323,418,437,346,375,9,16,16,11,52
+2914,Catawba_College,NC,IIB,395,326,288,342,490,394,345,418,30,12,23,1,66
+2918,Davidson_College,NC,IIB,626,460,356,506,801,591,440,644,60,34,32,4,130
+2920,Duke_University,NC,I,854,584,459,699,1055,728,553,862,330,149,141,0,620
+2923,East_Carolina_University,NC,IIA,554,430,377,415,672,525,462,507,189,187,261,11,792
+2926,Elizabeth_City_State_Univ,NC,IIB,472,415,338,398,580,510,420,489,32,32,16,3,105
+2927,Elon_College,NC,IIB,459,388,331,372,572,482,401,456,30,38,64,6,138
+2928,Fayetteville_State_Univ,NC,IIA,525,437,375,407,640,536,460,499,27,72,50,4,193
+2929,Gardner-Webb_University,NC,IIB,348,305,294,312,414,357,349,371,39,7,26,15,87
+2930,Greensboro_College,NC,IIB,377,331,309,333,456,400,367,404,11,21,10,2,44
+2931,Guilford_College,NC,IIB,492,414,338,410,615,505,407,503,32,22,29,5,90
+2933,High_Point_University,NC,IIB,475,397,330,349,591,496,407,435,14,25,35,9,94
+2936,Johnson_C_Smith_University,NC,IIB,408,357,303,327,485,427,367,394,11,27,34,12,84
+2941,Lenoir-Rhyne_College,NC,IIB,377,323,295,345,462,410,357,426,47,26,17,1,91
+2942,Livingstone_College,NC,IIB,?,257,263,259,?,292,298,294,5,12,22,14,53
+2944,Mars_Hill_College,NC,IIB,356,308,259,309,426,378,309,372,35,16,18,11,80
+2945,Meredith_College,NC,IIB,440,373,328,366,517,442,387,431,26,30,31,16,103
+2946,Methodist_College,NC,IIB,348,309,295,316,416,371,353,379,21,21,19,1,62
+2948,Montreat-Anderson_College,NC,IIB,?,304,274,299,?,393,355,393,4,12,8,0,24
+2950,North_Carolina_Central_Univ,NC,IIA,551,447,373,423,670,547,460,518,56,84,70,9,263
+2951,North_Carolina_Wesleyan_Coll,NC,IIB,384,317,299,320,478,385,360,389,10,13,20,2,45
+2954,Pembroke_State_University,NC,IIA,538,403,341,413,655,495,421,505,49,32,31,2,143
+2955,Pfeiffer_College,NC,IIB,395,322,269,337,471,381,321,401,23,9,15,2,49
+2957,Queens_College,NC,IIB,427,360,319,350,511,437,384,422,14,21,20,8,63
+2960,Salem_College,NC,IIB,378,349,283,324,466,451,349,407,9,15,17,3,44
+2962,Shaw_University,NC,IIB,?,321,293,292,?,383,348,345,5,19,43,25,92
+2972,North_Carolina_State_Univ,NC,I,665,475,417,505,797,578,508,610,463,345,200,12,1235
+2974,Univ_of_NC_at_Chapel_Hill,NC,I,701,512,410,565,837,620,498,678,572,329,212,18,1268
+2975,Univ_of_NC_at_Charlotte,NC,IIA,568,448,385,441,686,546,470,536,173,189,197,0,643
+2976,Univ_of_NC_at_Greensboro,NC,I,610,443,377,435,735,540,461,529,140,178,135,8,572
+2978,Wake_Forest_University,NC,IIA,685,526,433,557,837,641,508,674,135,86,74,18,323
+2979,Warren_Wilson_College,NC,IIB,?,?,?,283,?,?,?,352,0,0,0,0,42
+2981,Western_Carolina_University,NC,IIA,515,439,364,414,627,537,448,506,71,106,93,1,319
+2984,Univ_of_NC_at_Wilmington,NC,IIA,533,419,366,421,648,511,449,514,94,105,108,1,346
+2985,Wingate_College,NC,IIB,380,308,301,320,469,385,366,394,23,25,24,7,79
+2986,Winston-Salem_State_Univ,NC,IIB,480,421,365,407,587,516,451,500,39,48,30,6,149
+2989,Dickinson_State_University,ND,IIB,402,342,302,316,506,432,376,397,9,14,33,13,71
+2993,Mayville_State_University,ND,IIB,415,?,313,340,519,?,399,429,9,4,21,3,37
+2994,Minot_State_University,ND,IIA,457,383,331,347,563,477,416,436,34,41,68,16,188
+3005,Univ_of_North_Dakota-Main,ND,I,460,391,345,379,572,489,431,473,130,124,163,27,472
+3008,Valley_City_State_University,ND,IIB,403,368,313,340,501,462,383,425,12,14,16,6,54
+9265,North_Dakota_State_Univ,ND,IIA,473,391,353,398,545,458,420,467,130,125,149,6,423
+2539,Chadron_State_College,NE,IIA,491,404,329,390,593,500,406,476,33,20,19,19,91
+2540,College_of_Saint_Mary,NE,IIB,?,321,293,300,?,395,347,362,5,13,19,6,43
+2541,Concordia_Teachers_College,NE,IIB,352,316,282,320,423,390,357,393,22,16,15,1,54
+2542,Creighton_University,NE,IIA,649,462,351,437,793,562,418,529,66,119,127,22,342
+2543,Dana_College,NE,IIB,338,300,276,300,404,368,336,364,11,11,11,3,36
+2544,Doane_College,NE,IIB,436,392,326,360,521,465,391,431,17,7,28,5,57
+2548,Hastings_College,NE,IIB,426,359,305,353,516,434,369,426,19,19,24,4,66
+2551,Univ_of_Nebraska_at_Kearney,NE,IIA,509,433,365,409,618,533,448,502,81,89,92,9,309
+2553,Midland_Lutheran_College,NE,IIB,372,?,278,301,449,?,346,371,14,4,25,9,52
+2554,Univof_Nebraska_at_Omaha,NE,IIA,528,446,417,452,635,540,507,547,149,115,97,36,403
+2555,Nebraska_Wesleyan_University,NE,IIB,454,381,327,396,548,468,400,481,37,23,25,2,87
+2559,Peru_State_College,NE,IIB,483,402,308,367,584,493,385,452,14,8,19,9,50
+2563,Union_College,NE,IIB,290,293,272,288,358,359,334,354,18,14,7,1,40
+2565,Univof_Nebraska-Lincoln,NE,I,661,477,410,523,792,584,505,635,436,344,316,31,1127
+2566,Wayne_State_College,NE,IIA,481,411,324,394,585,501,399,482,46,25,41,13,125
+9743,Bellevue_College,NE,IIB,379,340,289,317,449,404,346,378,6,12,23,0,41
+9862,Clarkson_College,NE,IIB,?,407,377,368,?,469,434,425,1,6,8,11,26
+2572,Colby-Sawyer_College,NH,IIB,397,380,277,329,488,468,349,410,9,9,19,1,38
+2573,Dartmouth_College,NH,I,785,536,429,610,1002,686,532,774,163,89,114,5,371
+2575,Franklin_Pierce_College,NH,IIB,470,382,323,399,605,487,412,510,28,29,17,2,76
+2579,New_England_College,NH,IIB,423,329,251,327,551,437,313,423,20,20,23,2,65
+2580,New_Hampshire_College,NH,IIA,567,425,356,459,728,558,464,597,31,32,15,5,83
+2584,Notre_Dame_College,NH,IIB,335,299,261,286,393,383,312,349,6,11,13,4,34
+2586,Rivier_College,NH,IIA,449,363,331,365,541,419,392,429,12,29,18,7,66
+2587,Saint_Anselm_College,NH,IIB,512,403,338,381,633,508,435,483,16,35,51,7,109
+2589,University_of_New_Hampshire,NH,I,587,454,375,482,729,575,483,607,196,253,127,0,576
+2590,Keene_State_College,NH,IIB,494,417,337,426,622,532,439,542,61,46,40,2,149
+2591,Plymouth_State_College,NH,IIB,518,405,354,431,650,518,458,548,59,55,38,6,158
+2597,Bloomfield_College,NJ,IIB,476,434,354,406,602,547,443,510,12,13,17,4,46
+2599,Centenary_College,NJ,IIB,?,305,252,266,?,371,310,326,1,10,16,9,36
+2600,College_of_Saint_Elizabeth,NJ,IIB,426,388,322,365,490,437,384,420,9,19,16,3,47
+2603,Drew_University,NJ,IIA,603,463,386,529,762,580,479,664,61,28,15,4,108
+2608,Georgian_Court_College,NJ,IIB,490,425,373,403,592,509,450,487,19,13,30,8,71
+2610,Felician_College,NJ,IIB,?,351,311,320,?,422,375,385,1,14,24,5,44
+2613,Jersey_City_State_College,NJ,IIB,649,525,405,520,840,697,558,692,80,66,90,1,237
+2616,Monmouth_College,NJ,IIA,616,509,408,519,783,668,523,669,41,55,29,1,126
+2617,Montclair_State_College,NJ,IIA,647,521,417,532,802,661,541,672,155,130,125,9,419
+2621,New_Jersey_Inst_of_Tech,NJ,IIA,771,606,501,615,976,790,670,799,104,98,71,0,303
+2622,Kean_College_of_New_Jersey,NJ,IIA,640,516,423,525,833,691,582,700,115,107,115,3,340
+2625,William_Paterson_College,NJ,IIB,653,519,409,535,859,687,541,707,120,97,88,7,312
+2627,Princeton_University,NJ,I,963,564,437,749,1154,686,534,901,402,66,179,16,702
+2628,Rider_College,NJ,IIA,636,552,511,564,764,668,604,677,59,103,41,1,208
+2631,Rutgers_State_Univ-Newark,NJ,IIA,893,640,526,693,1097,812,682,871,141,125,73,16,374
+2632,Seton_Hall_University,NJ,IIA,736,557,414,553,894,683,507,675,98,110,101,13,332
+2638,Saint_Peters_College,NJ,IIB,477,391,317,404,600,498,412,514,46,42,21,5,117
+2639,Stevens_Institute_of_Tech,NJ,IIA,647,494,415,544,807,634,525,685,66,37,30,4,137
+2642,Trenton_State_College,NJ,IIB,644,524,422,525,845,691,557,690,108,81,123,1,313
+4741,Rutgers_State_Univ-Camden,NJ,IIA,860,633,510,648,1060,805,664,820,61,73,61,6,206
+6964,Rutgers_State_Univ-NBrswck,NJ,I,846,611,478,665,1045,780,624,838,601,393,258,90,1374
+8770,Fairleigh_Dickinson_Univ,NJ,IIA,530,440,404,459,692,579,517,597,147,63,54,8,303
+9344,Ramapo_College_of_New_Jersey,NJ,IIB,645,527,407,532,835,701,563,706,49,40,41,1,131
+9345,Stockton_State_College,NJ,IIB,656,496,393,492,790,607,490,603,47,58,65,8,178
+2093,Saint_Johns_College,NM,IIB,?,?,?,442,?,?,?,587,0,0,0,0,53
+2651,Eastern_New_Mexico_Univ,NM,IIA,497,377,321,360,605,466,399,446,21,42,63,11,144
+2653,New_Mexico_Highlands_Univ,NM,IIA,435,362,305,349,541,454,386,439,26,32,59,0,117
+2654,New_Mexico_Inst_Min_and_Tech,NM,I,538,421,405,448,648,512,494,544,39,32,29,5,108
+2657,New_Mexico_St_Univ-_Main,NM,I,524,433,360,434,641,531,444,533,202,167,196,17,582
+10313,Univ_New_Mexico-Albuquerque,NM,I,579,431,379,466,693,521,459,561,314,268,195,0,837
+2568,University_of_Nevada_-_Reno,NV,I,647,480,390,508,741,558,458,589,145,133,95,5,403
+2569,Univ_of_Nevada-Las_Vegas,NV,IIA,596,476,392,452,699,564,468,537,152,192,214,0,642
+2667,Dowling_College,NY,IIB,661,596,484,563,891,822,679,776,25,29,36,3,93
+2668,Alfred_University,NY,IIA,520,427,367,439,641,538,467,548,46,25,36,6,113
+2671,Bard_College,NY,IIB,657,460,365,521,860,605,481,683,40,15,29,0,84
+2681,Canisius_College,NY,IIA,542,480,370,468,679,599,450,582,57,73,51,0,181
+2685,Cazenovia_College,NY,IIB,443,354,295,337,549,445,374,423,8,13,21,3,45
+2699,Clarkson_University,NY,I,703,515,475,563,875,658,593,707,55,58,43,5,161
+2701,Colgate_University,NY,IIB,669,505,406,539,848,637,497,677,78,61,56,3,198
+2703,College_of_Mount_St_Vincent,NY,IIB,?,388,336,366,?,476,410,450,5,24,20,7,56
+2704,College_of_New_Rochelle,NY,IIA,539,449,391,447,693,579,499,574,11,38,17,1,67
+2705,College_of_Saint_Rose,NY,IIA,456,408,329,374,534,503,403,455,19,50,46,14,129
+2707,Columbia_University,NY,I,882,554,452,687,1136,767,646,915,477,185,199,11,923
+2708,Barnard_College,NY,IIB,733,516,395,508,943,652,509,654,49,19,56,6,154
+2709,Concordia_College,NY,IIB,352,289,275,303,436,366,363,387,11,6,14,1,32
+2710,Cooper_Union_for_AdvSci_and_Art,NY,IIB,684,514,433,607,872,673,600,784,35,18,6,0,59
+2711,Cornell_Univ-Endowed_Colls,NY,I,787,562,482,627,1047,748,640,834,447,189,148,3,914
+2711,Cornell_Univ-Statutory_Clls,NY,I,651,511,431,549,847,691,598,732,318,231,105,41,707
+2712,DYouville_College,NY,IIB,404,385,327,359,485,456,390,427,15,22,32,7,76
+2713,Dominican_College,NY,IIB,?,400,354,365,?,508,438,454,4,10,19,9,42
+2718,Elmira_College,NY,IIB,497,342,306,359,666,449,395,472,13,24,26,0,63
+2722,Fordham_University,NY,I,744,573,444,590,945,729,557,748,166,183,140,9,498
+2728,Hamilton_College,NY,IIB,631,478,377,478,801,608,475,604,46,37,54,12,149
+2729,Hartwick_College,NY,IIB,505,423,340,419,628,517,409,513,50,23,36,0,123
+2731,Hobart-William_Smith_Colls,NY,IIB,605,462,352,495,749,579,431,614,61,39,34,3,137
+2732,Hofstra_University,NY,I,757,550,470,584,956,692,579,731,127,131,141,7,406
+2734,Houghton_College,NY,IIB,370,323,265,327,487,424,343,428,30,29,17,1,77
+2735,Hilbert_College,NY,IIB,318,?,261,278,376,?,315,336,6,3,12,7,28
+2737,Iona_College,NY,IIA,594,462,393,461,756,594,496,587,42,81,59,10,192
+2739,Ithaca_College,NY,IIB,606,484,366,443,761,605,461,557,70,153,184,21,428
+2744,Keuka_College,NY,IIB,403,346,283,338,473,412,335,399,15,8,19,0,42
+2748,Le_Moyne_College,NY,IIB,542,455,365,445,684,576,465,564,30,50,36,3,119
+2758,Manhattan_College,NY,IIA,595,500,388,488,767,627,495,621,45,74,50,3,172
+2765,Marist_College,NY,IIB,580,485,373,417,741,643,481,542,16,34,91,0,151
+2768,Marymount_Coll_Tarrytown,NY,IIB,426,349,297,357,546,442,383,455,17,24,13,2,56
+2769,Marymount_Manhattan_College,NY,IIB,?,407,332,382,?,495,407,464,4,26,19,0,49
+2772,Mercy_College,NY,IIB,524,399,341,416,640,493,423,511,53,38,48,6,149
+2775,Molloy_College,NY,IIB,541,435,353,381,697,551,463,494,16,20,58,22,116
+2777,Medaille_College,NY,IIB,435,371,276,349,525,446,322,418,11,16,13,2,43
+2778,Mount_Saint_Mary_College,NY,IIB,514,407,349,395,633,505,424,482,14,8,23,6,51
+2779,Nazareth_Coll_of_Rochester,NY,IIB,513,428,343,430,634,533,425,532,37,33,35,0,105
+2785,New_York_University,NY,I,887,591,507,683,1172,785,674,905,532,337,252,42,1231
+2788,Niagara_University,NY,IIA,503,430,376,443,612,524,448,537,39,43,24,2,108
+2791,Pace_University,NY,IIA,685,513,436,576,851,643,556,720,187,124,77,3,397
+2803,Rensselaer_Polytechnic_Inst,NY,I,750,548,475,640,922,703,601,799,190,118,61,0,369
+2806,Rochester_Institute_of_Tech,NY,IIA,568,476,417,466,710,603,527,587,182,215,179,13,665
+2810,Russell_Sage_College,NY,IIA,487,409,351,397,609,506,435,493,19,56,37,6,118
+2813,Sarah_Lawrence_College,NY,IIB,623,478,398,541,779,610,495,677,39,14,13,0,69
+2814,Skidmore_College,NY,IIB,642,492,397,498,831,639,516,646,42,69,48,5,164
+2816,Siena_College,NY,IIB,515,429,357,434,667,567,474,570,52,53,49,1,155
+2817,StBonaventure_University,NY,IIA,492,398,377,425,642,535,495,562,56,51,43,4,154
+2820,St_Francis_College,NY,IIB,543,466,350,446,689,607,457,573,22,14,14,7,57
+2821,St_John_Fisher_College,NY,IIB,513,427,376,432,635,512,451,524,29,40,36,1,106
+2825,Saint_Josephs_College,NY,IIB,495,398,349,372,584,478,419,446,12,15,46,8,81
+2829,St_Lawrence_University,NY,IIB,627,473,366,488,799,613,472,627,50,56,40,7,153
+2832,St_Thomas_Aquinas_College,NY,IIB,510,408,374,419,617,526,454,515,18,16,26,3,63
+2835,SUNY_at_Albany,NY,I,732,526,407,576,934,679,524,739,260,217,125,0,638
+2836,SUNY_at_Binghamton,NY,I,705,511,407,555,902,665,528,716,172,175,82,0,460
+2838,SUNY_at_Stony_Brook,NY,I,755,534,414,589,961,688,526,751,346,216,183,24,801
+2841,SUNY_College_at_Brockport,NY,IIA,603,501,397,492,778,651,509,636,87,107,88,0,296
+2842,SUNY_College_at_Buffalo,NY,IIA,536,433,359,444,693,560,464,573,144,157,88,3,424
+2843,SUNY_College_at_Cortland,NY,IIA,530,411,341,432,691,537,439,563,85,76,66,0,234
+2844,SUNY_College_at_Fredonia,NY,IIA,562,438,350,450,731,569,451,585,93,65,54,15,235
+2845,SUNY_College_at_Geneseo,NY,IIA,541,411,348,405,704,536,448,525,48,78,79,23,243
+2846,SUNY_College_at_New_Paltz,NY,IIA,584,458,373,462,758,594,480,598,90,96,73,0,283
+2847,SUNY_College_at_Oneonta,NY,IIA,539,428,362,440,705,557,467,571,93,78,81,1,267
+2848,SUNY_College_at_Oswego,NY,IIA,537,427,339,441,702,556,435,574,111,105,78,4,302
+2849,SUNY_College_at_Plattsburgh,NY,IIA,538,435,343,445,701,566,441,578,107,76,71,1,266
+2850,SUNY_College_at_Potsdam,NY,IIA,531,413,337,424,691,539,436,552,78,63,52,9,219
+2882,Syracuse_University,NY,I,648,475,394,526,851,645,528,701,371,301,205,10,891
+2883,Syracuse_Univ-Utica_College,NY,IIB,487,394,339,401,642,520,439,527,27,46,32,0,105
+2889,Union_College,NY,IIA,638,508,399,512,841,677,501,667,60,50,54,9,173
+2894,University_of_Rochester,NY,I,747,520,434,611,895,626,520,733,252,130,110,7,508
+2895,Vassar_College,NY,IIB,674,517,408,523,879,669,512,674,70,60,66,9,212
+2899,Wagner_College,NY,IIB,457,366,326,368,587,477,438,483,20,17,31,4,72
+2901,Wells_College,NY,IIB,464,373,318,396,568,454,389,484,21,10,14,0,46
+4779,Long_Island_University,NY,IIA,631,513,408,531,825,672,520,690,233,175,124,22,561
+4804,New_York_Inst_of_Technology,NY,IIA,569,492,410,491,726,642,546,639,68,106,43,11,228
+6791,SUNY_College_at_Purchase,NY,IIB,534,432,362,437,696,565,468,570,29,52,28,0,114
+6792,SUNY_CollTech_Utica-Rome,NY,IIA,536,457,414,444,701,591,529,573,8,48,19,8,85
+7109,SUNY_College_at_Old_Westbury,NY,IIB,592,480,374,466,758,616,485,599,36,42,40,8,127
+9554,SUNY_at_Buffalo,NY,I,762,548,423,601,970,704,534,767,400,338,218,9,982
+10286,SUNY_Empire_State_College,NY,IIB,543,437,361,430,706,562,468,554,33,47,35,3,132
+3011,Art_Academy_of_Cincinnati,OH,IIB,?,286,?,304,?,354,?,371,5,6,5,1,17
+3012,Ashland_University,OH,IIB,484,418,329,398,624,530,437,515,52,58,58,4,179
+3014,Baldwin-Wallace_College,OH,IIB,530,431,360,464,662,552,464,587,74,39,35,0,148
+3016,Bluffton_College,OH,IIB,368,309,272,312,466,389,347,399,16,13,19,1,49
+3018,Bowling_Green_State_Univ,OH,I,620,481,394,483,817,644,530,643,226,212,180,65,690
+3023,Capital_University,OH,IIA,563,405,334,424,704,540,429,543,54,36,57,11,158
+3024,Case_Western_Reserve_Univ,OH,I,754,518,470,585,948,663,600,744,213,133,126,58,530
+3025,Cedarville_College,OH,IIB,419,364,300,346,527,459,379,436,32,37,60,3,132
+3032,Cleveland_State_University,OH,IIA,611,459,390,486,750,575,495,606,166,223,128,14,531
+3033,College_of_Mount_St_Joseph,OH,IIB,477,412,339,360,575,482,401,423,10,21,52,17,100
+3036,Franciscan_UnivSteubenville,OH,IIB,445,362,300,349,580,440,405,449,15,32,34,2,83
+3037,College_of_Wooster,OH,IIB,561,411,346,449,735,518,429,575,52,24,44,2,122
+3038,Mount_Union_College,OH,IIB,476,394,325,399,609,508,412,509,25,21,17,7,70
+3041,Defiance_College_The,OH,IIB,373,333,277,326,438,388,330,382,14,18,11,0,46
+3042,Denison_University,OH,IIB,558,414,346,445,757,528,439,584,58,32,55,0,146
+3045,University_of_Findlay,OH,IIB,417,370,301,330,526,470,369,413,18,29,51,7,115
+3046,Franklin_University,OH,IIB,?,?,?,345,?,?,?,438,0,0,0,0,39
+3048,Heidelberg_College,OH,IIB,399,334,298,331,491,407,349,397,17,18,24,8,67
+3049,Hiram_College,OH,IIB,468,367,302,373,602,469,379,474,28,22,20,11,81
+3050,John_Carroll_University,OH,IIA,587,473,389,465,717,586,490,576,59,56,74,14,203
+3051,Kent_State_Univ-Kent_Campus,OH,I,654,473,389,502,810,602,505,636,221,244,203,14,682
+3065,Kenyon_College,OH,IIB,608,439,381,480,777,552,475,608,49,36,38,8,131
+3069,Lourdes_College,OH,IIB,?,330,283,280,?,413,371,361,2,8,15,22,47
+3072,Malone_College,OH,IIB,410,352,306,343,515,441,383,432,20,18,26,4,70
+3073,Marietta_College,OH,IIB,445,366,298,370,569,464,367,470,27,18,19,5,69
+3084,Muskingum_College,OH,IIB,446,365,290,353,574,461,378,453,19,19,28,3,69
+3085,Notre_Dame_College_of_Ohio,OH,IIB,?,294,269,290,?,346,318,340,5,9,15,0,29
+3086,Oberlin_College,OH,IIB,588,454,385,507,789,605,491,673,121,69,43,6,239
+3089,Ohio_Northern_University,OH,IIB,511,431,371,437,639,546,465,550,55,53,39,8,155
+3092,Ohio_State_Univ-Lima,OH,IIB,?,460,335,384,?,567,424,480,3,14,19,3,39
+3093,Ohio_State_Univ-Mansfield,OH,IIB,?,396,350,375,?,494,441,470,2,19,18,2,41
+3094,Ohio_State_Univ-Marion,OH,IIB,508,424,337,410,622,526,426,510,6,10,9,1,26
+3095,Ohio_State_Univ-Newark,OH,IIB,?,417,353,392,?,518,445,489,4,13,17,2,36
+3100,Ohio_University-Athens,OH,I,632,486,393,512,786,618,512,648,248,241,192,4,687
+3109,Ohio_Wesleyan_University,OH,IIB,541,395,354,453,726,584,500,626,67,25,42,2,136
+3110,Otterbein_College,OH,IIB,459,372,329,363,600,467,399,457,22,42,56,10,130
+3121,Tiffin_University,OH,IIB,485,379,334,379,593,470,410,466,6,7,14,0,27
+3123,Univ_of_Akron-_Main_Campus,OH,I,577,448,387,479,718,567,497,603,278,253,147,39,717
+3125,Univof_Cinti-Main_Campus,OH,I,666,483,393,535,856,622,506,688,447,410,244,12,1113
+3127,University_of_Dayton,OH,IIA,590,479,392,482,765,616,495,618,123,159,130,7,419
+3131,University_of_Toledo,OH,I,608,457,379,486,750,572,481,607,217,152,167,20,556
+3133,Urbana_University,OH,IIB,335,266,241,272,425,314,297,333,9,12,14,1,36
+3134,Ursuline_College,OH,IIB,413,350,297,306,476,410,361,363,8,10,20,24,62
+3135,Walsh_University,OH,IIB,407,344,278,346,504,427,352,432,17,19,10,0,49
+3142,Wilmington_College,OH,IIB,407,357,303,335,481,430,364,401,10,18,32,1,61
+3143,Wittenberg_University,OH,IIB,546,413,341,438,704,543,436,567,49,55,32,6,142
+3144,Xavier_University,OH,IIA,571,473,378,449,712,586,467,557,58,75,78,19,230
+3145,Youngstown_State_University,OH,IIA,591,450,362,481,723,562,461,597,204,116,106,33,459
+6883,Ohio_State_Univ-Main_campus,OH,I,703,491,415,555,846,603,516,676,758,679,443,30,1910
+7104,Miami_University,OH,I,616,474,376,478,797,614,487,619,258,225,219,60,763
+8795,Antioch_University,OH,IIA,441,348,300,316,571,457,398,418,30,15,17,3,162
+9168,Wright_State_University-Main,OH,IIA,642,468,385,465,781,580,485,576,126,176,132,45,493
+12748,Shawnee_State_University,OH,IIB,510,439,368,411,658,563,502,537,15,54,35,15,119
+3150,Cameron_University,OK,IIB,426,360,329,345,531,452,415,434,44,35,63,34,177
+3151,Bartlesville_Wesleyan_Coll,OK,IIB,?,?,?,264,?,?,?,358,0,0,0,0,26
+3152,University_of_Central_Okla,OK,IIA,503,442,384,416,606,536,469,505,108,57,166,58,389
+3154,East_Central_University,OK,IIB,453,407,352,378,538,488,429,456,39,31,64,23,158
+3157,Langston_University,OK,IIB,459,375,313,342,545,454,383,415,12,31,34,29,108
+3161,Northeastern_State_Univ,OK,IIB,455,374,348,377,554,462,431,464,80,49,71,52,257
+3163,Northwestern_OklaState_Univ,OK,IIB,435,397,321,336,522,479,390,407,12,11,30,24,77
+3164,Oklahoma_Baptist_University,OK,IIB,379,335,282,317,467,420,359,399,22,33,42,5,102
+3165,Okla_Christian_U_of_S_and_Arts,OK,IIB,432,372,317,385,527,454,371,466,39,18,15,5,77
+3167,Univ_of_Sci_and__Arts_of_Okla,OK,IIB,427,369,336,362,528,459,434,454,13,18,11,10,52
+3170,Oklahoma_State_Univ-Main,OK,I,532,409,373,449,655,509,460,555,342,247,181,11,794
+3174,Oklahoma_Panhandle_StUniv,OK,IIB,427,360,311,346,515,444,386,425,15,14,14,11,54
+3175,Phillips_University,OK,IIB,365,315,273,317,438,381,327,381,16,10,15,1,42
+3179,Southeastern_Okla_St_Univ,OK,IIA,464,407,348,363,558,493,425,440,33,17,61,37,148
+3181,Sthwtrn_OklStU-Weatherfrd,OK,IIA,464,429,382,393,567,528,474,485,56,33,65,44,198
+3184,University_of_Oklahoma,OK,I,600,445,368,470,752,563,468,593,286,225,236,24,778
+3185,University_of_Tulsa,OK,IIA,686,500,404,513,835,608,493,625,84,108,73,20,287
+1339,Western_Baptist_College,OR,IIB,?,308,252,285,?,451,340,388,3,7,7,5,22
+3191,Concordia_College,OR,IIB,401,329,307,349,496,414,389,436,13,15,7,1,36
+3193,Eastern_Oregon_State_College,OR,IIB,470,363,309,373,612,482,412,492,20,23,17,5,65
+3194,George_Fox_College,OR,IIB,418,373,302,355,531,468,371,444,20,27,27,3,77
+3197,Lewis__and__Clark_College,OR,IIA,601,442,362,477,749,570,440,598,74,36,47,6,171
+3198,Linfield_College,OR,IIB,481,377,319,397,650,522,448,546,47,47,31,4,129
+3208,Northwest_Christian_College,OR,IIB,?,?,?,292,?,?,?,409,4,5,2,0,11
+3209,Western_Oregon_State_College,OR,IIA,439,354,315,361,575,470,417,472,60,40,33,2,155
+3210,Oregon_State_University,OR,I,597,473,400,475,762,615,522,615,206,209,133,46,622
+3211,Oregon_Institute_of_Tech,OR,IIB,500,441,391,438,648,574,512,572,38,32,32,7,109
+3212,Pacific_University,OR,IIA,441,381,341,370,561,469,421,461,28,32,41,7,108
+3216,Portland_State_University,OR,I,544,437,382,474,693,564,498,609,205,113,77,16,411
+3217,Reed_College,OR,IIB,596,442,378,495,729,545,463,607,47,20,31,0,98
+3219,Southern_Oregon_State_Coll,OR,IIA,460,371,315,393,598,491,417,517,72,49,25,12,161
+3223,University_of_Oregon,OR,I,597,446,375,459,762,579,488,594,240,182,152,89,671
+3224,University_of_Portland,OR,IIA,587,437,387,436,716,542,470,536,26,57,42,2,135
+3225,Warner_Pacific_College,OR,IIB,?,279,216,269,?,340,262,328,4,14,8,0,26
+3227,Willamette_University,OR,IIB,596,390,345,478,758,524,466,621,69,43,28,4,145
+3229,Albright_College,PA,IIB,488,396,359,430,648,514,451,562,39,21,15,3,79
+3230,Allegheny_College,PA,IIB,576,414,332,415,744,537,418,532,36,46,54,8,144
+3233,Alvernia_College,PA,IIB,402,315,295,303,506,370,347,361,7,12,30,11,60
+3235,Beaver_College,PA,IIA,496,405,353,381,652,532,462,500,12,20,32,2,68
+3237,Bryn_Mawr_College,PA,IIA,620,466,379,511,767,605,478,639,65,23,20,3,129
+3238,Bucknell_University,PA,IIA,658,497,415,528,840,637,542,678,84,85,73,1,243
+3241,Cabrini_College,PA,IIB,471,?,354,398,597,?,448,503,15,5,18,3,41
+3242,Carnegie-Mellon_University,PA,I,829,566,499,678,994,691,617,820,256,138,125,4,523
+3243,Cedar_Crest_College,PA,IIB,475,392,318,375,591,495,392,468,14,17,29,0,60
+3244,Chatham_College,PA,IIB,492,397,323,394,628,503,407,500,13,12,16,2,43
+3245,Chestnut_Hill_College,PA,IIB,?,322,277,311,?,400,348,391,5,10,18,4,37
+3247,College_Misericordia,PA,IIB,493,425,346,377,578,508,420,455,9,22,48,5,84
+3252,Del_Valley_Coll/Sci_and_Agr,PA,IIB,504,411,347,379,649,511,426,473,10,27,21,15,73
+3253,Dickinson_College,PA,IIB,622,468,380,466,797,601,478,593,35,47,51,7,144
+3256,Drexel_University,PA,I,674,496,459,568,843,619,570,709,153,114,73,0,341
+3258,Duquesne_University,PA,IIA,602,469,393,475,753,597,497,601,98,97,113,28,336
+3259,Eastern_College,PA,IIA,442,342,329,363,636,413,398,473,19,17,17,4,57
+3262,Elizabethtown_College,PA,IIB,552,456,371,448,718,581,465,571,30,39,26,6,105
+3265,Franklin_and_Marshall_Coll,PA,IIB,675,481,387,517,902,653,519,694,56,43,44,9,152
+3266,Gannon_University,PA,IIA,453,377,341,365,586,489,434,469,35,54,76,17,182
+3267,Geneva_College,PA,IIB,416,366,312,366,527,475,402,469,17,17,16,0,50
+3268,Gettysburg_College,PA,IIB,627,475,400,485,820,630,516,637,38,65,28,20,151
+3270,Gwynedd-Mercy_College,PA,IIB,356,316,269,280,428,383,330,341,13,18,51,16,98
+3274,Haverford_College,PA,IIB,653,498,392,521,876,702,551,716,40,19,33,3,95
+3275,Holy_Family_College,PA,IIB,480,395,335,364,599,504,432,465,12,14,33,16,75
+3276,Immaculata_College,PA,IIB,451,406,310,385,572,521,399,492,10,8,8,2,28
+3277,Indiana_University_of_Penn,PA,IIA,675,541,425,546,859,708,571,711,243,201,173,41,658
+3278,Thomas_Jefferson_University,PA,IIA,?,505,428,441,?,678,558,578,5,9,24,18,59
+3279,Juniata_College,PA,IIB,488,391,316,419,634,497,427,545,36,20,16,2,74
+3282,Kings_College,PA,IIB,498,427,354,409,641,548,444,520,22,28,45,0,95
+3284,Lafayette_College,PA,IIB,686,517,419,506,873,668,536,647,37,62,71,8,179
+3287,La_Salle_University,PA,IIA,585,482,426,470,733,616,543,597,30,80,95,4,209
+3288,Lebanon_Valley_College,PA,IIB,472,401,362,419,593,512,466,531,28,21,17,1,67
+3289,Lehigh_University,PA,I,757,543,448,635,955,700,568,805,216,118,77,4,416
+3290,Lincoln_University,PA,IIB,516,400,348,393,628,492,433,486,22,26,18,12,87
+3293,Lycoming_College,PA,IIB,502,436,352,395,656,575,442,507,16,26,33,11,86
+3296,Marywood_College,PA,IIA,514,429,356,412,635,524,443,508,25,41,52,3,121
+3297,Mercyhurst_College,PA,IIB,444,390,312,339,592,497,390,429,15,25,46,15,101
+3298,Messiah_College,PA,IIB,481,400,351,393,621,514,446,505,34,37,45,15,131
+3301,Moravian_College,PA,IIB,490,406,343,423,624,516,430,537,35,29,19,3,86
+3303,Carlow_College,PA,IIB,497,383,314,359,623,490,397,454,8,18,20,7,53
+3304,Muhlenberg_College,PA,IIB,589,432,359,449,809,568,463,600,36,31,37,2,115
+3313,Widener_University,PA,IIA,670,556,439,529,870,714,567,683,60,136,88,18,309
+3315,Bloomsburg_Univ_of_Penn,PA,IIA,669,538,428,528,856,710,580,696,98,109,131,10,348
+3316,California_Univ_of_Penn,PA,IIA,674,541,436,549,850,700,578,708,112,108,64,25,309
+3317,Cheyney_University_of_Penn,PA,IIA,692,554,379,550,884,732,530,725,35,35,21,7,98
+3320,East_Stroudsburg_University,PA,IIA,676,531,415,526,858,696,556,686,95,72,85,20,272
+3321,Edinboro_University_of_Penn,PA,IIA,676,545,424,516,870,714,570,679,111,86,169,26,392
+3322,Kutztown_Univ_of_Penn,PA,IIA,669,544,418,528,847,707,558,685,119,117,122,25,383
+3323,Lock_Haven_University,PA,IIB,676,544,417,508,820,675,527,631,46,64,61,26,197
+3324,Mansfield_Univ_of_Penn,PA,IIB,665,532,428,516,839,690,568,670,47,60,58,14,179
+3325,Millersville_Univ_of_Penn,PA,IIA,660,552,429,549,842,723,576,716,117,97,100,6,320
+3326,Shippensburg_University,PA,IIA,673,545,425,573,848,706,567,735,148,67,83,3,301
+3327,Slippery_Rock_Univ_of_Penn,PA,IIA,675,532,431,537,836,670,552,676,127,104,138,11,380
+3328,West_Chester_Univ_of_Penn,PA,IIA,667,540,431,533,821,680,554,671,136,163,176,8,483
+3354,PhilaCollof_Textiles_and_Sci,PA,IIB,538,425,362,417,693,571,452,538,17,28,39,1,85
+3357,Point_Park_College,PA,IIB,411,331,290,357,519,430,363,452,33,19,17,1,73
+3359,Robert_Morris_College,PA,IIB,575,454,406,438,724,576,513,554,11,43,42,7,103
+3362,Seton_Hill_College,PA,IIB,489,380,329,368,575,479,403,453,7,23,24,1,56
+3366,Saint_Francis_College,PA,IIB,472,392,323,375,573,481,403,463,20,14,24,8,66
+3367,St_Josephs_University,PA,IIA,594,484,427,487,764,628,539,623,39,50,63,2,154
+3368,Saint_Vincent_College,PA,IIB,436,399,317,363,603,540,406,481,14,20,20,10,64
+3369,Susquehanna_University,PA,IIB,534,420,359,422,661,519,443,521,25,26,33,5,89
+3370,Swarthmore_College,PA,IIB,704,519,417,562,868,651,526,699,68,44,47,2,163
+3371,Temple_University,PA,I,736,579,454,606,913,724,568,755,490,332,291,37,1150
+3376,Thiel_College,PA,IIB,408,342,287,369,534,443,376,481,33,14,10,1,58
+3378,University_of_Pennsylvania,PA,I,881,622,532,744,1086,831,712,945,541,240,212,0,993
+3379,Univ_of_Pittsburgh-Main,PA,I,736,516,421,547,910,653,537,688,427,402,373,63,1325
+3380,Univ_of_Pittsburgh-Bradford,PA,IIB,489,418,340,373,619,517,419,464,8,14,25,8,55
+3381,Univ_of_Pittsburgh-Grnsburg,PA,IIB,478,401,314,369,602,507,401,467,9,23,14,10,56
+3382,Univ_of_Pittsburgh-Johnstwn,PA,IIB,554,430,322,404,704,538,401,507,16,63,32,17,133
+3384,University_of_Scranton,PA,IIA,565,479,437,475,736,632,571,621,51,86,95,5,242
+3385,Ursinus_College,PA,IIB,528,419,354,434,686,547,458,563,32,28,29,2,91
+3388,Villanova_University,PA,IIA,726,535,438,536,912,698,586,698,133,143,206,21,503
+3389,Washington__and__Jefferson_Coll,PA,IIB,549,480,373,473,689,608,494,602,33,29,18,7,87
+3391,Waynesburg_College,PA,IIB,407,332,297,333,541,453,399,451,20,11,22,11,67
+3392,Westminster_College,PA,IIB,497,410,337,423,603,498,394,508,47,12,24,10,93
+3394,Wilkes_University,PA,IIA,499,430,338,409,612,534,408,502,31,53,53,0,138
+3396,Wilson_College,PA,IIB,322,314,269,294,402,366,315,350,8,9,12,3,32
+3399,York_College_of_Pennsylvania,PA,IIB,615,512,414,464,809,664,537,603,13,32,67,1,113
+3986,AlltwnCollStFrancis_Sales,PA,IIB,486,415,342,365,594,532,429,458,6,19,33,10,68
+3987,La_Roche_College,PA,IIB,433,364,302,351,518,438,355,419,11,12,21,0,44
+3988,Neumann_College,PA,IIB,?,328,296,307,?,457,399,415,5,9,27,3,44
+6965,Penn_State_Univ-Main_Campus,PA,I,721,509,417,522,887,642,525,652,622,449,427,160,1799
+9235,Clarion_University_of_Penn,PA,IIA,649,539,419,517,824,694,549,665,100,92,110,22,324
+3401,Brown_University,RI,I,752,515,433,625,956,659,554,797,286,100,111,0,514
+3402,Bryant_College,RI,IIB,632,582,502,556,812,746,629,709,40,43,45,0,135
+3406,Providence_College,RI,IIA,633,526,418,489,827,712,544,646,43,68,93,15,219
+3407,Rhode_Island_College,RI,IIA,518,442,381,453,675,581,504,594,125,101,96,1,323
+3409,Rhode_Island_School_Design,RI,IIB,558,427,351,444,739,576,484,598,35,49,34,0,118
+3411,Salve_Regina_University,RI,IIA,495,397,327,385,620,496,406,481,29,43,37,14,124
+3414,University_of_Rhode_Island,RI,I,630,473,416,541,813,622,548,703,334,187,135,3,659
+4917,Roger_Williams_University,RI,IIB,?,?,?,464,?,?,?,605,0,0,0,0,104
+3419,Charleston_Southern_Univ,SC,IIB,429,356,299,327,518,430,359,395,12,20,29,6,72
+3420,Benedict_College,SC,IIB,320,260,241,257,381,311,289,308,21,10,29,18,78
+3422,Central_Wesleyan_College,SC,IIB,293,247,214,264,366,311,261,329,20,7,9,0,36
+3423,Citadel_Military_Collof_SC,SC,IIA,469,405,332,421,576,502,415,520,65,59,24,0,148
+3425,Clemson_University,SC,I,602,441,375,466,728,544,465,571,296,224,191,42,801
+3427,Coker_College,SC,IIB,425,359,318,358,521,425,378,430,14,9,18,2,43
+3428,College_of_Charleston,SC,IIA,475,410,320,374,581,505,399,462,68,102,118,32,320
+3430,Columbia_College,SC,IIB,415,355,330,358,515,441,402,442,23,25,15,9,76
+3431,Converse_College,SC,IIB,467,384,317,372,582,495,402,473,12,31,23,3,69
+3432,Erskine_College,SC,IIB,420,?,297,355,527,?,366,444,19,5,14,2,40
+3434,Furman_University,SC,IIB,551,414,343,453,719,530,430,583,86,39,54,6,185
+3435,Lander_University,SC,IIB,453,381,343,380,557,472,427,470,34,31,41,4,114
+3436,Limestone_College,SC,IIB,277,282,250,264,319,328,287,303,7,8,11,2,28
+3439,Morris_College,SC,IIB,?,278,252,269,?,314,285,303,5,16,21,4,46
+3440,Newberry_College,SC,IIB,351,290,243,287,411,344,290,339,11,19,11,5,46
+3445,Presbyterian_College,SC,IIB,503,376,316,397,637,478,395,501,26,22,22,5,75
+3446,South_Carolina_State_College,SC,IIB,458,379,307,350,561,467,382,432,59,58,77,36,255
+3448,Univ_South_Carolina-Main,SC,I,585,436,385,475,705,532,472,577,417,335,194,60,1034
+3449,Univ_South_Carolina-Aiken,SC,IIB,461,392,317,374,563,481,392,457,30,39,36,12,117
+3451,Coastal_Carolina_University,SC,IIB,437,377,314,340,535,464,389,419,23,43,49,28,143
+3455,Voorhees_College,SC,IIB,?,?,254,233,?,?,287,265,1,3,12,14,30
+3456,Winthrop_University,SC,IIA,464,378,327,378,578,474,413,474,73,78,70,19,242
+3457,Wofford_College,SC,IIB,537,413,367,448,662,519,469,560,24,27,11,2,64
+6951,Univ_South_Carolina-Sprtbrg,SC,IIB,433,368,303,366,529,452,376,450,49,43,16,21,132
+9226,Francis_Marion_University,SC,IIB,476,394,328,387,585,488,410,480,64,37,40,25,166
+3458,Augustana_College,SD,IIB,434,382,322,364,576,519,429,487,34,22,45,7,108
+3459,Black_Hills_State_University,SD,IIB,410,341,303,329,487,409,366,396,24,13,50,11,98
+3461,Dakota_Wesleyan_University,SD,IIB,?,290,246,257,?,356,302,317,4,11,13,7,36
+3463,Dakota_State_University,SD,IIB,469,357,349,351,554,427,419,420,9,11,24,12,56
+3466,Northern_State_University,SD,IIA,417,333,297,337,498,402,362,407,27,30,35,12,104
+3469,Sioux_Falls_College,SD,IIB,376,308,289,311,463,388,364,391,7,12,15,2,36
+3470,South_Dakota_SchMin_and__Tech,SD,IIA,473,414,362,419,562,495,435,500,45,28,26,5,104
+3471,South_Dakota_State_Univ,SD,IIA,440,368,326,368,521,440,392,440,132,67,122,44,367
+10300,University_of_South_Dakota,SD,I,480,364,340,362,570,438,410,436,88,75,134,55,352
+3478,Austin_Peay_State_University,TN,IIA,482,362,314,374,581,445,390,458,86,47,102,17,252
+3479,Belmont_University,TN,IIA,484,372,315,382,573,445,377,455,42,54,45,7,148
+3480,Bethel_College,TN,IIB,287,?,255,262,345,?,307,323,9,4,9,5,27
+3481,Carson-Newman_College,TN,IIB,393,334,286,324,475,405,339,390,32,33,41,11,117
+3482,Christian_Brothers_Univ,TN,IIB,414,347,312,345,509,435,395,432,22,28,32,4,86
+3486,David_Lipscomb_University,TN,IIB,453,374,308,365,561,473,374,451,33,22,25,17,97
+3487,East_Tennessee_State_Univ,TN,IIA,519,449,358,411,629,548,441,504,129,124,165,68,486
+3490,Fisk_University,TN,IIB,383,369,269,319,451,437,314,375,17,19,17,2,65
+3492,Freed-Hardeman_University,TN,IIB,382,326,271,305,454,401,346,374,16,23,20,9,69
+3498,Lambuth_University,TN,IIB,316,288,283,294,405,380,363,379,15,9,16,2,42
+3500,Lee_College,TN,IIB,350,320,284,297,431,407,334,360,12,20,29,13,74
+3505,Maryville_College,TN,IIB,429,351,289,338,520,419,348,406,12,14,19,4,49
+3509,Memphis_State_University,TN,I,558,425,376,443,674,522,464,542,264,194,193,71,722
+3510,Middle_Tenn_State_Univ,TN,IIA,542,418,336,410,654,511,416,501,202,167,224,76,669
+3511,Milligan_College,TN,IIB,398,334,291,347,465,404,337,410,21,16,15,0,52
+3518,Southern_CSeventh-Day_Advts,TN,IIB,270,261,249,260,348,331,322,334,34,32,19,5,90
+3519,Rhodes_College,TN,IIB,575,446,353,430,741,566,428,538,23,37,46,4,110
+3522,Tennessee_State_University,TN,IIA,477,418,330,407,595,524,420,512,111,78,71,28,288
+3523,Tennessee_Technological_Univ,TN,IIA,547,424,346,436,664,527,439,540,146,98,100,32,376
+3527,Tusculum_College,TN,IIB,353,327,290,314,426,396,340,373,6,7,14,0,27
+3528,Union_University,TN,IIB,396,361,318,332,496,454,396,414,18,22,52,20,112
+3529,Univ_of_Tennat_Chattanooga,TN,IIA,494,420,365,428,628,525,452,538,113,60,79,11,263
+3530,Univof_Tennessee-Knoxville,TN,I,600,454,402,501,756,570,500,630,535,325,202,65,1139
+3531,Univof_Tennessee-Martin,TN,IIA,473,409,337,413,615,509,426,527,103,57,48,17,225
+3534,University_of_the_South,TN,IIB,578,427,347,485,759,571,447,636,53,20,18,6,99
+3535,Vanderbilt_University,TN,I,807,522,432,612,988,651,538,756,289,160,177,9,657
+6725,Univ_of_Tennessee-_Memphis,TN,I,605,461,403,486,757,576,502,607,53,60,40,11,164
+3537,Abilene_Christian_University,TX,IIA,424,375,339,376,555,491,418,494,68,42,36,14,160
+3541,Angelo_State_University,TX,IIB,485,425,369,398,618,549,484,517,68,27,40,45,180
+3543,Austin_College,TX,IIB,508,394,320,418,629,500,390,518,37,20,23,4,84
+3564,East_Texas_Baptist_Univ,TX,IIB,377,318,325,329,460,409,403,409,19,9,17,10,55
+3565,East_Texas_State_University,TX,IIA,494,378,351,418,625,487,456,536,107,66,58,13,248
+3571,Hardin-Simmons_University,TX,IIA,378,311,295,330,457,380,357,400,39,11,25,9,84
+3576,Houston_Baptist_University,TX,IIA,408,363,314,345,507,456,397,434,34,19,43,15,111
+3581,Lamar_University-Beaumont,TX,IIA,482,382,334,361,591,475,417,447,82,81,91,64,343
+3584,LeTourneau_University,TX,IIB,404,343,319,349,525,431,428,449,15,18,11,6,50
+3592,Midwestern_State_University,TX,IIA,491,418,362,399,613,528,463,505,42,45,54,20,162
+3594,University_of_North_Texas,TX,I,551,443,382,448,674,550,479,555,249,203,234,5,751
+3598,Our_Lady_of_the_Lake_Univ,TX,IIA,499,405,346,379,577,469,399,437,24,25,30,21,101
+3599,Univ_of_Texas-Pan_AmerUniv,TX,IIA,503,426,343,367,625,536,439,467,63,85,109,109,369
+3604,Rice_University,TX,I,809,548,481,663,992,682,593,816,224,89,91,8,422
+3606,Sam_Houston_State_University,TX,IIA,497,403,341,408,633,523,451,529,147,63,116,10,365
+3610,Schreiner_College,TX,IIB,354,300,257,282,425,363,313,343,12,8,8,12,40
+3613,Southern_Methodist_Univ,TX,I,733,505,463,550,918,636,570,687,158,154,135,5,483
+3615,Southwest_Texas_State_Univ,TX,IIA,495,410,328,385,619,521,426,492,209,135,204,53,662
+3620,Southwestern_University,TX,IIB,627,470,373,478,763,581,465,590,22,33,25,3,83
+3621,St_Edwards_University,TX,IIB,469,385,331,380,552,454,392,448,12,45,24,2,83
+3623,St_Marys_University,TX,IIA,652,474,383,502,744,560,452,585,58,57,49,5,169
+3624,Stephen_FAustin_State_Univ,TX,IIA,473,379,338,380,582,478,434,481,138,74,114,37,391
+3625,Sul_Ross_State_University,TX,IIB,440,368,310,354,562,474,410,462,34,15,24,8,95
+3630,Prairie_View_A_and_M_University,TX,IIA,485,421,347,369,616,542,455,481,34,58,64,73,232
+3631,Tarleton_State_University,TX,IIA,446,399,347,354,570,516,455,462,42,48,48,62,204
+3636,Texas_Christian_University,TX,I,654,477,423,511,811,599,518,632,107,109,99,9,336
+3639,Texas_A_and_M_Univ-Kingsville,TX,IIA,467,393,348,386,589,502,450,494,72,51,41,12,192
+3641,Texas_Lutheran_College,TX,IIB,458,370,313,365,564,456,386,449,20,13,20,8,61
+3642,Texas_Southern_University,TX,I,551,455,366,423,684,573,469,535,83,82,104,50,331
+3644,Texas_Tech_University,TX,I,610,429,363,468,762,550,472,595,270,216,220,14,742
+3645,Texas_Wesleyan_University,TX,IIB,456,536,298,439,570,656,370,544,42,30,15,9,96
+3646,Texas_Womans_University,TX,I,499,401,342,396,623,507,438,501,93,107,101,40,353
+3647,Trinity_University,TX,IIA,696,477,389,548,860,610,497,686,95,61,57,3,216
+3651,University_of_Dallas,TX,IIA,474,432,364,395,578,550,446,489,23,35,25,1,108
+3652,University_of_Houston,TX,I,681,462,398,520,836,585,510,651,341,288,238,24,903
+3656,Univ_of_Texas_at_Arlington,TX,I,581,438,395,455,724,557,506,577,185,224,137,0,608
+3658,Univ_of_Texas_at_Austin,TX,I,732,476,432,577,888,599,548,713,997,439,480,30,2099
+3661,Univ_of_Texas_at_El_Paso,TX,IIA,522,417,365,404,679,552,488,535,101,122,142,10,423
+3663,Wayland_Baptist_Univ,TX,IIB,433,278,252,311,502,338,362,387,18,19,15,10,62
+3665,West_Texas_A_and_M_University,TX,IIA,467,358,326,340,583,457,419,435,65,35,58,58,228
+6967,Baylor_University,TX,I,619,474,397,476,791,610,504,607,226,131,103,7,601
+9651,Texas_A_and_M_Internatl_Univ,TX,IIB,445,432,380,404,570,554,494,522,10,16,18,4,48
+9741,Univ_of_Texas_at_Dallas,TX,I,661,505,451,557,810,634,571,692,89,58,59,1,207
+9930,Univ_of_Texas_-Permian_Bsn,TX,IIB,457,393,348,384,576,501,449,491,21,18,26,6,76
+10115,Univ_of_Texas_-San_Antonio,TX,IIA,546,441,379,429,685,562,489,548,61,120,108,6,314
+10298,Texas_A_and_M_Univat_Galveston,TX,IIB,570,368,376,393,714,475,482,503,15,15,8,0,63
+10366,Texas_A__and__M_University-Main,TX,I,645,460,394,505,798,587,509,637,652,424,305,2,1546
+11161,Texas_A_and_M_U-Corpus_Christi,TX,IIA,475,396,334,400,604,513,440,517,49,44,45,4,142
+11163,Univ_of_Texas_at_Tyler,TX,IIA,522,421,359,409,666,548,496,538,39,37,24,0,133
+11711,Univ_of_Houston-Clear_Lake,TX,IIA,558,479,409,467,696,605,520,590,48,65,45,4,174
+11854,University_of_Central_Texas,TX,IIB,?,321,279,302,?,392,350,368,2,7,8,2,19
+12826,Univ_of_Houston-Downtown,TX,IIB,503,404,336,365,628,507,429,463,20,53,44,1,153
+13231,Univ_of_Houston-Victoria,TX,IIB,?,389,319,355,?,498,411,456,5,11,11,2,29
+29269,East_Texas_State_U-Texarkana,TX,IIB,480,373,?,429,616,490,?,556,20,6,2,4,32
+3670,Brigham_Young_University,UT,I,661,504,431,543,851,668,577,711,577,382,304,49,1372
+3675,University_of_Utah,UT,I,615,432,383,498,792,574,514,652,388,231,216,25,860
+3677,Utah_State_University,UT,I,518,403,364,420,688,546,497,567,199,165,158,20,583
+3678,Southern_Utah_University,UT,IIB,421,349,290,335,546,473,413,459,33,48,55,11,147
+3680,Weber_State_University,UT,IIB,483,388,341,389,633,522,458,518,160,97,124,61,459
+3681,Westminster_Coll_SltLkeCy,UT,IIB,445,367,325,359,578,459,399,448,15,25,35,4,79
+3702,Averett_College,VA,IIB,372,319,281,328,454,395,342,400,19,15,11,3,48
+3704,Bridgewater_College,VA,IIB,450,390,332,383,563,483,417,479,22,15,21,4,62
+3705,College_of_William_and_Mary,VA,I,679,499,382,525,827,621,484,650,185,132,123,30,470
+3706,Christopher_Newport_Univ,VA,IIB,509,442,363,412,632,553,458,515,39,44,68,15,166
+3708,Eastern_Mennonite_Coll_and_Sem,VA,IIB,387,335,286,325,480,411,355,402,26,13,15,13,69
+3709,Emory_and_Henry_College,VA,IIB,440,358,296,363,531,439,351,438,18,19,14,3,54
+3711,Ferrum_College,VA,IIB,415,342,299,353,508,417,362,431,27,21,16,5,69
+3713,Hampden-Sydney_College,VA,IIB,529,397,338,417,631,481,419,502,28,28,13,0,80
+3714,Hampton_University,VA,IIA,494,377,323,359,568,440,374,415,45,86,134,13,297
+3715,Hollins_College,VA,IIB,498,398,306,388,609,512,374,484,18,27,23,3,71
+3719,Longwood_College,VA,IIB,487,420,336,393,611,529,431,497,33,50,50,17,150
+3720,Lynchburg_College,VA,IIA,465,392,317,395,567,484,396,486,49,36,37,3,125
+3721,James_Madison_University,VA,IIA,521,447,366,441,647,560,466,553,187,151,131,39,508
+3723,Mary_Baldwin_College,VA,IIB,457,370,311,362,551,457,380,443,13,31,25,2,71
+3724,Marymount_University,VA,IIA,524,418,369,448,616,493,434,528,48,30,34,0,112
+3728,Old_Dominion_University,VA,I,595,451,370,446,731,564,468,557,165,228,156,52,643
+3732,Radford_University,VA,IIA,499,393,354,407,613,488,443,505,137,119,92,43,391
+3733,Randolph-Macon_College,VA,IIB,522,395,313,399,632,484,385,488,22,30,21,6,79
+3734,Randolph-Macon_Womans_Coll,VA,IIB,495,411,337,409,623,512,424,512,17,28,18,2,65
+3735,Virginia_Commonwealth_Univ,VA,I,610,492,404,491,753,611,501,609,220,310,211,43,784
+3736,Roanoke_College,VA,IIB,494,408,338,412,624,523,422,522,27,37,28,0,92
+3737,Shenandoah_University,VA,IIB,463,387,330,392,554,464,394,469,32,26,25,6,89
+3739,Saint_Pauls_College,VA,IIB,319,309,275,290,399,368,341,357,8,9,8,8,33
+3742,Sweet_Briar_College,VA,IIB,539,433,372,468,666,524,445,572,28,26,11,0,65
+3744,University_of_Richmond,VA,IIA,711,550,418,565,883,686,512,700,80,70,72,0,222
+3746,Mary_Washington_College,VA,IIB,475,397,325,401,602,507,421,513,59,43,48,0,157
+3747,U_Va_Clinch_Valley_College,VA,IIB,445,352,313,350,552,442,397,440,17,14,18,4,58
+3749,George_Mason_University,VA,I,753,524,445,568,909,650,550,696,210,266,156,43,675
+3752,Virginia_Intermont_College,VA,IIB,332,318,279,307,392,373,333,363,7,15,12,0,34
+3753,Virginia_Military_Institute,VA,IIB,532,446,364,467,668,573,465,590,52,14,24,2,94
+3754,Virginia_PolyInst_and_StUniv,VA,I,655,467,404,519,802,582,506,641,598,526,270,91,1485
+3764,Virginia_State_University,VA,IIA,453,416,375,398,554,510,462,489,55,49,59,28,191
+3765,Norfolk_State_University,VA,IIA,492,429,355,406,618,545,456,516,83,88,92,30,297
+3766,Virginia_Union_University,VA,IIB,401,351,264,283,459,404,302,324,8,15,37,8,78
+3767,Virginia_Wesleyan_College,VA,IIB,527,432,356,436,643,534,447,538,28,11,24,9,72
+3768,Washington__and__Lee_University,VA,IIB,685,487,397,592,842,605,480,728,84,30,24,0,138
+6968,University_of_Virginia,VA,I,777,517,430,610,953,653,545,757,445,277,201,18,973
+10392,Liberty_University,VA,IIA,401,341,279,327,458,389,322,375,44,56,51,17,168
+29261,Christendom_College,VA,IIB,?,?,279,320,?,?,336,396,1,5,7,0,13
+3682,Bennington_College,VT,IIB,?,?,?,373,?,?,?,449,0,0,0,0,46
+3683,Castleton_State_College,VT,IIB,432,355,302,355,580,484,410,480,26,27,34,3,90
+3687,Green_Mountain_College,VT,IIB,416,355,309,342,518,448,390,430,9,11,10,5,35
+3688,Johnson_State_College,VT,IIB,423,349,303,342,550,478,429,469,14,21,29,2,66
+3689,Lyndon_State_College,VT,IIB,433,366,293,366,584,501,411,500,18,22,17,0,57
+3691,Middlebury_College,VT,IIB,678,469,398,512,878,599,493,651,68,33,56,14,182
+3692,Norwich_University,VT,IIA,423,356,297,371,545,468,394,484,62,51,32,1,146
+3694,Saint_Michaels_College,VT,IIB,501,414,344,404,675,548,457,540,33,38,46,0,122
+3695,Trinity_College_of_Vermont,VT,IIB,364,340,299,325,432,407,365,392,6,20,11,1,40
+3696,University_of_Vermont,VT,I,606,450,370,458,770,586,486,592,175,174,115,0,555
+3771,Central_Washington_Univ,WA,IIA,483,355,292,401,596,447,374,501,172,80,72,0,340
+3775,Eastern_Washington_Univ,WA,IIA,480,406,352,425,601,514,451,537,181,79,74,14,348
+3777,Heritage_College,WA,IIB,?,359,319,322,?,437,392,395,4,7,9,8,28
+3778,Gonzaga_University,WA,IIA,616,428,345,420,741,527,432,518,49,83,96,23,251
+3785,Pacific_Lutheran_University,WA,IIA,494,409,351,422,617,513,434,527,78,88,63,0,229
+3788,Seattle_Pacific_University,WA,IIA,457,388,335,390,563,485,422,485,50,48,34,7,144
+3790,Seattle_University,WA,IIA,565,476,408,458,674,572,495,551,53,88,69,14,237
+3794,Saint_Martins_College,WA,IIB,378,347,303,325,441,418,360,386,7,14,28,1,50
+3797,University_of_Puget_Sound,WA,IIB,623,469,389,516,788,599,495,655,80,44,51,0,175
+3798,University_of_Washington,WA,I,683,485,421,555,838,606,524,687,893,472,352,11,1906
+3799,Walla_Walla_College,WA,IIB,333,314,300,312,403,382,367,379,45,20,36,13,117
+3800,Washington_State_University,WA,I,597,447,393,470,734,559,488,584,337,281,279,62,965
+3802,Western_Washington_Univ,WA,IIA,537,444,371,462,665,553,461,573,153,141,67,6,385
+3803,Whitman_College,WA,IIB,568,451,372,476,717,571,468,602,37,32,23,1,93
+3804,Whitworth_College,WA,IIB,426,349,279,345,513,426,345,420,26,39,18,10,93
+8155,Evergreen_State_College,WA,IIB,?,?,?,430,?,?,?,541,0,0,0,0,154
+3832,Alverno_College,WI,IIB,438,352,282,314,511,411,332,368,9,31,74,0,114
+3835,Beloit_College,WI,IIB,521,409,357,453,660,512,428,565,42,15,22,1,80
+3839,Carthage_College,WI,IIB,434,374,319,371,556,485,406,475,28,18,35,0,81
+3842,Concordia_Univ_Wisconsin,WI,IIB,416,391,340,348,507,509,434,443,10,14,35,1,74
+3854,Lakeland_College,WI,IIB,406,?,321,329,489,?,384,393,11,3,19,8,46
+3856,Lawrence_University,WI,IIB,570,425,364,462,691,521,439,561,42,28,31,3,104
+3861,Marian_Collof_Fond_du_Lac,WI,IIB,440,371,302,334,548,464,373,414,9,17,41,4,71
+3863,Marquette_University,WI,I,705,521,426,527,884,662,525,662,94,238,151,0,483
+3868,Milwaukee_School_of_Engrg,WI,IIB,484,411,353,439,609,522,427,551,56,27,20,0,103
+3869,Mount_Mary_College,WI,IIB,393,327,282,312,493,393,327,371,8,19,19,6,52
+3875,Northland_College,WI,IIB,375,296,271,325,458,354,344,397,19,15,7,2,44
+3884,Ripon_College,WI,IIB,491,380,320,409,619,479,401,515,28,23,17,1,69
+3892,St_Norbert_College,WI,IIB,546,445,353,415,712,585,457,541,15,45,42,7,109
+3895,Univ_Wisconsin-Madison,WI,I,666,498,439,573,831,628,566,721,918,287,360,30,1641
+3896,Univ_Wisconsin-Milwaukee,WI,I,604,465,421,495,761,598,544,632,267,306,192,2,797
+3899,Univ_Wisconsin-Green_Bay,WI,IIA,498,417,356,419,638,541,468,543,52,55,35,3,157
+3911,Viterbo_College,WI,IIB,448,366,316,344,553,441,395,423,10,23,28,10,71
+3915,Univ_Wisconsin-Stout,WI,IIA,502,394,349,412,642,513,460,536,121,71,69,6,300
+3917,Univ_Wisconsin-Eau_Claire,WI,IIA,489,410,372,428,627,533,487,555,167,126,112,12,417
+3919,Univ_Wisconsin-La_Crosse,WI,IIA,511,424,384,430,653,549,502,556,128,103,90,8,369
+3921,Univ_Wisconsin-Platteville,WI,IIA,517,417,357,437,661,542,470,565,94,57,58,0,221
+3923,Univ_Wisconsin-River_Falls,WI,IIA,485,399,340,420,622,519,449,545,112,57,57,2,238
+3924,Univ_Wisconsin-Stevens_Pnt,WI,IIA,516,423,353,437,658,548,464,565,138,104,84,5,344
+3925,Univ_Wisconsin-Superior,WI,IIA,501,410,348,432,642,533,459,561,42,26,19,5,97
+3926,Univ_Wisconsin-Whitewater,WI,IIA,525,434,368,432,670,562,483,559,127,103,99,5,379
+5015,Univ_Wisconsin-Parkside,WI,IIA,535,427,391,434,680,553,510,561,49,58,37,1,163
+9630,Univ_Wisconsin-Oshkosh,WI,IIA,541,435,374,439,688,562,490,567,104,108,130,4,356
+3806,Alderson_Broaddus_College,WV,IIB,385,315,272,299,507,402,349,386,9,18,25,11,63
+3808,Bethany_College,WV,IIB,397,348,286,340,501,485,358,433,21,6,23,0,50
+3809,Bluefield_State_College,WV,IIB,409,315,268,310,483,388,341,384,23,22,34,12,91
+3810,Concord_College,WV,IIB,400,342,284,325,505,438,372,420,29,18,35,12,94
+3811,Davis_and_Elkins_College,WV,IIB,373,305,259,299,480,388,339,386,14,10,14,7,46
+3812,Fairmont_State_College,WV,IIB,432,362,317,361,526,446,394,445,57,44,45,27,173
+3813,Glenville_State_College,WV,IIB,396,325,274,298,484,405,341,371,12,17,28,16,75
+3815,Marshall_University,WV,IIA,477,390,309,390,576,478,384,477,144,121,102,30,397
+3818,University_of_Charleston,WV,IIB,385,347,324,333,484,440,413,423,10,21,21,15,67
+3820,Salem-Teikyo_University,WV,IIB,422,353,305,306,509,429,368,369,6,11,17,16,50
+3822,Shepherd_College,WW,VIIB,415,348,312,342,508,421,383,418,27,31,33,14,115
+3823,West_Liberty_State_College,WV,IIB,417,327,235,337,513,404,294,417,42,62,18,7,130
+3825,West_Virginia_Inst_of_Tech,WV,IIB,408,340,297,349,502,419,369,431,54,43,29,11,137
+3827,West_Virginia_University,WV,I,535,431,361,439,642,521,438,529,335,237,272,22,895
+3830,West_Virginia_Wesleyan_Coll,WV,IIB,441,383,339,383,572,494,434,495,25,22,24,3,74
+3831,Wheeling_Jesuit_College,WV,IIB,403,348,282,315,486,416,348,381,8,20,25,12,65
+3932,University_of_Wyoming,WY,I,539,410,374,445,658,507,464,549,241,154,164,2,591

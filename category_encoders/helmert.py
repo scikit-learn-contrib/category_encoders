@@ -1,17 +1,15 @@
 """Helmert contrast coding"""
 
 
-import pandas as pd
+from patsy.contrasts import ContrastMatrix, Helmert
 import numpy as np
-from sklearn.base import BaseEstimator, TransformerMixin
-from patsy.contrasts import Helmert
-from category_encoders.ordinal import OrdinalEncoder
-import category_encoders.utils as util
 
-__author__ = 'willmcginnis'
+from category_encoders.base_contrast_encoder import BaseContrastEncoder
+
+__author__ = 'paulwestenthanner'
 
 
-class HelmertEncoder(BaseEstimator, TransformerMixin):
+class HelmertEncoder(BaseContrastEncoder):
     """Helmert contrast coding for encoding categorical features.
 
     Parameters
@@ -38,39 +36,33 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
+    >>> from sklearn.datasets import fetch_openml
+    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = HelmertEncoder(cols=['CHAS', 'RAD'], handle_unknown='value', handle_missing='value').fit(X, y)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
+    >>> enc = HelmertEncoder(cols=['CentralAir', 'Heating'], handle_unknown='value', handle_missing='value').fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 506 entries, 0 to 505
-    Data columns (total 21 columns):
-    intercept    506 non-null int64
-    CRIM         506 non-null float64
-    ZN           506 non-null float64
-    INDUS        506 non-null float64
-    CHAS_0       506 non-null float64
-    NOX          506 non-null float64
-    RM           506 non-null float64
-    AGE          506 non-null float64
-    DIS          506 non-null float64
-    RAD_0        506 non-null float64
-    RAD_1        506 non-null float64
-    RAD_2        506 non-null float64
-    RAD_3        506 non-null float64
-    RAD_4        506 non-null float64
-    RAD_5        506 non-null float64
-    RAD_6        506 non-null float64
-    RAD_7        506 non-null float64
-    TAX          506 non-null float64
-    PTRATIO      506 non-null float64
-    B            506 non-null float64
-    LSTAT        506 non-null float64
-    dtypes: float64(20), int64(1)
-    memory usage: 83.1 KB
+    RangeIndex: 1460 entries, 0 to 1459
+    Data columns (total 12 columns):
+     #   Column        Non-Null Count  Dtype  
+    ---  ------        --------------  -----  
+     0   intercept     1460 non-null   int64  
+     1   Id            1460 non-null   float64
+     2   MSSubClass    1460 non-null   float64
+     3   MSZoning      1460 non-null   object 
+     4   LotFrontage   1201 non-null   float64
+     5   YearBuilt     1460 non-null   float64
+     6   Heating_0     1460 non-null   float64
+     7   Heating_1     1460 non-null   float64
+     8   Heating_2     1460 non-null   float64
+     9   Heating_3     1460 non-null   float64
+     10  Heating_4     1460 non-null   float64
+     11  CentralAir_0  1460 non-null   float64
+    dtypes: float64(10), int64(1), object(1)
+    memory usage: 137.0+ KB
     None
 
     References
@@ -83,211 +75,5 @@ class HelmertEncoder(BaseEstimator, TransformerMixin):
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
     """
-
-    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
-                 handle_unknown='value', handle_missing='value'):
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.drop_cols = []
-        self.verbose = verbose
-        self.mapping = mapping
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
-        self.cols = cols
-        self.ordinal_encoder = None
-        self._dim = None
-        self.feature_names = None
-
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X and y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        # first check the type
-        X = util.convert_input(X)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        self.ordinal_encoder = OrdinalEncoder(
-            verbose=self.verbose,
-            cols=self.cols,
-            handle_unknown='value',
-            handle_missing='value'
-        )
-        self.ordinal_encoder = self.ordinal_encoder.fit(X)
-
-        ordinal_mapping = self.ordinal_encoder.category_mapping
-
-        mappings_out = []
-        for switch in ordinal_mapping:
-            values = switch.get('mapping')
-            col = switch.get('col')
-
-            column_mapping = self.fit_helmert_coding(col, values, self.handle_missing, self.handle_unknown)
-            mappings_out.append({'col': col, 'mapping': column_mapping, })
-
-        self.mapping = mappings_out
-
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = X_temp.columns.tolist()
-
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                          "Not found in generated cols.\n{}".format(e))
-
-        return self
-
-    def transform(self, X, override_return_df=False):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        if self._dim is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
-
-        # first check the type
-        X = util.convert_input(X)
-
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (X.shape[1], self._dim, ))
-
-        if not self.cols:
-            return X
-
-        X = self.ordinal_encoder.transform(X)
-
-        if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
-                raise ValueError('Columns to be encoded can not contain new values')
-
-        X = self.helmert_coding(X, mapping=self.mapping)
-
-        if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.values
-
-    @staticmethod
-    def fit_helmert_coding(col, values, handle_missing, handle_unknown):
-        if handle_missing == 'value':
-            values = values[values > 0]
-
-        values_to_encode = values.get_values()
-
-        if len(values) < 2:
-            return pd.DataFrame(index=values_to_encode)
-
-        if handle_unknown == 'indicator':
-            values_to_encode = np.append(values_to_encode, -1)
-
-        helmert_contrast_matrix = Helmert().code_without_intercept(values_to_encode)
-        df = pd.DataFrame(data=helmert_contrast_matrix.matrix, index=values_to_encode,
-                          columns=[str(col) + '_%d' % (i,) for i in
-                                   range(len(helmert_contrast_matrix.column_suffixes))])
-
-        if handle_unknown == 'return_nan':
-            df.loc[-1] = np.nan
-        elif handle_unknown == 'value':
-            df.loc[-1] = np.zeros(len(values_to_encode) - 1)
-
-        if handle_missing == 'return_nan':
-            df.loc[values.loc[np.nan]] = np.nan
-        elif handle_missing == 'value':
-            df.loc[-2] = np.zeros(len(values_to_encode) - 1)
-
-        return df
-
-    @staticmethod
-    def helmert_coding(X_in, mapping):
-        """
-        """
-
-        X = X_in.copy(deep=True)
-
-        cols = X.columns.values.tolist()
-
-        X['intercept'] = pd.Series([1] * X.shape[0], index=X.index)
-
-        for switch in mapping:
-            col = switch.get('col')
-            mod = switch.get('mapping')
-
-            base_df = mod.reindex(X[col])
-            base_df.set_index(X.index, inplace=True)
-            X = pd.concat([base_df, X], axis=1)
-
-            old_column_index = cols.index(col)
-            cols[old_column_index: old_column_index + 1] = mod.columns
-
-        cols = ['intercept'] + cols
-
-        return X.reindex(columns=cols)
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError('Must fit data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names
+    def get_contrast_matrix(self, values_to_encode: np.array) -> ContrastMatrix:
+        return Helmert().code_without_intercept(values_to_encode)

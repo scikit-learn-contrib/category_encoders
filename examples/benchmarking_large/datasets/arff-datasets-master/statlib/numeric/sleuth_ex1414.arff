@@ -1,0 +1,61 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex1414.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex1414
+
+@attribute agent {AIB,DEX70,MTX}
+@attribute treatment {BD,NS}
+@attribute route {IA,IV}
+@attribute dayspost {8,12,16}
+@attribute BATcpm INTEGER
+@attribute LHcpm INTEGER
+
+@data
+AIB,NS,IV,8,12025,10510
+AIB,NS,IV,12,10327,10345
+AIB,NS,IV,16,15852,13255
+MTX,NS,IV,8,3995,1285
+MTX,NS,IV,12,1786,1077
+MTX,NS,IV,16,1828,1731
+DEX70,NS,IV,8,6097,7997
+DEX70,NS,IV,12,4684,5721
+DEX70,NS,IV,16,7927,7120
+AIB,BD,IV,8,70034,10611
+AIB,BD,IV,12,129134,12311
+AIB,BD,IV,16,156655,178303
+MTX,BD,IV,8,10049,1388
+MTX,BD,IV,12,10540,1781
+MTX,BD,IV,16,4808,1680
+DEX70,BD,IV,8,109594,11191
+DEX70,BD,IV,12,23254,7325
+DEX70,BD,IV,16,17224,7996
+AIB,NS,IA,8,20870,8944
+AIB,NS,IA,12,27708,9242
+AIB,NS,IA,16,22006,7237
+MTX,NS,IA,8,5598,1724
+MTX,NS,IA,12,2393,1070
+MTX,NS,IA,16,5076,1228
+DEX70,NS,IA,8,18172,8148
+DEX70,NS,IA,12,20636,6041
+DEX70,NS,IA,16,15959,7016
+AIB,BD,IA,8,129747,9992
+AIB,BD,IA,12,68775,6316
+AIB,BD,IA,16,53808,4333
+MTX,BD,IA,8,9683,1424
+MTX,BD,IA,12,23173,1520
+MTX,BD,IA,16,22293,1777
+DEX70,BD,IA,8,159458,13460
+DEX70,BD,IA,12,45550,9113
+DEX70,BD,IA,16,96754,8070

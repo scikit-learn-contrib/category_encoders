@@ -1,0 +1,258 @@
+% Graeme D. Hutcheson and Nick Sofroniou 1999
+% 
+% The Multivariate Social Scientist:
+% Introductory Statistics Using Generalized Linear Models.
+% 
+% SAGE Publications.
+% 
+% Copyright: Graeme D. Hutcheson & Nick Sofroniou, 1999
+% 
+% This software can be freely used for non-commercial purposes and can be
+% freely distributed.
+% 
+% 
+% Readme file
+% ===========
+% 
+% The data sets in this directory are taken from the above book.
+% The data are presented in two formats, *.dat (ascii) and
+% *.por (SPSS portable). The GLIM code and macros are provided in
+% files *.glm and *.mac. Please read the errata file which indicates some
+% minor differences between these data sets and those reported in the
+% book.
+% 
+% 
+% 
+% 
+% DATA FILE      SOURCE IN BOOK    DESCRIPTION
+% 
+% Chapter 1
+%    tab1_01.*   Table 1.1         Video Games and Hostility
+% 
+% Chapter 2
+%    tab2_01.*   Table 2.1         Normal Errors
+%    tab2_02.*   Table 2.2         Skewed Errors
+%    tab2_03.*   Table 2.3         Curvilinearity
+% 
+% Chapter 3
+%    tab3_01.*   Table 3.1         Two Simple Models
+%    tab3_05.*   Table 3.5         Cost and Sound Quality
+%    tab3_07.*   Table 3.7         Exam marks and College Offers
+%    tab3_11.*   Table 3.11        Quality of Children's Testimonies
+%                                     Age: 5-6 = 0; 8-9 = 1
+%                                     Gender: female = 0; male = 1
+%                                     Location: 1 = home; 2 = school;
+%                                               3 = police interview
+%                                               4 = special interview
+%    tab3_11d.*  Table 3.11        Data in Table 3.11 with indicator dummy codes
+%                                  added
+% 
+% Chapter 4
+%    tab4_01.*   Table 4.1         Infection Severity and Treatment Outcome
+%                                     Treatment Outcome: 0 = survived
+%                                                        1 = died
+%    tab4_14.*   Table 4.14        Infection severity, Treatment outcome and
+%                                  Hospital Attended
+%                                     Hospital: 1 = hospital A
+%                                               2 = hospital B
+%                                               3 = hospital C
+%    tab4.14d.*  Table 4.14        Infection severity, Treatment outcome and
+%                                  Hospital Attended including dummy codes
+% 
+%    logis.*                       Child witness data: copy of
+%                                     tab3_11, but includes prosecution
+%    logis_d.*                     Child witness data: copy of
+%                                     tab3_11d, but includes prosecution
+% 
+%                                  logis.por and logis_d.por provide the data to
+%                                  obtain the parameters calculated in the book
+%                                  (pages 147 to 152). It should be noted that
+%                                  these differ slightly to the parameters
+%                                  obtained using the data sets logis.dat and
+%                                  logis_d.dat, as the *.dat files only record
+%                                  the variable 'coherence' to 2 decimal places.
+% 
+% Chapter 5
+% 
+%    tab5_01.*    Table 5.1        Job Satisfaction for doctors and dentists
+%    tab5_04.*    Table 5.4        Race, Housing and Illness
+%    tab5_07.*    Table 5.7        Dopamine and psychosis: integer scoring
+%    tab5_08.*    Table 5.8        Dopamine and psychosis: mid-ranks scoring
+%    tab5_10.*    Table 5.10       Treatment and Depression: integer scoring
+%    tab5_11.*    Table 5.11       Treatment and depression: mid-ranks scoring
+%    tab5_13.*    Table 5.13       Alcohol consumption and Libido: integer scores
+%    tab5_16.*    Table 5.16       Alcohol consumption and libido: low vs medium
+%                                  or high
+%    tab5_17.*    Table 5.17       Alcohol consumption and libido: medium vs high
+% 
+% 
+% Chapter 6
+% 
+%    tab6_11.*    Table 6.11       Child witness example data set
+%
+% File: ../data/hutsof99/tab2_03.dat
+%
+% Note: changes from Errata.txt where not included!
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation hutsof99-tab2_03
+
+@attribute X INTEGER
+@attribute Y REAL
+
+@data
+72,249.791
+38,62.499
+98,495.886
+24,-75.754
+15,78.427
+74,356.636
+2,-187.926
+7,-33.925
+63,181.206
+120,368.288
+75,-75.159
+11,182.174
+84,532.086
+108,521.793
+80,267.973
+138,711.623
+41,42.199
+12,-172.026
+89,177.935
+16,-51.589
+133,752.512
+20,240.120
+94,285.774
+42,162.236
+40,-31.174
+33,15.258
+29,1.628
+35,-4.459
+68,296.286
+32,-14.798
+91,285.477
+118,578.883
+67,133.172
+83,173.861
+85,271.469
+144,973.004
+77,223.258
+59,440.566
+95,458.003
+92,326.565
+25,22.454
+73,271.064
+53,223.204
+22,-263.659
+147,892.882
+122,588.256
+132,603.366
+100,609.033
+71,307.398
+143,835.975
+82,393.234
+104,589.643
+148,962.803
+21,73.660
+56,191.863
+114,577.091
+52,-35.354
+6,183.139
+55,28.795
+93,234.708
+3,188.412
+123,444.898
+9,89.085
+105,281.114
+39,17.412
+81,329.056
+27,-45.469
+48,85.909
+136,656.665
+87,146.014
+121,476.726
+99,515.105
+111,537.106
+18,298.240
+102,524.988
+8,35.675
+137,789.201
+30,107.124
+131,832.988
+146,1000.000
+34,26.382
+4,-44.500
+60,238.450
+47,-239.124
+64,119.303
+61,158.941
+36,-4.636
+113,526.128
+150,781.897
+129,644.314
+46,160.812
+101,199.342
+141,706.907
+10,-38.763
+50,63.446
+90,394.500
+109,514.556
+110,619.561
+37,190.308
+145,849.341
+58,265.046
+78,177.148
+88,284.431
+51,-91.861
+128,782.892
+140,966.896
+17,21.422
+70,329.623
+1,101.123
+126,828.606
+44,179.482
+54,60.894
+45,74.170
+127,575.926
+19,-42.791
+119,612.524
+135,782.881
+28,-108.173
+116,844.963
+97,440.371
+134,676.827
+124,715.990
+112,456.618
+106,654.291
+31,107.996
+130,889.754
+43,-103.854
+139,914.930
+5,36.138
+65,100.959
+149,960.266
+13,157.332
+107,426.440
+26,185.573
+76,85.051
+49,-7.449
+14,12.001
+66,32.242
+125,367.071
+57,246.221
+79,190.767
+86,409.721
+62,204.909
+103,766.175
+115,413.390
+69,289.236
+96,507.675
+142,689.215
+117,399.933
+23,-6.419

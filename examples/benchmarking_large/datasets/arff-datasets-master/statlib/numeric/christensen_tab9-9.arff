@@ -1,0 +1,74 @@
+% 
+% This contains viturally all of the data files
+% in "Analysis of Variance, Design, and Regression:
+% Applied Statistical Methods" by Ronald Christensen
+% (1996, Chapman and Hall).  The individual files 
+% correspond with tables in the book in a self 
+% explanitory manner (presuming you have the book to 
+% look at).  There are three files that correspond 
+% to data in exercises or examples.
+% 
+% The author retains no rights to these data.
+% 
+% Comments should be directed to:
+% Ronald Christensen
+% Dept. of Math and Statistics
+% University of New Mexico
+% Albq., NM 87131
+% e-mail: fletcher@math.unm.edu
+% 
+% More information about the book and alternative
+% access to the data can be obtained from  
+% the web at:  www.math.unm.edu/~fletcher
+% 
+%
+% File: ../data/christensen/tab9-9.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation christensen-tab9-9
+
+@attribute col_1 INTEGER
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+
+@data
+1,1,18
+1,2,7
+1,3,5
+1,4,9
+2,1,9
+2,2,11
+2,3,12
+2,4,3
+3,1,7
+3,2,11
+3,3,11
+3,4,1
+4,1,6
+4,2,4
+4,3,10
+4,4,8
+5,1,10
+5,2,8
+5,3,6
+5,4,10
+6,1,7
+6,2,12
+6,3,3
+6,4,15
+7,1,13
+7,2,5
+7,3,15
+7,4,16
+8,1,1
+8,2,11
+8,3,8
+8,4,12

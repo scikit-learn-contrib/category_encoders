@@ -1,9 +1,7 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
-
-__version__ = '2.0.0'
-
+import re
 
 here = path.abspath(path.dirname(__file__))
 
@@ -11,13 +9,18 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+# Get the version from the __init__.py file
+with open(path.join(here, 'category_encoders/__init__.py'), encoding='utf-8') as f:
+    __version__ = re.findall('''__version__ = ['"](.*)['"]''', f.read())[0]
+
 setup(
     name='category_encoders',
     version=__version__,
-    description='A collection sklearn transformers to encode categorical variables as numeric',
+    description='A collection of sklearn transformers to encode categorical variables as numeric',
     long_description=long_description,
-    url='https://github.com/wdm0006/categorical_encoding',
-    download_url='https://github.com/wdm0006/categorical_encoding/tarball/' + __version__,
+    long_description_content_type='text/markdown',
+    url='https://github.com/scikit-learn-contrib/category_encoders',
+    download_url='https://github.com/scikit-learn-contrib/category_encoders/tarball/' + __version__,
     license='BSD',
     classifiers=[
       'Development Status :: 3 - Alpha',
@@ -25,16 +28,17 @@ setup(
       'Programming Language :: Python :: 3',
     ],
     keywords='python data science machine learning pandas sklearn',
-    packages=find_packages(exclude=['tests*']),
+    packages=find_packages(include=['category_encoders', 'category_encoders.datasets']),
     include_package_data=True,
     author='Will McGinnis',
     install_requires=[
-      'numpy>=1.11.3',
+      'numpy>=1.14.0',
       'scikit-learn>=0.20.0',
-      'scipy>=0.19.0',
-      'statsmodels>=0.6.1',
-      'pandas>=0.21.1',
-      'patsy>=0.4.1',
+      'scipy>=1.0.0',
+      'statsmodels>=0.9.0',
+      'pandas>=1.0.5',
+      'patsy>=0.5.1',
     ],
-    author_email='will@pedalwrencher.com'
+    author_email='will@pedalwrencher.com',
+    package_data={'': ['datasets/data/*.csv']},
 )

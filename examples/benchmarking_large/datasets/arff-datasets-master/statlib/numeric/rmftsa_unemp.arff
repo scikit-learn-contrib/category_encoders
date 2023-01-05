@@ -1,0 +1,74 @@
+% Data Sets for 'Regression Models for Time Series Analysis' by
+% B. Kedem and K. Fokianos, Wiley 2002. Submitted by Kostas
+% Fokianos (fokianos@ucy.ac.cy) [8/Nov/02] (176k)
+%
+% Note: - attribute names were generated manually
+%       - information about data taken from here:
+%         http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/rmftsa/unemp.women48
+%
+% Monthly data in thousands, not seasosnaly adjusted, of
+% unemployed women over 20.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation rmftsa-unemp
+
+@attribute month INTEGER
+@attribute dummy {0}
+@attribute women REAL
+
+@data
+1,0,28.98
+2,0,27.88
+3,0,27.18
+4,0,24.06
+5,0,25.20
+6,0,26.45
+7,0,27.08
+8,0,28.11
+9,0,26.66
+10,0,23.80
+11,0,22.92
+12,0,21.87
+13,0,27.50
+14,0,25.95
+15,0,25.54
+16,0,22.13
+17,0,22.18
+18,0,24.49
+19,0,25.32
+20,0,26.39
+21,0,24.49
+22,0,23.26
+23,0,23.02
+24,0,20.65
+25,0,24.47
+26,0,23.98
+27,0,23.81
+28,0,22.50
+29,0,20.86
+30,0,23.97
+31,0,25.73
+32,0,24.75
+33,0,22.99
+34,0,20.54
+35,0,21.27
+36,0,19.35
+37,0,24.25
+38,0,22.45
+39,0,22.98
+40,0,20.05
+41,0,22.08
+42,0,23.79
+43,0,24.59
+44,0,25.39
+45,0,21.82
+46,0,19.59
+47,0,20.12
+48,0,18.34

@@ -1,0 +1,57 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/case1702.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-case1702
+
+@attribute hps {2,3,4,5}
+@attribute hpy {3,4,5}
+@attribute hcs {3,4,5}
+@attribute hcy {3,4,5}
+@attribute wps {2,3,4,5}
+@attribute wpy {3,4,5}
+@attribute wcs {4,5}
+@attribute wcy {4,5}
+
+@data
+2,3,5,5,4,4,5,5
+5,5,4,4,4,5,5,5
+4,5,5,5,4,4,5,5
+4,3,4,4,4,5,5,5
+3,3,5,5,4,4,5,5
+3,3,4,5,3,3,4,4
+3,4,4,4,4,3,5,4
+4,4,5,5,3,4,5,5
+4,5,5,5,4,4,5,4
+4,4,3,3,3,4,4,4
+4,4,5,5,4,5,5,5
+5,5,4,4,5,5,5,5
+4,4,4,4,4,4,5,5
+4,3,5,5,4,4,4,4
+4,4,5,5,4,4,5,5
+3,3,4,5,3,4,4,4
+4,5,4,4,5,5,5,5
+5,5,5,5,4,5,4,4
+5,5,4,4,3,4,4,4
+4,4,4,4,5,3,4,4
+4,4,4,4,5,3,4,4
+4,4,4,4,4,5,4,4
+3,4,5,5,2,5,5,5
+5,3,5,5,3,4,5,5
+5,5,3,3,4,3,5,5
+3,3,4,4,4,4,4,4
+4,4,4,4,4,4,5,5
+3,3,5,5,3,4,4,4
+4,4,3,3,4,4,5,4
+4,4,5,5,4,4,5,5

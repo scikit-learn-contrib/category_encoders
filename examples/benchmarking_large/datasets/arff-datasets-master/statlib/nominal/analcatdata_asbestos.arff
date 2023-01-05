@@ -1,0 +1,116 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: 1
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-asbestos
+
+@attribute Task {Insulation,Tile}
+@attribute Ventilation {General,Negative_pressure}
+@attribute Duration INTEGER
+@attribute Exposure {(1)_Low_exposure,(2)_Action_level,(3)_Above_legal_limit}
+
+@data
+Tile,Negative_pressure,184,(1)_Low_exposure
+Insulation,Negative_pressure,30,(3)_Above_legal_limit
+Insulation,Negative_pressure,116,(3)_Above_legal_limit
+Tile,Negative_pressure,133,(1)_Low_exposure
+Insulation,General,184,(3)_Above_legal_limit
+Insulation,General,57,(3)_Above_legal_limit
+Insulation,General,111,(3)_Above_legal_limit
+Insulation,Negative_pressure,98,(1)_Low_exposure
+Insulation,Negative_pressure,138,(1)_Low_exposure
+Tile,Negative_pressure,265,(1)_Low_exposure
+Tile,Negative_pressure,135,(1)_Low_exposure
+Insulation,General,217,(3)_Above_legal_limit
+Tile,Negative_pressure,245,(1)_Low_exposure
+Insulation,Negative_pressure,95,(1)_Low_exposure
+Insulation,General,236,(3)_Above_legal_limit
+Insulation,General,226,(2)_Action_level
+Insulation,General,145,(3)_Above_legal_limit
+Insulation,General,194,(3)_Above_legal_limit
+Insulation,General,103,(3)_Above_legal_limit
+Insulation,General,101,(3)_Above_legal_limit
+Insulation,General,105,(3)_Above_legal_limit
+Insulation,General,187,(3)_Above_legal_limit
+Insulation,General,30,(3)_Above_legal_limit
+Insulation,General,117,(3)_Above_legal_limit
+Insulation,General,244,(3)_Above_legal_limit
+Insulation,General,30,(3)_Above_legal_limit
+Insulation,General,59,(1)_Low_exposure
+Insulation,General,78,(3)_Above_legal_limit
+Insulation,Negative_pressure,139,(3)_Above_legal_limit
+Insulation,Negative_pressure,193,(3)_Above_legal_limit
+Insulation,Negative_pressure,30,(1)_Low_exposure
+Tile,Negative_pressure,214,(2)_Action_level
+Insulation,Negative_pressure,235,(1)_Low_exposure
+Tile,Negative_pressure,137,(1)_Low_exposure
+Tile,Negative_pressure,123,(1)_Low_exposure
+Tile,Negative_pressure,75,(1)_Low_exposure
+Tile,Negative_pressure,185,(1)_Low_exposure
+Insulation,Negative_pressure,30,(1)_Low_exposure
+Insulation,Negative_pressure,91,(3)_Above_legal_limit
+Tile,Negative_pressure,138,(1)_Low_exposure
+Tile,Negative_pressure,205,(1)_Low_exposure
+Insulation,General,47,(3)_Above_legal_limit
+Insulation,General,80,(3)_Above_legal_limit
+Insulation,General,105,(3)_Above_legal_limit
+Insulation,General,246,(3)_Above_legal_limit
+Insulation,General,30,(3)_Above_legal_limit
+Insulation,General,103,(1)_Low_exposure
+Insulation,General,58,(3)_Above_legal_limit
+Insulation,Negative_pressure,141,(1)_Low_exposure
+Insulation,Negative_pressure,89,(3)_Above_legal_limit
+Insulation,General,92,(2)_Action_level
+Tile,Negative_pressure,210,(1)_Low_exposure
+Tile,Negative_pressure,210,(1)_Low_exposure
+Tile,Negative_pressure,155,(1)_Low_exposure
+Insulation,Negative_pressure,100,(1)_Low_exposure
+Tile,General,253,(1)_Low_exposure
+Tile,General,42,(3)_Above_legal_limit
+Tile,Negative_pressure,174,(1)_Low_exposure
+Tile,Negative_pressure,81,(1)_Low_exposure
+Tile,Negative_pressure,269,(1)_Low_exposure
+Tile,Negative_pressure,240,(3)_Above_legal_limit
+Tile,Negative_pressure,245,(1)_Low_exposure
+Insulation,Negative_pressure,300,(1)_Low_exposure
+Tile,Negative_pressure,230,(1)_Low_exposure
+Tile,Negative_pressure,78,(1)_Low_exposure
+Tile,Negative_pressure,42,(1)_Low_exposure
+Tile,General,258,(2)_Action_level
+Tile,General,207,(1)_Low_exposure
+Insulation,Negative_pressure,188,(3)_Above_legal_limit
+Tile,General,30,(1)_Low_exposure
+Tile,Negative_pressure,230,(1)_Low_exposure
+Tile,Negative_pressure,235,(1)_Low_exposure
+Insulation,Negative_pressure,30,(1)_Low_exposure
+Tile,Negative_pressure,211,(1)_Low_exposure
+Tile,Negative_pressure,210,(1)_Low_exposure
+Tile,Negative_pressure,155,(1)_Low_exposure
+Insulation,Negative_pressure,130,(2)_Action_level
+Tile,Negative_pressure,215,(1)_Low_exposure
+Tile,Negative_pressure,260,(1)_Low_exposure
+Insulation,General,184,(1)_Low_exposure
+Tile,General,60,(3)_Above_legal_limit
+Insulation,General,79,(2)_Action_level
+Tile,Negative_pressure,247,(1)_Low_exposure

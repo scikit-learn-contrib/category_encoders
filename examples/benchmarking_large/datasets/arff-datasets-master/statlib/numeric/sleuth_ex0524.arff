@@ -1,0 +1,44 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex0524.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex0524
+
+@attribute zinc INTEGER
+@attribute code {1,2,3}
+
+@data
+185,1
+189,1
+187,1
+181,1
+150,1
+176,1
+171,2
+174,2
+202,2
+171,2
+207,2
+125,2
+189,2
+179,2
+163,2
+174,2
+184,2
+186,2
+210,3
+139,3
+172,3
+198,3
+177,3

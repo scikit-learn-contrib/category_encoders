@@ -1,0 +1,124 @@
+%                      File README
+%                      -----------
+% 
+% smoothmeth  A collection of the data sets used in the book "Smoothing
+%             Methods in Statistics," by Jeffrey S. Simonoff,
+%             Springer-Verlag, New York, 1996. Submitted by Jeff
+%             Simonoff (jsimonoff@stern.nyu.edu).
+% 
+% 
+% This submission consists of 37 files, plus this README file.
+% Each file represents a data set analyzed in the book.
+% The names of the files correspond to the names given in
+% the book. The data files are written in plain ASCII (character)
+% text. Missing values are represented by "M" in all data files.
+% 
+% Several of the files include an alphabetic (labeling) variable. It is
+% likely that these files would have to be input into a package using fixed,
+% rather than free, format. The relevant files, along with appropriate
+% Fortran format statements, are as follows:
+% 
+%    adptvisa.dat: (f10.4,4x,f7.4,3x,a20)
+% 
+%    airaccid.dat: (i3,3x,a34)
+% 
+%    basesal.dat : (f8.1,4x,a17)
+% 
+%    baskball.dat: (f7.4,4x,f6.4,3x,i3,4x,f5.2,3x,i2,3x,a17)
+% 
+%    cars93.dat  : (f5.1,2x,i2,2x,i2,3x,f3.1,2x,i3,3x,f4.1,2x,i4,2x,a21)
+% 
+%    elusage.dat : (i4,3x,f7.3,2x,a7)
+% 
+%    hckshoot.dat: (f7.3,4x,i1,4x,a20)
+% 
+%    jantemp.dat : (i6,3x,a30)
+% 
+%    marathon.dat: (f10.2,4x,a27)
+% 
+%    newscirc.dat: (f8.2,3x,f7.2,2x,a25)
+% 
+%    racial.dat  : (f7.4,4x,a32)
+% 
+%    safewatr.dat: (i5,3x,i3,3x,a26)
+% 
+%    schlvote.dat: (i3,4x,f5.2,2x,i8,4x,f4.1,5x,f5.2,2x,i7,2x,a25)
+% 
+% Description of data sources, and further information about the data sets,
+% can be found in the "Descriptions of the data sets" section of the book.
+% Pointing a World Wide Web browser to the URL
+% 
+%             http://www.stern.nyu.edu/SOR/SmoothMeth
+% 
+% will provide access to a site devoted to the book.
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the reference above).
+% 
+%
+% File: ../data/smoothmeth/jantemp.dat
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation smoothmeth-jantemp
+
+@attribute col_1 INTEGER
+@attribute col_2 {Albuquerque,Amarillo,Atlanta,Atlantic_City,Baltimore,Bismarck,Block_Island,Boise,Boston,Burlington,Charleston,Cheyenne,Chicago,Cleveland,Concord,Denver,Des_Moines,Detroit,Hartford,Helena,Honolulu,Huntington,Indianapolis,Jackson,Juneau,Key_West,Las_Vegas,Little_Rock,Louisville,Madison,Minn-St._Paul,Mobile,Nashville,New_Orleans,New_York,Norfolk,Oklahoma_City,Omaha,Philadelphia,Phoenix,Portland,Raleigh,Rapid_City,Salt_Lake_City,San_Francisco,Spokane,St._Louis,Wichita,Wilmington}
+@attribute col_3 {_Alabama,_Alaska,_Arizona,_Arkansas,_California,_Colorado,_Connecticut,_Delaware,_Florida,_Georgia,_Hawaii,_Idaho,_Illinois,_Indiana,_Iowa,_Kansas,_Kentucky,_Louisiana,_Maine,_Maryland,_Massachusetts,_Michigan,_Minnesota,_Mississippi,_Missouri,_Montana,_Nebraska,_Nevada,_New_Hampshire,_New_Jersey,_New_Mexico,_New_York,_North_Carolina,_North_Dakota,_Ohio,_Oklahoma,_Oregon,_Pennsylvania,_Rhode_Island,_South_Carolina,_South_Dakota,_Tennessee,_Texas,_Utah,_Vermont,_Virginia,_Washington,_West_Virginia,_Wisconsin,_Wyoming}
+
+@data
+41,Mobile,_Alabama
+16,Juneau,_Alaska
+39,Phoenix,_Arizona
+30,Little_Rock,_Arkansas
+42,San_Francisco,_California
+16,Denver,_Colorado
+17,Hartford,_Connecticut
+23,Wilmington,_Delaware
+66,Key_West,_Florida
+33,Atlanta,_Georgia
+65,Honolulu,_Hawaii
+23,Boise,_Idaho
+14,Chicago,_Illinois
+18,Indianapolis,_Indiana
+10,Des_Moines,_Iowa
+19,Wichita,_Kansas
+24,Louisville,_Kentucky
+43,New_Orleans,_Louisiana
+12,Portland,_Maine
+24,Baltimore,_Maryland
+23,Boston,_Massachusetts
+16,Detroit,_Michigan
+2,Minn-St._Paul,_Minnesota
+35,Jackson,_Mississippi
+20,St._Louis,_Missouri
+8,Helena,_Montana
+10,Omaha,_Nebraska
+33,Las_Vegas,_Nevada
+9,Concord,_New_Hampshire
+23,Atlantic_City,_New_Jersey
+22,Albuquerque,_New_Mexico
+26,New_York,_New_York
+29,Raleigh,_North_Carolina
+-4,Bismarck,_North_Dakota
+19,Cleveland,_Ohio
+25,Oklahoma_City,_Oklahoma
+34,Portland,_Oregon
+24,Philadelphia,_Pennsylvania
+25,Block_Island,_Rhode_Island
+37,Charleston,_South_Carolina
+9,Rapid_City,_South_Dakota
+28,Nashville,_Tennessee
+22,Amarillo,_Texas
+20,Salt_Lake_City,_Utah
+8,Burlington,_Vermont
+32,Norfolk,_Virginia
+20,Spokane,_Washington
+25,Huntington,_West_Virginia
+7,Madison,_Wisconsin
+15,Cheyenne,_Wyoming

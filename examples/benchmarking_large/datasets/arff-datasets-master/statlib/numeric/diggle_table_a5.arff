@@ -1,0 +1,48 @@
+% DATA-SETS FROM DIGGLE, P.J. (1990). TIME SERIES : A BIOSTATISTICAL
+% INTRODUCTION. Oxford University Press. 
+%
+% Table: Table A5 Bodyweights of rats
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation diggle-Table_A5_Bodyweights_of_rats
+
+@attribute col_1 INTEGER
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+@attribute col_5 INTEGER
+@attribute col_6 {controls,thiouracil,thyroxin}
+
+@data
+57,86,114,139,172,controls
+60,93,123,146,177,controls
+52,77,111,144,185,controls
+49,67,100,129,164,controls
+56,81,104,121,151,controls
+46,70,102,131,153,controls
+51,71,94,110,141,controls
+63,91,112,130,154,controls
+49,67,90,112,140,controls
+57,82,110,139,169,controls
+59,85,121,146,181,thyroxin
+54,71,90,110,138,thyroxin
+56,75,108,151,189,thyroxin
+59,85,116,148,177,thyroxin
+57,72,97,120,144,thyroxin
+52,73,97,116,140,thyroxin
+52,70,105,138,171,thyroxin
+61,86,109,120,129,thyroxin
+59,80,101,111,122,thyroxin
+53,79,100,106,133,thyroxin
+59,88,100,111,122,thiouracil
+51,75,101,123,140,thiouracil
+51,75,92,100,119,thiouracil
+56,78,95,103,108,thiouracil
+58,69,93,116,140,thiouracil
+46,61,78,90,107,thiouracil
+53,72,89,104,122,thiouracil

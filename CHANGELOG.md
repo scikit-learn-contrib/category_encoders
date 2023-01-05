@@ -1,3 +1,72 @@
+unreleased
+==========
+* added gray encoder
+
+v2.5.1.post0
+============
+* fix pypi sdist
+
+v2.5.1
+======
+* Added base class for contrast coding schemes in order to make them more maintainable
+* Added hierarchical column feature in target encoder
+* Fixed maximum recursion depth bug in hashing encoder
+
+v2.5.0
+======
+
+* Introduce base class for encoders
+* Introduce tagging system on encoders and use it to parametrize tests
+* Drop support for python 3.5 and python 3.6
+* Require pandas >=1.0
+* Introduce f-strings
+* Make BinaryEncoder a BaseNEncoder for base=2
+* FutureWarning for TargetEncoder's default parameters
+* Made all encoders re-fittable on different datasets (c.f. issue 122)
+* Introduced tox.ini file for easier version testing
+ 
+v2.4.1
+======
+
+* Fixed a bug with categorical data type in LeaveOneOut encoder
+* Do not install examples as a package on its own
+ 
+v2.4.0
+======
+
+* improved documentation
+* fix bug in CatBoost encoder
+* fix future warnings with pandas
+* added tests for python 3.9 and 3.10 in pipeline
+* fix treating np.NaN and python None equal
+* only build docs on release
+* unified conversion of inputs pandas objects that are used internally including some bugfixes.
+* added quantile encoder and summary encoder
+ 
+v2.3.0
+======
+
+ * many bugfixes
+ * added count encoder
+ 
+v2.2.2
+======
+* Added generalized linear mixed model encoder
+* Added cross-validation wrapper
+* Added multi-class wrapper
+* Support for pandas >= 1.0.1
+* Moved CI to github actions
+
+v2.1.0
+======
+
+* Added experimental support for multithreading in hashing encoder
+* Support for pandas >=0.24
+* Removed support for missing values represented by None due to changes in Pandas 0.24. Use numpy.NaN
+* Changed the default setting of Helmert encoder for handle_missing and handle_unknown
+* Fixed wrong calculation in m-estimate encoder
+* Fixed missing value handling in CatBoost encoder
+
 v2.0.0
 ======
 

@@ -1,0 +1,44 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-soccer
+
+@attribute Number_of_goals {0,1,2,3,4,5,6,7_or_more}
+@attribute English_1st_division INTEGER
+@attribute World_Cup_1974 INTEGER
+@attribute Number_of_passes {0,1,2,3,4,5,6,7,8,9_or_more}
+@attribute Passing_movements INTEGER
+
+@data
+0,225,28,0,10187
+1,293,24,1,6923
+2,224,13,2,3611
+3,114,5,3,1592
+4,41,4,4,608
+5,15,0,5,280
+6,9,0,6,107
+7_or_more,3,2,7,33
+?,?,?,8,9
+?,?,?,9_or_more,11

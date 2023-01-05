@@ -1,0 +1,42 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex0330.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex0330
+
+@attribute private INTEGER
+@attribute pubin INTEGER
+@attribute pubout INTEGER
+
+@data
+4000,764,7248
+13900,2650,5250
+10194,1842,5962
+15688,2984,9766
+11718,1576,5552
+12348,1492,7558
+9300,3338,8594
+3807,1713,6995
+11400,1902,5710
+16975,3093,7168
+15588,1323,3222
+14424,2110,5634
+12520,2760,7560
+9550,3271,7162
+13380,1770,4617
+10425,1800,6700
+5700,3086,7844
+17600,2220,4440
+16240,2136,5352
+11138,1932,5028

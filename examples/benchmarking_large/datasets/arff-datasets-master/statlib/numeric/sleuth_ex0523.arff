@@ -1,0 +1,73 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex0523.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex0523
+
+@attribute oxygen REAL
+@attribute bonegrp INTEGER
+
+@data
+11.10,1
+11.22,1
+11.29,1
+11.49,1
+11.32,2
+11.40,2
+11.71,2
+11.60,3
+11.78,3
+12.05,3
+10.61,4
+10.88,4
+11.12,4
+11.24,4
+11.43,4
+10.92,5
+11.20,5
+11.30,5
+11.62,5
+11.70,5
+11.70,6
+11.79,6
+11.91,6
+12.15,6
+11.33,7
+11.41,7
+11.62,7
+12.15,7
+12.30,7
+11.32,8
+11.65,8
+11.96,8
+12.15,8
+11.54,9
+11.89,9
+12.04,9
+10.93,10
+11.01,10
+11.08,10
+11.12,10
+11.28,10
+11.37,10
+11.35,11
+11.43,11
+11.50,11
+11.57,11
+11.92,11
+11.95,12
+12.01,12
+12.25,12
+12.30,12
+12.39,12

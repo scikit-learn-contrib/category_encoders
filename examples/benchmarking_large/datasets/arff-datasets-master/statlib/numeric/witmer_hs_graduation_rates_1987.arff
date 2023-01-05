@@ -1,0 +1,74 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/HS_graduation_rates_1987
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-HS_graduation_rates_1987
+
+@attribute STATE {Alabama,Alaska,Arizona,Arkansas,California,Colorado,Connecticut,D.C.,Delaware,Florida,Georgia,Hawaii,Idaho,Illinios,Indiana,Iowa,Kansas,Kentucky,Louisiana,Maine,Maryland,Massechusetts,Michigan,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New_Hampshire,New_Jersey,New_Mexico,New_York,North_Carolina,North_Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,Rhode_Island,South_Carolina,South_Dakota,Tennessee,Texas,Utah,Vermont,Virginia,Washington,West_Virginia,Wisconsin,Wyoming}
+@attribute PERCENT REAL
+@attribute WEST {0,1}
+
+@data
+Washington,77.8,1
+Oregon,72.8,1
+California,66.1,1
+Nevada,72.1,1
+Idaho,78.8,1
+Montana,86.2,1
+Wyoming,89.3,1
+Utah,80.6,1
+Colorado,73.7,1
+Arizona,64.4,1
+New_Mexico,71.7,1
+Texas,65.1,1
+Oklahoma,72.6,1
+Kansas,82.1,1
+Nebraska,86.7,1
+South_Dakota,79.7,1
+North_Dakota,88.4,1
+Minnesota,90.6,1
+Iowa,86.4,1
+Missouri,74.4,1
+Arkansas,77.5,1
+Louisiana,60.1,1
+Mississippi,64.8,0
+Alabama,70.2,0
+Georgia,62.5,0
+Florida,58.6,0
+South_Carolina,66.9,0
+North_Carolina,67.8,0
+Tennessee,67.8,0
+Kentucky,67.4,0
+West_Virginia,76.2,0
+Ohio,82.8,0
+Indiana,73.7,0
+Illinios,75.7,0
+Wisconsin,85.4,0
+Michigan,62.4,0
+Pennsylvania,78.7,0
+New_York,62.9,0
+Vermont,78,0
+New_Hampshire,72.7,0
+Maine,79.3,0
+Massechusetts,76.5,0
+Rhode_Island,69.4,0
+Connecticut,80.5,0
+New_Jersey,77.2,0
+Delaware,70.1,0
+Maryland,74.5,0
+Virginia,74,0
+Hawaii,70.8,1
+Alaska,66.7,1
+D.C.,55.5,0

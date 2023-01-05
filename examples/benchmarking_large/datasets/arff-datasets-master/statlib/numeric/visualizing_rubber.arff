@@ -1,0 +1,60 @@
+% This S dump contains 22 data sets from the
+% book Visualizing Data published by
+% Hobart Press (books@hobart.com).
+% The dump was created by data.dump()
+% and can be read back into S by data.restore().
+% The name of each S data set is the name of
+% the data set used in the book. To find the
+% description of the data set in the book look
+% under the entry - data, name - in the index.
+% For example, one data set is barley.
+% To find the description of barley, look
+% in the index under the entry - data, barley.
+%
+% File: ../data/visualizing/rubber.csv
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation visualizing-rubber
+
+@attribute hardness INTEGER
+@attribute tensilestrength INTEGER
+@attribute abrasionloss INTEGER
+@attribute tslow INTEGER
+@attribute tshigh INTEGER
+
+@data
+45,162,372,-18,0
+55,233,206,0,53
+61,232,175,0,52
+66,231,154,0,51
+71,231,136,0,51
+71,237,112,0,57
+81,224,55,0,44
+86,219,45,0,39
+53,203,221,0,23
+60,189,166,0,9
+64,210,164,0,30
+68,210,113,0,30
+79,196,82,0,16
+81,180,32,0,0
+56,200,228,0,20
+68,173,196,-7,0
+75,188,128,0,8
+83,161,97,-19,0
+88,119,64,-61,0
+59,161,249,-19,0
+71,151,219,-29,0
+80,165,186,-15,0
+82,151,155,-29,0
+89,128,114,-52,0
+51,161,341,-19,0
+59,146,340,-34,0
+65,148,283,-32,0
+74,144,267,-36,0
+81,134,215,-46,0
+86,127,148,-53,0

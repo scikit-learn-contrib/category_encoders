@@ -1,0 +1,314 @@
+%                      File README
+%                      -----------
+% 
+% chscase  A collection of the data sets used in the book 
+%          "A Casebook for a First Course in Statistics and Data Analysis,"
+%          by Samprit Chatterjee, Mark S. Handcock and Jeffrey S. Simonoff,
+%          John Wiley and Sons, New York, 1995. Submitted by 
+%          Samprit Chatterjee (schatterjee@stern.nyu.edu),
+%          Mark Handcock (mhandcock@stern.nyu.edu) and 
+%          Jeff Simonoff (jsimonoff@stern.nyu.edu)
+% 
+% This submission consists of 38 files, plus this README file.
+% Each file represents a data set analyzed in the book. The names
+% of the files correspond to the names used in the book. The data
+% files are written in plain ASCII (character) text. Missing
+% values are represented by "M" in all data files.
+% 
+% More information about the data sets and the book can be
+% obtained via gopher at the address
+%                      swis.stern.nyu.edu
+% 
+% The information is filed under
+%   ---> Academic Departments & Research Centers
+%    ---> Statistics and Operations Research
+%     ---> Publications
+%      ---> A Casebook for a First Course in Statistics and Data Analysis
+%       ---> Welcome!
+% 
+% It can also be accessed from the World Wide Web (WWW) using a
+% WWW browser (e.g., netscape) starting from the URL address
+%           http://www.stern.nyu.edu/SOR/Casebook
+% 
+% 
+% 
+% NOTICE: These datasets may be used freely for scientific,
+% educational and/or non-commercial purposes, provided suitable
+% acknowledgment is given (by citing the Chatterjee, Handcock and
+% Simonoff reference above).
+%
+% File: liinc.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation chscase-liinc
+
+@attribute col_1 {Albertson,Amagansett,Amityville,Asharoken,Atlantic_Beach,Babylon_Village,Baldwin,Baldwin_Harbor,Barnum_Island,Baxter_Estates,Bay_Shore,Bayport,Bayville,Baywood,Belle_Terre,Bellerose,Bellmore,Bellport,Bethpage,Blue_Point,Bohemia,Brentwood,Bridgehampton,Brightwaters,Brookhaven,Brookville,Calverton,Carle_Place,Cedarhurst,Center_Moriches,Centereach,Centerport,Central_Islip,Centre_Island,Cold_Spring_Harbor,Commack,Copiague,Coram,Cove_Neck,Cutchogue,Deer_Park,Dering_Harbor,Dix_Hills,East_Farmingdale,East_Hampton_Village,East_Hills,East_Islip,East_Massapequa,East_Meadow,East_Moriches,East_Northport,East_Norwich,East_Patchogue,East_Quogue,East_Rockaway,East_Shoreham,East_Williston,Eatons_Neck,Elmont,Elwood,Farmingdale,Farmingville,Flanders,Floral_Park,Flower_Hill,Fort_Salonga,Franklin_Square,Freeport,Garden_City,Garden_City_Park,Garden_City_South,Glen_Cove_City,Glen_Head,Glenwood_Landing,Great_Neck,Great_Neck_Estates,Great_Neck_Plaza,Greenlawn,Greenport,Greenport_West,Halesite,Hampton_Bays,Hauppauge,Head_of_the_Harbor,Helwett_Harbor,Hempstead_Village,Herricks,Hewlett,Hewlett_Bay_Park,Hewlett_Neck,Hicksville,Holbrook,Holtsville,Huntington,Huntington_Bay,Huntington_Station,Inwood,Island_Park,Islandia,Islip,Islip_Terrace,Jamesport-Aquebogue,Jericho,Kensington,Kings_Park,Kings_Point,Lake_Grove,Lake_Ronkonkoma,Lake_Success,Lakeview,Lattingtown,Laurel,Laurel_Hollow,Lawrence,Levittown,Lido_Beach,Lindenhurst,Lloyd_Harbor,Locust_Valley,Long_Beach_City,Lynbrook,Malverne,Manhasset,Manhasset_Hills,Manorhaven,Manorville,Massapequa,Massapequa_Park,Mastic,Mastic_Beach,Matinecock,Mattituck,Medford,Melville,Merrick,Middle_Island,Mill_Neck,Miller_Place,Mineola,Montauk,Mount_Sinai,Munsey_Park,Muttontown,Nesconset,New_Cassel,New_Hyde_Park,Nissequogue,North_Amityville,North_Babylon,North_Bay_Shore,North_Bellmore,North_Bellport,North_Great_River,North_Haven,North_Hills,North_Lindenhurst,North_Massapequa,North_Merrick,North_New_Hyde_Park,North_Patchogue,North_Valley_Stream,North_Wantagh,Northport,Northwest_Harbor,Noyack-Water_Mill,Oakdale,Ocean_Beach,Oceanside,Old_Bethpage,Old_Brookville,Old_Field,Old_Westbury,Oyster_Bay,Oyster_Bay_Cove,Patchogue,Peconic,Plainedge,Plainview,Plandome,Plandome_Heights,Plandome_Manor,Poospatuck,Poquott,Port_Jefferson,Port_Jefferson_Station,Port_Washington,Port_Washington_North,Quogue,Remsenburg-Speonk,Ridge,Riverhead,Riverside-Pine_Valley,Rockville_Centre,Rocky_Point,Ronkonkoma,Roosevelt,Roslyn,Roslyn_Estates,Roslyn_Harbor,Roslyn_Heights,Russell_Gardens,Saddle_Rock,Sag_Harbor,Salisbury,Saltaire,Sands_Point,Sayville,Sea_Cliff,Seaford,Searingtown,Selden,Setauket-East_Setauket,Shelter_Island,Shelter_Island_Heights,Shinnecock,Shinnecock_Hills,Shirley,Shoreham,Smithtown,Sound_Beach,South_Farmingdale,South_Floral_Park,South_Hempstead,South_Huntington,South_Valley_Stream,Southampton,Southold,Springs,St_James,Stewart_Manor,Stony_Brook,Syosset,Terryville,Thomaston,Uniondale,University_Gardens,Upper_Brookville,Valley_Stream,Wading_River,Wantagh,West_Babylon,West_Bay_Shore,West_Hempstead,West_Hills,West_Islip,West_Sayville,Westbury,Westhampton,Westhampton_Beach,Wheatley_Heights,Williston_Park,Woodbury,Woodmere,Woodsburgh,Wyandanch,Yaphank,of_the_Branch}
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+
+@data
+Albertson,47838,49676
+Amagansett,27919,34705
+Amityville,39294,46442
+Asharoken,95159,84064
+Atlantic_Beach,54167,72812
+Babylon_Village,41908,52023
+Baldwin,44383,53994
+Baldwin_Harbor,54304,63421
+Barnum_Island,42275,60709
+Baxter_Estates,48242,58031
+Bay_Shore,20872,37702
+Bayport,41545,54368
+Bayville,43192,55511
+Baywood,40248,46528
+Belle_Terre,74205,100000
+Bellerose,56255,73990
+Bellmore,46880,58203
+Bellport,46755,53062
+Bethpage,46698,52533
+Blue_Point,38715,52044
+Bohemia,36278,47241
+Brentwood,39489,48665
+Bridgehampton,30897,41397
+Brightwaters,52590,66935
+Brookhaven,44676,47903
+Brookville,105979,98700
+Calverton,17818,21152
+Carle_Place,39799,47111
+Cedarhurst,41218,52119
+Center_Moriches,32597,42737
+Centereach,41695,50224
+Centerport,44260,58544
+Central_Islip,34706,42434
+Centre_Island,67170,82969
+Cold_Spring_Harbor,58245,76608
+Commack,53188,62014
+Copiague,37987,45738
+Coram,40422,49135
+Cove_Neck,65621,112114
+Cutchogue,32344,42766
+Deer_Park,42777,48117
+Dering_Harbor,133502,125000
+Dix_Hills,63256,79154
+East_Farmingdale,36567,48125
+East_Hampton_Village,35696,46771
+East_Hills,94865,111521
+East_Islip,39858,52796
+East_Massapequa,48818,57717
+East_Meadow,46948,54511
+East_Moriches,36116,48361
+East_Northport,46234,52108
+East_Norwich,55442,67814
+East_Patchogue,34087,41052
+East_Quogue,29991,33607
+East_Rockaway,41339,50818
+East_Shoreham,54068,64725
+East_Williston,63039,72678
+Eatons_Neck,64384,71520
+Elmont,38101,44452
+Elwood,51223,63700
+Farmingdale,37368,46667
+Farmingville,38174,47354
+Flanders,17969,37271
+Floral_Park,41408,51344
+Flower_Hill,91748,107582
+Fort_Salonga,57503,68464
+Franklin_Square,39468,46186
+Freeport,35545,43948
+Garden_City_Park,44954,51553
+Garden_City_South,43642,45625
+Garden_City,64929,74478
+Glen_Cove_City,40050,42982
+Glen_Head,43145,53746
+Glenwood_Landing,51481,60775
+Great_Neck_Estates,92975,117706
+Great_Neck_Plaza,33364,46316
+Great_Neck,53968,60567
+Greenlawn,45851,52601
+Greenport,18856,25563
+Greenport_West,34025,30926
+Halesite,56880,64745
+Hampton_Bays,28234,35736
+Hauppauge,46351,57959
+Head_of_the_Harbor,70098,86135
+Hempstead_Village,30232,36715
+Herricks,50118,56231
+Hewlett,44557,60554
+Hewlett_Bay_Park,133502,150001
+Helwett_Harbor,133502,150001
+Hewlett_Neck,125802,150001
+Hicksville,45716,50794
+Holbrook,40968,51211
+Holtsville,40981,51400
+Huntington,50020,62121
+Huntington_Bay,87354,98626
+Huntington_Station,38717,45775
+Inwood,21912,27595
+Islandia,43773,52238
+Island_Park,30303,45020
+Islip,38838,50459
+Islip_Terrace,40217,51796
+Jamesport-Aquebogue,37035,36867
+Jericho,62982,75043
+Kensington,104123,110522
+Kings_Park,45000,53155
+Kings_Point,128856,140838
+Lake_Grove,37864,48164
+Lake_Ronkonkoma,36857,45485
+Lake_Success,92065,97095
+Lakeview,45767,50279
+Lattingtown,64197,94557
+Laurel,40050,36953
+Laurel_Hollow,89470,133460
+Lawrence,66001,78815
+Levittown,45378,52866
+Lido_Beach,53672,77279
+Lindenhurst,37330,46615
+Lloyd_Harbor,100734,130720
+Locust_Valley,41773,50145
+Long_Beach_City,29028,41495
+Lynbrook,40520,45453
+Malverne,49555,60310
+Manhasset,53884,66902
+Manhasset_Hills,78316,81445
+Manorhaven,39174,43239
+Manorville,31830,39683
+Massapequa,48238,60345
+Massapequa_Park,51819,58773
+Mastic,29911,39512
+Mastic_Beach,19671,35776
+Matinecock,66919,97155
+Mattituck,37257,36415
+Medford,39849,50190
+Melville,60374,72581
+Merrick,54885,65383
+Middle_Island,32980,41103
+Mill_Neck,75200,88030
+Miller_Place,46341,60162
+Mineola,39235,44635
+Montauk,28825,31849
+Mount_Sinai,42962,57535
+Munsey_Park,87978,108553
+Muttontown,89945,119981
+Nesconset,44381,60204
+New_Cassel,36122,48314
+New_Hyde_Park,41070,47023
+Nissequogue,72610,87852
+North_Amityville,31862,35694
+North_Babylon,43354,51976
+North_Bay_Shore,37821,47275
+North_Bellmore,48188,56075
+North_Bellport,30077,37722
+North_Great_River,43048,56911
+North_Haven,35956,37308
+North_Hills,92195,110711
+North_Lindenhurst,38177,49025
+North_Massapequa,49899,55273
+North_Merrick,48375,60233
+North_New_Hyde_Park,45433,51987
+North_Patchogue,34137,45874
+North_Valley_Stream,46029,53618
+North_Wantagh,51317,55488
+Northport,42821,57733
+Northwest_Harbor,31668,41558
+Noyack-Water_Mill,30424,38117
+Oakdale,43268,57291
+Ocean_Beach,28480,26250
+Oceanside,48548,53875
+Old_Bethpage,56948,62308
+Old_Brookville,97368,116731
+Old_Field,76987,103403
+Old_Westbury,98699,137518
+Oyster_Bay,37227,47679
+Oyster_Bay_Cove,100385,150001
+Patchogue,20968,34173
+Peconic,30340,42031
+Plainedge,45522,57071
+Plainview,56729,66095
+Plandome_Heights,74425,73948
+Plandome_Manor,107092,130183
+Plandome,93762,110644
+Poospatuck,?,20781
+Poquott,38359,62216
+Port_Jefferson_Station,37416,47873
+Port_Jefferson,45445,54620
+Port_Washington,48622,64224
+Port_Washington_North,52389,61722
+Quogue,40235,52031
+Remsenburg-Speonk,33724,51303
+Ridge,28863,31878
+Riverhead,20118,28491
+Riverside-Pine_Valley,12408,19671
+Rockville_Centre,46150,55476
+Rocky_Point,21851,37974
+Ronkonkoma,37802,47748
+Roosevelt,38768,43559
+Roslyn_Estates,109840,118093
+Roslyn_Harbor,90052,105326
+Roslyn_Heights,52875,63013
+Roslyn,41794,53337
+Russell_Gardens,88509,87032
+Saddle_Rock,102103,113346
+Sag_Harbor,27378,35952
+Salisbury,51266,57580
+Saltaire,133502,25714
+Sands_Point,133502,134484
+Sayville,39082,53806
+Sea_Cliff,42983,46672
+Seaford,47627,55259
+Searingtown,80207,85337
+Selden,35351,46298
+Setauket-East_Setauket,49285,66727
+Shelter_Island,22099,37159
+Shelter_Island_Heights,33603,41339
+Shinnecock,29096,29464
+Shinnecock_Hills,29427,31735
+Shirley,32019,41602
+Shoreham,57455,77959
+Smithtown,50080,61455
+Sound_Beach,35677,44944
+South_Farmingdale,48259,54437
+South_Floral_Park,41225,44453
+South_Hempstead,46659,57218
+South_Huntington,45118,54865
+South_Valley_Stream,57740,59080
+Southampton,33014,38770
+Southold,31869,36288
+Springs,27469,41754
+St_James,42316,51571
+Stewart_Manor,49212,63545
+Stony_Brook,53234,63244
+Syosset,56882,65806
+Terryville,42462,54131
+Thomaston,58001,63393
+Uniondale,39828,46917
+University_Gardens,51387,64187
+Upper_Brookville,92558,128993
+Valley_Stream,42004,47287
+of_the_Branch,57288,68998
+Wading_River,37197,51838
+Wantagh,50189,60134
+West_Babylon,38671,47067
+West_Bay_Shore,48836,54947
+West_Hempstead,45481,52271
+West_Hills,57615,67805
+West_Islip,45810,57081
+West_Sayville,38286,49028
+Westbury,46554,52114
+Westhampton,28614,41806
+Westhampton_Beach,35563,42143
+Wheatley_Heights,51405,57495
+Williston_Park,43868,50496
+Woodbury,66038,91102
+Woodmere,66732,79623
+Woodsburgh,105305,91909
+Wyandanch,29614,34421
+Yaphank,32873,44569

@@ -1,0 +1,105 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Water_Oberlin
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Water_Oberlin
+
+@attribute WEEK INTEGER
+@attribute H2O INTEGER
+
+@data
+1,5561
+2,6135
+3,5847
+4,6001
+5,6783
+6,6435
+7,6410
+8,6294
+9,5798
+10,5883
+11,5803
+12,4450
+13,5503
+14,5739
+15,5936
+16,6047
+17,5847
+18,5752
+19,6046
+20,5730
+21,5548
+22,5959
+23,6571
+24,6965
+25,6278
+26,6688
+27,8429
+28,7741
+29,8622
+30,7451
+31,7447
+32,7313
+33,7184
+34,6559
+35,7521
+36,8308
+37,8007
+38,7563
+39,7207
+40,6915
+41,6978
+42,6965
+43,6007
+44,7518
+45,7685
+46,7526
+47,7194
+48,7376
+49,7485
+50,7435
+51,5716
+52,5722
+53,6700
+54,6905
+55,6483
+56,6551
+57,6496
+58,6917
+59,7089
+60,7221
+61,7310
+62,6495
+63,6415
+64,6031
+65,4623
+66,5906
+67,5996
+68,5898
+69,5880
+70,6166
+71,6258
+72,6258
+73,6362
+74,6407
+75,6182
+76,6891
+77,7562
+78,6491
+79,7435
+80,6512
+81,5286
+82,5184
+83,5361

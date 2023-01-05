@@ -56,7 +56,17 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+docs/build/
 
 # PyBuilder
 target/
 
+.pytest_cache/
+.tmp/
+checkcommits.sh
+runtest.py
+
+
+*~
+*.swp
+*.swo

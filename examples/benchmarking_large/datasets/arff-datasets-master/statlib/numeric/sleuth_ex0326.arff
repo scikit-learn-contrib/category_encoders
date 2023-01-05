@@ -1,0 +1,69 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex0326.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex0326
+
+@attribute removed REAL
+@attribute duration INTEGER
+@attribute code {1,2}
+
+@data
+0.07,2,1
+0.1,5,1
+0.11,7,1
+0.12,11,1
+0.15,12,1
+0.19,11,1
+0.28,9,1
+0.31,9,1
+0.3,16,1
+0.34,17,1
+0.35,12,1
+0.39,14,1
+0.38,23,1
+0.4,35,1
+0.42,21,1
+0.4,10,1
+0.41,9,1
+0.42,7,1
+0.48,11,1
+0.48,13,1
+0.47,14,1
+0.49,16,1
+0.5,14,1
+0.51,17,1
+0.53,22,1
+0.58,13,1
+0.59,13,1
+0.65,12,1
+0.6,19,1
+0.6,23,1
+0.69,21,1
+0.7,27,1
+0.7,28,1
+0.51,58,1
+0.7,15,1
+0.28,3,2
+0.37,12,2
+0.52,10,2
+0.65,17,2
+0.76,24,2
+0.89,33,2
+0.74,44,2
+0.7,46,2
+0.79,48,2
+0.78,51,2
+0.74,64,2
+0.77,78,2

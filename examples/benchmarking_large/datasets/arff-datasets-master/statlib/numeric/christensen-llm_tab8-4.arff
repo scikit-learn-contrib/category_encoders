@@ -1,0 +1,77 @@
+% 
+% This contains most of the data and all of the large
+% data sets from "Log-Linear Models and Logistic Regression"
+% by Ronald Christensen (1997, Second Edition, Springer-Verlag).
+% The individual files correspond to either data files described 
+% in the book or to numbered tables in the book.  
+% 
+% The author retains no rights to these data.
+% 
+% Comments should be directed to:
+% Ronald Christensen
+% Dept. of Math and Statistics
+% University of New Mexico
+% Albq., NM 87131
+% e-mail: fletcher@stat.unm.edu
+% 
+% More information about the book and alternative
+% access to the data can be obtained from  
+% the web at:  www.math.unm.edu/~fletcher
+% 
+%
+% File: tab8-4.dat
+%
+% Note: attribute names were generated automatically since there was no
+%       information in the data itself.
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation christensen-llm-tab8-4
+
+@attribute col_1 {1,2}
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 {1,2}
+@attribute col_5 INTEGER
+
+@data
+1,1,1,1,2
+1,1,2,1,4
+1,1,3,1,0
+1,2,1,1,0
+1,2,2,1,1
+1,2,3,1,3
+1,3,1,1,3
+1,3,2,1,10
+1,3,3,1,8
+2,1,1,1,2
+2,1,2,1,3
+2,1,3,1,0
+2,2,1,1,0
+2,2,2,1,0
+2,2,3,1,0
+2,3,1,1,2
+2,3,2,1,6
+2,3,3,1,3
+1,1,1,2,0
+1,1,2,2,1
+1,1,3,2,0
+1,2,1,2,1
+1,2,2,2,10
+1,2,3,2,3
+1,3,1,2,1
+1,3,2,2,5
+1,3,3,2,2
+2,1,1,2,0
+2,1,2,2,4
+2,1,3,2,0
+2,2,1,2,0
+2,2,2,2,10
+2,2,3,2,4
+2,3,1,2,0
+2,3,2,2,3
+2,3,3,2,8

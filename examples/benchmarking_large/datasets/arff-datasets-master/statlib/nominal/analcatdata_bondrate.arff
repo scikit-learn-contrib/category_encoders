@@ -1,0 +1,98 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: last
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-bondrate
+
+@attribute City {Allentown,Atlanta,Austin,Bakersfield,Baltimore,Birmingham,Boston,Buffalo,Charleston,Chicago,Cincinatti,Cleveland,Columbus,Dallas,Dayton,Denver,Detroit,Durham,El_Paso,Grand_Rapids,Greensboro,Hartford,Honolulu,Houston,Jacksonville,Kansas_City,Knoxville,Las_Vegas,Little_Rock,Los_Angeles,Louisville,Memphis,Miami,Milwaukee,New_Haven,New_York_City,Norfolk,Oklahoma_City,Philadelphia,Phoenix,Pittsburgh,Providence,Raleigh,Richmond,Rochester,Sacramento,San_Antonio,San_Diego,San_Francisco,Seattle,St_Louis,Syracuse,Toledo,Tucson,Tulsa,Twin_Cities,Worcester}
+@attribute Population INTEGER
+@attribute Per_capita_income INTEGER
+@attribute Household_income INTEGER
+@attribute Discretionary_income INTEGER
+@attribute Publics_in_top_10 {0,1,2,3,4,5,6,7,8,9}
+@attribute Nonprofits_in_top_10 {0,1,2,3,4,5}
+@attribute For_profits_in_top_10 {1,2,3,4,5,6,7,8,9}
+@attribute Utilities_in_top_10 {0,1,2}
+@attribute Region {Midwest,Northeast,South,West}
+@attribute State_capital {No,Yes}
+@attribute Rating {(1)_AAA,(2)_AA,(3)_A,(4)_BBB,(5)_BB}
+
+@data
+Allentown,686688,16851,56800,44173,1,3,5,1,Northeast,No,(2)_AA
+Atlanta,2833511,17688,56098,47557,4,1,4,1,South,Yes,(2)_AA
+Austin,781572,17182,46426,44274,7,0,3,0,South,Yes,(2)_AA
+Bakersfield,543477,12675,49696,38850,0,3,7,0,West,No,(3)_A
+Baltimore,2382172,17116,61695,46170,2,3,4,1,South,No,(3)_A
+Birmingham,907810,15600,49945,40852,5,1,3,1,South,No,(2)_AA
+Boston,3783817,19974,68411,53703,4,3,3,0,Northeast,Yes,(3)_A
+Buffalo,1189288,15094,50659,38545,6,0,4,0,Northeast,No,(4)_BBB
+Charleston,506875,13546,46195,38545,5,2,3,0,South,No,(2)_AA
+Chicago,8065633,19408,66300,54128,5,0,5,0,Midwest,No,(3)_A
+Cincinatti,1744124,16801,54870,44464,4,1,4,1,Midwest,No,(2)_AA
+Cleveland,2759823,16116,56848,41841,5,3,2,0,Midwest,No,(3)_A
+Columbus,1377419,16697,43811,43830,5,1,4,0,Midwest,Yes,(1)_AAA
+Dallas,3885415,18900,57704,50727,3,1,6,0,South,No,(1)_AAA
+Dayton,951270,15973,51551,41611,3,2,5,0,Midwest,No,(2)_AA
+Denver,1848319,18600,58114,46059,1,0,7,1,West,Yes,(2)_AA
+Detroit,4665236,17256,58890,46466,4,3,3,0,Midwest,No,(4)_BBB
+Durham,?,17642,49546,44655,3,2,5,0,South,No,(1)_AAA
+El_Paso,591610,10697,42225,35842,0,1,7,2,South,No,(2)_AA
+Grand_Rapids,688399,15502,52007,43447,2,4,4,0,Midwest,No,(3)_A
+Greensboro,942091,15697,48929,39458,2,1,7,0,South,No,(1)_AAA
+Hartford,1123678,20853,69989,55108,1,1,7,1,Northeast,Yes,(2)_AA
+Honolulu,836231,18705,74744,58222,2,2,5,1,West,Yes,(2)_AA
+Houston,3711043,18045,56795,50509,2,0,7,1,South,No,(2)_AA
+Jacksonville,906727,15351,50836,40630,6,1,3,0,South,No,(2)_AA
+Kansas_City,1566280,17487,56286,45301,5,1,4,0,Midwest,No,(2)_AA
+Knoxville,604816,15616,44052,39198,5,2,3,0,South,No,(2)_AA
+Los_Angeles,14531529,16271,71029,49481,4,1,5,0,West,No,(2)_AA
+Las_Vegas,741459,15986,49228,41338,0,1,9,0,West,No,(3)_A
+Little_Rock,513117,15580,47622,40803,6,3,1,0,South,Yes,(2)_AA
+Louisville,952662,15874,50905,40893,4,2,4,0,South,No,(2)_AA
+Memphis,981747,15337,52543,42057,6,2,2,0,South,No,(2)_AA
+Miami,3192582,14294,55316,40424,4,2,3,1,South,No,(3)_A
+Milwaukee,1607183,17447,55757,46247,0,2,7,1,Midwest,No,(2)_AA
+New_Haven,804219,19634,65474,51639,0,5,5,0,Northeast,No,(4)_BBB
+New_York_City,17953372,18906,67201,50414,3,2,4,1,Northeast,No,(3)_A
+Norfolk,1396107,14825,51376,41696,8,0,2,0,South,No,(2)_AA
+Oklahoma_City,958839,14151,46056,36899,6,2,2,0,South,Yes,(2)_AA
+Philadelphia,5899345,18837,63701,51337,0,3,7,0,Northeast,No,(5)_BB
+Phoenix,2122101,15166,50740,39385,4,1,5,0,West,Yes,(2)_AA
+Pittsburgh,2242798,16024,52108,40047,3,2,5,0,Northeast,No,(3)_A
+Providence,916270,15043,52340,39932,0,5,5,0,Northeast,Yes,(4)_BBB
+Raleigh,735480,17642,49546,44655,4,1,4,1,South,Yes,(1)_AAA
+Richmond,865640,17040,60197,44093,0,1,8,1,South,Yes,(2)_AA
+Rochester,1002410,16471,61594,44022,4,1,5,0,Northeast,No,(2)_AA
+Sacramento,1481102,16663,54026,44394,0,3,7,0,West,Yes,(2)_AA
+San_Antonio,1302099,13605,46632,39251,9,0,1,0,South,No,(2)_AA
+San_Diego,2498016,16485,56542,47163,7,2,1,0,West,No,(2)_AA
+San_Francisco,6253311,22003,80087,55590,4,1,5,0,West,No,(2)_AA
+Seattle,2559164,20387,57884,51147,0,3,7,0,West,No,(2)_AA
+St_Louis,2444099,16999,58697,44785,0,2,7,0,Midwest,No,(4)_BBB
+Syracuse,659864,15077,51716,40823,1,4,4,1,Northeast,No,(2)_AA
+Toledo,614128,14770,51398,39206,3,4,3,0,Midwest,No,(3)_A
+Tucson,666880,13514,42998,34133,6,2,2,0,West,No,(2)_AA
+Tulsa,708954,14253,49050,36318,3,2,5,0,South,No,(2)_AA
+Twin_Cities,2464124,18113,61029,47792,4,2,4,0,Midwest,Yes,(1)_AAA
+Worcester,709705,17018,56517,46317,3,3,3,1,Northeast,No,(3)_A

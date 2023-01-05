@@ -1,0 +1,63 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/June_rain
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-June_rain
+
+@attribute YEAR INTEGER
+@attribute JUNE_RAIN REAL
+
+@data
+1938,2.45
+1939,3.25
+1940,3.68
+1941,2.79
+1942,4.09
+1943,4.02
+1944,3.04
+1945,4.41
+1946,5.14
+1947,6.07
+1948,3.95
+1949,1.63
+1950,3.77
+1951,3.25
+1952,1.48
+1953,3.3
+1954,1.38
+1955,2.68
+1956,4.14
+1957,5.85
+1958,4.67
+1959,1.82
+1960,3.01
+1961,2.95
+1962,2.95
+1963,1.93
+1964,2.06
+1965,3.05
+1966,1.83
+1967,1.17
+1968,2.32
+1969,4.61
+1970,4.98
+1971,3.79
+1972,9.06
+1973,6.72
+1974,3.57
+1975,4.1
+1976,3.64
+1977,4.91
+1978,3.3

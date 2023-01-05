@@ -1,0 +1,74 @@
+% Relationship between IQ and Brain Size
+% 
+% Summary:
+% 	Monozygotic twins share numerous physical, psychological, and pathological traits.  Recent advances in in vivo brain image acquisition and analysis have made it possible to determine quantitatively whether: 1) twins share neuroanatomical traits; and 2) neuroanatomical measures correlate with brain size.
+% 	Using magnetic resonance imaging and computer-based image analysis techniques, measurements of the volume of the forebrain, the surface area of the cerebral cortex and the mid-sagittal area of the corpus callosum were obtained in 10 pairs of monozygotic twins.  Head circumference, body weight, and Full-Scale IQ were also measured.  Analyses of variance were carried out using genotype, birth order, and sex, as between-subject factors.  Pearson correlation coefficients were computed to assess the interrelationships between brain measures, head circumference, and IQ.
+% 	Effects of genotype (but not of birth order) were found for total forebrain volume, total cortical surface area, and callosal area.  Consistent with previous twin studies, highly significant effects of genotype but not birth order were also found for head circumference, body weight, and Full-Scale IQ.  The significant effect of genotype on all measures was not attributable to sex differences across unrelated twin pairs.  Significant correlations were observed between forebrain volume, cortical surface area, and callosal area as well as between each brain measure and head circumference.  No correlation between IQ and any other measure was found.  
+% 	Monozygotic twins share similarities in forebrain volume, cortical surface area, and callosal area.  Brain measures are highly correlated with one another and with head circumference, but none is correlated with IQ.
+% 
+% Authorization: Contact Authors 
+% 
+% Reference:
+% Tramo MJ, Loftus WC, Green RL, Stukel TA, Weaver JB, Gazzaniga MS.  Brain Size, Head Size, and IQ in Monozygotic Twins.  Neurology  1998; 50:1246-1252.
+% 
+% Description:  This datafile contains 20 observations (10 pairs of twins) on 9 variables.  This data set can be used to demonstrate simple linear regression and correlation.
+% 
+% 
+% Variable Names in order from left to right: 
+% 	CCMIDSA: Corpus Collasum Surface Area (cm2)
+% 	FIQ: Full-Scale IQ
+% 	HC: Head Circumference (cm)
+% 	ORDER: Birth Order
+% 	PAIR: Pair ID (Genotype)
+% 	SEX: Sex (1=Male 2=Female)
+% 	TOTSA: Total Surface Area (cm2)
+% 	TOTVOL: Total Brain Volume (cm3)
+% 	WEIGHT: Body Weight (kg)
+% 
+% 
+% 
+% Therese Stukel
+% Dartmouth Hitchcock Medical Center
+% One Medical Center Dr.
+% Lebanon, NH 03756
+% e-mail: stukel@dartmouth.edu
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: 2
+%
+
+@relation iq_brain_size
+
+@attribute CCMIDSA REAL
+@attribute FIQ INTEGER
+@attribute HC REAL
+@attribute ORDER {1,2}
+@attribute PAIR {1,2,3,4,5,6,7,8,9,10}
+@attribute SEX {Female,Male}
+@attribute TOTSA REAL
+@attribute TOTVOL INTEGER
+@attribute WEIGHT REAL
+
+@data
+6.08,96,54.7,1,1,Female,1913.88,1005,57.607
+5.73,89,54.2,2,1,Female,1684.89,963,58.968
+6.22,87,53,1,2,Female,1902.36,1035,64.184
+5.8,87,52.9,2,2,Female,1860.24,1027,58.514
+7.99,101,57.8,1,3,Female,2264.25,1281,63.958
+8.42,103,56.9,2,3,Female,2216.4,1272,61.69
+7.44,103,56.6,1,4,Female,1866.99,1051,133.358
+6.84,96,55.3,2,4,Female,1850.64,1079,107.503
+6.48,127,53.1,1,5,Female,1743.04,1034,62.143
+6.43,126,54.8,2,5,Female,1709.3,1070,83.009
+7.99,101,57.2,2,6,Male,1689.6,1173,61.236
+8.76,96,57.2,1,6,Male,1806.31,1079,61.236
+6.32,93,57.2,2,7,Male,2136.37,1067,83.916
+6.32,88,57.2,1,7,Male,2018.92,1104,79.38
+7.6,94,55.8,2,8,Male,1966.81,1347,97.524
+7.62,85,57.2,1,8,Male,2154.67,1439,99.792
+6.03,97,57.2,1,9,Male,1767.56,1029,81.648
+6.59,114,56.5,2,9,Male,1827.92,1100,88.452
+7.52,113,59.2,2,10,Male,1773.83,1204,79.38
+7.67,124,58.5,1,10,Male,1971.63,1160,72.576

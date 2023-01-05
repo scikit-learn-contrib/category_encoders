@@ -1,14 +1,12 @@
 """Binary encoding"""
-
-import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
-
-import category_encoders as ce
+from functools import partialmethod
+from category_encoders import utils
+from category_encoders.basen import BaseNEncoder
 
 __author__ = 'willmcginnis'
 
 
-class BinaryEncoder(BaseEstimator, TransformerMixin):
+class BinaryEncoder(BaseNEncoder):
     """Binary encoding for categorical variables, similar to onehot, but stores categories as binary bitstrings.
 
     Parameters
@@ -35,121 +33,33 @@ class BinaryEncoder(BaseEstimator, TransformerMixin):
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
+    >>> from sklearn.datasets import fetch_openml
+    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
+    >>> enc = BinaryEncoder(cols=['CentralAir', 'Heating']).fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 506 entries, 0 to 505
-    Data columns (total 18 columns):
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    CHAS_0     506 non-null int64
-    CHAS_1     506 non-null int64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
-    RAD_0      506 non-null int64
-    RAD_1      506 non-null int64
-    RAD_2      506 non-null int64
-    RAD_3      506 non-null int64
-    RAD_4      506 non-null int64
-    TAX        506 non-null float64
-    PTRATIO    506 non-null float64
-    B          506 non-null float64
-    LSTAT      506 non-null float64
-    dtypes: float64(11), int64(7)
-    memory usage: 71.2 KB
+    RangeIndex: 1460 entries, 0 to 1459
+    Data columns (total 10 columns):
+     #   Column        Non-Null Count  Dtype  
+    ---  ------        --------------  -----  
+     0   Id            1460 non-null   float64
+     1   MSSubClass    1460 non-null   float64
+     2   MSZoning      1460 non-null   object 
+     3   LotFrontage   1201 non-null   float64
+     4   YearBuilt     1460 non-null   float64
+     5   Heating_0     1460 non-null   int64  
+     6   Heating_1     1460 non-null   int64  
+     7   Heating_2     1460 non-null   int64  
+     8   CentralAir_0  1460 non-null   int64  
+     9   CentralAir_1  1460 non-null   int64  
+    dtypes: float64(4), int64(5), object(1)
+    memory usage: 114.2+ KB
     None
 
     """
-
-    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True,
-                 handle_unknown='value', handle_missing='value'):
-        self.verbose = verbose
-        self.cols = cols
-        self.mapping = mapping
-        self.drop_invariant = drop_invariant
-        self.return_df = return_df
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
-        self.base_n_encoder = ce.BaseNEncoder(base=2, verbose=self.verbose, cols=self.cols, mapping=self.mapping,
-                                              drop_invariant=self.drop_invariant, return_df=self.return_df,
-                                              handle_unknown=self.handle_unknown, handle_missing=self.handle_missing)
-
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X and y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        self.base_n_encoder.fit(X, y, **kwargs)
-
-        return self
-
-    def transform(self, X, override_return_df=False):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
-
-        return self.base_n_encoder.transform(X)
-
-    def inverse_transform(self, X_in):
-        """
-        Perform the inverse transformation to encoded data.
-
-        Parameters
-        ----------
-        X_in : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-        p: array, the same size of X_in
-
-        """
-
-        return self.base_n_encoder.inverse_transform(X_in)
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        return self.base_n_encoder.get_feature_names()
+    encoding_relation = utils.EncodingRelation.ONE_TO_M
+    __init__ = partialmethod(BaseNEncoder.__init__, base=2)

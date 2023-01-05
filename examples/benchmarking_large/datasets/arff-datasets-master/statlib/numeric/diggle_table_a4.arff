@@ -1,0 +1,38 @@
+% DATA-SETS FROM DIGGLE, P.J. (1990). TIME SERIES : A BIOSTATISTICAL
+% INTRODUCTION. Oxford University Press. 
+%
+% Table: Table A4 Growth of colonies of paramecium aurelium
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation diggle-Table_A4_Growth_of_colonies_of_paramecium_aurelium
+
+@attribute col_1 INTEGER
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 INTEGER
+@attribute col_5 INTEGER
+
+@data
+2,17,15,11,14
+3,29,36,37,34
+4,39,62,67,56
+5,63,84,134,94
+6,185,156,226,189
+7,258,234,306,266
+8,267,348,376,330
+9,392,370,485,416
+10,510,480,530,507
+11,570,520,650,580
+12,650,575,605,610
+13,560,400,580,513
+14,575,545,660,593
+15,650,560,460,557
+16,550,480,650,560
+17,480,510,575,522
+18,520,650,525,565
+19,500,500,550,517

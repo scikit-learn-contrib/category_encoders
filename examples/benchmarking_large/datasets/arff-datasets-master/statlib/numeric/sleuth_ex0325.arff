@@ -1,0 +1,52 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/ex0325.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-ex0325
+
+@attribute country {Algeria,Australia,Austria,Belgium,Britain,Canada,Denmark,Ecuador,Finland,France,Indonesia,Iran,Iraq,Ireland,Italy,Japan,Libya,Netherlands,NewZealand,Nigeria,Norway,Portugal,Saudi_Arabia,South_Africa,Sweden,Switzerland,United_States,Venezuela,West_Germany}
+@attribute life REAL
+@attribute income INTEGER
+@attribute code {1,2}
+
+@data
+Australia,71.0,3426,1
+Austria,70.4,3350,1
+Belgium,70.6,3346,1
+Canada,72.0,4751,1
+Denmark,73.3,5029,1
+Finland,69.8,3312,1
+France,72.3,3403,1
+West_Germany,70.3,5040,1
+Ireland,70.7,2009,1
+Italy,70.6,2298,1
+Japan,73.2,3292,1
+Netherlands,73.8,4103,1
+NewZealand,71.1,3723,1
+Norway,73.9,4102,1
+Portugal,68.1,956,1
+South_Africa,68.2,-32768,1
+Sweden,74.7,5596,1
+Switzerland,72.1,2963,1
+Britain,72.0,2503,1
+United_States,71.3,5523,1
+Algeria,50.7,430,2
+Ecuador,52.3,360,2
+Indonesia,47.5,110,2
+Iran,50.0,1280,2
+Iraq,51.6,560,2
+Libya,52.1,3010,2
+Nigeria,36.9,180,2
+Saudi_Arabia,42.3,1530,2
+Venezuela,66.4,1240,2

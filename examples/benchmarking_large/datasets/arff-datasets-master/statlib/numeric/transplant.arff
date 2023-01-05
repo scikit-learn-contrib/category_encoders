@@ -1,0 +1,169 @@
+% DATA FILE:
+% Data on patient deaths within 30 days of surgery in 131 U.S.
+% hospitals.  See Christiansen and Morris, Bayesian Biostatistics, D.
+% Berry and D. Stangl, editors, 1996, Marcel Dekker, Inc.
+% 
+% 
+% Data on 131 heart transplant hospitals in the US.  The 3646 transplants
+% took place during a 27 month period from October 1987 through December
+% 1989.  The columns are:  obs = hospital #, e = expected #
+% of deaths within 30 days of the transplant surgeries, z = number of
+% deaths within 30 days of surgery, n = # of patients receiving heart
+% transplant within this time period.  (Christiansen and Morris, Bayesian
+% Biostatistics, D.  Berry and D. Stangl, editors, 1996.) The patient
+% level data used to create this data set was provided by the United
+% Network for Organ Sharing, 1100 Boulders Parkway, Suite 500, P.O. Box
+% 13770, Richmond, VA, 23225.
+% 
+% The following data may be used for non-commercial purposes and can be
+% distributed freely.  If you use the data, please acknowledge StatLib,
+% the United Network for Organ Sharing, and Christiansen and Morris,
+% 1996.
+% 
+% 
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation transplant
+
+@attribute obs INTEGER
+@attribute e REAL
+@attribute z INTEGER
+@attribute n INTEGER
+
+@data
+1,0.057,0,1
+2,0.064,0,1
+3,0.064,0,1
+4,0.066,1,1
+5,0.462,0,1
+6,0.086,0,2
+7,0.114,0,2
+8,0.117,0,2
+9,0.118,0,2
+10,0.119,0,2
+11,0.126,0,2
+12,0.231,1,2
+13,0.261,1,2
+14,0.211,1,3
+15,0.216,1,3
+16,0.218,0,3
+17,0.648,1,3
+18,0.143,0,4
+19,0.144,2,4
+20,0.210,1,4
+21,0.244,0,4
+22,0.530,3,6
+23,0.796,2,6
+24,1.622,4,6
+25,0.561,2,7
+26,0.762,0,7
+27,1.222,1,7
+28,0.513,4,8
+29,0.532,0,8
+30,0.936,1,8
+31,0.503,1,9
+32,0.564,0,9
+33,0.572,2,9
+34,0.583,0,9
+35,0.722,0,9
+36,0.771,2,9
+37,1.873,4,9
+38,0.532,0,10
+39,0.584,0,10
+40,0.672,2,10
+41,0.722,1,10
+42,0.904,1,11
+43,1.236,0,11
+44,0.950,0,12
+45,1.405,1,12
+46,0.776,3,13
+47,1.013,0,13
+48,0.739,0,14
+49,1.770,1,14
+50,0.821,0,15
+51,1.115,2,15
+52,1.164,3,15
+53,1.164,0,15
+54,1.303,0,16
+55,1.774,3,16
+56,3.585,1,16
+57,1.193,1,17
+58,1.213,1,17
+59,1.232,1,17
+60,1.517,4,17
+61,1.520,3,17
+62,1.862,3,17
+63,1.888,1,17
+64,1.247,0,18
+65,1.381,2,18
+66,1.643,2,18
+67,1.660,4,18
+68,1.827,4,19
+69,1.486,3,20
+70,1.593,2,20
+71,2.265,4,20
+72,1.524,1,21
+73,1.759,3,21
+74,1.309,0,22
+75,1.529,4,24
+76,1.677,1,24
+77,1.654,2,25
+78,1.785,3,25
+79,1.979,4,25
+80,1.767,4,26
+81,2.465,2,26
+82,1.750,2,27
+83,2.458,4,27
+84,2.383,2,28
+85,2.717,3,28
+86,2.282,0,32
+87,2.115,0,33
+88,2.852,2,33
+89,2.856,5,33
+90,3.174,5,33
+91,2.369,1,35
+92,2.557,1,35
+93,3.859,3,35
+94,2.641,1,37
+95,2.741,1,38
+96,3.055,3,38
+97,3.513,1,38
+98,2.728,2,40
+99,3.354,6,40
+100,3.814,0,40
+101,4.014,2,41
+102,2.612,2,42
+103,2.815,1,43
+104,4.294,2,43
+105,3.450,8,44
+106,3.628,6,45
+107,4.219,1,45
+108,3.932,6,47
+109,4.082,4,47
+110,4.203,1,48
+111,4.022,3,51
+112,4.636,5,51
+113,5.571,2,56
+114,6.436,4,57
+115,5.344,3,60
+116,4.445,4,61
+117,4.705,5,61
+118,5.039,2,61
+119,6.043,6,68
+120,5.121,8,69
+121,11.260,5,69
+122,5.789,0,73
+123,6.044,6,74
+124,5.569,8,75
+125,6.130,7,75
+126,6.249,3,79
+127,7.002,3,91
+128,7.851,9,99
+129,9.573,7,104
+130,12.050,18,133
+131,12.131,17,152

@@ -1,0 +1,74 @@
+% This file contains data from Regression Analysis By Example, 2nd Edition,
+% by Samprit Chatterjee and Bertram Price, John Wiley, 1991.
+% Data sets have names of the form 'rabe.xxx' where xxx is the page number
+% in the book where the data occurs.
+% 
+% For additional information, Samprit Chatterjee can be reached using
+% "schatter@stern.nyu.edu".
+%
+% File: ../data/rabe/rabe.97
+%
+% Note: there were no information about the columns in the data set,
+%       hence automatically generated names
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation rabe-97
+
+@attribute col_1 INTEGER
+@attribute col_2 INTEGER
+@attribute col_3 INTEGER
+@attribute col_4 {0,1}
+@attribute col_5 INTEGER
+
+@data
+1,1,1,1,13876
+2,1,3,0,11608
+3,1,3,1,18701
+4,1,2,0,11283
+5,1,3,0,11767
+6,2,2,1,20872
+7,2,2,0,11772
+8,2,1,0,10535
+9,2,3,0,12195
+10,3,2,0,12313
+11,3,1,1,14975
+12,3,2,1,21371
+13,3,3,1,19800
+14,4,1,0,11417
+15,4,3,1,20263
+16,4,3,0,13231
+17,4,2,0,12884
+18,5,2,0,13245
+19,5,3,0,13677
+20,5,1,1,15965
+21,6,1,0,12336
+22,6,3,1,21352
+23,6,2,0,13839
+24,6,2,1,22884
+25,7,1,1,16978
+26,8,2,0,14803
+27,8,1,1,17404
+28,8,3,1,22184
+29,8,1,0,13548
+30,10,1,0,14467
+31,10,2,0,15942
+32,10,3,1,23174
+33,10,2,1,23780
+34,11,2,1,25410
+35,11,1,0,14861
+36,12,2,0,16882
+37,12,3,1,24170
+38,13,1,0,15990
+39,13,2,1,26330
+40,14,2,0,17949
+41,15,3,1,25685
+42,16,2,1,27837
+43,16,2,0,18838
+44,16,1,0,17483
+45,17,2,0,19207
+46,20,1,0,19346

@@ -1,0 +1,309 @@
+% February 23, 1982
+% 
+% The 1982 annual meetings of the American Statistical Association (ASA)
+% will be held August 16-19, 1982 in Cincinnati.  At that meeting, the ASA
+% Committee on Statistical Graphics plans to sponsor an "Exposition of 
+% Statistical Graphics Technology."  The purpose of this activity is to
+% more fully inform the ASA membership about the capabilities and uses of
+% computer graphcis in statistical work.   This letter is to invite you to 
+% participate in the Exposition.
+% 
+% Attached is a set of biomedical data containing 209 observations (134
+% for "normals" and 75 for "carriers").  Each vendor of provider of
+% statistical graphics software participating in the Exposition is to
+% analyze these data using their software and to prepare tabular, graphical
+% and text output illustrating the use of graphics in these analyses and
+% summarizing their conclusions.  The tabular and graphical materials must be
+% direct computer output from the statistical graphics software; the
+% textual descriptions and summaries need not be.  The total display space
+% available to each participant at the meeting will be a standard poster-
+% board (approximately 4' x 2 1/2').  All entries will be displayed in one
+% location at the meetings, together with brief written commentary by
+% the committee summarizing the results of this activity.
+% 
+% Reference
+% 
+% Exposition of Statistical Graphics Technology,
+% L. H. Cox, M. M. Johnson, K. Kafadar,
+% ASA Proc Stat. Comp Section, 1982, pp 55-56.
+% Enclosures
+% 
+% 
+% THE DATA
+% 
+%    The following data arose in a study to develop screening methods to
+% identify carriers of a rare genetic disorder. Four measurements m1,
+% m2, m3, m4 were made on blood samples. One of these, m1, has been used
+% before.
+%    Because the disease is rare, there are only a few carriers of
+% the disease from whom data are available. The data come in two files,
+% one for normals and one for carriers of the disease. A description of
+% the files is provided. The data have been stripped of the names and
+% other identifiers. Otherwise the data are as received by the analyst.
+% 
+% 
+% PURPOSE OF THE ANALYSIS
+% 
+%    The purpose of the analysis is to develop a screening procedure to
+% detect carriers and to describe its effectiveness.  Experts in the
+% field have noted that young people tend to have higher measurements.
+% The laboratory which prepared the measurements is worried that there
+% may be a systematic drift over time in their measurement process.
+% These effects should be considered in the analysis.  Can graphical
+% displays show the differences between the distributions of carriers
+% and normals?
+% 
+%             
+% FILE DESCRIPTION
+% 
+% 
+% Column	Content
+% 
+% 1	Observation number (sequence number per patient)
+%         Note that there are several samples per patient
+%         for some patients.
+% 2-8	Blank
+% 9-12	Hospital identification number for blood sample
+% 13-18	Blank
+% 19-20	Age of patient
+% 21-26	Blank
+% 27-32	Date that blood sample was taken (mmddyy)
+%         Note that all day entries are 00.
+% 33-39	Blank
+% 40-43	ml (measurement 1) sss.s
+% 44-50	Blank
+% 51-54	m2 (measurement 2) xxx.x Eight missing data points.
+% 55-61	Blank
+% 62-65	m3 (measurement 3) xxx.x
+% 66-72	Blank
+% 73-75	m4 (measurement 4) xxx Seven missing data points.
+% 
+%
+%
+% Information about the dataset
+% CLASSTYPE: nominal
+% CLASSINDEX: last
+%
+
+@relation biomed
+
+@attribute Observation_number {1,2,3,4,5,6,7}
+@attribute Hospital_identification_number_for_blood_sample INTEGER
+@attribute Age_of_patient INTEGER
+@attribute Date_that_blood_sample_was_taken INTEGER
+@attribute ml REAL
+@attribute m2 REAL
+@attribute m3 REAL
+@attribute m4 INTEGER
+@attribute class {carrier,normal}
+
+@data
+1,1027,30,100078,167.0,89.0,25.6,364,carrier
+1,1013,41,100078,104.0,81.0,26.8,245,carrier
+1,1324,22,080079,30.0,108.0,8.8,284,carrier
+2,1332,22,080079,44.0,104.0,17.4,172,carrier
+1,966,20,100078,65.0,87.0,23.8,198,carrier
+1,979,42,090078,440.0,107.0,20.2,239,carrier
+1,1327,59,080079,58.0,88.2,11.0,259,carrier
+1,978,35,090078,129.0,93.1,18.3,188,carrier
+2,1290,36,060079,104.0,87.5,16.7,256,carrier
+3,1139,35,020079,122.0,88.5,21.6,263,carrier
+4,1487,36,110079,144.0,?,24.4,329,carrier
+1,1193,29,040079,265.0,83.5,16.1,136,carrier
+2,1513,30,120079,510.0,?,60.2,272,carrier
+1,1208,27,040079,285.0,79.5,36.4,245,carrier
+2,1395,27,090079,25.0,91.0,49.1,209,carrier
+1,1209,28,040079,124.0,92.0,32.2,298,carrier
+1,947,29,080078,53.0,76.0,14.0,174,carrier
+2,1153,30,020079,46.0,71.0,16.9,197,carrier
+3,1311,30,070079,40.0,85.5,12.7,201,carrier
+4,1325,30,080079,41.0,90.0,9.7,342,carrier
+5,1536,31,010080,45.0,?,13.8,217,carrier
+1,923,31,060078,657.0,104.0,110.0,358,carrier
+2,1156,32,020079,465.0,86.5,63.7,412,carrier
+3,1266,32,050079,485.0,83.5,73.0,382,carrier
+4,1496,32,120079,610.0,?,111.7,593,carrier
+1,1135,37,020079,168.0,82.5,23.3,261,carrier
+1,914,38,060078,286.0,109.5,31.9,260,carrier
+2,1124,39,010079,388.0,91.0,41.6,204,carrier
+3,1398,39,090079,148.0,105.2,18.8,221,carrier
+1,913,34,060078,73.0,105.5,17.0,285,carrier
+2,1223,35,040079,36.0,92.8,22.0,308,carrier
+3,1531,36,010080,55.0,?,20.7,262,carrier
+1,970,58,080078,19.0,100.5,10.9,196,carrier
+2,1155,58,020079,34.0,98.5,19.9,299,carrier
+3,1538,59,010080,25.0,?,9.2,316,carrier
+1,1109,38,010079,113.0,97.0,18.8,216,carrier
+1,1354,30,080079,57.0,105.0,12.9,155,carrier
+1,949,42,080078,78.0,118.0,15.5,212,carrier
+2,1066,43,110078,73.0,104.0,20.6,201,carrier
+1,1168,29,030079,69.0,111.0,16.0,175,carrier
+2,1447,30,100079,177.0,103.5,19.8,241,carrier
+1,911,35,060078,48.0,98.0,16.4,233,carrier
+2,951,35,070078,34.0,96.5,10.4,122,carrier
+3,1009,35,090078,42.0,100.1,17.1,184,carrier
+1,1358,44,090079,109.0,81.0,25.3,227,carrier
+1,1115,35,090079,925.0,81.0,62.9,279,carrier
+2,1203,35,040079,1288.0,82.0,51.6,368,carrier
+3,1381,36,090079,325.0,76.3,33.9,413,carrier
+1,929,53,060078,59.0,93.0,22.2,240,carrier
+2,1236,54,040079,69.0,92.6,20.9,243,carrier
+1,1202,30,040079,363.0,91.3,36.0,325,carrier
+1,1050,35,110078,37.0,84.0,12.8,156,carrier
+1,1289,53,060079,101.0,77.5,11.7,280,carrier
+1,1173,41,030079,99.0,93.2,18.6,156,carrier
+2,1008,40,090078,125.0,90.5,19.4,438,carrier
+3,1328,42,080079,52.0,93.3,11.2,272,carrier
+1,1303,59,060079,560.0,106.0,21.0,345,carrier
+1,956,31,080078,85.0,94.0,20.1,198,carrier
+2,1253,32,050079,79.0,?,9.0,137,carrier
+3,1302,32,060079,72.0,88.0,8.3,166,carrier
+1,953,52,060078,197.0,91.5,25.2,236,carrier
+2,1163,52,030078,242.0,85.5,16.6,168,carrier
+3,1334,53,080079,245.0,89.5,22.7,269,carrier
+1,1030,39,100078,154.0,103.5,21.3,296,carrier
+2,1306,39,060079,228.0,104.0,10.2,236,carrier
+3,1493,40,120079,123.0,?,25.4,275,carrier
+1,1323,43,080079,80.0,90.5,12.1,269,carrier
+1,902,44,060078,28.0,104.0,22.0,142,carrier
+2,1296,45,060079,35.0,86.3,14.4,184,carrier
+1,1249,33,050079,57.0,88.0,8.9,190,carrier
+1,955,26,110078,326.0,98.0,27.1,358,carrier
+2,1307,26,060079,700.0,90.0,49.1,343,carrier
+1,984,61,090078,100.0,101.0,11.8,301,carrier
+2,1141,61,020079,80.0,97.5,15.1,262,carrier
+1,1305,48,060079,115.0,79.0,14.2,258,carrier
+1,1007,22,060079,52.0,83.5,10.9,176,normal
+1,786,32,080078,20.0,77.0,11.0,200,normal
+1,778,36,070078,28.0,86.5,13.2,171,normal
+1,1306,22,110079,30.0,104.0,22.6,230,normal
+1,895,23,010078,40.0,83.0,15.2,205,normal
+1,987,30,050079,24.0,78.8,9.6,151,normal
+1,789,27,080078,15.0,87.0,13.5,232,normal
+1,825,30,110078,22.0,91.0,17.5,198,normal
+1,1296,25,100079,42.0,65.5,13.3,216,normal
+1,906,26,020079,130.0,80.3,17.1,211,normal
+2,933,26,030079,48.0,85.2,22.7,160,normal
+3,1246,27,070079,31.0,86.5,6.9,162,normal
+4,671,25,100077,41.0,87.3,15.0,?,normal
+1,818,26,100078,47.0,53.0,14.6,131,normal
+2,921,27,030079,36.0,56.0,18.2,105,normal
+3,1253,27,070079,24.0,57.5,5.6,130,normal
+1,941,31,040079,34.0,92.7,7.9,140,normal
+2,1287,31,090079,38.0,96.0,12.6,158,normal
+1,1301,35,100079,40.0,104.6,16.1,209,normal
+1,948,28,040079,59.0,88.0,9.9,128,normal
+2,1259,28,080079,75.0,81.0,10.1,177,normal
+3,1289,28,090079,72.0,66.3,16.4,156,normal
+1,773,27,070078,42.0,77.0,15.3,163,normal
+2,934,27,030079,30.0,80.2,8.1,100,normal
+3,1022,28,060079,24.0,87.0,3.5,132,normal
+1,667,31,110077,29.0,94.0,11.8,?,normal
+1,801,24,090078,26.0,84.5,20.7,145,normal
+1,1262,23,080079,65.0,75.0,19.9,187,normal
+1,938,27,030079,34.0,86.3,11.8,120,normal
+1,903,25,020079,37.0,73.3,13.0,254,normal
+1,916,34,030079,73.0,57.4,7.4,107,normal
+2,1249,34,070079,87.0,76.3,6.0,87,normal
+1,1218,25,070079,35.0,71.0,8.8,186,normal
+1,779,20,070078,31.0,61.5,9.9,172,normal
+1,990,20,050079,62.0,81.0,10.2,181,normal
+1,1001,31,060079,48.0,79.0,16.8,182,normal
+1,1250,31,070079,40.0,82.5,6.4,151,normal
+1,1219,26,070079,55.0,85.5,10.9,216,normal
+1,1248,26,070079,32.0,73.8,8.6,147,normal
+1,1307,21,110079,26.0,79.3,16.4,123,normal
+1,769,27,060078,25.0,91.0,10.3,135,normal
+2,1016,27,060079,22.0,84.0,2.8,145,normal
+1,774,26,070078,30.0,76.0,17.1,145,normal
+2,917,26,030079,35.0,76.7,10.9,105,normal
+3,1255,26,070079,34.0,78.0,8.0,140,normal
+1,813,31,100078,27.0,90.0,15.6,167,normal
+2,920,31,030079,22.0,71.5,11.8,98,normal
+3,1012,31,060079,22.0,73.5,5.1,184,normal
+1,1285,25,090079,72.0,80.5,12.0,225,normal
+1,669,22,120077,22.0,85.5,15.0,?,normal
+1,782,35,070078,51.0,70.0,16.6,146,normal
+2,909,36,020079,30.0,66.7,15.3,124,normal
+3,1247,36,070079,23.0,66.3,4.4,142,normal
+1,943,33,040079,67.0,98.0,9.3,225,normal
+1,804,27,090078,50.0,69.0,15.1,160,normal
+2,942,27,030079,92.0,68.0,16.5,115,normal
+1,1305,36,100079,55.0,78.2,21.8,188,normal
+1,765,25,060078,38.0,82.0,15.8,161,normal
+1,657,27,100077,22.0,99.0,10.8,?,normal
+1,918,33,030079,27.0,100.0,10.3,169,normal
+1,673,26,120077,28.0,93.5,7.0,?,normal
+1,790,22,080078,34.0,84.0,12.0,175,normal
+2,908,23,020079,44.0,81.3,10.5,159,normal
+3,1244,25,070079,32.0,86.5,6.7,149,normal
+1,1298,22,100079,35.0,59.4,11.3,130,normal
+1,949,31,050079,35.0,90.0,15.3,124,normal
+1,791,33,080078,31.0,75.5,13.7,160,normal
+2,824,33,110078,25.0,78.9,12.2,127,normal
+1,1003,27,060079,52.0,77.0,17.9,198,normal
+1,819,30,100078,34.0,75.0,15.4,171,normal
+1,1292,20,100079,53.0,93.2,22.3,349,normal
+1,914,30,020079,69.0,66.7,8.7,119,normal
+2,1220,30,070079,25.0,70.5,5.3,123,normal
+1,989,27,050079,24.0,89.5,16.1,176,normal
+1,1281,35,080079,21.0,108.5,9.8,148,normal
+1,768,26,060078,51.0,82.0,12.9,149,normal
+2,1011,27,060079,37.0,77.3,3.9,141,normal
+1,771,24,070078,24.0,82.0,14.2,123,normal
+2,910,25,020079,30.0,77.0,16.2,124,normal
+3,1245,26,070079,34.0,81.3,9.7,158,normal
+1,802,20,090078,22.0,102.0,10.3,177,normal
+1,1295,22,100079,32.0,79.2,5.8,190,normal
+1,675,38,120077,45.0,108.0,13.7,?,normal
+1,1294,34,100079,24.0,70.4,10.6,181,normal
+1,781,22,070078,20.0,72.0,11.9,110,normal
+1,762,22,060078,34.0,91.0,14.5,144,normal
+1,1290,24,090079,25.0,92.0,14.0,166,normal
+1,831,38,120078,26.0,109.0,8.9,163,normal
+2,896,39,010079,28.0,102.3,17.1,146,normal
+3,919,39,030079,21.0,92.4,10.3,197,normal
+4,927,39,030079,23.0,111.5,10.0,133,normal
+5,940,39,040079,26.0,92.6,12.3,196,normal
+6,947,39,040079,25.0,98.7,10.0,174,normal
+7,1010,39,060079,21.0,93.2,5.9,181,normal
+1,899,32,020079,56.0,72.0,9.9,227,normal
+2,1303,34,100079,48.0,83.0,13.7,228,normal
+1,763,22,060078,51.0,91.0,12.7,149,normal
+1,926,39,030079,18.0,95.0,11.3,66,normal
+1,1252,33,070079,28.8,104.0,6.9,169,normal
+1,1310,33,110079,41.0,105.5,15.1,252,normal
+1,1017,20,060079,40.0,81.0,6.1,167,normal
+1,776,22,070078,21.0,74.5,12.2,163,normal
+1,901,25,020078,95.0,69.8,7.3,169,normal
+2,1009,25,060079,59.0,72.5,10.7,314,normal
+1,913,36,020079,40.0,72.7,7.0,131,normal
+2,1260,36,080079,30.0,79.5,11.9,130,normal
+1,767,22,060078,48.0,76.0,16.6,133,normal
+1,1019,39,060079,39.0,88.5,7.6,168,normal
+1,936,30,030079,30.0,82.7,18.1,124,normal
+1,1261,37,070079,38.0,85.0,21.6,198,normal
+1,929,27,030079,27.0,87.2,12.5,99,normal
+2,1254,28,070079,32.0,76.3,5.6,159,normal
+1,911,29,020079,74.0,80.4,8.9,207,normal
+2,1015,30,060079,33.0,86.0,3.8,149,normal
+1,777,31,070078,34.0,80.5,11.1,149,normal
+2,904,31,020079,45.0,86.5,10.8,169,normal
+3,1021,32,060079,52.0,79.0,10.7,187,normal
+1,789,32,070078,28.0,82.5,17.4,144,normal
+2,829,32,120078,35.0,97.0,14.5,137,normal
+1,764,25,060078,37.0,93.0,15.3,167,normal
+2,907,26,020079,44.0,81.3,15.3,166,normal
+3,1014,26,060079,68.0,82.8,11.9,177,normal
+1,811,37,100078,97.5,34.0,12.0,203,normal
+1,785,25,070078,37.0,98.0,16.4,198,normal
+2,1217,25,070079,34.0,92.0,12.1,217,normal
+1,766,20,060078,30.0,80.0,12.9,129,normal
+1,770,25,060078,37.0,98.0,11.7,177,normal
+2,682,24,100077,26.0,94.2,11.7,?,normal
+1,798,34,090078,24.0,100.5,14.0,231,normal
+1,942,32,040079,41.0,78.5,10.9,191,normal
+2,1024,32,060079,43.0,87.5,6.0,136,normal
+1,810,32,100078,30.0,90.5,15.3,136,normal
+2,1258,33,070079,30.0,85.0,11.4,176,normal
+3,1300,33,100079,43.0,88.5,20.3,175,normal

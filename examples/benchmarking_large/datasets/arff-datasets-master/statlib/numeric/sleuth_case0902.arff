@@ -1,0 +1,120 @@
+% Contains 110 data sets from the book 'The Statistical Sleuth'
+% by Fred Ramsey and Dan Schafer; Duxbury Press, 1997.
+% (schafer@stat.orst.edu) [14/Oct/97] (172k)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/sleuth/case0902.asc
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation sleuth-case0902
+
+@attribute gest INTEGER
+@attribute brain REAL
+@attribute body REAL
+@attribute litter REAL
+@attribute species {Aardvark,Acouchis,African_elephant,Agoutis,Axis_deer,Badger,Barbary_sheep,Barking_deer,Bat-eared_fox,Beaked_whale,Beaver,Black_buck_antilope,Bush_baby,Canadian_beaver,Capybara,Caribou,Cattle,Chimpanzee,Chinchilla,Deer_mouse_I,Deer_mouse_II,Deer_mouse_III,Deer_mouse_IV,Dog,Dolphin,Domestic_cat,Domestic_goat,Domestic_pig,Domestic_sheep,Duikers,Eland,Elephant_shrew_I,Elephant_shrew_II,Elk,Fallow_deer,Flying_squirrel,Fur_seal,Gentle_lemur,Gorilla,Gray_fox,Grizzly_bear,Guinea_pig,Hamadryas_baboon,Hampster_I,Hampster_II,Harp_seal,Hedgehog,Hippopotamus,Hopping_mouse,Horse,House_mouse,Howler_monkey,Human_being,Hyrax,Jack_rabbit,Leaf_monkey,Lemur,Leopard,Linkajou,Lion,Llama,Long-nose_armadillo,Lynx,Nutria,Orangutan,Porcupine_I,Porcupine_II,Porcupine_III,Porpoise,Pygmy_gerbil,Pygmy_hippopotamus,Quokka,Raccoon,Rat_I,Rat_II,Red_deer,Red_fox,Rhesus_monkey_I,Rhesus_monkey_II,Ring-tail_monkey,Sambar,Sea_lion,Slow_loris,Spider_monkey_I,Spider_monkey_II,Tapir,Tiger,Tree_shrew,Tree_squirrel,Vervet_guenon,Vicuna,Weddell_seal,Western_baboon,White-handed_gibbon,Wild_boar,Yak}
+
+@data
+26,17.50,3.5,1.0,Quokka
+34,3.50,0.93,4.6,Hedgehog
+46,3.15,0.15,3.0,Tree_shrew
+51,1.14,0.049,1.5,Elephant_shrew_I
+46,1.37,0.064,1.5,Elephant_shrew_II
+135,22.00,2.1,1.0,Lemur
+90,12.80,1.2,1.2,Slow_loris
+135,9.90,0.7,1.0,Bush_baby
+139,54.00,7.7,1.0,Howler_monkey
+180,73.00,3.7,1.0,Ring-tail_monkey
+140,114.00,9.1,1.0,Spider_monkey_I
+140,109.00,7.7,1.0,Spider_monkey_II
+145,7.80,0.22,2.0,Gentle_lemur
+175,84.60,6.0,1.0,Rhesus_monkey_I
+165,107.00,8.7,1.1,Rhesus_monkey_II
+180,183.00,21.0,1.0,Hamadryas_baboon
+180,179.00,32.0,1.0,Western_baboon
+195,67.00,4.6,1.0,Vervet_guenon
+168,65.50,5.8,1.0,Leaf_monkey
+210,102.00,5.5,1.0,White-handed_gibbon
+270,343.00,37.0,1.0,Orangutan
+230,360.00,45.0,1.0,Chimpanzee
+265,406.00,140.0,1.0,Gorilla
+270,1300.00,65.0,1.0,Human_being
+120,12.00,3.7,4.0,Long-nose_armadillo
+31,9.60,2.2,5.0,Aardvark
+41,13.30,2.9,2.5,Jack_rabbit
+38,6.23,0.33,3.0,Tree_squirrel
+40,1.89,0.052,3.1,Flying_squirrel
+128,40.00,20.0,2.9,Canadian_beaver
+128,45.00,25.0,4.0,Beaver
+23,0.68,0.027,3.7,Deer_mouse_I
+23,0.63,0.026,5.0,Deer_mouse_II
+24,0.52,0.017,5.0,Deer_mouse_III
+24,0.69,0.024,5.0,Deer_mouse_IV
+21,0.67,0.036,4.6,Hampster_I
+16,1.12,0.13,6.3,Hampster_II
+21,1.04,0.065,4.0,Pygmy_gerbil
+23,0.72,0.05,7.3,Rat_I
+21,2.38,0.34,8.0,Rat_II
+19,0.45,0.024,5.0,House_mouse
+27,1.18,0.15,5.6,Hopping_mouse
+112,37.00,11.0,1.2,Porcupine_I
+112,37.00,14.0,1.2,Porcupine_II
+113,24.00,6.6,1.0,Porcupine_III
+67,4.28,0.97,2.6,Guinea_pig
+123,76.00,30.0,3.0,Capybara
+104,20.30,2.8,1.3,Agoutis
+98,9.90,0.78,1.2,Acouchis
+110,5.25,0.43,2.0,Chinchilla
+132,23.00,5.0,5.5,Nutria
+360,1600.00,160.0,1.0,Dolphin
+270,537.00,56.0,1.0,Porpoise
+63,70.20,8.5,4.0,Dog
+52,48.00,6.0,4.0,Red_fox
+63,37.30,3.8,3.7,Gray_fox
+65,28.50,3.2,4.0,Bat-eared_fox
+219,400.00,250.0,2.3,Grizzly_bear
+240,500.00,250.0,1.8,Beaked_whale
+63,41.60,5.3,3.5,Raccoon
+77,31.20,2.0,1.1,Linkajou
+60,53.00,6.0,2.2,Badger
+63,28.40,2.5,4.0,Domestic_cat
+60,75.00,12.0,2.5,Lynx
+92,157.00,46.0,2.5,Leopard
+108,260.00,180.0,3.0,Lion
+104,302.00,210.0,3.0,Tiger
+254,355.00,250.0,1.0,Fur_seal
+343,363.00,100.0,1.0,Sea_lion
+240,442.00,110.0,1.0,Harp_seal
+310,550.00,400.0,1.0,Weddell_seal
+655,4480.00,2800.0,1.0,African_elephant
+225,20.50,3.8,2.4,Hyrax
+330,712.00,480.0,1.0,Horse
+390,250.00,230.0,1.0,Tapir
+120,185.00,150.0,4.0,Wild_boar
+115,180.00,190.0,8.0,Domestic_pig
+240,590.00,1400.0,1.0,Hippopotamus
+205,260.00,150.0,1.0,Pygmy_hippopotamus
+330,225.00,93.0,1.0,Llama
+300,198.00,45.0,1.1,Vicuna
+183,124.00,16.0,1.1,Barking_deer
+240,223.00,80.0,1.0,Fallow_deer
+218,219.00,89.0,1.0,Axis_deer
+255,435.00,200.0,1.0,Red_deer
+235,365.00,120.0,1.0,Elk
+246,383.00,120.0,1.1,Sambar
+225,288.00,110.0,1.0,Caribou
+255,480.00,560.0,1.0,Eland
+255,334.00,250.0,1.0,Yak
+280,456.00,520.0,1.0,Cattle
+120,93.00,13.0,1.0,Duikers
+180,200.00,39.0,1.0,Black_buck_antilope
+158,210.00,66.0,1.2,Barbary_sheep
+150,125.00,49.0,2.4,Domestic_sheep
+151,106.00,30.0,2.0,Domestic_goat

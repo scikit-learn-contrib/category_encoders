@@ -1,21 +1,22 @@
 """Count Encoder"""
-from __future__ import division
-
 import numpy as np
 import pandas as pd
 import category_encoders.utils as util
+from category_encoders.ordinal import OrdinalEncoder
 
 from copy import copy
-from sklearn.base import BaseEstimator, TransformerMixin
 
 
 __author__ = 'joshua t. dunn'
 
 
-class CountEncoder(BaseEstimator, TransformerMixin):
+class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+    prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_ONE
+
     def __init__(self, verbose=0, cols=None, drop_invariant=False,
-                 return_df=True, handle_unknown=None,
-                 handle_missing='count',
+                 return_df=True, handle_unknown='value',
+                 handle_missing='value',
                  min_group_size=None, combine_min_nan_groups=None,
                  min_group_name=None, normalize=False):
         """Count encoding for categorical features.
@@ -38,84 +39,76 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             (otherwise it will be a numpy array).
         handle_missing: str
             how to handle missing values at fit time. Options are 'error', 'return_nan',
-            and 'count'. Default 'count', which treat NaNs as a countable category at
+            and 'value'. Default 'value', which treat NaNs as a countable category at
             fit time.
-        handle_unknown: str, int or dict of.
+        handle_unknown: str, int or dict of {column : option, ...}.
             how to handle unknown labels at transform time. Options are 'error'
-            'return_nan' and an int. Defaults to None which uses NaN behaviour
+            'return_nan', 'value' and int. Defaults to None which uses NaN behaviour
             specified at fit time. Passing an int will fill with this int value.
-        normalize: bool or dict of.
+        normalize: bool or dict of {column : bool, ...}.
             whether to normalize the counts to the range (0, 1). See Pandas `value_counts`
             for more details.
-        min_group_size: int, float or dict of.
+        min_group_size: int, float or dict of {column : option, ...}.
             the minimal count threshold of a group needed to ensure it is not
-            combined into a "leftovers" group. If float in the range (0, 1),
+            combined into a "leftovers" group. Default value is 0.01. 
+            If float in the range (0, 1),
             `min_group_size` is calculated as int(X.shape[0] * min_group_size).
             Note: This value may change type based on the `normalize` variable. If True
             this will become a float. If False, it will be an int.
-        min_group_name: None, str or dict of.
+        min_group_name: None, str or dict of {column : option, ...}.
             Set the name of the combined minimum groups when the defaults become
             too long. Default None. In this case the category names will be joined
             alphabetically with a `_` delimiter.
-            Note: The default name can be long ae may keep changing, for example, 
+            Note: The default name can be long and may keep changing, for example, 
             in cross-validation.
-        combine_min_nan_groups: bool or dict of.
+        combine_min_nan_groups: bool or dict of {column : bool, ...}.
             whether to combine the leftovers group with NaN group. Default True. Can
             also be forced to combine with 'force' meaning small groups are effectively
-            counted as NaNs. Force can only used when 'handle_missing' is 'count' or 'error'.
-            Note: Will not force if it creates an binary or invariant column.
+            counted as NaNs. Force can only be used when 'handle_missing' is 'value' or 'error'.
+            Note: Will not force if it creates a binary or invariant column.
 
 
         Example
         -------
         >>> import pandas as pd
-        >>> from sklearn.datasets import load_boston
+        >>> from sklearn.datasets import fetch_openml
         >>> from category_encoders import CountEncoder
 
-        >>> bunch = load_boston()
+        >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+        >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
         >>> y = bunch.target
-        >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-        >>> enc = CountEncoder(cols=['CHAS', 'RAD']).fit(X, y)
+        >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
+        >>> enc = CountEncoder(cols=['CentralAir', 'Heating']).fit(X, y)
         >>> numeric_dataset = enc.transform(X)
-
         >>> print(numeric_dataset.info())
         <class 'pandas.core.frame.DataFrame'>
-        RangeIndex: 506 entries, 0 to 505
-        Data columns (total 13 columns):
-        CRIM       506 non-null float64
-        ZN         506 non-null float64
-        INDUS      506 non-null float64
-        CHAS       506 non-null int64
-        NOX        506 non-null float64
-        RM         506 non-null float64
-        AGE        506 non-null float64
-        DIS        506 non-null float64
-        RAD        506 non-null int64
-        TAX        506 non-null float64
-        PTRATIO    506 non-null float64
-        B          506 non-null float64
-        LSTAT      506 non-null float64
-        dtypes: float64(11), int64(2)
-        memory usage: 51.5 KB
+        RangeIndex: 1460 entries, 0 to 1459
+        Data columns (total 7 columns):
+         #   Column       Non-Null Count  Dtype  
+        ---  ------       --------------  -----  
+         0   Id           1460 non-null   float64
+         1   MSSubClass   1460 non-null   float64
+         2   MSZoning     1460 non-null   object 
+         3   LotFrontage  1201 non-null   float64
+         4   YearBuilt    1460 non-null   float64
+         5   Heating      1460 non-null   int64  
+         6   CentralAir   1460 non-null   int64  
+        dtypes: float64(4), int64(2), object(1)
+        memory usage: 80.0+ KB
         None
 
         References
         ----------
 
         """
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.drop_cols = []
-        self.verbose = verbose
-        self.cols = cols
-        self._dim = None
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
         self.normalize = normalize
         self.min_group_size = min_group_size
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
+        self.ordinal_encoder = None
 
         self._check_set_create_attrs()
 
@@ -127,90 +120,48 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self._handle_unknown = {}
         self._handle_missing = {}
 
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X.
-
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-        self : encoder
-            Returns self.
-        """
-
-        # first check the type
-        X = util.convert_input(X)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
+    def _fit(self, X, y=None, **kwargs):
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            handle_unknown='value',
+            handle_missing='value'
+        )
+        self.ordinal_encoder = self.ordinal_encoder.fit(X)
+        X_ordinal = self.ordinal_encoder.transform(X)
 
         self._check_set_create_dict_attrs()
-
-        self._fit_count_encode(X, y)
-
-        if self.drop_invariant:
-            self.drop_cols = []
-            X_temp = self.transform(X)
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [
-                x for x in generated_cols if X_temp[x].var() <= 10e-5
-            ]
-
+        self._fit_count_encode(X_ordinal, y)
         return self
 
-    def transform(self, X, y=None):
-        """Perform the transformation to new categorical data.
+    def _transform(self, X):
+        for col in self.cols:
+            # Treat None as np.nan
+            X[col] = pd.Series([el if el is not None else np.NaN for el in X[col]], index=X[col].index)
+            if self.handle_missing == "value":
+                if not util.is_category(X[col].dtype):
+                    X[col] = X[col].fillna(np.nan)
 
-        Parameters
-        ----------
-        X : array-like, shape = [n_samples, n_features]
-        y : array-like, shape = [n_samples]
-            
-        Returns
-        -------
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-        """
+            if self._min_group_size is not None:
+                if col in self._min_group_categories.keys():
+                    X[col] = X[col].map(self._min_group_categories[col]).fillna(X[col])
 
-        if self._dim is None:
-            raise ValueError(
-                'Must train encoder before it can be used to transform data.'
-            )
+            X[col] = X[col].astype(object).map(self.mapping[col])
+            if isinstance(self._handle_unknown[col], (int, np.integer)):
+                X[col] = X[col].fillna(self._handle_unknown[col])
 
-        # first check the type
-        X = util.convert_input(X)
+            elif (self._handle_unknown[col] == 'value'
+                  and X[col].isna().any()
+                  and self._handle_missing[col] != 'return_nan'
+            ):
+                X[col].replace(np.nan, 0, inplace=True)
 
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError(
-                'Unexpected input dimension %d, expected %d'
-                % (X.shape[1], self._dim,)
-            )
-
-        if not self.cols:
-            return X
-
-        X, _ = self._transform_count_encode(X, y)
-
-        if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
-
-        if self.return_df:
-            return X
-        else:
-            return X.values
+            elif (
+                    self._handle_unknown[col] == 'error'
+                    and X[col].isnull().any()
+            ):
+                raise ValueError(f'Missing data found in column {col} at transform time.')
+        return X
 
     def _fit_count_encode(self, X_in, y):
         """Perform the count encoding."""
@@ -222,61 +173,20 @@ class CountEncoder(BaseEstimator, TransformerMixin):
         self.mapping = {}
 
         for col in self.cols:
-            if X[col].isnull().any():
-                if self._handle_missing[col] == 'error':
-                    raise ValueError(
-                        'Missing data found in column %s at fit time.'
-                        % (col,)
-                    )
-
-                elif self._handle_missing[col] not in ['count', 'return_nan',  'error', None]:
-                    raise ValueError(
-                        '%s key in `handle_missing` should be one of: '
-                        ' `count`, `return_nan` and `error` not `%s`.'
-                        % (col, str(self._handle_missing[col]))
-                    )
-
-            self.mapping[col] = X[col].value_counts(
-                normalize=self._normalize[col],
-                dropna=False
-            )
-
-            self.mapping[col].index = self.mapping[col].index.astype(object)
+            mapping_values = X[col].value_counts(normalize=self._normalize[col])
+            ordinal_encoding = [m["mapping"] for m in self.ordinal_encoder.mapping if m["col"] == col][0]
+            reversed_ordinal_enc = {v: k for k, v in ordinal_encoding.to_dict().items()}
+            mapping_values.index = mapping_values.index.map(reversed_ordinal_enc)
+            self.mapping[col] = mapping_values
 
             if self._handle_missing[col] == 'return_nan':
                 self.mapping[col][np.NaN] = np.NaN
+            
+            # elif self._handle_missing[col] == 'value':
+            #test_count.py failing     self.mapping[col].loc[-2] = 0
 
         if any([val is not None for val in self._min_group_size.values()]):
             self.combine_min_categories(X)
-
-    def _transform_count_encode(self, X_in, y):
-        """Perform the transform count encoding."""
-        X = X_in.copy(deep=True)
-        X.loc[:, self.cols] = X.fillna(value=pd.np.nan)
-
-        for col in self.cols:
-            if self._min_group_size is not None:
-                if col in self._min_group_categories.keys():
-                    X[col] = (
-                        X[col].map(self._min_group_categories[col])
-                        .fillna(X[col])
-                    )
-
-            X[col] = X[col].map(self.mapping[col])
-
-            if isinstance(self._handle_unknown[col], (int, np.integer)):
-                X[col] = X[col].fillna(self._handle_unknown[col])
-            elif (
-                self._handle_unknown[col] == 'error'
-                and X[col].isnull().any()
-            ):
-
-                raise ValueError(
-                    'Missing data found in column %s at transform time.'
-                    % (col,)
-                )
-
-        return X, self.mapping
 
     def combine_min_categories(self, X):
         """Combine small categories into a single category."""
@@ -348,14 +258,16 @@ class CountEncoder(BaseEstimator, TransformerMixin):
                 "'combine_min_nan_groups' == 'force' for all columns."
             )
         
+
         if (
             self.combine_min_nan_groups is not None
             and self.min_group_size is None
         ):
-            raise ValueError(
-                "`combine_min_nan_groups` only works when `min_group_size` "
-                "is set for all columns."
-            )
+            pass
+            # raise ValueError(
+            #     "`combine_min_nan_groups` only works when `min_group_size` "
+            #     "is set for all columns."
+            # )
 
         if (
             self.min_group_name is not None
@@ -376,8 +288,8 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             'min_group_name': None,
             'combine_min_nan_groups': True,
             'min_group_size': None,
-            'handle_unknown': 'count',
-            'handle_missing': None,
+            'handle_unknown': 'value',
+            'handle_missing': 'value',
         }
 
         for attr_name, attr_default in dict_attrs.items():
@@ -400,26 +312,17 @@ class CountEncoder(BaseEstimator, TransformerMixin):
             ):
                 raise ValueError(
                     "Cannot have `handle_missing` == 'return_nan' and "
-                    "'combine_min_nan_groups' == 'force' for columns `%s`."
-                    % (col,)
+                    f"'combine_min_nan_groups' == 'force' for columns `{col}`."
                 )
             
             if (
                 self._combine_min_nan_groups[col] is not True
                 and self._min_group_size[col] is None
             ):
-                raise ValueError(
-                    "`combine_min_nan_groups` only works when `min_group_size`"
-                    "is set for column %s."
-                    % (col,)
-                )
+                raise ValueError(f"`combine_min_nan_groups` only works when `min_group_size` is set for column {col}.")
 
             if (
                 self._min_group_name[col] is not None
                 and self._min_group_size[col] is None
             ):
-                raise ValueError(
-                    "`min_group_name` only works when `min_group_size`"
-                    "is set for column %s."
-                    % (col,)
-                )
+                raise ValueError(f"`min_group_name` only works when `min_group_size` is set for column {col}.")

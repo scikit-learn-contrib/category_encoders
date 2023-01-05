@@ -1,0 +1,118 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Science_budget
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Science_budget
+
+@attribute SCI_BUDGET INTEGER
+@attribute SCI_FACULTY INTEGER
+
+@data
+?,21
+49232,31
+26740,32
+53000,?
+207928,?
+?,12
+70000,27
+39760,19
+?,39
+?,30
+36822,24
+?,36
+177776,37
+271160,56
+135000,44
+?,40
+176619,32
+165875,53
+89073,41
+5000,11
+?,28
+63300,39
+67436,20
+?,19
+87000,22
+156986,41
+129194,41
+13700,?
+151802,35
+?,17
+88447,34
+?,33
+?,24
+36400,41
+150000,26
+27000,21
+151007,47
+21689,14
+3600,15
+?,24
+?,20
+131700,43
+41688,22
+115000,22
+33620,31
+105000,62
+?,15
+158754,35
+23000,19
+138648,40
+?,12
+?,33
+?,?
+?,?
+11320,12
+?,32
+?,47
+?,55
+15444,9
+60708,52
+94518,28
+240622,47
+23000,18
+256690,38
+200000,34
+249470,46
+185820,58
+82191,22
+?,29
+313847,45
+81821,27
+?,17
+44000,22
+?,35
+244645,50
+380475,71
+45772,21
+70000,22
+100000,24
+?,16
+?,27
+?,52
+?,33
+?,20
+90000,30
+?,31
+227219,48
+155000,36
+84314,37
+37200,36
+48316,18
+65639,31
+?,26
+?,11
+?,16
+?,19

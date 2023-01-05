@@ -2,14 +2,13 @@
 import numpy as np
 import pandas as pd
 import warnings
-from sklearn.base import BaseEstimator, TransformerMixin
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 
 __author__ = 'willmcginnis'
 
 
-class OneHotEncoder(BaseEstimator, TransformerMixin):
+class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     """Onehot (or dummy) coding for categorical features, produces one feature per category, each binary.
 
     Parameters
@@ -27,54 +26,55 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
         if True, category values will be included in the encoded column names. Since this can result in duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
         If False, category indices will be used instead of the category values.
     handle_unknown: str
-        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can cause
-        unexpected changes in dimension in some cases.
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
+
+        'error' will raise a `ValueError` at transform time if there are new categories.
+        'return_nan' will encode a new value as `np.nan` in every dummy column.
+        'value' will encode a new value as 0 in every dummy column.
+        'indicator' will add an additional dummy column (in both training and test data).
     handle_missing: str
-        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has nan values.  This can cause
-        unexpected changes in dimension in some cases.
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
+
+        'error' will raise a `ValueError` if missings are encountered.
+        'return_nan' will encode a missing value as `np.nan` in every dummy column.
+        'value' will encode a missing value as 0 in every dummy column.
+        'indicator' will treat missingness as its own category, adding an additional dummy column
+        (whether there are missing values in the training set or not).
 
     Example
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
-    >>> from sklearn.datasets import load_boston
-    >>> bunch = load_boston()
+    >>> from sklearn.datasets import fetch_openml
+    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
     >>> y = bunch.target
-    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-    >>> enc = OneHotEncoder(cols=['CHAS', 'RAD'], handle_unknown='indicator').fit(X, y)
+    >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
+    >>> enc = OneHotEncoder(cols=['CentralAir', 'Heating'], handle_unknown='indicator').fit(X, y)
     >>> numeric_dataset = enc.transform(X)
     >>> print(numeric_dataset.info())
     <class 'pandas.core.frame.DataFrame'>
-    RangeIndex: 506 entries, 0 to 505
-    Data columns (total 24 columns):
-    CRIM       506 non-null float64
-    ZN         506 non-null float64
-    INDUS      506 non-null float64
-    CHAS_1     506 non-null int64
-    CHAS_2     506 non-null int64
-    CHAS_-1    506 non-null int64
-    NOX        506 non-null float64
-    RM         506 non-null float64
-    AGE        506 non-null float64
-    DIS        506 non-null float64
-    RAD_1      506 non-null int64
-    RAD_2      506 non-null int64
-    RAD_3      506 non-null int64
-    RAD_4      506 non-null int64
-    RAD_5      506 non-null int64
-    RAD_6      506 non-null int64
-    RAD_7      506 non-null int64
-    RAD_8      506 non-null int64
-    RAD_9      506 non-null int64
-    RAD_-1     506 non-null int64
-    TAX        506 non-null float64
-    PTRATIO    506 non-null float64
-    B          506 non-null float64
-    LSTAT      506 non-null float64
-    dtypes: float64(11), int64(13)
-    memory usage: 95.0 KB
+    RangeIndex: 1460 entries, 0 to 1459
+    Data columns (total 15 columns):
+     #   Column         Non-Null Count  Dtype  
+    ---  ------         --------------  -----  
+     0   Id             1460 non-null   float64
+     1   MSSubClass     1460 non-null   float64
+     2   MSZoning       1460 non-null   object 
+     3   LotFrontage    1201 non-null   float64
+     4   YearBuilt      1460 non-null   float64
+     5   Heating_1      1460 non-null   int64  
+     6   Heating_2      1460 non-null   int64  
+     7   Heating_3      1460 non-null   int64  
+     8   Heating_4      1460 non-null   int64  
+     9   Heating_5      1460 non-null   int64  
+     10  Heating_6      1460 non-null   int64  
+     11  Heating_-1     1460 non-null   int64  
+     12  CentralAir_1   1460 non-null   int64  
+     13  CentralAir_2   1460 non-null   int64  
+     14  CentralAir_-1  1460 non-null   int64  
+    dtypes: float64(4), int64(10), object(1)
+    memory usage: 171.2+ KB
     None
 
     References
@@ -87,85 +87,36 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
     http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
 
     """
+    prefit_ordinal = True
+    encoding_relation = util.EncodingRelation.ONE_TO_N_UNIQUE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
                  handle_missing='value', handle_unknown='value', use_cat_names=False):
-        self.return_df = return_df
-        self.drop_invariant = drop_invariant
-        self.drop_cols = []
+        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
+                         handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping = None
-        self.verbose = verbose
-        self.cols = cols
         self.ordinal_encoder = None
-        self._dim = None
-        self.handle_unknown = handle_unknown
-        self.handle_missing = handle_missing
         self.use_cat_names = use_cat_names
-        self.feature_names = None
 
     @property
     def category_mapping(self):
         return self.ordinal_encoder.category_mapping
 
-    def fit(self, X, y=None, **kwargs):
-        """Fit encoder according to X and y.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number of samples
-            and n_features is the number of features.
-        y : array-like, shape = [n_samples]
-            Target values.
-
-        Returns
-        -------
-
-        self : encoder
-            Returns self.
-
-        """
-
-        # first check the type
-        X = util.convert_input(X)
-
-        self._dim = X.shape[1]
-
-        # if columns aren't passed, just use every string column
-        if self.cols is None:
-            self.cols = util.get_obj_cols(X)
-        else:
-            self.cols = util.convert_cols_to_list(self.cols)
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
+    def _fit(self, X, y=None, **kwargs):
+        oe_missing_strat = {
+            'error': 'error',
+            'return_nan': 'return_nan',
+            'value': 'value',
+            'indicator': 'return_nan',
+        }[self.handle_missing]
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
             cols=self.cols,
             handle_unknown='value',
-            handle_missing='value'
+            handle_missing=oe_missing_strat,
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         self.mapping = self.generate_mapping()
-
-        X_temp = self.transform(X, override_return_df=True)
-        self.feature_names = list(X_temp.columns)
-
-        if self.drop_invariant:
-            self.drop_cols = []
-            generated_cols = util.get_generated_cols(X, X_temp, self.cols)
-            self.drop_cols = [x for x in generated_cols if X_temp[x].var() <= 10e-5]
-            try:
-                [self.feature_names.remove(x) for x in self.drop_cols]
-            except KeyError as e:
-                if self.verbose > 0:
-                    print("Could not remove column from feature names."
-                    "Not found in generated cols.\n{}".format(e))
-
-        return self
 
     def generate_mapping(self):
         mapping = []
@@ -184,20 +135,26 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             index = []
             new_columns = []
 
-            for cat_name, class_ in values.iteritems():
+            append_nan_to_index = False
+            for cat_name, class_ in values.items():
+                if pd.isna(cat_name) and self.handle_missing == 'return_nan':
+                    # we don't want a mapping column if return_nan
+                    # but do add the index to the end
+                    append_nan_to_index = class_
+                    continue
                 if self.use_cat_names:
-                    n_col_name = str(col) + '_%s' % (cat_name,)
+                    n_col_name = f"{col}_{cat_name}"
                     found_count = found_column_counts.get(n_col_name, 0)
                     found_column_counts[n_col_name] = found_count + 1
                     n_col_name += '#' * found_count
                 else:
-                    n_col_name = str(col) + '_%s' % (class_,)
+                    n_col_name = f"{col}_{class_}"
 
                 index.append(class_)
                 new_columns.append(n_col_name)
 
             if self.handle_unknown == 'indicator':
-                n_col_name = str(col) + '_%s' % (-1,)
+                n_col_name = f"{col}_-1"
                 if self.use_cat_names:
                     found_count = found_column_counts.get(n_col_name, 0)
                     found_column_counts[n_col_name] = found_count + 1
@@ -205,7 +162,10 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 new_columns.append(n_col_name)
                 index.append(-1)
 
-            base_matrix = np.eye(N=len(index), dtype=np.int)
+            if append_nan_to_index:
+                index.append(append_nan_to_index)
+
+            base_matrix = np.eye(N=len(index), M=len(new_columns), dtype=int)
             base_df = pd.DataFrame(data=base_matrix, columns=new_columns, index=index)
 
             if self.handle_unknown == 'value':
@@ -214,7 +174,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 base_df.loc[-1] = np.nan
 
             if self.handle_missing == 'return_nan':
-                base_df.loc[values.loc[np.nan]] = np.nan
+                base_df.loc[-2] = np.nan
             elif self.handle_missing == 'value':
                 base_df.loc[-2] = 0
 
@@ -222,41 +182,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
 
         return mapping
 
-    def transform(self, X, override_return_df=False):
-        """Perform the transformation to new categorical data.
-
-        Parameters
-        ----------
-
-        X : array-like, shape = [n_samples, n_features]
-
-        Returns
-        -------
-
-        p : array, shape = [n_samples, n_numeric + N]
-            Transformed values with encoding applied.
-
-        """
-
-        if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
-
-        if self._dim is None:
-            raise ValueError(
-                'Must train encoder before it can be used to transform data.')
-
-        # first check the type
-        X = util.convert_input(X)
-
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError('Unexpected input dimension %d, expected %d' % (
-                X.shape[1], self._dim, ))
-
-        if not self.cols:
-            return X if self.return_df else X.values
-
+    def _transform(self, X):
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
@@ -264,15 +190,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
                 raise ValueError('Columns to be encoded can not contain new values')
 
         X = self.get_dummies(X)
-
-        if self.drop_invariant:
-            for col in self.drop_cols:
-                X.drop(col, 1, inplace=True)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.values
+        return X
 
     def inverse_transform(self, X_in):
         """
@@ -293,32 +211,31 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
         # first check the type and make deep copy
-        X = util.convert_input(X_in, columns=self.feature_names, deep=True)
+        X = util.convert_input(X_in, columns=self.feature_names_out_, deep=True)
 
         X = self.reverse_dummies(X, self.mapping)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
             if self.drop_invariant:
-                raise ValueError("Unexpected input dimension %d, the attribute drop_invariant should "
-                                 "be False when transforming the data" % (X.shape[1],))
+                raise ValueError(f"Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should "
+                                 "be False when transforming the data")
             else:
-                raise ValueError('Unexpected input dimension %d, expected %d' % (
-                    X.shape[1], self._dim, ))
+                raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
-        if not self.cols:
+        if not list(self.cols):
             return X if self.return_df else X.values
 
         for switch in self.ordinal_encoder.mapping:
             column_mapping = switch.get('mapping')
-            inverse = pd.Series(data=column_mapping.index, index=column_mapping.get_values())
+            inverse = pd.Series(data=column_mapping.index, index=column_mapping.values)
             X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
 
             if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
                 for col in self.cols:
                     if X[switch.get('col')].isnull().any():
                         warnings.warn("inverse_transform is not supported because transform impute "
-                                      "the unknown category nan when encode %s" % (col,))
+                                      f"the unknown category nan when encode {col}")
 
         return X if self.return_df else X.values
 
@@ -344,7 +261,7 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            base_df = mod.reindex(X[col])
+            base_df = mod.reindex(X[col].fillna(-2))
             base_df = base_df.set_index(X.index)
             X = pd.concat([base_df, X], axis=1)
 
@@ -388,21 +305,3 @@ class OneHotEncoder(BaseEstimator, TransformerMixin):
             out_cols = X.columns.values.tolist()
 
         return X
-
-    def get_feature_names(self):
-        """
-        Returns the names of all transformed / added columns.
-
-        Returns
-        -------
-        feature_names: list
-            A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-
-        """
-
-        if not isinstance(self.feature_names, list):
-            raise ValueError(
-                'Must transform data first. Affected feature names are not known before.')
-        else:
-            return self.feature_names

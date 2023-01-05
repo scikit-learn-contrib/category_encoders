@@ -1,0 +1,596 @@
+% Citation Request:
+%    This primary tumor domain was obtained from the University Medical Centre,
+%    Institute of Oncology, Ljubljana, Yugoslavia.  Thanks go to M. Zwitter and 
+%    M. Soklic for providing the data.  Please include this citation if you plan
+%    to use this database.
+% 
+% 1. Title: Primary Tumor Domain
+% 
+% 2. Sources:
+%      (a) Source:
+%      (b) Donors: Igor Kononenko, 
+%                  University E.Kardelj
+%                  Faculty for electrical engineering
+%                  Trzaska 25
+%                  61000 Ljubljana (tel.: (38)(+61) 265-161
+% 
+%                  Bojan Cestnik
+%                  Jozef Stefan Institute
+%                  Jamova 39
+%                  61000 Ljubljana
+%                  Yugoslavia (tel.: (38)(+61) 214-399 ext.287) 
+%      (c) Date: November 1988
+% 
+% 3. Past Usage: (sveral)
+%     1. Cestnik,G., Konenenko,I, & Bratko,I. (1987). Assistant-86: A
+%        Knowledge-Elicitation Tool for Sophisticated Users.  In I.Bratko
+%        & N.Lavrac (Eds.) Progress in Machine Learning, 31-45, Sigma Press.
+%        -- Assistant-86: 44% accuracy
+%     2. Clark,P. & Niblett,T. (1987). Induction in Noisy Domains.  In
+%        I.Bratko & N.Lavrac (Eds.) Progress in Machine Learning, 11-30,
+%        Sigma Press.
+%        -- Simple Bayes: 48% accuracy
+%        -- CN2 (95% threshold): 45%
+%     3. Michalski,R., Mozetic,I. Hong,J., & Lavrac,N. (1986).  The Multi-Purpose
+%        Incremental Learning System AQ15 and its Testing Applications to Three
+%        Medical Domains.  In Proceedings of the Fifth National Conference on
+%        Artificial Intelligence, 1041-1045. Philadelphia, PA: Morgan Kaufmann.
+%        -- Experts: 42% accuracy 
+%        -- AQ15: 29-41%
+% 
+% 4. Relevant Information:
+%      This is one of three domains provided by the Oncology Institute
+%      that has repeatedly appeared in the machine learning literature.
+%      (See also breast-cancer and lymphography.)
+% 
+% 5. Number of Instances: 339
+% 
+% 6. Number of Attributes: 18 including the class attribute
+% 
+% 7. Attribute Information: (class is location of tumor)
+%     --- NOTE: All attribute values in the database have been entered as
+%               numeric values corresponding to their index in the list
+%               of attribute values for that attribute domain as given below.
+%     1. class: lung, head & neck, esophasus, thyroid, stomach, duoden & sm.int,
+%               colon, rectum, anus, salivary glands, pancreas, gallblader,
+%               liver, kidney, bladder, testis, prostate, ovary, corpus uteri, 
+%               cervix uteri, vagina, breast
+%     2. age:   <30, 30-59, >=60
+%     3. sex:   male, female
+%     4. histologic-type: epidermoid, adeno, anaplastic
+%     5. degree-of-diffe: well, fairly, poorly
+%     6. bone: yes, no
+%     7. bone-marrow: yes, no
+%     8. lung: yes, no
+%     9. pleura: yes, no
+%    10. peritoneum: yes, no
+%    11. liver: yes, no
+%    12. brain: yes, no
+%    13. skin: yes, no
+%    14. neck: yes, no
+%    15. supraclavicular: yes, no
+%    16. axillar: yes, no
+%    17. mediastinum: yes, no
+%    18. abdominal: yes, no
+% 
+% 8. Missing Attribute Values: (? indicates unknown value)
+%     Attribute#: Number of missing values
+%     1: 0
+%     2: 0
+%     3: 1
+%     4: 67
+%     5: 155
+%     6: 0
+%     7: 0
+%     8: 0
+%     9: 0
+%     10: 0
+%     11: 0
+%     12: 0
+%     13: 1
+%     14: 0
+%     15: 0
+%     16: 1
+%     17: 0
+%     18: 0
+% 
+% 9. Class Distribution: 
+%     Class Index:   Number of instances in class:
+%               1:   84
+%               2:   20
+%               3:   9
+%               4:   14
+%               5:   39
+%               6:   1
+%               7:   14
+%               8:   6
+%               9:   0
+%              10:   2
+%              11:   28
+%              12:   16
+%              13:   7
+%              14:   24
+%              15:   2
+%              16:   1
+%              17:   10
+%              18:   29
+%              19:   6
+%              20:   2
+%              21:   1
+%              22:   24
+%
+%
+%
+%
+%
+% Relabeled values in attribute age
+%    From: 1                       To: '<30'               
+%    From: 2                       To: '30-59'             
+%    From: 3                       To: '>=60'              
+%
+%
+% Relabeled values in attribute sex
+%    From: 1                       To: male                
+%    From: 2                       To: female              
+%
+%
+% Relabeled values in attribute histologic-type
+%    From: 1                       To: epidermoid          
+%    From: 2                       To: adeno               
+%    From: 3                       To: anaplastic          
+%
+%
+% Relabeled values in attribute degree-of-diffe
+%    From: 1                       To: well                
+%    From: 2                       To: fairly              
+%    From: 3                       To: poorly              
+%
+%
+% Relabeled values in attribute bone
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute bone-marrow
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute lung
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute pleura
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute peritoneum
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute liver
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute brain
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute skin
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute neck
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute supraclavicular
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute axillar
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute mediastinum
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute abdominal
+%    From: 1                       To: yes                 
+%    From: 2                       To: no                  
+%
+%
+% Relabeled values in attribute class
+%    From: 1                       To: lung                
+%    From: 2                       To: 'head and neck'     
+%    From: 3                       To: esophagus           
+%    From: 4                       To: thyroid             
+%    From: 5                       To: stomach             
+%    From: 6                       To: 'duoden and sm.int' 
+%    From: 7                       To: colon               
+%    From: 8                       To: rectum              
+%    From: 9                       To: anus                
+%    From: 10                      To: 'salivary glands'   
+%    From: 11                      To: pancreas            
+%    From: 12                      To: gallbladder         
+%    From: 13                      To: liver               
+%    From: 14                      To: kidney              
+%    From: 15                      To: bladder             
+%    From: 16                      To: testis              
+%    From: 17                      To: prostate            
+%    From: 18                      To: ovary               
+%    From: 19                      To: 'corpus uteri'      
+%    From: 20                      To: 'cervix uteri'      
+%    From: 21                      To: vagina              
+%    From: 22                      To: breast              
+%
+@relation primary-tumor
+@attribute age { '<30', '30-59', '>=60'}
+@attribute sex { male, female}
+@attribute histologic-type { epidermoid, adeno, anaplastic}
+@attribute degree-of-diffe { well, fairly, poorly}
+@attribute bone { yes, no}
+@attribute bone-marrow { yes, no}
+@attribute lung { yes, no}
+@attribute pleura { yes, no}
+@attribute peritoneum { yes, no}
+@attribute liver { yes, no}
+@attribute brain { yes, no}
+@attribute skin { yes, no}
+@attribute neck { yes, no}
+@attribute supraclavicular { yes, no}
+@attribute axillar { yes, no}
+@attribute mediastinum { yes, no}
+@attribute abdominal { yes, no}
+@attribute class { lung, 'head and neck', esophagus, thyroid, stomach, 'duoden and sm.int', colon, rectum, anus, 'salivary glands', pancreas, gallbladder, liver, kidney, bladder, testis, prostate, ovary, 'corpus uteri', 'cervix uteri', vagina, breast}
+@data
+'>=60',female,?,?,no,no,no,no,no,yes,no,no,no,no,no,no,no,lung
+'>=60',male,?,poorly,no,no,no,no,no,yes,no,no,no,yes,no,yes,no,lung
+'30-59',female,adeno,?,no,no,no,yes,no,no,no,yes,no,no,yes,no,no,breast
+'30-59',female,adeno,?,no,no,no,no,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',female,adeno,?,no,no,no,yes,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',male,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,no,colon
+'30-59',male,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,no,no,prostate
+'30-59',female,adeno,?,yes,no,no,no,no,no,yes,no,no,no,no,yes,no,lung
+'30-59',male,adeno,fairly,no,no,no,no,no,no,no,no,yes,yes,no,no,no,prostate
+'30-59',female,adeno,well,no,no,no,no,yes,yes,no,no,no,no,no,no,no,ovary
+'>=60',female,?,?,no,no,no,no,yes,yes,no,no,no,yes,no,no,no,lung
+'30-59',male,epidermoid,?,no,no,no,yes,no,no,no,no,yes,no,no,no,no,'head and neck'
+'>=60',female,?,?,yes,no,yes,no,no,no,no,no,no,no,no,no,no,thyroid
+'>=60',female,adeno,?,no,yes,no,no,yes,no,no,no,no,no,no,no,yes,pancreas
+'30-59',male,epidermoid,well,yes,no,no,no,no,no,no,yes,yes,yes,no,no,no,lung
+'30-59',male,epidermoid,?,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',male,anaplastic,poorly,no,no,no,yes,no,yes,no,no,yes,no,no,yes,yes,lung
+'30-59',male,?,poorly,yes,no,no,no,no,yes,no,no,no,no,no,yes,no,lung
+'>=60',male,adeno,fairly,no,no,no,yes,yes,no,no,no,no,no,no,no,no,liver
+'>=60',male,epidermoid,poorly,yes,no,yes,yes,no,yes,no,no,no,no,no,no,yes,lung
+'30-59',female,adeno,?,no,no,no,no,yes,yes,no,yes,no,no,no,no,yes,ovary
+'30-59',female,adeno,well,no,no,no,no,no,no,no,no,no,yes,no,no,no,kidney
+'<30',female,adeno,poorly,yes,no,no,no,no,no,no,no,no,no,no,yes,no,lung
+'30-59',male,epidermoid,well,yes,no,no,no,no,no,no,no,yes,yes,no,no,no,'salivary glands'
+'<30',male,adeno,poorly,no,no,yes,no,no,no,no,no,yes,yes,yes,no,no,breast
+'>=60',male,adeno,well,no,no,no,no,no,yes,no,yes,no,no,no,no,no,rectum
+'>=60',male,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,pancreas
+'30-59',male,epidermoid,poorly,no,no,no,no,no,yes,no,no,no,no,no,yes,no,lung
+'>=60',female,adeno,poorly,no,no,no,no,no,yes,no,no,no,no,no,no,yes,pancreas
+'>=60',male,adeno,well,yes,no,no,no,no,no,no,no,no,no,no,no,no,prostate
+'>=60',female,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,gallbladder
+'>=60',female,?,poorly,no,no,no,no,no,yes,no,no,no,no,no,no,no,gallbladder
+'30-59',female,adeno,poorly,no,no,no,no,yes,yes,no,no,no,no,yes,yes,yes,breast
+'30-59',female,adeno,?,no,no,no,no,no,no,no,no,no,no,yes,no,no,breast
+'>=60',female,adeno,poorly,no,no,yes,no,no,yes,no,no,no,no,no,no,yes,gallbladder
+'30-59',female,adeno,?,no,no,no,no,no,no,no,no,no,yes,yes,no,yes,stomach
+'30-59',male,adeno,?,no,no,no,no,no,no,yes,no,no,no,no,no,yes,stomach
+'30-59',male,adeno,poorly,no,no,no,no,no,no,no,no,no,yes,no,yes,no,lung
+'30-59',male,adeno,?,yes,no,no,no,no,no,no,no,yes,no,no,no,no,thyroid
+'<30',male,?,poorly,yes,no,no,yes,yes,no,no,no,no,no,no,no,no,pancreas
+'30-59',male,?,poorly,no,no,no,no,yes,no,yes,yes,no,no,no,yes,yes,lung
+'>=60',female,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,no,pancreas
+'30-59',female,adeno,?,no,no,yes,no,no,yes,no,no,no,no,no,no,yes,pancreas
+'30-59',female,adeno,?,no,no,no,yes,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',female,?,poorly,yes,no,no,no,no,no,no,yes,yes,no,no,no,no,esophagus
+'30-59',female,adeno,well,no,no,no,no,yes,yes,no,no,no,no,no,no,yes,pancreas
+'30-59',female,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,pancreas
+'30-59',male,epidermoid,fairly,yes,no,no,no,no,no,no,?,yes,yes,no,no,no,lung
+'>=60',female,adeno,well,no,no,no,no,yes,no,no,no,no,no,no,no,no,ovary
+'>=60',female,adeno,well,no,no,no,no,no,no,no,no,no,yes,no,no,no,stomach
+'>=60',female,adeno,?,no,no,no,no,no,no,no,no,no,no,no,yes,yes,gallbladder
+'>=60',female,anaplastic,poorly,no,no,no,yes,no,no,no,no,no,no,no,yes,no,thyroid
+'30-59',female,adeno,?,yes,no,no,yes,no,no,no,yes,yes,yes,yes,yes,no,breast
+'<30',male,?,?,no,no,no,no,yes,yes,no,no,no,no,no,no,no,colon
+'30-59',female,adeno,?,no,no,yes,no,no,no,no,no,yes,yes,yes,yes,yes,stomach
+'30-59',male,?,poorly,yes,no,no,yes,no,no,no,no,no,no,no,yes,no,lung
+'30-59',male,?,poorly,yes,yes,no,no,no,no,yes,no,no,no,no,yes,no,lung
+'30-59',male,adeno,?,no,no,yes,no,no,yes,no,no,no,no,no,no,yes,esophagus
+'30-59',female,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,no,no,breast
+'<30',female,?,poorly,yes,no,no,no,no,no,yes,no,no,yes,yes,yes,no,lung
+'30-59',male,?,poorly,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',male,?,poorly,yes,yes,yes,yes,yes,yes,no,no,no,no,no,yes,yes,lung
+'>=60',male,?,poorly,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',female,adeno,?,no,no,yes,no,no,yes,no,no,no,no,no,no,yes,'corpus uteri'
+'30-59',male,epidermoid,well,no,no,no,no,no,no,no,no,yes,no,no,no,no,rectum
+'30-59',female,adeno,well,no,no,no,yes,yes,no,no,no,no,no,no,no,no,stomach
+'>=60',male,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,prostate
+'30-59',male,adeno,?,no,no,no,yes,no,no,no,no,no,no,no,no,no,lung
+'30-59',female,adeno,poorly,yes,no,no,yes,no,yes,no,no,no,yes,no,yes,no,thyroid
+'30-59',female,adeno,?,yes,no,no,no,no,no,no,no,no,no,yes,no,no,breast
+'>=60',female,adeno,well,no,no,no,no,yes,no,no,no,no,no,no,no,no,pancreas
+'>=60',male,adeno,?,yes,no,yes,no,no,no,no,no,no,no,no,no,no,kidney
+'30-59',male,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,no,no,kidney
+'30-59',female,adeno,poorly,no,no,no,yes,no,no,no,no,no,no,no,no,yes,pancreas
+'30-59',male,?,poorly,no,no,no,no,no,no,no,no,no,yes,no,yes,no,lung
+'>=60',male,epidermoid,poorly,no,no,no,no,no,no,no,no,no,yes,no,no,no,lung
+'30-59',female,adeno,well,no,no,no,no,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',male,?,poorly,no,no,no,no,no,no,no,no,yes,yes,no,yes,yes,lung
+'30-59',male,adeno,?,no,no,no,no,no,no,no,no,no,no,yes,no,no,lung
+'30-59',male,adeno,fairly,no,no,yes,yes,no,no,no,no,no,no,no,no,no,testis
+'30-59',male,?,poorly,yes,no,yes,yes,no,yes,no,no,no,no,no,yes,yes,lung
+'30-59',female,adeno,?,yes,no,no,no,no,yes,no,no,no,no,no,no,no,lung
+'30-59',male,?,poorly,no,no,no,yes,no,yes,no,yes,no,no,no,no,no,lung
+'30-59',male,epidermoid,well,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',male,anaplastic,poorly,yes,yes,no,no,no,no,no,no,no,no,no,yes,no,lung
+'>=60',female,adeno,well,yes,no,no,no,no,no,no,no,no,no,no,no,no,thyroid
+'30-59',male,?,poorly,no,no,yes,no,no,yes,no,no,no,no,no,yes,yes,lung
+'>=60',male,epidermoid,fairly,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',female,adeno,?,no,no,no,no,yes,no,no,no,no,no,no,no,yes,ovary
+'30-59',female,epidermoid,poorly,no,no,no,no,no,yes,yes,no,no,no,no,yes,no,lung
+'30-59',female,anaplastic,poorly,no,no,no,yes,no,no,yes,no,no,no,no,yes,no,lung
+'>=60',male,adeno,?,no,no,yes,no,yes,yes,no,no,no,no,no,no,yes,stomach
+'30-59',male,adeno,?,no,no,yes,no,no,no,no,no,no,yes,no,no,no,lung
+'>=60',male,adeno,?,yes,no,yes,no,no,no,no,no,no,no,no,yes,yes,kidney
+'30-59',female,adeno,fairly,yes,no,no,no,no,no,no,no,no,no,no,no,yes,'cervix uteri'
+'30-59',male,?,poorly,no,no,no,no,no,yes,no,no,no,yes,no,no,no,esophagus
+'>=60',male,adeno,?,no,no,no,no,yes,yes,no,no,no,no,no,no,no,stomach
+'30-59',female,?,?,no,no,no,yes,no,no,no,no,no,no,no,no,no,lung
+'30-59',male,adeno,?,yes,no,yes,no,yes,no,no,no,no,no,no,no,yes,kidney
+'>=60',female,adeno,?,no,no,yes,no,no,yes,no,no,no,no,no,no,yes,gallbladder
+'30-59',female,adeno,fairly,no,no,no,no,yes,no,no,no,no,no,no,no,no,stomach
+'30-59',male,?,poorly,no,no,no,yes,no,no,no,no,no,yes,no,yes,yes,lung
+'30-59',female,adeno,?,no,no,no,no,yes,no,no,no,no,no,no,no,no,stomach
+'30-59',female,adeno,?,yes,no,no,yes,no,no,no,no,no,no,no,no,no,breast
+'<30',female,adeno,well,yes,no,yes,no,no,no,no,yes,no,no,no,no,no,thyroid
+'>=60',male,epidermoid,fairly,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'>=60',female,adeno,well,no,no,yes,no,no,no,no,no,no,no,no,no,no,rectum
+'30-59',female,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,no,no,liver
+'30-59',female,?,?,no,no,no,no,no,no,no,no,yes,yes,no,no,no,'head and neck'
+'30-59',male,epidermoid,?,no,no,no,yes,no,yes,no,no,no,no,no,no,no,lung
+'<30',male,adeno,well,no,no,no,no,yes,no,no,no,no,yes,no,no,no,stomach
+'<30',female,?,well,no,no,no,no,no,no,no,no,no,no,no,no,no,kidney
+'30-59',female,epidermoid,poorly,yes,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',female,?,?,yes,no,yes,no,no,no,no,no,no,no,no,no,no,kidney
+'>=60',female,adeno,poorly,no,no,yes,no,yes,yes,no,no,no,no,no,no,yes,ovary
+'>=60',female,adeno,?,no,no,no,yes,yes,no,yes,no,no,no,no,no,yes,liver
+'30-59',male,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,no,no,kidney
+'30-59',female,adeno,?,no,no,no,no,no,no,yes,no,no,no,no,yes,no,lung
+'30-59',female,adeno,?,no,no,no,yes,yes,no,no,no,no,no,no,no,no,ovary
+'>=60',female,adeno,well,no,no,no,no,no,yes,no,no,no,no,no,no,no,stomach
+'<30',male,adeno,?,no,no,no,yes,no,no,no,no,no,no,no,no,no,stomach
+'>=60',female,adeno,fairly,no,no,no,no,no,no,no,no,yes,yes,yes,no,no,breast
+'<30',female,adeno,?,yes,no,no,no,yes,no,no,no,yes,yes,yes,no,yes,stomach
+'>=60',male,epidermoid,?,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',male,adeno,poorly,no,no,no,no,no,yes,no,no,no,no,no,no,no,pancreas
+'>=60',male,epidermoid,fairly,yes,no,no,no,no,no,no,no,no,no,no,yes,no,lung
+'30-59',female,adeno,?,no,no,no,yes,no,no,no,no,no,no,no,no,yes,ovary
+'>=60',male,adeno,?,no,no,no,no,yes,no,no,no,no,no,no,no,no,stomach
+'>=60',female,?,poorly,yes,no,no,no,no,no,no,no,no,no,no,no,yes,thyroid
+'<30',female,?,poorly,yes,no,yes,yes,no,no,no,no,no,no,no,yes,no,lung
+'30-59',female,adeno,?,no,no,no,yes,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',female,adeno,?,yes,no,no,yes,no,yes,no,no,yes,yes,yes,yes,yes,breast
+'>=60',female,adeno,poorly,no,no,no,yes,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',male,?,poorly,no,no,no,no,no,no,no,no,no,no,no,yes,no,lung
+'30-59',male,adeno,well,no,no,no,no,no,no,no,no,no,no,no,yes,no,stomach
+'>=60',female,adeno,fairly,no,no,no,no,no,no,no,no,no,yes,yes,no,no,breast
+'30-59',male,adeno,?,yes,no,yes,no,no,no,no,no,no,no,no,no,no,kidney
+'<30',female,adeno,?,yes,no,no,no,no,no,no,no,no,no,yes,no,no,breast
+'>=60',male,adeno,well,no,no,no,no,no,yes,no,no,no,no,no,no,no,rectum
+'30-59',male,adeno,?,yes,no,yes,no,no,no,yes,no,no,no,no,yes,no,stomach
+'30-59',male,epidermoid,?,no,no,no,no,no,no,no,no,no,yes,?,yes,no,lung
+'30-59',male,epidermoid,?,no,no,yes,no,no,no,no,no,no,yes,no,no,no,esophagus
+'30-59',female,adeno,?,no,no,no,no,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',female,?,?,yes,no,no,no,no,no,no,no,no,yes,yes,no,no,breast
+'30-59',male,epidermoid,poorly,no,no,yes,no,no,no,no,no,yes,yes,yes,yes,no,esophagus
+'>=60',male,adeno,poorly,no,no,no,no,no,yes,no,no,no,no,no,no,no,stomach
+'30-59',female,adeno,fairly,yes,no,no,yes,no,no,no,no,no,yes,yes,yes,yes,breast
+'30-59',female,anaplastic,poorly,no,no,no,yes,yes,no,no,no,no,yes,no,yes,no,lung
+'>=60',female,?,poorly,no,no,no,no,no,yes,no,no,no,no,no,no,yes,stomach
+'30-59',male,epidermoid,poorly,yes,no,no,yes,no,no,no,no,no,yes,no,yes,no,lung
+'30-59',male,epidermoid,poorly,yes,no,no,no,no,no,no,no,no,no,no,no,no,lung
+'>=60',male,adeno,?,no,no,yes,yes,no,no,no,no,no,no,no,no,no,kidney
+'30-59',male,epidermoid,well,yes,no,no,no,no,no,no,no,no,no,no,no,no,lung
+'>=60',female,adeno,?,no,no,no,no,yes,yes,no,no,no,no,no,no,no,gallbladder
+'<30',female,adeno,well,yes,yes,no,no,yes,no,no,no,no,no,no,no,no,stomach
+'>=60',female,adeno,?,no,no,yes,no,no,no,no,no,no,no,no,no,no,liver
+'30-59',male,adeno,?,no,no,no,yes,yes,yes,no,no,no,no,no,no,yes,pancreas
+'>=60',female,adeno,fairly,no,no,no,no,no,yes,no,no,no,no,no,no,yes,gallbladder
+'>=60',female,adeno,poorly,yes,no,no,no,no,no,no,no,no,no,no,no,yes,'corpus uteri'
+'30-59',female,adeno,poorly,no,no,no,no,no,yes,no,no,no,no,no,no,yes,pancreas
+'>=60',female,?,poorly,no,no,no,no,no,no,no,no,no,no,no,yes,yes,lung
+'>=60',male,?,poorly,yes,no,no,no,no,yes,no,no,no,no,no,yes,yes,lung
+'30-59',male,adeno,well,no,no,no,no,yes,yes,no,no,no,no,no,no,yes,colon
+'>=60',male,adeno,well,no,no,no,no,no,no,no,no,no,no,no,no,yes,prostate
+'>=60',female,adeno,?,yes,no,yes,no,no,no,no,no,no,no,no,no,no,thyroid
+'30-59',male,anaplastic,poorly,no,no,yes,no,yes,no,no,no,no,no,no,no,yes,lung
+'>=60',male,adeno,well,no,no,yes,no,no,yes,no,no,no,no,no,yes,yes,prostate
+'>=60',female,adeno,?,no,no,no,no,yes,yes,no,no,no,no,no,no,yes,pancreas
+'30-59',male,?,poorly,no,no,no,no,no,no,no,no,no,yes,no,yes,no,lung
+'30-59',male,adeno,?,no,no,yes,yes,no,no,no,no,no,no,no,yes,yes,pancreas
+'>=60',female,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,gallbladder
+'30-59',male,?,poorly,no,no,no,no,no,no,yes,yes,no,yes,yes,yes,no,lung
+'30-59',female,adeno,?,yes,no,no,no,no,no,no,no,no,yes,yes,no,no,breast
+'30-59',female,?,?,no,no,no,no,yes,no,no,no,no,no,no,no,yes,ovary
+'30-59',female,adeno,fairly,no,no,no,no,yes,no,no,no,no,no,no,no,yes,colon
+'30-59',male,adeno,poorly,no,no,no,yes,no,yes,no,no,no,no,no,yes,yes,pancreas
+'>=60',male,adeno,well,no,no,no,no,no,no,yes,no,no,no,no,no,no,kidney
+'30-59',male,adeno,?,no,no,no,no,yes,yes,no,no,no,no,no,no,yes,stomach
+'>=60',male,epidermoid,well,yes,no,no,no,yes,yes,no,no,no,no,no,yes,no,lung
+'30-59',male,adeno,poorly,yes,no,no,no,no,yes,no,no,no,no,no,no,no,stomach
+'30-59',female,adeno,?,no,no,no,yes,yes,no,no,no,no,no,no,no,no,gallbladder
+'30-59',male,adeno,?,no,no,no,yes,yes,yes,no,no,no,yes,no,no,yes,colon
+'30-59',male,?,poorly,no,no,no,no,no,no,no,no,no,yes,no,no,no,stomach
+'30-59',female,adeno,fairly,no,no,no,no,yes,no,no,yes,yes,yes,yes,no,no,breast
+'30-59',male,adeno,fairly,no,no,yes,no,no,no,no,no,yes,yes,no,yes,no,lung
+'>=60',male,adeno,fairly,no,no,no,yes,yes,yes,no,no,no,no,no,no,yes,colon
+'30-59',male,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,no,pancreas
+'30-59',male,adeno,well,no,no,no,no,yes,yes,no,no,no,no,no,no,no,pancreas
+'30-59',male,adeno,?,yes,no,yes,no,no,no,yes,no,no,no,no,yes,no,kidney
+'>=60',female,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,colon
+'30-59',male,anaplastic,poorly,no,no,no,no,no,no,yes,no,no,no,no,no,no,lung
+'30-59',female,adeno,fairly,no,no,no,yes,yes,no,no,no,no,no,no,no,no,ovary
+'<30',male,?,poorly,no,no,no,no,no,yes,no,no,no,yes,no,yes,no,lung
+'30-59',female,adeno,well,yes,no,no,no,no,no,no,no,no,no,no,no,no,lung
+'30-59',male,adeno,?,yes,no,yes,yes,no,no,no,no,no,no,no,yes,no,kidney
+'30-59',female,adeno,fairly,no,no,no,no,no,no,no,no,no,no,no,no,yes,'corpus uteri'
+'30-59',male,?,?,yes,no,no,no,no,no,no,yes,no,no,no,no,no,lung
+'30-59',male,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,no,no,stomach
+'>=60',female,adeno,?,yes,no,yes,yes,no,yes,no,no,no,no,no,yes,yes,pancreas
+'<30',male,adeno,?,no,no,no,no,no,no,no,no,no,yes,no,no,no,kidney
+'30-59',female,adeno,?,yes,no,yes,yes,yes,yes,no,no,no,no,no,yes,yes,lung
+'30-59',male,?,poorly,no,no,no,yes,no,yes,yes,no,no,no,no,yes,yes,lung
+'30-59',male,adeno,fairly,yes,no,no,no,no,no,no,no,no,no,no,no,no,prostate
+'>=60',female,epidermoid,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,gallbladder
+'30-59',male,adeno,well,no,no,yes,no,no,no,no,yes,no,no,yes,no,no,kidney
+'>=60',female,?,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,stomach
+'<30',male,anaplastic,poorly,no,no,no,no,no,no,no,no,no,yes,no,no,no,liver
+'>=60',female,adeno,?,no,no,yes,no,no,yes,no,no,no,no,no,yes,yes,colon
+'30-59',female,adeno,?,no,no,yes,no,no,no,no,no,no,no,no,no,no,colon
+'30-59',male,?,poorly,yes,no,no,no,no,no,no,no,no,no,no,no,no,esophagus
+'<30',male,adeno,poorly,yes,yes,yes,no,no,yes,yes,no,no,no,yes,yes,yes,stomach
+'<30',male,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,no,no,kidney
+'30-59',male,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,no,yes,esophagus
+'>=60',male,adeno,poorly,no,no,yes,no,no,yes,no,no,no,no,no,no,yes,pancreas
+'30-59',male,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,yes,no,lung
+'>=60',male,epidermoid,?,no,no,no,no,no,no,no,no,no,no,no,no,yes,lung
+'30-59',female,adeno,well,yes,no,no,no,no,no,no,no,no,no,no,no,no,'corpus uteri'
+'>=60',male,adeno,?,no,no,no,yes,yes,no,no,no,no,no,no,yes,yes,lung
+'>=60',female,?,poorly,yes,no,no,yes,no,yes,no,no,no,no,no,no,no,lung
+'30-59',male,?,poorly,yes,no,no,no,yes,no,yes,no,no,no,no,yes,yes,lung
+'<30',male,adeno,?,no,no,no,no,yes,yes,no,yes,no,no,no,no,yes,kidney
+'30-59',female,?,poorly,no,no,yes,yes,yes,yes,no,yes,no,no,no,yes,yes,lung
+'30-59',female,adeno,?,no,no,no,yes,no,no,no,no,no,no,no,no,no,ovary
+'>=60',female,?,poorly,yes,no,no,yes,no,no,no,no,no,no,no,no,no,lung
+'<30',female,adeno,well,yes,no,no,no,no,no,no,no,no,yes,no,no,yes,stomach
+'30-59',female,adeno,?,no,no,yes,yes,yes,no,no,no,no,no,no,no,yes,stomach
+'>=60',female,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,stomach
+'30-59',female,adeno,fairly,yes,no,yes,no,no,no,no,no,no,no,no,yes,no,thyroid
+'30-59',female,adeno,?,no,no,no,no,no,no,no,no,no,no,yes,no,no,breast
+'30-59',female,adeno,?,no,no,yes,yes,yes,no,no,no,no,yes,no,no,no,breast
+'<30',female,?,poorly,yes,no,yes,yes,no,no,no,no,no,no,no,yes,no,lung
+'30-59',female,adeno,well,no,no,no,yes,yes,no,no,no,no,no,no,no,no,stomach
+'30-59',female,adeno,?,no,no,no,no,no,no,no,no,no,no,yes,no,no,breast
+'30-59',male,epidermoid,well,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',female,adeno,well,yes,no,yes,no,no,no,no,no,no,no,no,no,no,thyroid
+'>=60',female,adeno,poorly,no,no,no,no,no,yes,no,no,no,no,no,yes,yes,gallbladder
+'30-59',male,epidermoid,?,yes,no,no,yes,yes,no,no,no,yes,yes,no,no,no,'salivary glands'
+'>=60',female,adeno,poorly,no,no,yes,yes,yes,yes,no,no,no,no,no,yes,yes,gallbladder
+'>=60',female,?,poorly,no,no,no,no,no,yes,no,no,no,no,no,yes,yes,lung
+'30-59',male,adeno,poorly,no,no,no,no,yes,yes,no,no,no,no,no,no,no,pancreas
+'>=60',female,adeno,?,no,no,yes,no,no,no,no,no,no,no,no,no,no,'duoden and sm.int'
+'30-59',female,adeno,?,no,no,no,no,no,no,no,no,no,no,yes,no,no,breast
+'30-59',male,epidermoid,?,no,no,yes,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'>=60',female,?,poorly,no,no,no,no,no,no,no,no,no,no,no,no,yes,ovary
+'>=60',female,?,poorly,no,no,yes,no,no,yes,yes,no,no,yes,no,yes,no,lung
+'>=60',female,adeno,?,no,no,no,no,no,no,no,no,no,no,no,yes,yes,liver
+'>=60',female,adeno,?,no,no,yes,yes,no,yes,no,no,no,no,no,yes,yes,colon
+'30-59',female,adeno,?,no,no,yes,yes,yes,no,no,no,no,no,no,no,no,pancreas
+'30-59',male,?,?,no,no,no,no,yes,no,no,no,no,no,no,no,no,bladder
+'30-59',male,epidermoid,well,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',male,adeno,fairly,yes,no,no,no,no,no,no,no,no,no,no,no,no,prostate
+'30-59',female,adeno,?,no,no,no,yes,no,no,no,no,no,no,no,no,no,ovary
+'30-59',female,?,poorly,no,no,no,no,no,no,no,no,yes,yes,no,no,no,esophagus
+'30-59',male,adeno,well,no,no,yes,yes,no,no,no,no,no,no,no,yes,yes,stomach
+'>=60',male,epidermoid,fairly,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',female,adeno,?,no,no,no,no,no,no,yes,no,no,no,no,no,no,rectum
+'<30',male,?,poorly,no,no,yes,no,no,no,no,no,no,no,no,no,no,lung
+'>=60',male,adeno,?,no,no,yes,no,no,no,no,no,no,yes,no,no,no,stomach
+'>=60',female,adeno,poorly,no,no,no,no,yes,yes,no,no,no,no,no,no,no,pancreas
+'30-59',female,adeno,poorly,no,no,no,yes,yes,yes,no,no,no,no,no,no,yes,pancreas
+'>=60',male,epidermoid,?,no,no,yes,no,no,yes,no,no,no,no,no,yes,yes,esophagus
+'>=60',female,?,poorly,no,no,no,yes,no,yes,no,no,no,yes,no,yes,no,lung
+'30-59',male,adeno,poorly,yes,no,no,no,no,no,no,yes,no,no,no,no,no,lung
+'30-59',female,adeno,?,no,no,no,no,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',female,adeno,?,no,no,no,no,yes,yes,no,no,no,no,no,yes,yes,'corpus uteri'
+'>=60',female,adeno,poorly,no,no,yes,no,no,yes,no,no,no,no,no,yes,yes,pancreas
+'30-59',female,adeno,well,no,no,no,no,yes,no,no,no,no,no,no,no,no,ovary
+'>=60',male,adeno,well,no,no,no,no,yes,no,no,no,no,no,no,no,yes,stomach
+'30-59',male,?,poorly,no,no,no,no,yes,yes,no,no,no,no,no,yes,no,lung
+'30-59',male,?,?,yes,no,yes,no,no,no,no,no,no,no,no,no,no,thyroid
+'30-59',female,adeno,?,no,no,no,no,no,yes,no,no,no,yes,no,yes,no,lung
+'>=60',female,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,no,gallbladder
+'>=60',female,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,no,colon
+'30-59',male,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,yes,stomach
+'>=60',male,adeno,well,no,no,no,no,yes,yes,no,no,no,no,no,no,yes,pancreas
+'30-59',male,epidermoid,poorly,yes,no,no,no,no,no,no,no,no,no,no,no,no,lung
+'<30',male,epidermoid,fairly,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'>=60',male,adeno,?,no,no,no,yes,yes,yes,no,no,no,no,no,no,yes,rectum
+'30-59',female,adeno,well,no,no,no,yes,yes,no,no,no,no,yes,no,no,no,stomach
+'30-59',female,adeno,?,no,no,yes,no,no,no,no,no,no,no,no,yes,yes,colon
+'30-59',female,adeno,?,no,no,no,no,yes,no,no,no,no,no,no,no,yes,ovary
+'30-59',male,epidermoid,well,no,no,no,no,no,no,no,no,yes,no,no,no,no,lung
+'30-59',female,adeno,?,no,no,no,no,no,no,no,no,no,no,yes,no,no,breast
+'>=60',female,adeno,?,no,no,no,yes,yes,no,no,no,no,no,no,no,yes,kidney
+'>=60',female,epidermoid,poorly,no,no,no,no,no,no,no,no,no,no,no,yes,no,lung
+'30-59',male,?,?,no,no,no,no,no,no,no,no,no,no,no,no,yes,stomach
+'30-59',female,adeno,?,no,no,no,no,no,no,no,no,no,no,yes,no,no,breast
+'30-59',?,?,well,no,no,no,no,no,no,no,no,no,no,no,yes,no,thyroid
+'30-59',female,adeno,?,no,no,no,no,yes,yes,no,no,no,yes,no,yes,yes,ovary
+'30-59',female,adeno,?,yes,yes,no,no,yes,yes,no,no,no,no,yes,no,no,breast
+'>=60',female,adeno,?,no,no,yes,no,no,no,no,no,no,no,no,no,no,kidney
+'>=60',female,epidermoid,poorly,yes,no,yes,no,no,no,no,no,no,yes,no,no,no,lung
+'30-59',male,adeno,well,yes,no,no,no,no,no,no,no,no,no,no,no,no,kidney
+'>=60',male,?,poorly,no,no,no,no,no,no,yes,no,no,no,no,yes,yes,lung
+'30-59',female,adeno,?,no,no,yes,no,yes,yes,no,no,no,no,no,no,yes,kidney
+'30-59',male,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,no,no,prostate
+'>=60',female,epidermoid,?,no,no,no,yes,yes,no,no,no,no,no,no,no,no,lung
+'30-59',male,adeno,?,no,no,yes,no,no,yes,no,no,no,yes,yes,yes,no,lung
+'30-59',female,adeno,?,no,no,yes,no,no,yes,no,no,no,no,no,yes,yes,'cervix uteri'
+'30-59',female,adeno,?,no,no,no,no,no,no,no,no,no,no,yes,no,no,breast
+'30-59',male,adeno,well,yes,no,no,no,no,no,no,no,no,no,no,no,no,thyroid
+'30-59',female,adeno,well,no,no,no,no,yes,no,no,yes,no,no,no,no,no,ovary
+'30-59',male,adeno,well,no,no,no,no,no,yes,no,no,no,no,no,no,no,stomach
+'30-59',male,adeno,?,no,no,no,yes,yes,no,no,no,no,no,no,yes,yes,lung
+'30-59',female,adeno,?,yes,no,no,no,no,no,no,yes,no,no,no,no,no,lung
+'30-59',female,?,?,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'>=60',male,epidermoid,fairly,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',female,adeno,poorly,no,no,no,no,yes,yes,no,no,no,no,no,no,no,ovary
+'30-59',male,adeno,?,no,no,yes,yes,no,no,no,no,no,no,no,yes,yes,liver
+'30-59',male,?,?,yes,no,no,no,no,no,no,no,no,no,no,no,no,kidney
+'30-59',male,?,poorly,no,no,no,no,no,no,no,yes,no,no,no,no,no,lung
+'30-59',female,adeno,?,no,no,no,no,no,yes,no,no,no,no,no,no,no,ovary
+'30-59',male,adeno,fairly,no,no,yes,no,no,no,no,no,yes,yes,yes,yes,no,thyroid
+'>=60',male,epidermoid,well,no,no,no,no,no,no,no,no,yes,yes,no,no,no,'head and neck'
+'>=60',female,adeno,?,no,no,no,no,no,no,no,no,no,no,no,no,yes,colon
+'30-59',female,epidermoid,?,yes,no,yes,no,yes,yes,no,no,no,no,no,no,yes,vagina
+'30-59',female,adeno,poorly,no,no,no,no,no,no,no,no,no,yes,no,no,no,lung
+'>=60',male,epidermoid,poorly,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'>=60',female,adeno,poorly,no,no,yes,no,no,no,no,no,no,no,no,yes,yes,kidney
+'30-59',female,adeno,poorly,no,no,yes,no,yes,yes,no,no,no,no,no,yes,no,lung
+'>=60',female,adeno,?,no,no,no,no,no,no,no,no,no,no,no,no,yes,gallbladder
+'>=60',female,adeno,fairly,no,no,no,no,yes,no,no,no,no,no,no,no,no,pancreas
+'30-59',female,adeno,well,no,no,no,no,yes,yes,no,no,no,no,no,no,yes,stomach
+'30-59',male,adeno,well,no,no,no,no,yes,no,no,no,no,no,no,no,no,colon
+'30-59',female,adeno,?,no,no,no,no,no,no,no,no,no,yes,no,no,no,stomach
+'>=60',female,adeno,poorly,no,no,no,no,no,yes,no,no,no,no,no,no,yes,gallbladder
+'30-59',male,?,poorly,no,no,yes,no,yes,yes,no,no,no,no,no,yes,yes,pancreas
+'>=60',male,?,poorly,no,no,no,no,no,yes,no,no,no,no,no,yes,yes,lung
+'>=60',male,?,poorly,no,no,no,yes,yes,no,no,no,yes,no,no,yes,yes,bladder
+'30-59',male,adeno,?,yes,no,no,no,no,no,no,no,no,no,no,yes,no,kidney
+'>=60',female,adeno,?,no,no,yes,yes,yes,no,no,no,no,no,no,no,yes,'corpus uteri'
+'30-59',male,epidermoid,well,no,no,no,no,no,no,no,no,yes,no,no,no,no,'head and neck'
+'30-59',female,?,poorly,no,no,no,no,yes,no,no,no,no,no,no,no,yes,stomach
+'30-59',male,adeno,well,yes,no,no,no,no,no,no,no,yes,yes,no,yes,no,prostate
+'30-59',female,adeno,well,no,no,no,no,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',male,epidermoid,poorly,yes,no,no,no,no,no,no,yes,no,no,yes,no,no,lung
+'30-59',female,adeno,well,no,no,no,yes,yes,no,no,no,no,no,no,no,no,ovary
+'30-59',female,adeno,?,yes,no,yes,yes,yes,yes,yes,no,no,no,no,no,yes,gallbladder
+'30-59',female,adeno,well,no,no,no,yes,yes,no,no,no,no,no,no,no,no,ovary

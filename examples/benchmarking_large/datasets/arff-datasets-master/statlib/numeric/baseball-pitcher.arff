@@ -1,0 +1,568 @@
+% 
+% 
+% 
+% 
+% 
+% 
+%             1988 Graphics Section Poster Session
+%           Displaying Analysis of Baseball Salaries
+% 
+%      The Statistical Graphics Section of the  American  Sta-
+% tistical  Association is sponsoring a special poster session
+% titled "Why They Make What They Make - An Analysis of  Major
+% League  Baseball  Salaries."   The  session  will be held in
+% August 1988 at the meetings in New Orleans and  is  intended
+% to  allow  members  to  compare techniques for analyzing and
+% displaying data.  The session provides a forum for both  old
+% and  new  graphical techniques to describe and summarize the
+% data.
+% 
+%      The results of each analysis will be  displayed  during
+% the  poster session.  Each participant will be given a space
+% to display his/her results and  other  conference  attendees
+% will be encouraged to discuss them with you.  There will not
+% be any formal discussion or comparison of results.   Rather,
+% the  opportunity  is  provided for informal comparison among
+% ourselves.
+% 
+%      Since  this  session  is  treated   as   an   organized
+% contributed-paper  session,  you  must submit a contributed-
+% paper abstract to the ASA  office.   The  abstract  must  be
+% postmarked  not  later than February 15, 1988 AND identified
+% as a contribution to the special Statistical Graphics  Expo-
+% sition.   The  forms can be found in future issues of AMSTAT
+% News.  The abstract can be very  general.   A  sample  which
+% will  suffice  is  provided below.  Variations might include
+% the software, hardware and techniques you plan to use.   You
+% have  until August to work on the analysis.  After the meet-
+% ings you will be given an opportunity  to  include  a  short
+% paper  describing  your  analysis in the 1988 Proceedings of
+% the Statistical Graphics Section.
+% 
+% 
+%                       SAMPLE ABSTRACT
+% 
+%              Analysis of Baseball Salary Data *
+% 
+%      This analysis describes and  summarizes  the  relation-
+%      ships  between  1987  salaries of major league baseball
+%      players and the player's performance.  We use graphical
+%      methods to show relationships between a player's salary
+%      to his 1986 and career performance statistics  and  the
+%      player's team.
+% 
+%      *Contribution to special Statistical  Graphics  Exposi-
+%      tion
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+%                      September 2, 1987
+% 
+% 
+% 
+% 
+% 
+% 
+%                            - 2 -
+% 
+% 
+%      Description of the 1988 Graphics Section Data Set
+% 
+%      The data consist of three files consisting of  data  on
+% the regular and leading substitute hitters in 1986, the reg-
+% ular pitchers in 1986 and the team statistics.   The  salary
+% data  were  taken  from  Sports Illustrated, April 20, 1987.
+% The salary of any player not included  in  that  article  is
+% listed  as an NA.  The 1986 and career statistics were taken
+% from The 1987 Baseball Encyclopedia Update published by Col-
+% lier  Books,  Macmillan  Publishing  Company, New York.  The
+% team attendance figures were obtained from the Elias  Sports
+% Bureau, personal conversation.
+% 
+%      The goal is to use  graphical  methods  to  attempt  to
+% explain differences in the salaries of major league baseball
+% players and to answer the question "Are players paid accord-
+% ing to their performance?".
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+%                      September 2, 1987
+% 
+% 
+% 
+% 
+% 
+% 
+%                            - 3 -
+% 
+% 
+%                       The Hitter File
+% There is one line per hitter.  Each data item  is  separated
+% by a tab character.  The variables are
+%      hitter's name,
+%      number of times at bat in 1986,
+%      number of hits in 1986,
+%      number of home runs in 1986,
+%      number of runs in 1986,
+%      number of runs batted in in 1986,
+%      number of walks in 1986,
+%      number of years in the major leagues,
+%      number of times at bat during his career,
+%      number of hits during his career,
+%      number of home runs during his career,
+%      number of runs during his career,
+%      number of runs batted in during his career,
+%      number of walks during his career,
+%      player's league at the end of 1986,
+%      player's division at the end of 1986,
+%      player's team at the end of 1986,
+%      player's position(s) in 1986,
+%      number of put outs in 1986,
+%      number of assists in 1986,
+%      number of errors in 1986,
+%      1987 annual salary on opening day in thousands of  dol-
+%      lars,
+%      player's league at the beginning of 1987,
+%      player's team at the beginning of 1987.
+% 
+%                       The Pitcher File
+% There is one line per pitcher.  Each data item is  separated
+% by a tab character.  The variables are
+%      pitcher's name,
+%      player's team at the end of in 1986,
+%      player's league at the end of 1986,
+%      number of wins in 1986,
+%      number of losses in 1986,
+%      earned run average in 1986,
+%      number of games in 1986,
+%      number of innings pitched in 1986,
+%      number of saves in 1986,
+%      number of years in the major leagues,
+%      number of wins during his career,
+%      number of losses during his career,
+%      earned run average during his career,
+%      number of games during his career,
+%      number of innings pitched during his career,
+%      number of saves during his career,
+%      1987 annual salary on opening day in thousands of  dol-
+%      lars,
+%      player's league at the beginning of 1987,
+%      player's team at the beginning of 1987.
+% 
+% 
+% 
+% 
+%                      September 2, 1987
+% 
+% 
+% 
+% 
+% 
+% 
+%                            - 4 -
+% 
+% 
+%                        The Team File
+% There is one line per team.  Each data item is separated  by
+% a tab character.  The variables are
+%      league,
+%      division,
+%      position in final league standings in 1986,
+%      team,
+%      number of wins in 1986,
+%      number of losses in 1986,
+%      attendance for home games in 1986,
+%      attendance for away games in 1986,
+%      1987 average salary.
+% 
+% 
+% 
+%               Coding for some of the Variables
+% Team Names:
+%      N.Y. New York
+%      Phi. Philadelphia
+%      St.L.     St. Louis
+%      Mon. Montreal
+%      Chi. Chicago
+%      Pit. Pittsburgh
+%      Hou. Houston
+%      Cin. Cincinnati
+%      S.F. San Francisco
+%      S.D. San Diego
+%      L.A. Los Angeles
+%      Atl. Atlanta
+%      Bos. Boston
+%      Det. Detroit
+%      Tor. Toronto
+%      Cle. Cleveland
+%      Mil. Milwaukee
+%      Bal. Baltimore
+%      Cal. California
+%      Tex. Texas
+%      K.C. Kansas City
+%      Oak. Oakland
+%      Min. Minnesota
+%      Sea. Seattle
+% 
+% Leagues:
+%      N    National
+%      A    American
+% 
+% Division:
+%      W    West
+%      E    East
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+%                      September 2, 1987
+% 
+% 
+% 
+% 
+% 
+% 
+%                            - 5 -
+% 
+% 
+% Player's position(s):
+% 
+%      If a substitute played 70% of his games  at  one  posi-
+% tion,  that  is the only position listed for him.  If he did
+% not play 70% of his games at one position, but played 90% of
+% his  games  at two position, he is listed with a combination
+% position, such as "S2" for shortstop  and  second  base,  or
+% "CO"  for  catcher and outfield.  If a player failed to meet
+% either the 70% or 90% requirement listed above, he is listed
+% as a utillity player ("UT").
+%      1B   First Base
+%      2B   Second Base
+%      SS   Short Stop
+%      3B   Third Base
+%      RF   Right Field
+%      CF   Center Field
+%      LF   Left Field
+%      C    Catcher
+%      DH   Designated Hitter
+%      OF   Outfield
+%      UT   Utility
+%      OS   Outfield and Short Stop
+%      3S   Third Base and Short Stop
+%      13   First and Third Base
+%      3O   Third Base and Outfield
+%      O1   Outfield and First Base
+%      S3   Short Stop and Third Base
+%      32   Third and Second Base
+%      DO   Designated Hitter and Outfield
+%      OD   Outfield and Designated Hitter
+%      CD   Catcher and Designated Hitter
+%      CS   Catcher and Short Stop
+%      23   Second and Third Base
+%      1O   First Base and Outfield
+%      2S   Second Base and Short Stop
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+%                      September 2, 1987
+% 
+% 
+% 
+%
+% Note: the uncorrected data is being used!
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation baseball-pitcher
+
+@attribute pitchers_name {Al_Nipper,Andy_Hawkins,Andy_McGaffigan,Aurelio_Lopez,Barry_Jones,Bert_Blyleven,Bill_Campbell,Bill_Gullickson,Bill_Mooneyham,Bill_Swift,Bill_Wegman,Bob_Forsch,Bob_James,Bob_Kipper,Bob_Knepper,Bob_McClure,Bob_Ojeda,Bob_Sebra,Bob_Shirley,Bob_Stanley,Bob_Tewksbury,Bob_Walk,Bob_Welch,Bobby_Witt,Bret_Saberhagen,Brian_Fisher,Bruce_Hurst,Bruce_Ruffin,Bryn_Smith,Bud_Black,Calvin_Schiraldi,Cecilio_Guante,Charles_Hudson,Charlie_Hough,Charlie_Kerfeld,Charlie_Leibrandt,Chris_Codiroli,Chris_Welsh,Craig_Lefferts,Curt_Young,Dale_Mohorcic,Dan_Petry,Dan_Plesac,Dan_Quisenberry,Danny_Cox,Danny_Darwin,Danny_Jackson,Dave_Dravecky,Dave_Righetti,Dave_Schmidt,Dave_Smith,Dave_Stewart,Dave_Stieb,David_Palmer,Dennis_Eckersley,Dennis_Lamp,Dennis_Leonard,Dennis_Rasmussen,Don_Aase,Don_Carman,Don_Robinson,Don_Sutton,Donnie_Moore,Doug_Corbett,Doug_Drabek,Doyle_Alexander,Dwight_Gooden,Ed_Correa,Ed_Lynch,Eric_Bell,Eric_King,Eric_Plunk,Eric_Show,Ernie_Camacho,Fernando_Valenzuela,Floyd_Bannister,Floyd_Youmans,Frank_Tanana,Frank_Viola,Frank_Wills,Gene_Garber,Gene_Nelson,Goose_Gossage,Greg_Harris,Greg_Mathews,Greg_Minton,Jack_Morris,Jamie_Moyer,Jay_Baller,Jay_Howell,Jay_Tibbs,Jeff_Dedmon,Jeff_Reardon,Jeff_Robinson,Jeff_Sellers,Jesse_Orosco,Jim_Acker,Jim_Clancy,Jim_Deshaies,Jim_Slaton,Jim_Winn,Jimmy_Key,Joaquin_Andujar,Joe_Cowley,Joe_Hesketh,Joe_Johnson,Joe_Niekro,Joe_Sambito,Joel_Davis,John_Candelaria,John_Cerutti,John_Denny,John_Franco,John_Tudor,Jose_Guzman,Jose_Rijo,Juan_Nieves,Keith_Atherton,Ken_Dixon,Ken_Howell,Ken_Schrom,Kent_Tekulve,Kevin_Gross,Kirk_McCaskill,LaMarr_Hoyt,Lance_McCullers,Larry_McWilliams,Lee_Smith,Mario_Soto,Mark_Clear,Mark_Davis,Mark_Eichhorn,Mark_Gubicza,Mark_Huismann,Mark_Langston,Mark_Portugal,Mark_Thurmond,Matt_Young,Mike_Bielecki,Mike_Boddicker,Mike_Flanagan,Mike_Krukow,Mike_LaCoss,Mike_Maddux,Mike_Mason,Mike_Moore,Mike_Morgan,Mike_Scott,Mike_Smithson,Mitch_Williams,Neal_Heaton,Neil_Allen,Nolan_Ryan,Oil_Can_Boyd,Orel_Hershiser,Paul_Assenmacher,Pete_Ladd,Phil_Niekro,Randy_ONeal,Ray_Fontenot,Rich_Bordi,Rich_Dotson,Rick_Aguilera,Rick_Honeycutt,Rick_Langford,Rick_Mahler,Rick_Reuschel,Rick_Rhoden,Rick_Sutcliffe,Ricky_Horton,Roger_Clemens,Roger_McDowell,Ron_Darling,Ron_Davis,Ron_Guidry,Ron_Robinson,Ron_Romanick,Scott_Bailes,Scott_Bankhead,Scott_Garrelts,Scott_McGregor,Scott_Sanderson,Shane_Rawley,Sid_Fernandez,Steve_Bedrosian,Steve_Carlton,Steve_Farr,Steve_Ontiveros,Steve_Trout,Storm_Davis,Ted_Higuera,Ted_Power,Terry_Forster,Tim_Burke,Tim_Conroy,Tim_Leary,Todd_Worrell,Tom_Browning,Tom_Candiotti,Tom_Henke,Tom_Niedenfuer,Tom_Seaver,Vida_Blue,Walt_Terell,Willie_Hernandez,Zane_Smith}
+@attribute players_team_at_the_end_of_in_1986 {Atl.,Bal.,Bos.,Cal.,Chi.,Cin.,Cle.,Det.,Hou.,K.C.,L.A.,Mil.,Min.,Mon.,N.Y.,Oak.,Phi.,Pit.,S.D.,S.F.,Sea.,St.L.,Tex.,Tor.}
+@attribute players_league_at_the_end_of_1986 {A,N}
+@attribute number_of_wins_in_1986 INTEGER
+@attribute number_of_losses_in_1986 INTEGER
+@attribute earned_run_average_in_1986 REAL
+@attribute number_of_games_in_1986 INTEGER
+@attribute number_of_innings_pitched_in_1986 REAL
+@attribute number_of_saves_in_1986 INTEGER
+@attribute number_of_years_in_the_major_leagues INTEGER
+@attribute number_of_wins_during_his_career INTEGER
+@attribute number_of_losses_during_his_career INTEGER
+@attribute earned_run_average_during_his_career REAL
+@attribute number_of_games_during_his_career INTEGER
+@attribute number_of_innings_pitched_during_his_career REAL
+@attribute number_of_saves_during_his_career INTEGER
+@attribute 1987_annual_salary_on_opening_day_in_thousands_of_dollars REAL
+@attribute players_league_at_the_beginning_of_1987 {A,N}
+@attribute players_team_at_the_beginning_of_1987 {Atl.,Bal.,Bos.,Cal.,Chi.,Cin.,Cle.,Det.,Hou.,K.C.,L.A.,Mil.,Min.,Mon.,N.Y.,Oak.,Phi.,Pit.,S.D.,S.F.,Sea.,St.L.,Tex.,Tor.}
+
+@data
+Don_Aase,Bal.,A,6,7,2.98,66,81.2,34,9,61,54,3.74,325,956.2,75,625,A,Bal.
+Jim_Acker,Atl.,N,5,12,4.01,44,155,0,4,20,20,3.99,175,411,12,350,N,Atl.
+Rick_Aguilera,N.Y.,N,10,7,3.88,28,141.2,0,2,20,14,3.58,49,264,0,195,N,N.Y.
+Doyle_Alexander,Atl.,N,11,10,4.14,34,228.1,0,16,160,135,3.71,467,2709,3,?,N,Atl.
+Neil_Allen,Chi.,A,7,2,3.82,22,113,0,8,53,58,3.65,367,793.2,75,1200,A,Chi.
+Joaquin_Andujar,Oak.,A,12,7,3.82,28,155.1,1,11,122,108,3.49,369,2014,9,1270,A,Oak.
+Paul_Assenmacher,Atl.,N,7,3,2.50,61,68.1,7,1,7,3,2.50,61,68.1,7,80,N,Atl.
+Keith_Atherton,Min.,A,6,10,4.08,60,97,10,4,19,28,3.97,202,374,19,300,A,Min.
+Scott_Bailes,Cle.,A,10,10,4.95,62,112.2,7,1,10,10,4.95,62,112.2,7,80,A,Cle.
+Jay_Baller,Chi.,N,2,4,5.37,36,53.2,5,3,4,7,4.35,60,113.2,6,?,N,Chi.
+Scott_Bankhead,K.C.,A,8,9,4.61,24,121,0,1,8,9,4.61,24,121,0,75,A,Sea.
+Floyd_Bannister,Chi.,A,10,14,3.54,28,165.1,0,10,101,117,4.03,300,1832.1,0,930,A,Chi.
+Steve_Bedrosian,Phi.,N,8,6,3.39,68,90.1,29,6,42,45,3.27,294,662.1,70,825,N,Phi.
+Eric_Bell,Bal.,A,1,2,5.01,4,23.1,0,2,1,2,4.97,8,29,0,62.5,A,Bal.
+Mike_Bielecki,Pit.,N,6,11,4.66,31,148.2,0,3,8,14,4.53,47,198.2,0,?,N,Pit.
+Bud_Black,K.C.,A,5,10,3.20,56,121,9,6,46,50,3.71,172,834.1,9,600,A,K.C.
+Vida_Blue,S.F.,N,10,10,3.27,28,156.2,0,17,209,161,3.26,502,3344,2,?,N,S.F.
+Bert_Blyleven,Min.,A,17,14,4.01,36,271.2,0,17,229,197,3.08,541,3987.1,0,1150,A,Min.
+Mike_Boddicker,Bal.,A,14,12,4.70,33,218.1,0,7,63,49,3.60,136,900.2,0,800,A,Bal.
+Rich_Bordi,Bal.,A,6,4,4.46,52,107,3,7,17,18,4.00,155,330.2,10,?,A,Bal.
+Oil_Can_Boyd,Bos.,A,16,10,3.78,30,214.1,0,5,47,44,3.86,112,791.1,0,?,A,Bos.
+Tom_Browning,Cin.,N,14,13,3.81,39,243.1,0,3,35,22,3.58,80,528,0,287.5,N,Cin.
+Tim_Burke,Mon.,N,9,7,2.93,68,101.1,4,2,18,11,2.64,146,221.2,12,?,N,Mon.
+Ernie_Camacho,Cle.,A,2,4,4.08,51,57.1,20,6,7,16,3.60,138,200,43,325,A,Cle.
+Bill_Campbell,Det.,A,3,6,3.88,34,55.2,3,14,83,68,3.51,693,1218.2,126,62.5,N,Mon.
+John_Candelaria,Cal.,A,10,2,2.55,16,91.2,0,12,141,89,3.12,350,2016.2,15,800,A,Cal.
+Tom_Candiotti,Cle.,A,16,12,3.57,36,252.1,0,3,22,18,3.68,54,340.1,0,160,A,Cle.
+Steve_Carlton,Chi.,A,9,14,5.10,32,176.1,0,22,323,229,3.11,705,5055,1,150,A,Cle.
+Don_Carman,Phi.,N,10,5,3.22,50,134.1,1,4,19,10,2.91,133,235,9,245,N,Phi.
+John_Cerutti,Tor.,A,9,4,4.15,34,145.1,1,2,9,6,4.20,38,152,1,115,A,Tor.
+Jim_Clancy,Tor.,A,14,14,3.94,34,219.1,0,10,102,116,4.13,279,1768,0,850,A,Tor.
+Mark_Clear,Mil.,A,5,5,2.20,59,73.2,16,8,62,44,3.80,394,689.1,77,625,A,Mil.
+Roger_Clemens,Bos.,A,24,4,2.48,33,254,0,3,40,13,3.15,69,485.2,0,500,A,Bos.
+Tim_Conroy,St.L.,N,5,11,5.23,25,115.1,0,6,15,30,4.61,125,426,0,?,N,St.L.
+Doug_Corbett,Cal.,A,4,2,3.66,46,78.2,10,7,24,28,3.12,302,530,65,?,A,Cal.
+Ed_Correa,Tex.,A,12,14,4.23,32,202.1,0,2,13,14,4.36,37,212.2,0,115,A,Tex.
+Joe_Cowley,Chi.,A,11,11,3.88,27,162.1,0,4,33,21,3.91,90,457.2,0,218,N,Phi.
+Danny_Cox,St.L.,N,12,13,2.90,32,220,0,4,42,39,3.19,108,700.1,0,600,N,St.L.
+Ron_Darling,N.Y.,N,15,6,2.81,34,237,0,4,44,24,3.12,108,726,0,1050,N,N.Y.
+Danny_Darwin,Hou.,N,11,10,3.17,39,184.2,0,9,72,78,3.55,295,1240.2,17,715,N,Hou.
+Joel_Davis,Chi.,A,4,5,4.70,19,105.1,0,2,7,8,4.48,31,176.2,0,62.5,A,Chi.
+Mark_Davis,S.F.,N,5,7,2.99,67,84.1,4,6,22,44,4.36,221,534.1,11,415,N,S.F.
+Ron_Davis,Chi.,N,2,8,8.59,53,58.2,2,9,46,52,3.94,447,692.2,130,725,N,Chi.
+Storm_Davis,Bal.,A,9,12,3.62,25,154,0,5,54,40,3.65,154,855,1,605,N,S.D.
+Jeff_Dedmon,Atl.,N,6,6,2.98,57,99.2,3,4,16,12,3.72,176,270.2,7,290,N,Atl.
+John_Denny,Cin.,N,11,10,4.20,27,171.1,0,13,123,108,3.58,325,2149.2,0,?,N,Cin.
+Jim_Deshaies,Hou.,N,12,5,3.25,26,144,0,3,12,6,3.56,30,154,0,110,N,Hou.
+Ken_Dixon,Bal.,A,11,13,4.58,35,202.1,0,3,19,18,4.17,71,377.1,1,155,A,Bal.
+Rich_Dotson,Chi.,A,10,17,5.48,34,197,0,8,83,76,4.01,206,1294.2,0,1000,A,Chi.
+Doug_Drabek,N.Y.,A,7,8,4.10,27,131.2,0,1,7,8,4.10,27,131.2,0,85,N,Pit.
+Dave_Dravecky,S.D.,N,9,11,3.07,26,161.1,0,5,50,43,3.06,169,821.1,10,575,N,S.D.
+Dennis_Eckersley,Chi.,N,6,11,4.57,33,201,0,12,151,128,3.67,376,2496,3,783.333,A,Oak.
+Mark_Eichhorn,Tor.,A,14,6,1.72,69,157,10,2,14,9,2.45,76,195,10,165,A,Tor.
+Steve_Farr,K.C.,A,8,4,3.13,56,109.1,8,3,13,16,3.76,103,263,10,150,A,K.C.
+Sid_Fernandez,N.Y.,N,16,6,3.52,32,204.1,1,4,31,22,3.29,75,470.2,1,308,N,N.Y.
+Mike_Flanagan,Bal.,A,0,0,4.50,1,4,0,2,1,1,3.32,4,19,0,625,A,Bal.
+Ray_Fontenot,Min.,A,3,5,5.23,57,72.1,2,4,25,26,4.03,143,493.2,2,?,A,Min.
+Bob_Forsch,St.L.,N,14,10,3.25,33,230,0,13,143,116,3.62,392,2371.1,3,750,N,St.L.
+Terry_Forster,Cal.,A,4,1,3.51,41,41,5,16,54,65,3.23,614,1105,127,?,A,Cal.
+John_Franco,Cin.,N,6,6,2.94,74,101,29,3,24,11,2.58,195,279.1,45,300,N,Cin.
+Gene_Garber,Atl.,N,5,5,2.54,61,78,24,17,88,99,3.29,843,1393,194,750,N,Atl.
+Scott_Garrelts,S.F.,N,13,9,3.11,53,173.2,10,5,26,20,3.18,154,360,23,290,N,S.F.
+Dwight_Gooden,N.Y.,N,17,6,2.84,33,250,0,3,58,19,2.28,99,744.2,0,1500,N,N.Y.
+Goose_Gossage,S.D.,N,5,7,4.45,45,64.2,21,15,101,89,2.87,725,1482,278,1000,N,S.D.
+Kevin_Gross,Phi.,N,12,12,4.02,37,241.2,0,4,39,36,3.79,136,672.1,1,420,N,Phi.
+Cecilio_Guante,Pit.,N,5,2,3.35,52,78,4,5,13,17,3.06,201,355.2,20,405,A,N.Y.
+Mark_Gubicza,K.C.,A,12,6,3.64,35,180.2,0,3,36,30,3.92,93,547,0,450,A,K.C.
+Ron_Guidry,N.Y.,A,9,12,3.98,30,192.1,0,12,163,80,3.25,334,2218.2,4,?,A,N.Y.
+Bill_Gullickson,Cin.,N,15,12,3.38,37,244.2,0,8,87,73,3.43,213,1430.2,0,900,N,Cin.
+Jose_Guzman,Tex.,A,9,15,4.54,29,172.1,0,2,12,17,4.26,34,205,0,107.5,A,Tex.
+Greg_Harris,Tex.,A,10,8,2.83,73,111.1,20,6,22,25,3.42,216,440,36,620,A,Tex.
+Andy_Hawkins,S.D.,N,10,8,4.30,37,209.1,0,5,43,37,3.80,142,767.1,0,535,N,S.D.
+Neal_Heaton,Min.,A,7,15,4.08,33,198.2,1,5,39,56,4.64,154,785.1,8,400,A,Min.
+Tom_Henke,Tor.,A,9,5,3.35,63,91.1,27,5,15,9,3.34,132,191.1,43,291,A,Tor.
+Willie_Hernandez,Det.,A,8,7,3.55,64,88.2,24,10,59,52,3.30,604,897,114,1060,A,Det.
+Orel_Hershiser,L.A.,N,14,14,3.85,35,231.1,0,4,44,25,2.85,124,668.2,3,800,N,L.A.
+Joe_Hesketh,Mon.,N,6,5,5.01,15,82.2,0,3,18,12,3.12,51,283,1,?,N,Mon.
+Ted_Higuera,Mil.,A,20,11,2.79,34,248.1,0,2,35,19,3.30,66,460.2,0,300,A,Mil.
+Rick_Honeycutt,L.A.,N,11,9,3.32,32,171,0,10,87,105,3.76,275,1562.2,1,805,N,L.A.
+Ricky_Horton,St.L.,N,4,3,2.24,42,100.1,3,3,16,9,2.91,128,315.2,5,410,N,St.L.
+Charlie_Hough,Tex.,A,17,10,3.79,33,230.1,0,17,131,115,3.55,609,2167.2,61,700,A,Tex.
+Jay_Howell,Oak.,A,3,6,3.38,38,53.1,16,7,26,26,3.97,202,390,52,95,A,Oak.
+Ken_Howell,L.A.,N,6,12,3.87,62,97.2,12,3,15,24,3.71,150,235,30,170,N,L.A.
+LaMarr_Hoyt,S.D.,N,8,11,5.15,35,159,0,8,98,68,3.99,244,1311.1,10,?,N,S.D.
+Charles_Hudson,Phi.,N,7,10,4.94,33,144,0,4,32,42,3.98,127,680,0,305,A,N.Y.
+Mark_Huismann,Sea.,A,3,4,3.79,46,97.1,5,4,9,8,3.98,106,221.2,8,125,A,Sea.
+Bruce_Hurst,Bos.,A,13,8,2.99,25,174.1,0,7,55,54,4.31,171,1004,0,700,A,Bos.
+Danny_Jackson,K.C.,A,11,12,3.20,32,185.2,1,4,28,31,3.54,83,488.2,1,225,A,K.C.
+Bob_James,Chi.,A,5,4,5.25,49,58.1,14,7,20,20,3.67,236,353,63,470,A,Chi.
+Joe_Johnson,Tor.,A,13,9,4.42,33,175,0,2,17,13,4.32,48,260.2,0,135,A,Tor.
+Barry_Jones,Pit.,N,3,4,2.89,26,37.1,3,1,3,4,2.89,26,37.1,3,75,N,Pit.
+Charlie_Kerfeld,Hou.,N,11,2,2.59,61,93.2,7,2,15,4,3.07,72,138,7,110.037,N,Hou.
+Jimmy_Key,Tor.,A,14,11,3.57,36,232,0,3,32,22,3.46,134,506.2,10,875,A,Tor.
+Eric_King,Det.,A,11,4,3.51,33,138.1,3,1,11,4,3.51,33,138.1,3,80,A,Det.
+Bob_Kipper,Pit.,N,6,8,4.03,20,114,0,2,7,11,4.63,27,142,0,90,N,Pit.
+Bob_Knepper,Hou.,N,17,12,3.14,40,258,0,11,114,118,3.44,338,2145.2,1,1000,N,Hou.
+Mike_Krukow,S.F.,N,20,9,3.05,34,245,0,11,108,104,3.84,311,1859.1,1,618,N,S.F.
+Mike_LaCoss,S.F.,N,10,13,3.57,37,204.1,0,9,61,67,4.09,281,1179,6,300,N,S.F.
+Pete_Ladd,Sea.,A,8,6,3.82,52,70.2,6,6,17,23,4.14,205,286.2,39,?,A,Sea.
+Dennis_Lamp,Tor.,A,2,6,5.05,40,73,2,10,74,76,3.90,396,1353.2,33,?,A,Tor.
+Rick_Langford,Oak.,A,1,10,7.36,16,55,0,11,73,106,4.01,260,1490.2,0,?,A,Oak.
+Mark_Langston,Sea.,A,12,14,4.85,37,239.1,0,3,36,38,4.43,96,591,0,370,A,Sea.
+Tim_Leary,Mil.,A,12,12,4.21,33,188.1,0,5,17,20,4.09,61,288,0,170,N,L.A.
+Craig_Lefferts,S.D.,N,9,8,3.09,83,107.2,4,4,22,22,2.89,261,385.2,17,500,N,S.D.
+Charlie_Leibrandt,K.C.,A,14,11,4.09,35,231.1,0,7,58,44,3.77,173,928.1,2,850,A,K.C.
+Dennis_Leonard,K.C.,A,8,13,4.44,33,192.2,0,12,144,106,3.69,312,2187.1,1,?,A,K.C.
+Aurelio_Lopez,Hou.,N,3,3,3.46,45,78,7,10,60,35,3.52,433,872.1,92,300,N,Hou.
+Ed_Lynch,Chi.,N,7,5,3.73,24,101.1,0,7,45,45,3.82,190,829.1,4,550,N,Chi.
+Mike_Maddux,Phi.,N,3,7,5.42,16,78,0,1,3,7,5.42,16,78,0,?,N,Phi.
+Rick_Mahler,Atl.,N,14,18,4.88,39,237.2,0,8,61,59,3.85,216,1084,2,662.5,N,Atl.
+Mike_Mason,Tex.,A,7,3,4.33,27,135,0,5,25,35,4.31,110,532,0,280,A,Tex.
+Greg_Mathews,St.L.,N,11,8,3.65,23,145.1,0,1,11,8,3.65,23,145.1,0,100,N,St.L.
+Kirk_McCaskill,Cal.,A,17,10,3.36,34,246.1,0,2,29,22,3.94,64,436,0,232,A,Cal.
+Bob_McClure,Mon.,N,4,6,3.19,65,79,6,12,48,48,3.86,424,924.1,41,550,N,Mon.
+Lance_McCullers,S.D.,N,10,10,2.78,70,136,5,2,10,12,2.68,91,171,10,125,N,S.D.
+Roger_McDowell,N.Y.,N,14,9,3.02,75,128,22,2,20,14,2.93,137,255.1,39,?,N,N.Y.
+Andy_McGaffigan,Mon.,N,10,5,2.65,48,142.2,2,6,20,23,3.44,142,455.1,5,292.5,N,Mon.
+Scott_McGregor,Bal.,A,11,15,4.52,34,203,0,11,136,98,3.84,326,2038.2,5,950,A,Bal.
+Larry_McWilliams,Pit.,N,3,11,5.15,49,122.1,0,9,68,67,3.91,258,1240.1,2,?,N,Pit.
+Greg_Minton,S.F.,N,4,4,3.93,48,68.2,5,12,44,52,3.22,537,847,124,750,N,S.F.
+Dale_Mohorcic,Tex.,A,2,4,2.51,58,79,7,1,2,4,2.51,58,79,7,92.5,A,Tex.
+Bill_Mooneyham,Oak.,A,4,5,4.52,45,99.2,2,1,4,5,4.52,45,99.2,2,?,A,Oak.
+Donnie_Moore,Cal.,A,4,5,2.97,49,72.2,21,11,36,36,3.64,375,596.1,80,1000,A,Cal.
+Mike_Moore,Sea.,A,11,13,4.30,38,266,1,5,48,62,4.44,157,997.1,1,500,A,Sea.
+Mike_Morgan,Sea.,A,11,17,4.53,37,216.1,1,6,21,45,4.91,101,507.1,1,170,A,Sea.
+Jack_Morris,Det.,A,21,8,3.27,35,267,0,10,144,94,3.58,302,2123.1,0,1850,A,Det.
+Jamie_Moyer,Chi.,N,7,4,5.05,16,87.1,0,1,7,4,5.05,16,87.1,0,70,N,Chi.
+Gene_Nelson,Chi.,A,6,6,3.85,54,114.2,6,6,28,34,4.55,160,528.2,9,350,A,Oak.
+Tom_Niedenfuer,L.A.,N,6,6,3.71,60,80,11,6,29,28,2.76,295,424,63,725,N,L.A.
+Joe_Niekro,N.Y.,A,9,10,4.87,25,125.2,0,20,213,190,3.50,670,3426.1,16,775,A,N.Y.
+Phil_Niekro,Cle.,A,11,11,4.32,34,210.1,0,23,311,261,3.27,838,5264.2,30,500,A,Cle.
+Juan_Nieves,Mil.,A,11,12,4.92,35,184.2,0,1,11,12,4.92,35,184.2,0,115,A,Mil.
+Al_Nipper,Bos.,A,10,12,5.38,26,159,0,4,31,31,4.35,83,519.2,0,325,A,Bos.
+Bob_Ojeda,N.Y.,N,18,5,2.57,32,217.1,0,7,62,44,3.83,172,935.2,1,625,N,N.Y.
+Randy_ONeal,Det.,A,3,7,4.33,37,122.2,2,3,10,13,3.82,69,235.2,3,100,N,Atl.
+Steve_Ontiveros,Oak.,A,2,2,4.71,46,72.2,10,2,3,5,3.30,85,147.1,18,?,A,Oak.
+Jesse_Orosco,N.Y.,N,8,6,2.33,58,81,21,7,44,38,2.48,314,518.1,91,925,N,N.Y.
+David_Palmer,Atl.,N,11,10,3.65,35,209.2,0,7,49,36,3.36,157,787.1,2,725,N,Atl.
+Dan_Petry,Det.,A,5,10,4.66,20,116,0,8,98,74,3.58,227,1504.1,0,975,A,Det.
+Dan_Plesac,Mil.,A,10,7,2.97,51,91,14,1,10,7,2.97,51,91,14,140,A,Mil.
+Eric_Plunk,Oak.,A,4,7,5.31,26,120.1,0,1,4,7,5.31,26,120.1,0,75,A,Oak.
+Mark_Portugal,Min.,A,6,10,4.31,27,112.2,1,2,7,13,4.53,33,137,1,85,A,Min.
+Ted_Power,Cin.,N,10,6,3.70,56,129,1,6,34,29,3.72,264,476.1,41,500,N,Cin.
+Dan_Quisenberry,K.C.,A,3,7,2.77,62,81.1,12,8,47,42,2.51,506,845.1,229,875,A,K.C.
+Dennis_Rasmussen,N.Y.,A,18,6,3.88,31,202,0,4,30,17,4.06,81,465,0,175,A,N.Y.
+Shane_Rawley,Phi.,N,11,7,3.54,23,157.2,0,9,81,79,3.80,374,1298.1,40,800,N,Phi.
+Jeff_Reardon,Mon.,N,7,9,3.94,62,89,35,8,42,46,2.80,456,666,162,825,A,Min.
+Rick_Reuschel,Pit.,N,9,16,3.96,35,215.2,0,14,162,155,3.43,436,2771.2,4,750,N,Pit.
+Rick_Rhoden,Pit.,N,15,12,2.84,34,253.2,0,13,121,97,3.48,333,2118,1,575,A,N.Y.
+Dave_Righetti,N.Y.,A,8,8,2.45,74,106.2,46,7,58,44,3.01,294,832,107,800,A,N.Y.
+Jose_Rijo,Oak.,A,9,11,4.65,39,193.2,1,3,17,23,4.45,75,319.2,3,110,A,Oak.
+Don_Robinson,Pit.,N,3,4,3.38,50,69.1,14,9,59,63,3.85,301,1137,31,620,N,Pit.
+Jeff_Robinson,S.F.,N,6,3,3.36,64,104.1,8,3,13,18,4.15,106,288.1,8,190,N,S.F.
+Ron_Romanick,Cal.,A,5,8,5.50,18,106.1,0,3,31,29,4.24,82,531,0,?,A,Cal.
+Bruce_Ruffin,Phi.,N,9,4,2.46,21,146.1,0,1,9,4,2.46,21,146.1,0,100,N,Phi.
+Nolan_Ryan,Hou.,N,12,8,3.34,30,178,0,20,253,226,3.15,611,4115.2,3,1000,N,Hou.
+Bret_Saberhagen,K.C.,A,7,12,4.15,30,156,0,3,37,29,3.41,100,549,1,740,A,K.C.
+Joe_Sambito,Bos.,A,2,0,4.84,53,44.2,12,10,35,32,2.79,414,590.2,84,360,A,Bos.
+Scott_Sanderson,Chi.,N,9,11,4.19,37,169.2,1,9,78,69,3.40,229,1313.2,3,866.667,N,Chi.
+Calvin_Schiraldi,Bos.,A,4,2,1.41,25,51,9,3,6,5,4.28,40,94.2,9,150,A,Bos.
+Dave_Schmidt,Chi.,A,3,6,3.31,49,92.1,8,6,23,28,3.18,221,436.1,34,375,A,Bal.
+Ken_Schrom,Cle.,A,14,7,4.54,34,206,0,6,45,38,4.46,144,746.1,1,425,A,Cle.
+Mike_Scott,Hou.,N,18,10,2.22,37,275.1,0,8,65,62,3.70,212,1160,3,666.667,N,Hou.
+Tom_Seaver,Bos.,A,7,13,4.03,28,176.1,0,20,311,205,2.86,656,4782.2,1,?,A,Bos.
+Bob_Sebra,Mon.,N,5,5,3.55,17,91.1,0,2,5,7,4.27,24,111.2,0,70,N,Mon.
+Jeff_Sellers,Bos.,A,3,7,4.94,14,82,0,2,5,7,4.66,18,104.1,0,77.5,A,Bos.
+Bob_Shirley,N.Y.,A,0,4,5.04,39,105.1,3,10,66,94,3.75,419,1390.1,18,500,A,N.Y.
+Eric_Show,S.D.,N,9,5,2.97,24,136.1,0,6,62,46,3.30,188,949.2,6,787.5,N,S.D.
+Jim_Slaton,Det.,A,4,6,5.08,36,113.1,2,16,151,158,4.03,496,2683.1,14,400,A,Oak.
+Bryn_Smith,Mon.,N,10,8,3.94,30,187.1,0,6,49,41,3.27,193,836.1,6,?,N,Mon.
+Dave_Smith,Hou.,N,4,7,2.73,54,56,33,7,38,29,2.61,361,526.2,100,650,N,Hou.
+Lee_Smith,Chi.,N,9,9,3.09,66,90.1,31,7,36,41,2.89,396,598.1,144,820,N,Chi.
+Zane_Smith,Atl.,N,8,16,4.05,38,204.2,1,3,18,26,3.85,83,371.2,1,150,N,Atl.
+Mike_Smithson,Min.,A,13,14,4.77,34,198,0,5,56,59,4.19,148,977,0,540,A,Min.
+Mario_Soto,Cin.,N,5,10,4.71,19,105,0,10,94,83,3.37,277,1611.1,4,1200,N,Cin.
+Bob_Stanley,Bos.,A,6,6,4.37,66,82.1,16,10,100,76,3.45,503,1374,123,1075,A,Bos.
+Dave_Stewart,Oak.,A,9,5,3.95,37,161.2,0,7,39,40,3.96,247,766,19,500,A,Oak.
+Dave_Stieb,Tor.,A,7,12,4.74,37,205,1,8,102,92,3.34,259,1859.1,1,850,A,Tor.
+Rick_Sutcliffe,Chi.,N,5,14,4.64,28,176.2,0,10,86,68,3.84,251,1416.2,6,1800,N,Chi.
+Don_Sutton,Cal.,A,15,11,3.74,34,207,0,21,310,239,3.20,723,5001.1,5,550,A,Cal.
+Bill_Swift,Sea.,A,2,9,5.46,29,115.1,0,2,8,19,5.11,52,236,0,?,A,Sea.
+Frank_Tanana,Det.,A,12,9,4.16,32,188.1,0,14,159,153,3.40,408,2759.1,0,662.5,A,Det.
+Kent_Tekulve,Phi.,N,11,5,2.54,73,110,4,13,85,76,2.69,853,1199,176,800,N,Phi.
+Walt_Terell,Det.,A,15,12,4.56,34,217.1,0,5,49,45,3.89,125,816,0,600,A,Det.
+Bob_Tewksbury,N.Y.,A,9,5,3.31,23,130.1,0,1,9,5,3.31,23,130.1,0,85,A,N.Y.
+Mark_Thurmond,Det.,A,7,8,4.56,42,122.1,3,4,35,30,3.50,131,554.2,5,370,A,Det.
+Jay_Tibbs,Mon.,N,7,9,3.97,35,190.1,0,3,23,27,3.73,84,509,0,160,N,Mon.
+Steve_Trout,Chi.,N,5,7,4.75,37,161,0,9,74,75,3.94,242,1294.1,4,890,N,Chi.
+John_Tudor,St.L.,N,13,7,2.92,30,219,0,8,85,58,3.26,204,1342.2,1,1050,N,St.L.
+Frank_Viola,Min.,A,16,13,4.51,37,245.2,0,5,63,64,4.38,165,1090,0,830,A,Min.
+Bob_Walk,Pit.,N,7,8,3.75,44,141.2,2,7,33,32,4.35,127,573.2,2,285,N,Pit.
+Bill_Wegman,Mil.,A,5,12,5.13,35,198.1,0,2,7,12,5.00,38,216,0,80,A,Mil.
+Chris_Welsh,Cin.,N,6,9,4.78,24,139.1,0,5,22,31,4.45,122,538,0,?,N,Cin.
+Mitch_Williams,Tex.,A,8,6,3.58,80,98,8,1,8,6,3.58,80,98,8,120,A,Tex.
+Frank_Wills,Cle.,A,4,4,4.91,26,40.1,4,4,13,19,5.40,66,235,5,?,A,Cle.
+Jim_Winn,Pit.,N,3,5,3.58,50,88,3,4,7,11,4.47,96,193.1,4,140,A,Chi.
+Bobby_Witt,Tex.,A,11,9,5.48,31,157.2,0,1,11,9,5.48,31,157.2,0,92.5,A,Tex.
+Todd_Worrell,St.L.,N,9,10,2.08,74,103.2,36,2,12,10,2.23,91,125.1,41,150,N,St.L.
+Floyd_Youmans,Mon.,N,13,12,3.53,33,219,0,2,17,15,3.25,47,296,0,145,N,Mon.
+Curt_Young,Oak.,A,13,9,3.45,29,198,0,4,22,18,4.43,76,361.2,0,150,A,Oak.
+Matt_Young,Sea.,A,8,6,3.82,65,103.2,13,4,37,48,4.35,157,639,14,350,N,L.A.
+Ron_Robinson,Cin.,N,10,3,3.24,70,116.2,14,3,18,12,3.47,115,264.2,15,185,N,Cin.
+Fernando_Valenzuela,L.A.,N,21,11,3.14,34,269.1,0,7,99,68,2.94,210,1554.2,1,1850,N,L.A.
+Bob_Welch,L.A.,N,7,13,3.28,33,235.2,0,9,100,77,3.31,257,1568.1,8,837.5,N,L.A.
+Brian_Fisher,N.Y.,A,9,5,4.93,62,96.2,6,2,13,9,3.65,117,195,20,180,N,Pit.
+Chris_Codiroli,Oak.,A,5,8,4.03,16,91.2,0,5,38,40,4.59,121,629.1,2,295,A,Oak.

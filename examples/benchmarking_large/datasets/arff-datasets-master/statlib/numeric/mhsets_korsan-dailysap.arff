@@ -1,0 +1,5053 @@
+%                                 MHSETS
+% 
+%            TIME SERIES DATA SETS FOR HIPEL AND MCLEOD BOOK:
+% 
+%  Contents
+%    INSTALLATION
+%    REFERENCE
+%    CONTACTS
+%    VERSIONS
+%    OVERVIEW OF THE DATASETS
+%    FORMAT OF THE DATASETS
+%    SCOPE OF THE BOOK
+%    DECISION SUPPORT SYSTEM
+%    USING THE DATASETS WITH S/SPLUS
+%    SUMMARY OF THE SUBDIRECTORIES OF MHSETS
+%    SUBDIRECTORY README FILES
+% 
+%  INSTALLATION
+%  Copy the file mhsets.sh or mhsets.zip to an empty subdirectory mhsets.
+% Then type the command "sh mhsets.sh" or "pkunzip -d mhsets.zip".
+% 
+%  REFERENCE
+%  K.W. Hipel and A.I. McLeod (1994),  "Time Series Modelling of Water
+%    Resources and Environmental Systems" published by Elsevier,
+%    Amsterdam.  ISBN 0-444-89270-2.   (1013 pages).
+% 
+%  CONTACTS
+%  A. Ian McLeod
+%   Department of Statistical and Actuarial Sciences
+%   The University of Western Ontario
+%   London, Ontario, Canada N6A 5B9
+%   Phone: (519)661-3611
+%   Fax: (519)661-3813
+%   e-mail: aim@uwo.ca
+%  Keith W. Hipel
+%   Department of Systems Design Engineering
+%   University of Waterloo
+%   Waterloo, Ontario, Canada N2L 3G1
+%   Phone: (519)885-1211 ext.4644 or 2830
+%   Fax: (519)746-4791
+%   e-mail: kwhipel@sysoffice.watstar.uwaterloo.ca
+% 
+%  VERSIONS
+%    This is version 1.0.
+%    It is intended to maintain updates and/or corrections to these datasets.
+%  These updates and corrections are available by anonymous ftp from
+%  fisher.stats.uwo.ca in the directory pub/mhsets.
+%    Both shar (for unix) and zip (for PC) archives are available by
+%  anonymous ftp from fisher.stats.uwo.ca in the directory pub/mhsets.
+% 
+%  OVERVIEW OF THE DATASETS
+%    The datasets provided include many of the datasets dicussed in our
+%  book, Hipel and McLeod (1994). In our book we also mention a number of
+%  case studies conducted by ourselves as well as other researchers. Many of
+%  these datasets are also available here too. Other datasets which are
+%  suitable for use in the problems which accompany the book or for
+%  time series researchers wishing to compare their methodology to
+%  other interesting types of data. In our time series and systems
+%  courses, the datasets provided here are a useful and extensive
+%  source of both classroom demonstrations and student projects and
+%  assignments.
+%    All datasets are in the public domain.
+% 
+%  FORMAT OF THE DATASETS
+%    The data sets are organized in a number of subdirectories. Some of
+%  subdirectories refer to particular case studies such as ASKEW and NOAKES
+%  while other subdirectories group datasets of a similar type such as ANNUAL
+%  and ECOLOGY.
+%    Each dataset consists of a title plus a time series in free-format in
+%  chronlogical order reading across. The extension .1 or .2 means that there
+%  is one or two data series on the file. Sometimes there are additional
+%  comments located immediately after the title. These comments are indicated
+%  by a symbol # in column 1 of the file. This format is read directly
+%  by our MHTS decision support package. For convenience of S or S-plus
+%  users, a S function is provided to input these datasets into S or S-plus.
+%  See the section, USING THE DATASETS WITH S/SPLUS, below.
+% 
+% 
+%  SCOPE OF THE BOOK
+%    This unique book provides a comprehensive presentation of the theory and
+%  practice of time series modelling of environmental systems.
+%  Recent and useful developments in time series analysis, stochastic hydrology
+%  and statistical water quality modelling are combined in a coherent and
+%  systematic manner in order to produce this landmark book on time series
+%  methods in environmetrics.
+%    The rich variety of time series models that are clearly defined,
+%  explained and illustrated include ARMA, nonstationary ARIMA,
+%  long memory FARMA, seasonal ARIMA, deseasonalized, periodic,
+%  transfer function) noise, intervention and multivariate ARMA models.
+%  Extensive hydrological, water quality and other environmental applications
+%  are given for clearly demonstrating how the various kinds of time series
+%  models can be systematically and conveniently fitted to real world data sets
+%  by following the identification, estimation and diagnostic check stages of
+%  model construction. Moreover, a major emphasis of the book is the use of
+%  exploratory data analysis graphs, intervention analysis, nonparametric
+%  trend tests and regression analysis in the detection and estimation of
+%  trends in environmental impact assessment studies.
+%    Other topics in environmetrics covered in the book include
+%  time series analysis in decision making, estimating missing observations,
+%  simulation, the Hurst phenomenon, forecasting experiments and causality.
+% 
+%    Professionals working in fields overlapping with environmetrics who will
+%  find this book to be an indispensable resource include water resources
+%  engineers, environmental scientists, hydrologists, geophysicists,
+%  geographers, earth scientists and planners.
+%  However, because the time series methods presented in the book can be
+%  applied to data sets arising in fields outside of the environmental areas
+%  described in the book, other professionals such as systems scientists,
+%  economists, mechanical engineers, chemical engineers, and management
+%  scientists will benefit from a knowledge of the impressive array of ideas
+%  given in the book.
+%    Within each professional group, the book is designed for use by teachers,
+%  students, researchers, practitioners and consultants.
+%    When employed for teaching purposes, this book can be used as a course text
+%  at the upper undergraduate and graduate levels.
+%  The only mathematical background required of the reader is a one
+%  semester introductory course on probability and statistics.
+%  Depending upon the number of topics covered, the book can be utilized in a
+%  one ortwo semester course.
+% 
+%  DECISION SUPPORT SYSTEM
+%    The McLeod - Hipel Time Series (MHTS) constitutes a comprehensive decision
+%  support system for performing extensive data analyses using many of the
+%  time series models, graphical procedures, trend tests and other techniques
+%  described in the aforementioned book and elsewhere.
+%  To obtain information about the MHTS package, kindly contact A. I. McLeod
+%  (aim@uwo.ca) or K. W. Hipel (519) 885-1211.
+% 
+%  USING THE DATASETS WITH S/SPLUS
+%    An S function is provided for inputing the datasets into S/Splus.
+%  The source code is in the file readmhts.s and S style documentation
+%  is available in readmhts.d. These two files are included in the
+%  archive directly under the main subdirectory mhsets.
+%     To read this function into S/Splus:  source("readmhts.s")
+%     Then to read in a particular dataset, say amazon.2, into the S variable,
+%  z enter:   z_readmhts("annual/amazon.2")
+% 
+%  SUMMARY OF THE SUBDIRECTORIES OF MHSETS
+% 
+%               ANNUAL		miscellanous annual time series
+%               ASKEW             case study: monthly riverflows
+%               ASTATKIE		case study: daily riverflows
+%               BARACOS		case study: daily riverflow in arctic
+%               BLOWFLY		case study of blowfly populations
+%               BOXJENK		some classic time series
+%               CNELSON		case study: annual U.S. economic series
+%               COMMOD		some commodity prices, daily
+%               ECOLOGY           animal abundance, annual
+%               EPI		outbreaks of measles, mumps, chickenpox
+%               HTONG             case study: daily riverflows
+%               HURST		case study: long annual geophysical time series
+%               KORSAN            case study: long financial time series
+%               LAMARCHE		case study: treerings and meteorological series
+%               LONDONWQ		case study: water consumption in London, Ontario
+%               MISC		miscellaneous time series
+%               MONTHLY		miscellaneous monthly geophysical time series
+%               NOAKES		case study: monthly riverflow time series
+%               PROTHERO		case study: quarterly macro-economic series
+%               PRUSCHA		case study: annual temperature data
+%               ROBERTS		miscellaneous time series
+%               SANFRAN		case study: riverflow and meteorological series
+%               THOMPSTO		case study: quarter-monthly flows, precipitation
+%               WISCONSI		case study: employment data from Wisconsin
+% 
+% 
+%  SUBDIRECTORY README FILES
+% 
+% ANNUAL
+% Miscellaneous annual time series.
+% Brief Summary Of The Data Files In The Directory mhsets/annual
+% 1.  AMAZON.2
+% Amazon, High and Low Water Levels, 1962-78
+% #High and Low levels of the Amazon at Iquitos, Peru, 1962-78
+% #References:
+% #Gentry and Lopeq-Parodi (1980) "Deforestation and increased flooding in
+% #  the upper Amazon". Science, 210, 1354-1356.
+% #Ramsey (1988). "The Slug Trace", The American Statistician, V.42, p.290.
+% 
+% 2.  BIRTHS.1
+% Births per 10,000 of 23 year old women, U.S., 1917-1975
+% 
+% 3.  BWATER.1
+% BALTIMORE CITY ANNUAL WATER USE, 1885-1968, LITRES PER CAPITA PER DAY
+% 
+% 4.  CANFIRE.1
+% No. of acres burned in forest fires in CANADA (excl. Yukon & NWT) 1918-1988
+% 
+% 5.  CIG.3
+% #CAN.Cigarette Consumption/adult, Real Price and Income/adult, 1953-75
+% 
+% 6.  CORN.2
+% Annual corn yield and rainfall in US cornbelt states, 1890-1927
+% 
+% 7.  DAL.1
+% DAL RIVER, NEAR NORSLUND,SWEDEN, 1852-1922
+% 
+% 8.  DANUBE.1
+% DANUBE RIVER, AT ORSHAVA,ROMANIA, 1837-1957
+% 
+% 9.  DVI.1
+% VOLCANIC DUST VEIL INDEX, NORTHERN HEMISPHERE, 1500-1969
+% 
+% 10.  ELECUS.1
+% Total Electricity Consumption, U.S., 1920-70, Kilowatt-hours (millions)
+% 
+% 11.  FORTALEZ.1
+% Annual rainfall (mm) at Fortaleza, Brazil, 1849-1979
+% #Refeference: P.A. Morettin, A.R. Mesquita, J.G.C. Rocha,
+% #            "Rainfall at Fortaleza in Brazil Revisted"
+% #            Time Series Analysis, Theory and Practice, Vol. 6
+% #            pp. 67--85. Editor: O.D. Anderson
+% 
+% 12.  FRNCHA.1
+% FRENCH BROAD RIVER AT ASHEVILLE, N.C.
+% 
+% 13.  FRNCHB.1
+% FRENCH BROAD RIVER NEAR NEWPORT, TENN.
+% 
+% 14.  GEODUCK.1
+% Geoduck Clam Data, 1907-1980, interventions at t=13 and t=56
+% #Reference: D.J. Noakes and A. Campbell (1992),
+% #"Use of Geoduck Clams to Indicate Changes in the Marine Environment
+% #of Ladysmith Harbour, British Columbia", Environmetircs,
+% #Vol. 3, No. 1, 81--97
+% 
+% 15.  GLOBTP.1
+% Changes In Global Temperature, Annual, 1880-1985
+% #Surface air "temperature change" for the globe, 1880-1985.
+% #Degrees Celsius. "Temperature change" actually means temperature
+% #against an arbitrary zero point.
+% #From James Hansen and Sergej Lebedeff, "Global Trends of Measured
+% #Surface Air Temperature", `Journal of Geophysical Research`, Vol. 92,
+% #No. D11, pages 13,345-13,372, November 20, 1987.
+% 
+% 16.  GOTA.1
+% GOTA RIVER, NEAR SJOTOP-VANNERSBURG,SWEDEN, 1807-1957
+% 
+% 17.  HURON.1
+% Lake Huron, mean level, July, 1860-1986
+% #Mean July average water surface elevation, in feet, IGLD (1955)
+% #for Harbor Beach, Michigan, on Lake Huron, Station 5014.  1860--1986.
+% #Source: Great Lakes Water Levels, 1860-1986. U.S. Dept. of Commerce,
+% #National Oceanic and Atmospheric Administration, National Ocean Survey.
+% 
+% 18.  KIEWA.1
+% KIEWA RIVER, AT KIEWA,VICTORIA, 1885-1954
+% 
+% 19.  MCKEN.1
+% MCKENZIE RIVER AT MCKENZIE BRIDGE, OREGON, 1911-57, cfs
+% 
+% 20.  MINIMUM.1
+% Annual Minimum Level of Nile River, 622-1921
+% 
+% 21.  MSTOUIS.1
+% MISSISSIPPI RIVER, NEAR ST.LOUIS,MO., 1861-1957
+% 
+% 22.  NEUMUNAS.1
+% NEUMUNAS RIVER, AT SMALININKAI,LITUANIA,USSR, 1811-1943
+% 
+% 23.  NILE.1
+% AVERAGE ANNUAL RIVERFLOW, NILE AT ASWAN, 1870-1945
+% 
+% 24.  NILE2.1
+% Mean annual Nile flow, 1871-1970, units: 10^8 m^3, water yr: july-june
+% #Original Data Listing:
+% #78Biomtrka65   243- 252
+% # George W. Cobb
+% # The problem of the Nile: Conditional solution to a changepoint problem
+% #
+% #Additional Reference:
+% #91EnvrMtrc 2   341- 375
+% # I. B. MacNeill;S. M. Tang;V. K. Jandhyala
+% # A search for the source of the Nile's change-points
+% 
+% 25.  NYWATER.1
+% NEW YORK CITY ANNUAL WATER USE, 1898-1968, LITRES PER CAPITA PER DAY
+% 
+% 26.  OGDEN.1
+% ST. LAWRENCE RIVER AT OGDENSBURG, N.Y., 1860-1957, YEARLY FLOW
+% 
+% 27.  PEAS.1
+% PRECIPITATION IN MM., EASTPORT, USA, 1887-1950
+% 
+% 28.  PGREATL.1
+% Annual precipitation, 1900-1986, Entire Great Lakes
+% #Annual precipitation in inches
+% #SOURCE:  Great Lake  Wate  Levels  U.S  Dept  o  Commerce   NOO
+% #- NOS  Rockville  MD  an  U.S  Lak  Survey  Detroit  MI--U.S
+% #Armu Corp
+% 
+% 29.  RHINE.1
+% RHINE RIVER, NEAR BASLE,SWITZERLAND, 1807-1957
+% 
+% 30.  SPIRITS.3
+% Alcohol Demand, UK, 1870-1938. logs: Q(demand),P(r.price),Y(r.income)
+% #empirical demand function for alcoholic spirits, U.K., 1870-1938
+% #source: Durbin & Watson (1951, Table 1) Biometrika, V.38, pp.159-78
+% #"Testing for serial correlation in least squares regression II"
+% #
+% # spirits =  log consumption per head
+% # income  =  log real income per head
+% # price   =  log real price
+% #
+% #  spirits,  income,   price
+% 
+% 31.  SUNSPOTS.1
+% Annual sunspot numbers, 1700-1988
+% 
+% 32.  SUNSPT.1
+% Annual sunspot numbers, 1700-1988
+% 
+% 33.  THAMES.1
+% THAMES RIVER, NEAR TEDDINGTON,ENGLAND, 1883-1954
+% 
+% 34.  TPYR.1
+% AVERAGE ANNUAL TEMPERATURE, CENTRAL ENGLAND, 1723-1970
+% 
+% 35.  USM1.1
+% M1, U.S. 1959.1-1992.2
+% 
+% 36.  USM2.1
+% M2, U.S. 1959.1-1992.2
+% 
+% 37.  USM3.1
+% M3, U.S. 1959.1-1992.2
+% 
+% 38.  WHEAT.1
+% Beveridge wheat price index, 1500-1869
+% ----------------------------------------------------------------------------
+% 
+% ASKEW
+% These 26 monthly riverflow sequences were selected by Askew et al. (1971)
+% for their study in critical period statistics. Askew et al. (1977)
+% state these series represent unregulated riverflows.
+% Addtional Reference: Askew, A.J.,Yeh, W.W.G and Hall, W.A. (1971)
+% "A comparative study of critical drought simulation", Water Resources
+% Research 7, pp.52-62.
+% Brief Summary Of The Data Files In The Directory mhsets/askew
+% 1.  ASKEW.1
+% SACRAMENTO RIVER AT KESWICK, CALIFORNIA, OCTOBER 1939 - SEPTEMBER 1960
+% 
+% 2.  ASKEW10.1
+% CLEARWATER RIVER AT KAMIAH, IDAHO 1911 TO 1965
+% 
+% 3.  ASKEW11.1
+% JUDITH RIVER NEAR UTICA, MT. 1920 TO 1960
+% 
+% 4.  ASKEW12.1
+% MADISON RIVER NEAR WEST YELLOWSTONE, MT. 1923 TO 1960
+% 
+% 5.  ASKEW13.1
+% WHITEROCKS RIVER NEAR WHITEROCKS, UTAH, 1930 TO 1960
+% 
+% 6.  ASKEW14.1
+% MIDDLE BOULDER CREEK AT NEDERLAND, CO. 1912 TO 1960
+% 
+% 7.  ASKEW15.1
+% SOUTH PLATTE RIVER BELOW CHEESMAN LAKE, CO. 1925 TO 1960
+% 
+% 8.  ASKEW16.1
+% NECHES RIVER NEAR ROCKLAND, TEXAS 1914 TO 1960
+% 
+% 9.  ASKEW17.1
+% BIG FORD RIVER AT BIG FALLS, MN., 1929 TO 1960
+% 
+% 10.  ASKEW18.1
+% SKUNK RIVER AT AUGUSTA, IOWA 1915 TO 1960
+% 
+% 11.  ASKEW19.1
+% CURRENT RIVER AT VAN BUREN, MO 1922 TO 1960
+% 
+% 12.  ASKEW2.1
+% TRINITY RIVER AT LEWISTON, CALIFORNIA, OCTOBER 1912 - SEPTEMBER 1960
+% 
+% 13.  ASKEW20.1
+% WOLF RIVER AT NEW LONDON, WI 1914 TO 1960
+% 
+% 14.  ASKEW21.1
+% MAD RIVER NEAR SPRINGFIELD, OH. 1915 TO 1960
+% 
+% 15.  ASKEW22.1
+% WEST BRANCH DELAWARE RIVER AT HALE EDDY, NY 1916 TO 1960
+% 
+% 16.  ASKEW23.1
+% PEMIGEWASSET RIVER AT PLYMOUTH, NH 1904 TO 1960
+% 
+% 17.  ASKEW24.1
+% RAPPAHANNOCK RIVER NEAR FREDERICKSBURG, VA 1911 TO 1960
+% 
+% 18.  ASKEW25.1
+% JAMES RIVER AT BUCHANAN, VA 1911 TO 1960
+% 
+% 19.  ASKEW26.1
+% OOSTANAULA RIVER AT RESACA, GA 1893 TO 1960
+% 
+% 20.  ASKEW3.1
+% FEATHER RIVER AT OROVILLE, CALIFORNIA, OCTOBER 1902 - SEPTEMBER 1977
+% 
+% 21.  ASKEW4.1
+% AMERICAN RIVER AT FAIR OAKS, CALIFORNIA, OCTOBER 1906 - SEPTEMBER 1960
+% 
+% 22.  ASKEW5.1
+% EEL RIVER ABOVE DOS RIOS, CALIFORNIA, OCTOBER 1952 - SEPTEMBER 1960
+% 
+% 23.  ASKEW6.1
+% ROCK CREEK AT LITTLE ROUND VALLEY, NR. BISHOP, CALIFORNIA, SEPTEMBER 1960
+% 
+% 24.  ASKEW7.1
+% MCKENZIE RIVER AT MCKENZIE BRIDGE, OREGON, OCTOBER 1911 TO SEPTEMBER 1960
+% 
+% 25.  ASKEW8.1
+% S.F. SKYKOMISH RIVER NEAR INDEX, WASHINGTON,OCTOBER 1923 TO SEPTEMBER 1960
+% 
+% 26.  ASKEW9.1
+% BOISE RIVER NEAR TWIN SPRINGS, IDAHO,OCTOBER 1912 TO SEPTEMBER 1960
+% ----------------------------------------------------------------------------
+% 
+% ASTATKIE
+% This data was compiled from published meteorological data by Tessema
+%  Astatkie and used for nonlinear time series modelling in his Ph.D.
+%  Thesis, Queens University (1994) "Modulated Threshold Time Series
+%  Models". (D. Watts and E.Watt faculty advisors).
+% The units for flow are cms (cubic meters per second).
+% The units for temperature are degrees Celsius
+% The units for precipitation are in mm.
+% Acknowledgment: I would like to thank Tessema Astatkie for sending
+%  this data to me via e-mail.
+% Brief Summary Of The Data Files In The Directory mhsets/astatkie
+% 
+% 1.  FISHER.1
+% Mean daily flow, cms, Fisher River near Dallas, Jan 1 1988 - Dec 31 1991
+% #Station number 05SD003
+% #Latitude 51-21 N
+% #Longitude 97-30 W
+% 
+% 2.  FISHERP.1
+% Total daily precipitation, mm, Jan 1 1988 - Dec 31 1991, Fisher Basin
+% #Station Name: Hodgson 2
+% #Latitude: 51-11 N
+% #Longitude: 97-27 W
+% 
+% 3.  FISHERT.1
+% Mean daily temperature, deg C, Jan 1 1988 - Dec 31 1991
+% #Station Name: Hodgson 2
+% #Latitude: 51-11 N
+% #Longitude: 97-27 W
+% 
+% 4.  OLDMAN.1
+% Oldman River near Brocket, mean daily flow, cms, Jan 1 1988 - Dec 31 1991
+% #Station Number: 05AA024
+% #Latitude: 49-33 N
+% #Longitude: 113-49 W
+% 
+% 5.  OLDMANP.1
+% Precipitation, mm, Jan 1 1988 - Dec 31 1991, Oldman River basin
+% #Station Name: Pincher Creek (Jan 1, 1988 - Aug 31 1989 and Jan 1 1900 -
+% #                             Dec 31 1991)
+% #              Latitude: 49-31 N
+% #              Longitude: 114-00 W
+% #
+% #              Lethbridge A (Sept 1 1989 - Dec 31 1989)
+% #              Latitude:  49-38 N
+% #              Longitude: 112-48 W
+% 
+% 6.  OLDMANT.1
+% Mean daily temperature, C, Jan 1 1988 - Dec 31 1991, Oldman basin
+% #Station Name: Pincher Creek (Jan 1, 1988 - Aug 31 1989 and Jan 1 1900 -
+% #                             Dec 31 1991)
+% #              Latitude: 49-31 N
+% #              Longitude: 114-00 W
+% #
+% #              Lethbridge A (Sept 1 1989 - Dec 31 1989)
+% #              Latitude:  49-38 N
+% #              Longitude: 112-48 W
+% 
+% 7.  SAUGEEN.1
+% Mean daily flow, cms, Saugeen River near Port Elgin, Jan 1 1988 - Dec 31 1991
+% #Station number: 02FC001
+% 
+% 8.  SAUGEENP.1
+% Precipitation, mm, Jan 1 1988 - Dec 31 1991, Saugeen basin
+% #Station Name: Paisley
+% #Station Number: 6126210
+% #Longitude: 44-16 N
+% #Latitude: 81-22 W
+% 
+% 9.  SAUGEENT.1
+% Mean daily temperature, C, Jan 1 1988 - Dec 31 1991, Saugeen basin
+% #Station Name: Paisley
+% #Station Number: 6126210
+% #Longitude: 44-16 N
+% #Latitude: 81-22 W
+% 
+% 
+% BARACOS
+% Some of the data used in "Modeling hydrologic time series from the Arctic"
+% by P.C. Baracos, K.W. Hipel & A.I. McLeod (1981), Water Resources Bulletin,
+% Vol. 17, No.3, pp.414-422.
+% Brief Summary Of The Data Files In The Directory mhsets/baracos
+% 1.  CMINEF.1
+% TREE RIVER,10QA001, 1969-76, MEAN MONTHLY FLOW
+% 
+% 2.  CMINER.1
+% COPPERMINE, 2200900, MONTHLY, RAIN (MM), 1933-76
+% 
+% 3.  CMINET.1
+% COPPERMINE MONTHLY TEMPERATURE,2200900 CELSIUS,1933-1976
+% ----------------------------------------------------------------------------
+% 
+% BLOWFLY
+% Time series data on a population of sheep blow-flies maintained
+% under stable conditions for two years (361 observations) collected
+% by A.J. Nicholson and modelled by D.R. Brillinger, J. Guckenheimer,
+% P. Guttorp and G. Oster (1980), "Empirical Modelling of Population
+% Time Series Data: The Case of Age and Density Dependent Vital Rates",
+% Lectures on Mathematics in the Life Sciences, Vol. 13, pp.65--90
+% Brief Summary Of The Data Files In The Directory mhsets/blowfly
+% 
+% 1.  DEATHS.1
+% deaths in total adult population
+% 
+% 2.  EGGS.1
+% number of blowfly eggs
+% 
+% 3.  EMERGING.1
+% number of emerging eggs
+% 
+% 4.  NONEMERG.1
+% number of nonemerging eggs
+% 
+% 5.  TOTAL.1
+% total blowfly population
+% ----------------------------------------------------------------------------
+% 
+% BOXJENK
+% Selected "classic" time series from Box and Jenkins (1976),
+% Time Series Analysis: forecasting and control.
+% Brief Summary Of The Data Files In The Directory mhsets/boxjenk
+% 1.  SERIESA.1
+% SERIES A, CHEMICAL PROCESS CONCENTRATION READINGS
+% #every 2 hours
+% 
+% 2.  SERIESB.1
+% SERIES B, IBM STOCK PRICES
+% #closing price of common stock, daily, May 17 1961 to November 2 1962
+% #May 17 = 137th day
+% 
+% 3.  SERIESB2.1
+% IBM STOCK PRICES, 2ND SERIES
+% #closing price of common stock, daily, June 29 1959 to June 30 1960
+% #June 29 = 180th day
+% 
+% 4.  SERIESC.1
+% SERIES C, CHEMICAL PROCESS TEMPERATURE READINGS
+% #every minute
+% 
+% 5.  SERIESD.1
+% SERIES D, CHEMICAL PROCESS VISCOSITY READINGS
+% #every hour
+% 
+% 6.  SERIESE.1
+% SERIES E, WOLFER SUNSPOT NUMBERS, 1770-1869
+% 
+% 7.  SERIESF.1
+% SERIES F, SUCCESSIVE YIELDS OF BATCH PROCESS
+% 
+% 8.  SERIESG.1
+% SERIES G, MONTHLY INTERNATIONAL AIRLINE PASSENGERS
+% #unit: thousands of passengers; January 1949 to December 1960
+% 
+% 9.  SERIESJ.2
+% SERIES J, GAS INPUT DATA, 396 VALUES
+% #sampling interval 9 seconds
+% #output = % CO_2 in outlet gas
+% #input  = 0.60 - 0.40(input gas rate in cu. ft. / min.)
+% 
+% 10.  SERIESJX.1
+% SERIES J, INPUT
+% #sampling interval 9 seconds
+% #input  = 0.60 - 0.40(input gas rate in cu. ft. / min.)
+% 
+% 11.  SERIESJY.1
+% SERIES J, OUTPUT
+% #sampling interval 9 seconds
+% #output = % CO_2 in outlet gas
+% ----------------------------------------------------------------------------
+% 
+% CNELSON
+% THE DATA SET WAS USED IN 'TRENDS AND RANDOM WALKS IN
+% MACROECONOMIC TIME SERIES; SOME EVIDENCE AND IMPLICATIONS'
+% BY CHARLES R. NELSON AND CHARLES I. PLOSSER PUBLISHED IN
+% JOURNAL OF MONETARY ECONOMICS 10 (1982) P 139-162.
+% NORTH HOLLAND PUBLISHING COMPANY
+% Acknowledgment: I would like to thank Charles Nelson for sending
+%  this data to me via e-mail.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/cnelson
+% 
+% 1.  BND.1
+% Bond yield, U.S., 1900-1970, annual
+% 
+% 2.  CPI.1
+% CPI, U.S., 1860-1970, annual
+% 
+% 3.  EMP.1
+% Employment, U.S., 1860-1970, annual
+% 
+% 4.  GNP.1
+% Nominal GNP, U.S., 1909-1970, annual
+% 
+% 5.  IP.1
+% Industrial production, U.S., 1860-1970, annual
+% 
+% 6.  M.1
+% Money Stock, U.S., 1889-1970, annual
+% 
+% 7.  PCRGNP.1
+% Real per capita GNP, U.S., 1909-1970, annual
+% 
+% 8.  PRGNP.1
+% GNP deflator, U.S., 1909-1970, annual
+% 
+% 9.  RGNP.1
+% Real GNP, U.S., 1909-1970, annual
+% 
+% 10.  RWG.1
+% Real wages, U.S., 1900-1970, annual
+% 
+% 11.  SP500.1
+% Common stock prices, U.S., 1871-1970, annual
+% 
+% 12.  UN.1
+% Employment, U.S., 1860-1970, annual
+% 
+% 13.  VEL.1
+% Velocity of money, 1869-1970, annual
+% 
+% 14.  WG.1
+% Wages, U.S., 1900-1970, annual
+% ----------------------------------------------------------------------------
+% 
+% COMMOD
+% This is a file of actual commodity prices of the five
+% commodities (feeder cattle, gold price, porkbellies,
+% soybeans and U.S. treasury bills) on the Chicago
+% market over a period of about 97-100 consecutive trading days.
+% For each commodity there are 3 files containing the
+% daily high, daily low, and daily close price.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/commod
+% 
+% 1.  FEED.1
+% FEEDER CATTLE CONTRACTS, CLOSE PRICE ON 95 CONSECUTIVE TRADING DAYS
+% 
+% 2.  FEEDH.1
+% FEEDER CATTLE APR,81, HIGH
+% 
+% 3.  FEEDL.1
+% FEEDER CATTLE APR,81, LOW
+% 
+% 4.  GOLD.1
+% GOLD CLOSE PRICE, 97 SUCCESSIVE TRADING DAYS
+% 
+% 5.  GOLDH.1
+% GOLD JUN,81, HIGH
+% 
+% 6.  GOLDL.1
+% GOLD JUN,81, LOW
+% 
+% 7.  PORK.1
+% PORKBELLIES, 99 CONSECUTIVE TRADING DAYS, CLOSE PRICE
+% 
+% 8.  PORKH.1
+% PORK BELLIES, HIGH
+% 
+% 9.  PORKL.1
+% PORK BELLIES MAR,81, LOW
+% 
+% 10.  SOY.1
+% SOYBEAN CONTRACTS, CLOSE PRICE ON 99 CONSECUTIVE TRADING DAYS
+% 
+% 11.  SOYH.1
+% SOYBEANS, HIGH
+% 
+% 12.  SOYL.1
+% SOYBEANS, LOW
+% 
+% 13.  US.1
+% U.S. TREASURY BILL CONTRACTS, 100 CONSECUTIVE TRADING DAYS
+% 
+% 14.  USH.1
+% U.S. T BILLS, HIGH
+% 
+% 15.  USL.1
+% U.S. TREASURY BILLS MAR,81, LOW
+% ----------------------------------------------------------------------------
+% 
+% ECOLOGY
+% Time series data on the abundance of various wild animals. Typically
+% these data show strong cyclically behaviour which has been the subject
+% for speculation and study. Basically there are two types of counts -
+% fur production and fur sales. The difference is that fur sales as
+% a one year lag over fur production. The type is indicated in the time
+% series title string.
+% 
+% FOX DATASETS: arctic.1, hbco.1, hebron.1, hopedale.1, nain.1, okak.1
+% These are from C. Elton (1942) "Voles, Mice and Lemmings",
+% Oxford Univ. Press.
+% 
+% LYNX DATASET:
+% Annual Number of Lynx Trapped, MacKenzie River, 1821-1934
+% Original Source: Elton, C. and Nicholson, M. (1942)
+% "The ten year cycle in numbers of Canadian lynx",
+% J. Animal Ecology, Vol. 11, 215--244.
+% This is the famous data set which has been listed before in
+% various publications:
+% Cambell, M.J. and Walker, A.M. (1977) "A survey of statistical work on
+% the MacKenzie River series of annual Canadian lynx trappings for the years
+% 1821-1934 with a new analysis", J.Roy.Statistical Soc. A 140, 432--436.
+% 
+% FUR-SALES DATASETS: marten.1, mink.1, muskrat.1, otter_l.1, racoon.1,
+%                     skunk.1, wolf.1, wolveren.1
+% These datasets are from:
+% Jones, J.W. (1914) "Fur-farming in Canada", Commission of Conservation
+% Canada, pp.209--214
+% 
+% ADDTIONAL REFERENCES:
+% 85JTimSrAn 6   171- 180
+%  Timo Teraesvirta
+%  Mink and muskrat interaction: A structural analysis
+%  ARIMA model;Canonical form;Time series;Transfer function
+% 78ApplStat27   168- 175
+%  W.-Y. T. Chan;Kenneth F. Wallis
+%  Multiple time series modelling: Another look at the mink-muskrat interaction
+%  Animal populations;Predator-prey;Autoregressive-moving average;Box-Jenkins;Identification
+% 75PIBiomC  8    55-  72
+%  G. M. Jenkins
+%  The interaction between the muskrat and mink cycles in north Canada
+% 77Ststcian26    51-  75
+%  O. D. Anderson
+%  A Box-Jenkens analysis of the coloured fox data from Nain, Labrador
+% 
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/ecology
+% 
+% 1.  ARCTIC.1
+% Arctic foxes, fur returns, Ungava District, 1868-1924
+% #Source: C. Elton (1942) "Voles, Mice and Lemmings", Oxford Univ. Press
+% #Table 51, p.415-6.
+% 
+% 2.  HBCO.1
+% Coloured fox fur returns, H.B. Co, Ungava District, 1868-1924
+% #Source: C. Elton (1942) "Voles, Mice and Lemmings", Oxford Univ. Press
+% #Table 53, p.422
+% 
+% 3.  HEBRON.1
+% Coloured fox fur production, Hebron, Labrador, 1834-1925
+% #Source: C. Elton (1942) "Voles, Mice and Lemmings", Oxford Univ. Press
+% #Table 17, p.265--266
+% #remark: missing value for 1852, ie. observation no. 18
+% 
+% 4.  HOPEDALE.1
+% Coloured fox fur production, HOPEDALE, Labrador,, 1834-1925
+% #Source: C. Elton (1942) "Voles, Mice and Lemmings", Oxford Univ. Press
+% #Table 17, p.265--266
+% 
+% 5.  LYNX.1
+% Annual Number of Lynx Trapped, MacKenzie River, 1821-1934
+% #Original Source: Elton, C. and Nicholson, M. (1942)
+% #"The ten year cycle in numbers of Canadian lynx",
+% #J. Animal Ecology, Vol. 11, 215--244.
+% #This is the famous data set which has been listed before in
+% #various publications:
+% #Cambell, M.J. and Walker, A.M. (1977) "A survey of statistical work on
+% #the MacKenzie River series of annual Canadian lynx trappings for the years
+% #1821-1934 with a new analysis", J.Roy.Statistical Soc. A 140, 432--436.
+% 
+% 6.  MARTEN.1
+% Fur sales, marten, HB Co., 1850-1911
+% #Jones, J.W. (1914) "Fur-farming in Canada", Commission of Conservation
+% #Canada, pp.209--214
+% 
+% 7.  MINK.1
+% Fur sales, mink, HB Co., 1850-1911
+% #Jones, J.W. (1914) "Fur-farming in Canada", Commission of Conservation
+% #Canada, pp.209--214
+% 
+% 8.  MUSKRAT.1
+% Fur sales, HB Co., muskrat, 1850-1911
+% #Jones, J.W. (1914) "Fur-farming in Canada", Commission of Conservation
+% #Canada, pp.209--214
+% 
+% 9.  NAIN.1
+% Coloured fox fur production, Nain, Labrador, 1834-1925
+% #Source: C. Elton (1942) "Voles, Mice and Lemmings", Oxford Univ. Press
+% #Table 17, p.265--266
+% #remark: missing value for 1852, ie. observation no. 18
+% 
+% 10.  OKAK.1
+% Coloured fox fur production, Okak, Labrador, 1834-1925
+% #Source: C. Elton (1942) "Voles, Mice and Lemmings", Oxford Univ. Press
+% #Table 17, p.265--266
+% #remark: missing value for 1852, ie. observation no. 18
+% 
+% 11.  OTTER_L.1
+% Fur sales, otter (land), HB Co., 1850-1911
+% #Jones, J.W. (1914) "Fur-farming in Canada", Commission of Conservation
+% #Canada, pp.209--214
+% 
+% 12.  RACOON.1
+% Fur sales, HB Co., racoon, 1850-1911
+% #Jones, J.W. (1914) "Fur-farming in Canada", Commission of Conservation
+% #Canada, pp.209--214
+% 
+% 13.  SKUNK.1
+% Fur sales, H.B. Co., skunk, 1850-1911
+% #Jones, J.W. (1914) "Fur-farming in Canada", Commission of Conservation
+% #Canada, pp.209--214
+% 
+% 14.  WOLF.1
+% Fur sales, HB Co., wolf, 1850-1911
+% #Jones, J.W. (1914) "Fur-farming in Canada", Commission of Conservation
+% #Canada, pp.209--214
+% 
+% 15.  WOLVEREN.1
+% Fur sales, HB Co., wolferene, 1850-1911
+% #Jones, J.W. (1914) "Fur-farming in Canada", Commission of Conservation
+% #Canada, pp.209--214
+% ----------------------------------------------------------------------------
+% 
+% EPI
+% ORIGINAL DATA SOURCE:
+% Yorke, J.A. and London, W.P. (1973)
+% "Recurrent Outbreaks of Measles, Chickenpox and Mumps",
+% American Journal of Epidemiology, Vol. 98, pp.469
+% 
+% REMARKS:
+% Schaffer and Kot (1985) have studied this data using a nonlinear
+% dynamical systems approach. However traditional time series methods
+% are adequate. Which is better?
+% 
+% REFERENCE:
+% Schaffer, W.M. and Kot, M. (1985)
+% "Nearly one dimensional dynamics in an epidemic",
+% Journal of Theoretical Biology, Vol. 112, pp.403--427.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/epi
+% 
+% 1.  CHICKNYC.1
+% Reported Number of Cases of Chickenpox, Monthly, 1931-1972, New York City
+% 
+% 2.  MEASLBAL.1
+% Reported Number of Cases of Measles, Monthly, Jan. 1939- June 1972, Baltimore
+% 
+% 3.  MEASLNYC.1
+% Reported monthly cases of measles, 1928-1972, New York City
+% 
+% 4.  MUMPS.1
+% Reported monthly cases of mumps, 1928-197 2 New York City
+% ----------------------------------------------------------------------------
+% 
+% HTONG
+% These datasets were introduced into the literature in a paper by
+% Tong, Thanoon and Gudmundsson (1985) and has been used by various
+% nonlinear modelers since then. These datasets given in the book
+% by Tong (1991). For additional references, see below.
+% 
+% References:
+% Astatkie, T. (1994),  "Modulated Threshold Time Series  Models".
+% Ph.D. Thesis, Queens University.
+% 
+% Chen, R. & Tsay, R. (1993). Nonlinear additive ARX models.
+% Journal of the American Statistical Association, Vol. 88, pp.955-67.
+% 
+% Lewis, P.A.W. (1994). Forthcoming paper in Water Resources Bulletin
+% 
+% Tong, H., Thanoon, B. & Gudmundsson, G. (1985) "Threshold time
+% series modelling of two Icelandic riverflow systems", Water
+% Resources Bulletin, Vol. 21, No. 4, pp.651--661.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/htong
+% 
+% 1.  JOKULSA.1
+% Jokulsa Eystri River, mean daily flow, Jan. 1, 1972 - Dec. 31, 1974, cms
+% 
+% 2.  PRECIP.1
+% Daily precipitation, in mm, Hveravellir, Jan. 1, 1972 - Dec. 31, 1974
+% 
+% 3.  TEMPER.1
+% Mean daily temperature, in deg C, Hveravellir, Jan. 1, 1972 - Dec. 31, 1974
+% 
+% 4.  VATNSD.1
+% Vatnsdalsa River, mean daily flow, Jan. 1, 1972 - Dec. 31, 1974, cms
+% ----------------------------------------------------------------------------
+% 
+% HURST
+% Datasets from K.W. Hipel and A.I. McLeod (1978) "Preservation of the
+% Rescaled Adjusted Range", Water Resources Research, Vol. 14, pp. 491--
+% 517. In our paper we examined the long memory hypothesis and found
+% that on the whole there was no evidence for this hypothesis.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/hurst
+% 
+% 1.  BIGCONE.1
+% BIG CONE SPRUCE,SOUTHERN CALIFORNIA, U.S.A., 1458-1966, 509 VALUES
+% 
+% 2.  BRYCE.1
+% PONDEROSA PINE,BRYCE WATER CANYON,UTAH,U.S.A., 1340-1964, 625 YEARS
+% 
+% 3.  DANUBE.1
+% DANUBE RIVER, AT ORSHAVA,ROMANIA, 1837-1957
+% 
+% 4.  DELL.1
+% LIMBER PINE, DELL,MONTANA,U.S.A., 1311-1965, 655 YEARS
+% 
+% 5.  EAGLECOL.1
+% DOUGLAS FIR,EAGLE,COLORADO, U.S.A.,M 1107-1964, 858 YEARS
+% 
+% 6.  ESPANOLA.1
+% MUD VARVE DATA, SWEDISH TIME SCALE, ESPANOLA, CANADA, -204 TO -908, 668 YEARS
+% 
+% 7.  EXSHAW.1
+% DOUGLAS FIR,EXSHAW,ALBERTA,CANADA, 1460-1965, 506 YEARS
+% 
+% 8.  GOTA.1
+% GOTA RIVER, NEAR SJOTOP-VANNERSBURG,SWEDEN, 1807-1957
+% 
+% 9.  LAKEVIEW.1
+% PONDEROSA PINE,LAKEVIEW OREGON,U.S.A., 1421-1964, 544 YEARS
+% 
+% 10.  MINIMUM.1
+% Annual Minimum Level of Nile River, 622-1469
+% 
+% 11.  MSTOUIS.1
+% MISSISSIPPI RIVER, NEAR ST.LOUIS,MO., 1861-1957
+% 
+% 12.  NARAMATA.1
+% PONDEROSA PINE, NARAMATA,BRITISH COLUMBIA,CANADA,1951-1965, 515 YEARS
+% 
+% 13.  NAVAJO.1
+% DOUGLAS FIR,NAVAJO NATIONAL MONUMENT(BETATAKIN),ARIZONA,U.S.A., 700 YEARS
+% 
+% 14.  NEUMUNAS.1
+% NEUMUNAS RIVER, AT SMALININKAI,LITUANIA,USSR, 1811-1943
+% 
+% 15.  NINEMILE.1
+% DOUGLAS FIR,NINE MILE CANYON (HIGH),UTHAH,U.S.A.,1194-1964, 771 YEARS
+% 
+% 16.  OGDEN.1
+% ST. LAWRENCE RIVER AT OGDENSBURG, N.Y., 1860-1957, YEARLY FLOW
+% 
+% 17.  PRECIP.1
+% Total annual rainfall, inches, London, England, 1813-1912
+% 
+% 18.  RHINE.1
+% RHINE RIVER, NEAR BASLE,SWITZERLAND, 1807-1957
+% 
+% 19.  SNAKE.1
+% DOUGLAS FIR,SNAKE RIVER BASIN,U.S.A.,1282-1950, 669 YEARS
+% 
+% 20.  SUNSPT.1
+% YEARLY SUNSPOT-RELATIVE NUMBERS   1700-1960
+% 
+% 21.  TEMPER.1
+% AVERAGE ANNUAL TEMPERATURE, CENTRAL ENGLAND, 1723-1970
+% 
+% 22.  TIOGA.1
+% JEFFREY PINE,TIOGA PASS, CALIFORNIA, U.S.A., 1304-1964, 661 YEARS
+% 
+% 23.  WHITEMTN.1
+% BRISTLECONE PINE, WHITE MOUNTAINS, CALIFORNIA,U.S.A., 800-1963, 1164 YEARS
+% ----------------------------------------------------------------------------
+% 
+% KORSAN
+% Financial time series from "Fractals and Time Series Analysis" by
+% R.J. Korsan (1993), Mathematica, Vol.3, pp.39-47
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/korsan
+% 
+% 1.  DAILYIBM.1
+% Daily closing price of IBM stock, Jan 1, 1980 to Oct. 8, 1992
+% 
+% 2.  DAILYSAP.1
+% Daily S&P 500 index of stocks, Jan. 1, 1980 to Oct. 8, 1992
+% ----------------------------------------------------------------------------
+% 
+% LAMARCHE
+% This data was kindly provided by the late V.C. LaMarche, Jr and is the data
+% used in the paper by Fritts, H.C. et al. (1971) "Multivariate techniques
+% for specifying tree-growth and climatic relationships and for reconstructing
+% anomalies in Paleoclimate. Journal of Applied Meteorology, 10, pp.845-864.
+% The data was produced and assembled at the Tree Ring Laboratory at the
+% University of Arizona, Tuscon.
+% 
+% The data can also be studied using Granger causality methods as in W.K. Li
+% (1981) "Topics in Time Series Modelling", Ch. 8, Ph.D. Thesis, University
+% of Western Ontario.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/lamarche
+% 
+% 1.  CAMPITO.1
+% CAMPITO MNT. TREE RING DATA, N=5405 FROM 3435BC TO 1969AD (IN .01 MM)
+% 
+% 2.  PRECIP.1
+% Mean monthly precipitation, 1907-1972
+% 
+% 3.  RING.1
+% Campito treerings, 1907-1960
+% 
+% 4.  TEMPER.1
+% Mean monthly temperature, 1907-1972
+% ----------------------------------------------------------------------------
+% 
+% LONDONWQ
+%  The water consumption data and the number of consumers are obtained
+% by meter readers. Approximately half of all consumers have their meter
+% read in a given month. The data for residential water consumption
+% is the consumption for those residential consumers who had their meter
+% read in the given month for the last two months. This is considered
+% a proxy variable for the total residential water consumption.
+% 
+%  Prior to January 1991 the rates for residential water consumption in the
+% city of London were based on a descending block structure.
+% So the more water one used, the cheaper the rate.
+% For example in 1983, the first 200 cubic feet were
+% charged at $3.80 per 100 cubic feet, the next 50000 cubic feet were charged
+% at $0.64 per cubic feet;
+% and the remainder was charged at $0.53 per cubic feet.
+% In January of 1991 the billing was changed to encourage conservation.
+% The new rate is based on an increasing block rate structure.
+% For example in 1991, the first 1200 cubic
+% feet consumed by residential users were charged at $2.011 per 100 cubic feet,
+% the next 2800 cubic feet were charged at $2.120 per 100 cubic feet, and the
+% remainder was charged at $2.228 per 100 cubic feet.
+% From June 1993 onwards,
+% the environmental tax was added to the bill of water consumption, this tax
+% rate charges of $0.254 per 100 cubic feet.
+% 
+% Original Source: London P.U.C.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/londonwq
+% 
+% 1.  CONSUM.1
+% Total consumers 01/83 -04/94
+% #missing value for June 1988 (66-th obs.) estimated by
+% #intervention analysis
+% 
+% 2.  PREC.1
+% Monthly precipitation (millimeter), 01/83 - 04/94
+% 
+% 3.  TEMPER.1
+% Monthly temperature (celcius), 01/83 - 04/94
+% 
+% 4.  WATERQ.1
+% Residential water consumption, 1983:1-1994:4
+% #missing value for June 1988 (66-th obs.) estimated by
+% #intervention analysis
+% ----------------------------------------------------------------------------
+% 
+% MISC
+% Miscellaneous time series.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/misc
+% 
+% 1.  CAFFEINE.1
+% CAFFEINE LEVELS IN INSTANT COFFEE (SEASONAL PERIOD = 5)
+% 
+% 2.  CIGB.2
+% Biomonthly cigarette consumption and price, 1966-74
+% #consumption per adult in real dollars
+% #real price index of cigarettes
+% #Ref: McLeod (1977) Ph.D. Thesis: Topics in Time Series.
+% 
+% 3.  FREEDMAN.1
+% Freedman's Nonlinear Time Series
+% #z_t = f(z_(t-1)), where f(x)=2x if x<=0.5 and f(x)=2-2x, x>0.5
+% 
+% 4.  KINGS.1
+% Age of Death of Successive Kings of England
+% #starting with William the Conqueror
+% #Source: McNeill, "Interactive Data Analysis"
+% 
+% 5.  LOGISTIC.1
+% logistic map, mu=3.9
+% #z_t = mu z_ t-1  (1-z_ t-1 )
+% 
+% 6.  PACK.2
+% Y - INDOOR TEMPERATURE,  X - OUTDOOR TEMPERATURE
+% #original data from a paper by D. Pack
+% 
+% 7.  PAPER.2
+% PAPER-MAKING PROCESS DATA (TEE AND WU). OUTPUT AND INPUT VARIABLE
+% 
+% 8.  QBIRTHS.1
+% Number of births, daily, Quebec, January 1, 1977 to December 31, 1990.
+% #source: B. Quenneville, Statistics Canada
+% 
+% 9.  SALESX.1
+% SALES OF COMPANY X, JAN. 1965 TO MAY 1971
+% #Reference: Chatfield, C. and Prothero, D.L. (1973).
+% #Box-Jenkins seasonal forecasting: problems in a case-study
+% #Journal of the Royal Statistical Society A, Vol. 136, pp.295--336
+% 
+% 10.  SAUGEEN.1
+% Mean daily Saugeen riverflows, Jan 1, 1915 to Dec 31, 1979
+% 
+% 11.  SIMAR4.1
+% Simulated AR(4), beta=(2.7607, -3.8106, 2.6535, -0.9238), n=800
+% #bimodal spectral density, peaks are close together
+% #see Percival and Walden (1994)
+% #    "Spectral Analysis for Physical Applications", Cambridge Univ. Press
+% #    p.46, equation (46a)
+% ----------------------------------------------------------------------------
+% 
+% MONTHLY
+% Miscellaneous monthly time series.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/monthly
+% 
+% 
+% 1.  AROSA.1
+% ozone, arosa, 1932-72, i=23,63,235,275,462
+% 
+% 2.  AZUSA.1
+% Ozone concentration, AZUSA, 1956.1-1970.12
+% 
+% 3.  BAYDU.1
+% Bay du Nord River, monthly flow, 1953-81, missing values at 327,328
+% #used as a covariate with the Piper's Hole River dataset
+% 
+% 4.  CO2.1
+% Co_2  (ppm) Mauna Loa. 1965.1-1980.12
+% 
+% 5.  CPI.1
+% Monthly CPI, Canada, 1950-73
+% 
+% 6.  DESCRIBE
+% Brief Summary Of The Data Files In The Directory c:\hmsets\monthly
+% 
+% 7.  ELBE.1
+% ELBE RIVER, MONTHLY RIVERFLOWS, 300 VALUES
+% 
+% 8.  ENGINES.1
+% Motor vehicles engines and parts/CPI Canada, 1976.5-1991.12. IV=164
+% 
+% 9.  FRASER.1
+% Fraser River at Hope, 1913.3-1990.12
+% 
+% 10.  FURNAS.DAT
+%  006 FURNAS - VAZOES MEDIAS MENSAIS (M3/S) - 1931 A 1978
+% 
+% 11.  GUELPH.1
+% Phosphorous Data,Speed River,Guelph,1972.1-1977.12,IV=26,ms=6,19,25,41
+% 
+% 12.  HANKOU.1
+% Monthly Flows, Chang Jiang at Han Kou, 1865-1979
+% 
+% 13.  NIAGARA.1
+% NIAGARA RIVER AT QUEENSTON - STATION NO. 02HA003, 1860-1990
+% #MONTHLY MEAN DISCHARGES IN CUBIC METRES PER SECOND FOR THE PERIOD OF RECORD
+% #LOCATION -  LAT   43:09:25N    DRAINAGE AREA    686000 km2
+% #            LONG  079:02:50W   REGULATED SINCE 1955
+% 
+% 14.  NIGERIA.1
+% NIGERIA POWER CONSUMPTION, 123 VALUES
+% 
+% 15.  NILEMON.1
+% Mean monthly Nile river flow, cms, at Aswan, 1870.3-1932.12
+% 
+% 16.  OZONE.1
+% Ozone concentration, downtown L.A., 1955.1-1972.12
+% 
+% 17.  PEAS.1
+% PRECIPITATION IN MM., Monthly, EASTPORT, USA, 1887-1950
+% 
+% 18.  PIPER.1
+% Piper's Hole River, mean monthly flow, 1953-81, fire at 104-6
+% 
+% 19.  PPHIL.1
+% MONTHLY PRECIPITATION, MM., PHILADELPHIA, 1820-1950
+% 
+% 20.  README
+% Miscellaneous monthly time series.
+% 
+% 21.  REDDEER.1
+% MONTHLY RIVERFLOW OF RED DEER RIVER AT RED DEER ALBERTA, 1942-74
+% 
+% 22.  RIOTIETE.1
+% VAZOES MEDIAS MENSAIS DO RIO TIETE - POSTO CUMBICA - 1948 A 1978
+% 
+% 23.  SALESX.1
+% Sales of company x, January 1965 to May 1971
+% #from paper of Chatfield and Prothero, JRSS A (1973)
+% #Box-Jenkins seasonal forecasting: problems in a case study
+% 
+% 24.  SSASK.1
+% S. SASK. RIVER AT SASKTOON- 780 MONTHLY FLOWS IN CMS-JAN 1912 TO DEC 1974
+% 
+% 25.  SUNSPTMO.1
+% Zurich Monthly Sunspot Numbers 1749 - 1983
+% 
+% 26.  TPMON.1
+% MONTHLY TEMPERATURES IN ENGLAND (F), 1723-1970, 2976 VALUES
+% 
+% 27.  TSEOIL.1
+% Shartes traded in Oil and Mining stock, TSE, iv=320
+% #Kuiwait invasion occurred at t=320
+% 
+% 28.  WOODS.1
+% LAKE OF THE WOODS AT WARROAD - STATION NO. 05PD001
+% #MONTHLY MEAN WATER LEVELS IN METRES FOR THE PERIOD OF RECORD
+% #1916-1965
+% #LOCATION -  LAT   48:54:20N
+% #            LONG  095:19:00W   REGULATED
+% #WATER LEVELS REFERRED TO LAKE OF THE WOODS DATUM
+% 
+% 29.  WQLONDON.1
+% London, Ontario, Monthly Water Useage, 1966-1988 (Ml/day)
+% ----------------------------------------------------------------------------
+% 
+% NOAKES
+% Monthly riverflow time series used in the forecasting experiments reported
+% in the article "Forecasting monthly riverflow time series" by D.J. Noakes,
+% A.I. McLeod & K.W. Hipel (1985), International Journal of Forecasting,
+% Vol. 1, pp.179-190.
+% See also:
+% A.I. McLeod, D.J. Noakes, K.W. Hipel & R.M. Thompstone (1987). ``Combining
+% hydrologic forecasts''. Journal of the American Society of Civil Engineers,
+% Water Resources Planning and Management Division, V.113, pp.29-41.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/noakes
+% 
+% 1.  AMERICAN.1
+% AMERICAN RIVER AT FAIR OAKS, CALIFORNIA, OCTOBER 1906 - SEPTEMBER 1960
+% 
+% 2.  BOISE.1
+% BOISE RIVER NEAR TWIN SPRINGS, IDAHO,OCTOBER 1912 TO SEPTEMBER 1960
+% 
+% 3.  CLEARWAT.1
+% CLEARWATER RIVER AT KAMIAH, IDAHO 1911 TO 1965
+% 
+% 4.  COLUM.1
+% STATION NO. 08NA002 COLUMBIA RIVER AT NICHOLSON 1933-69 37 YRS.
+% 
+% 5.  CURRENT.1
+% CURRENT RIVER AT VAN BUREN, MO 1922 TO 1960
+% 
+% 6.  ENGLISH.1
+% STATION 05QA001  ENGLISH R. NEAR SIOUX LOOKOUT O. 1922-77
+% 
+% 7.  FEATHER.1
+% FEATHER RIVER AT OROVILLE, CALIFORNIA, OCTOBER 1902 - SEPTEMBER 1977
+% 
+% 8.  JAMES.1
+% JAMES RIVER AT BUCHANAN, VA 1911 TO 1960
+% 
+% 9.  JUDITH.1
+% JUDITH RIVER NEAR UTICA, MT. 1920 TO 1960
+% 
+% 10.  MAD.1
+% MAD RIVER NEAR SPRINGFIELD, OH. 1915 TO 1960
+% 
+% 11.  MADISON.1
+% MADISON RIVER NEAR WEST YELLOWSTONE, MT. 1923 TO 1960
+% 
+% 12.  MBOULDER.1
+% MIDDLE BOULDER CREEK AT NEDERLAND, CO. 1912 TO 1960
+% 
+% 13.  MCKENZIE.1
+% MCKENZIE RIVER AT MCKENZIE BRIDGE, OREGON, OCTOBER 1911 TO SEPTEMBER 1960
+% 
+% 14.  MISINAB.1
+% STATION NO. 04LJ001 MISSINAIBI RIVER AT MATTICE  1921-76  56 YRS.
+% 
+% 15.  NAMAKAN.1
+% STATION  05PA006  NAMAKAN R. AT LAC LA CROIX ONT.  1923-77
+% 
+% 16.  NECHES.1
+% NECHES RIVER NEAR ROCKLAND, TEXAS 1914 TO 1960
+% 
+% 17.  NMAGNET.1
+% STATION 02EA005  N. MAGNETAWAN R., BURKS FALLS O. 1916-77
+% 
+% 18.  OOSTANAU.1
+% OOSTANAULA RIVER AT RESACA, GA 1893 TO 1960
+% 
+% 19.  PIGEON.1
+% STATION 02AA001 PIGEON R. NEAR MIDDLE FALLS ONT. 1924-77
+% 
+% 20.  RAPPAHAN.1
+% RAPPAHANNOCK RIVER NEAR FREDERICKSBURG, VA 1911 TO 1960
+% 
+% 21.  RICHELU.1
+% STATION 02OJ007  RICHELIEU R. AT FRYERS RAPDS QUE 1938-77
+% 
+% 22.  RIOGRAND.1
+%  006 FURNAS - VAZOES MEDIAS MENSAIS (M3/S) - 1931 A 1978
+% 
+% 23.  SAUGEEN.1
+% SAUGEEN RIVER, WALKERTON, 1915-1976
+% 
+% 24.  SFSKYKOM.1
+% S.F. SKYKOMISH RIVER NEAR INDEX, WASHINGTON,OCTOBER 1923 TO SEPTEMBER 1960
+% 
+% 25.  SSASK.1
+% S. SASK. RIVER AT SASKTOON- 624 MONTHLY FLOWS IN CMS-OCT 1911 TO OCT 1963
+% 
+% 26.  STJOHNS.1
+% STATION 01AD002  SAINT JOHNS R. AT FORT KENT N.B. 1927-77
+% 
+% 27.  TRINITY.1
+% TRINITY RIVER AT LEWISTON, CALIFORNIA, OCTOBER 1912 - SEPTEMBER 1960
+% 
+% 28.  TURTLE.1
+% STATION 05PB014  TURTLE R. NEAR MINE CENTRE ONT.  1921-77
+% 
+% 29.  WBDELAWA.1
+% WEST BRANCH DELAWARE RIVER AT HALE EDDY, NY 1916 TO 1960
+% 
+% 30.  WOLF.1
+% WOLF RIVER AT NEW LONDON, WI 1914 TO 1960
+% ----------------------------------------------------------------------------
+% 
+% PROTHERO
+% Contains quarterly U.K. economic time series from a case study reported
+% by D.L. Prothero and K.F. Wallis (1976), "Modelling macroeconomic time
+% series (with discussion)", Journal of the Royal Statistical Society, A,
+% Vol.139, Part 4, pp.468-500.
+% 
+% Prothero and Wallis fitted several models to each series and compared
+% their performance with a multivariate model.
+% 
+% Acknowledgment: I would like to thank D.L. Prothero for sending
+%  this data to me.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/prothero
+% 
+% 1.  CD.1
+% CD(1), CONSUMER EXPENDITURE ON DURABLE GOODS, QUARTERLY
+% 
+% 2.  CN.1
+% CN(2), CONSUMER EXPENDITURE ON ALL OTHER GOODS AND SERVICES, QUARTERLY
+% 
+% 3.  I.1
+% I(3), INVESTMENT, QUARTERLY
+% 
+% 4.  IV.1
+% IV(4), INVENTORY INVESTMENT, QUARTERLY
+% 
+% 5.  M.1
+% M(5), IMPORTS OF GOODS AND SERVICES, QUARTERLY
+% 
+% 6.  Y.1
+% Y(7), GROSS DOMESTIC PRODUCT, QUARTERLY
+% 
+% 7.  YD.1
+% YD(6), PERSONAL DISPOSABLE INCOME, QUARTERLY
+% ----------------------------------------------------------------------------
+% 
+% PRUSCHA
+% Temperature time series data for Munich-Riem, 1981-1984 from
+% "A note on time series analysis of yearly temperature data",
+% Journal of the Royal Statistical Society, A, Vol. 149, Part 2,
+% pp. 174--185 by Helmut Pruscha (1984).
+% Acknowledgment: I would like to thank Professor Pruscha for sending
+%  this data to me via e-mail.
+% Brief Summary Of The Data Files In The Directory mhsets/pruscha
+% 
+% 1.  SUMMER.1
+% Mean summer temperature (153 days) Deg C., 1781-1988,, Munich-Riem
+% 
+% 2.  WINTER.1
+% Winter negative temperature sum, deg. C., 1781-1988, Munich-Riem
+% 
+% 3.  YEAR.1
+% Mean annual temperature, Deg C., 1781-1988,, Munich-Riem
+% ----------------------------------------------------------------------------
+% 
+% ROBERTS
+% Selected interesting time series from Appendix A of H. Roberts (1992)
+% "Data Analysis for Managers" published by Scientific Press.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/roberts
+% 
+% 1.  AARIVINT.1
+% Intervals between aircraft arrivals in control zone
+% 
+% 2.  ALIGN.1
+% The total number of alignment errors per airplane in a sample of 50 planes.
+% #Original Source: Grant and Leavenworth.
+% 
+% 3.  ATT.1
+% Returns for AT&T, 1961:1-1967:12
+% #84 MONTHS DATA--JAN 1961 THRU DEC 1967--ON RETURNS FOR AT&T
+% #see also NYSE.1, IBM.1
+% 
+% 4.  BEARDS.1
+% Percent of Men with full beards, 1866-1911, annual
+% #see also, skirts.1
+% #SEE MARIJA NORUSIS'S 1981 SPSS PRIMER FOR DETAILS AND
+% #ADDITIONAL DATA EXTENDING BACK TO 1842 AND FORWARD TO 1953
+% 
+% 5.  BLUME.1
+% Monthly unit sales, Winnebago Industries, Inc., Nov. 1966 - Feb. 1972.
+% 
+% 6.  BOXHU1.1
+% #Yields of 20 consecutive batches of a chemical process.
+% #The first 10 batches were run under a standard process and the
+% #second 10 under a modified process aimed at increasing mean
+% #yield.  Source: Box, Hunter, and Hunter, Statistics for
+% #Experimenters, Wiley, 1978.
+% 
+% 7.  BOXHUN.1
+% Production record of 210 consecutive yield values.
+% #Taken from Box, Hunter, and Hunter, *Statistics for Experimenters*,
+% #Wiley, 1978, pages 32-3.
+% 
+% 8.  CCPI.1
+% One-month change in CPI, 1963:4-1971:7
+% #see also, tbills.1, scoles.1
+% 
+% 9.  CRYER.1
+% Chemical process data
+% #from "The Estimation of Sigma for an X Chart: MR/d2 or
+% #S/c4", Jonathan D. Cryer and Thompas P. Ryan, manuscript, February, 1989
+% 
+% 10.  DJ.1
+% Monthly closings of the Dow-Jones Industrial Index Aug 1968 - Aug 1981
+% 
+% 11.  DJWEEK.1
+% WEEKLY CLOSINGS OF THE DOW-JONES INDUSTRIAL AVERAGE, July 1971-Aug 2, 1974
+% #JULY 1971 THROUGH 2 AUGUST 1974.  DATA QUOTED IN UNPUBLISHED PAPER BY D.
+% #A. HSU, TAKEN FROM "NEW YORK STOCK EXCHANGE: STOCK PRICES", PUBLISHED
+% #QUARTERLY BY STANDARD AND POOR CO., NEW YORK, N.Y.
+% 
+% 12.  EGDEMAN.2
+% Measurements of center thickness and axial difference
+% #Measurements of center thickness (in mils) and axial difference (in mils) of
+% #25 contact lenses pulled from the production process at regular intervals.
+% #Tolerances: 0.4 mil +/- 0.01 mil for center thickness; axial difference must
+% #be less than 0.0025 mil.
+% #Taken from Rick L. Edgeman and Susan B. Athey, "Digidot Plots for Process
+% #Surveillance", Quality Progress, May, 1990, 66-68.
+% 
+% 13.  G.1
+% NOMINAL GOVERNMENT PRODUCT (BILLION DOLLARS)  1929-1974, U.S.
+% 
+% 14.  GLOBWARM.1
+% Surface air "temperature change" for the globe, 1880-1985. Degrees Celsius.
+% #"Temperature change" actually means temperature against an arbitrary zero
+% #point.  From James Hansen and Sergej Lebedeff, "Global Trends of Measured
+% #Surface Air Temperature", `Journal of Geophysical Research`, Vol. 92, No.
+% #D11, pages 13,345-13,372, November 20, 1987.
+% 
+% 15.  GNPN.1
+% NOMINAL GNP (BILLION DOLLARS)  1890-1974, U.S.
+% 
+% 16.  GNPR.1
+% REAL GNP  (BILLION DOLLARS)  1890-1974, U.S.
+% 
+% 17.  GRANT.1
+% Diameters, consecutive batches of 5
+% #100 measurements of pitch diameter -- DIAM -- of threads on
+% #aircraft fittings.  Values expressed in units of 0.0001 inch in
+% #excess of 0.4000 inch.  Specifications call for "37 plus or minus
+% #13".  Each successive group of five readings are items
+% #consecutively produced at times about one hour apart.  From Eugene
+% #L. Grant, Statistical Quality Control, McGraw-Hill, 1946.
+% 
+% 18.  GRUEN.1
+% Quarterly unit sales of the SPSS Manual, 1976:1-1982:4
+% #Quarterly unit sales of the SPSS Manual, Second Edition, from
+% #1976:1 through 1982:4.  (SPSS is a leading statistical computing
+% #package; the manual was actually sold through McGraw-Hill, Inc.)
+% 
+% 19.  HALSEY.1
+% Degree days per heating in Chicago, 1931:2 - 1977:8, monthly
+% #DEGREE DAYS PER HEATING YEAR IN CHICAGO, 1931-2 TO 1977-8.
+% #A DEGREE DAY IS THE DIFFERENCE BETWEEN 65 DEGREES F. AND THE ACTUAL
+% #DAILY MEAN TEMPERATURE IF THE LATTER IS 65 DEGREES OR LESS;
+% #OTHERWISE THE VALUE IS ZERO.  THE SUM OF DEGREE DAYS FROM JULY 1
+% #THROUGH THE FOLLOWING JUNE 30 -- DDAYS -- IS A MEASURE OF COLD WEATHER
+% #SEVERITY.
+% 
+% 20.  HARBOR.1
+% Mean July water level, Harbor Beach, Michigan, 1860-1986
+% #Mean July average water surface elevation, in feet, IGLD (1955)
+% #for Harbor Beach, Michigan, on Lake Huron, Station 5014.  1860--1986.
+% #Source: Great Lakes Water Levels, 1860-1986. U.S. Dept. of Commerce,
+% #National Oceanic and Atmospheric Administration, National Ocean Survey.
+% 
+% 21.  IBM.1
+% Monthly returns, IBM common stock. Jan. 1961-Dec. 1967.
+% #see also NYSE.1, ATT.1
+% 
+% 22.  IPI.1
+% IMPLICIT PRICE INDEX  1890-1974, U.S.
+% 
+% 23.  IRONSU.3
+% 39 daily observations, blast furnace data (bof, sulfur, coke)
+% #39 DAILY OBSERVATIONS OF:
+% #BOF--SULFUR IN BASIC OXYGEN STEEL
+% #SULFUR--SULFUR IN HOT METAL
+% #COKE--MOISTURE IN COKE USED
+% #FOR A BLAST FURNACE OPERATION
+% # BOF    SULFUR      COKE
+% 
+% 24.  ISH66.1
+% Quality control data, 5 measurements per day
+% #Data from Ishikawa, *Guide to Quality Control*, Table 7.2, page 66.
+% #Each row shows five measurements taken at successive times on a given day:
+% #6:00, 10:00, 14:00, 18:00, and 22:00.  Thus the 25 rows represent 25 days,
+% #which we shall assume to be consecutive working days.
+% 
+% 25.  JOE.3
+% #Three monthly series for the period 1954:1 to 1985:12.
+% #The first  series is the commercial paper rate, expressed by the annual
+% #percentage rate, e.g. 8.36.
+% #The second series is the monthly return on the S&P 500 index.
+% #The third series is the return, before transaction costs, to an
+% #investment strategy based on the commercial paper rate.
+% 
+% 26.  LAKEMICH.1
+% Highest mean monthly level, Lake Michigan, 1860-1955
+% #Lake Michigan-Huron, highest monthly mean level for each calendar year,
+% #1860-1955.  (Add 500 to get height in feet above sea level.)
+% 
+% 27.  LYNDPIN.2
+% Annual Domestic Sales and Adverstising, Pinkham Medicine, 1907-60
+% #Annual domestic sales and advertising of Lydia E. Pinkham Medicine
+% #Company, 1907-1960 (in $1000).  Source: Kristian S. Palda, The
+% #Measurement of Cumulative Advertising Effects,  Prentice-Hall,
+% #Englewood Cliffs, N.J., 1964, page 23.
+% #AD: advertising
+% #SA: sales
+% 
+% 28.  M.1
+% MONEY SUPPLY (BILLION DOLLARS)  1890-1974, U.S.
+% 
+% 29.  NYSE.1
+% Monthly returns, NYSE. Jan. 1961-Dec. 1967.
+% #see also ATT.1, IBM.1
+% 
+% 30.  PGREATL.1
+% Annual precipitation, inches, Great Lakes, 1900-1986
+% #Source: Great Lake Water Levels, U.S. Dept of Commerce, Rockville MD
+% #        U.S. Lake Survey, Detroit, MI, US Army Corps of Engineers
+% 
+% 31.  PLHURON.1
+% Annual precipitation, inches, Lake Huron, 1900-1986
+% #Source: Great Lake Water Levels, U.S. Dept of Commerce, Rockville MD
+% #        U.S. Lake Survey, Detroit, MI, US Army Corps of Engineers
+% 
+% 32.  PLMICH.1
+% Annual precipitation, inches, Lake Michigan, 1900-1986
+% #Source: Great Lake Water Levels, U.S. Dept of Commerce, Rockville MD
+% #        U.S. Lake Survey, Detroit, MI, US Army Corps of Engineers
+% 
+% 33.  PLSUPER.1
+% Annual precipitation, inches, Lake Superior, 1900-1986
+% #Source: Great Lake Water Levels, U.S. Dept of Commerce, Rockville MD
+% #        U.S. Lake Survey, Detroit, MI, US Army Corps of Engineers
+% 
+% 34.  RGNP.1
+% REAL GNP IN BILLIONS OF DOLLARS, USA, 1890-1974
+% 
+% 35.  ROCKY.1
+% Rockwell hardness, 100 coils produced in sequence at a Chicago Steel Mill
+% #ROCKWELL HARDNESS (MEASURED ON ROCKWELL "B" SCALE) OF A SAMPLE OF 100 STEEL
+% #COILS PRODUCED IN SEQUENCE IN A CHICAGO STEEL MILL.
+% 
+% 36.  SCHOLES.1
+% Scholes Index for NYSE, 1963:4-1971:7
+% #RETV: SCHOLES INDEX FOR NYSE: VALUE-WEIGHTED RETURNS WITH REINVESTMENT OF
+% #      DIVIDENDS
+% #see also, tbills.1, ccpi.1
+% 
+% 37.  SKIRTS.1
+% Diameter of skirts at hem, 1866-1911, annual
+% #see also beards.1
+% #SEE MARIJA NORUSIS'S 1981 SPSS PRIMER FOR DETAILS AND
+% #ADDITIONAL DATA EXTENDING BACK TO 1842 AND FORWARD TO 1953
+% 
+% 38.  SNOW.1
+% Chicago Snowfall, 1939-78
+% #CHICAGO SNOWFALL DATA FOR 40 YEARS, TOTAL IN INCHES, STARTING WITH 1939 AND
+% #ENDING WITH 1978.
+% 
+% 39.  TBILLS.1
+% One-month return on U.S. Treasury Bills, 1963:4-1971:7
+% #see also, ccpi.1, scoles.1
+% 
+% 40.  U.1
+% Civilian unemployment rate  1890-1974, U.S.
+% 
+% 41.  VELMON.1
+% Velocity of money, U.S. economy, 1869-1960, annual
+% #FRIEDMAN AND SCHWARTZ DATA ON VELOCITY OF MONEY FOR THE AMERICAN
+% #ECONOMY FROM 1869 TO 1960.
+% 
+% 42.  YULE1.1
+% Standardized mortality per 1000 persons, England, 1866-1911
+% #see also yule2.1
+% #ANNUAL DATA FOR 1866-1911
+% #MORTAL: STANDARDIZED MORTALITY PER 1000 PERSONS IN ENGLAND AND WALES
+% #MARRAG:  PROPORTION OF CHURCH OF ENGLAND MARRIAGES PER 1000 OF
+% #         ALL MARRIAGES
+% #SOURCE: G. UDNY YULE, "WHY DO WE SOMETIMES GET NONSENSE-CORRELATIONS
+% #BETWEEN TIME-SERIES?", JOURNAL OF THE ROYAL STATISTICAL SOCIETY, 89,
+% #JANUARY, 1926, 1-69.  NUMBERS READ FROM GRAPH ON PAGE 3. YULE'S
+% #CORRELATION FROM ORIGINAL DATA IS 0.9512.  CORRELATION COMPUTED FROM
+% #NUMBERS IS 0.9515.
+% #MORTAL
+% 
+% 43.  YULE2.1
+% Proportion of Church of England Marriages/1000 persons, England, 1866-1911
+% #see also yule2.1
+% #ANNUAL DATA FOR 1866-1911
+% #MORTAL: STANDARDIZED MORTALITY PER 1000 PERSONS IN ENGLAND AND WALES
+% #MARRAG:  PROPORTION OF CHURCH OF ENGLAND MARRIAGES PER 1000 OF
+% #         ALL MARRIAGES
+% #SOURCE: G. UDNY YULE, "WHY DO WE SOMETIMES GET NONSENSE-CORRELATIONS
+% #BETWEEN TIME-SERIES?", JOURNAL OF THE ROYAL STATISTICAL SOCIETY, 89,
+% #JANUARY, 1926, 1-69.  NUMBERS READ FROM GRAPH ON PAGE 3. YULE'S
+% #CORRELATION FROM ORIGINAL DATA IS 0.9512.  CORRELATION COMPUTED FROM
+% #NUMBERS IS 0.9515.
+% # MARRAG
+% ----------------------------------------------------------------------------
+% 
+% SANFRAN
+% A case study with monthly riverflow, precipitation and temperature.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/sanfran
+% 
+% 1.  FLOW.1
+% SAN FRANCISCO RIVER, GLENWOOD, CMS, MONTHLY, 1928-1966
+% 
+% 2.  PRECIP.1
+% MONTHLY PRECIPITATION, MM, SOUTHWESTERN MOUNTAIN REGION, 1932-1966
+% 
+% 3.  TEMPER.1
+% MONTHLY MEAN TEMPERATURES, SOUTHWESTERN MOUNTAIN REGION, F., 1932-1966
+% ----------------------------------------------------------------------------
+% 
+% 
+% THOMPSTO
+% Quarter-monthly (i.e., s=48) hydrological time series used in the article
+% "Forecasting quarter-monthly riverflow" by R.M. Thompstone, K.W. Hipel and
+% A.I. McLeod (1985), Water Resources Bulletin, Vol.21 No.5, pp.731-741
+% See also:
+% A.I. McLeod, D.J. Noakes, K.W. Hipel & R.M. Thompstone (1987). ``Combining
+% hydrologic forecasts''. Journal of the American Society of Civil Engineers,
+% Water Resources Planning and Management Division, V.113, pp.29-41.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/thompsto
+% 
+% 1.  LACSTJIN.1
+% Lac St-Jean Reservoir, quarter-monthly inflows, 1953-82
+% 
+% 2.  LACSTJRA.1
+% Lac St-Jean Region, quarter-monthly rainfall, 1953-82
+% 
+% 3.  LACSTJSN.1
+% Fonte de neige par quart de mois, 1953-82, Bassin Daval
+% ----------------------------------------------------------------------------
+% 
+% WISCONSI
+% Wisconsin employment time series.
+%   Contains time series of employment, in units of 1000 employees,
+% of various industries in Wisconsin.
+% 
+% Miller and Wichern (1977) fit seasonal ARIMA models to these time
+% series data in their book. McLeod (1993) pointed out that some
+% of these time series exhibit periodic correlation. The data are
+% listed in Miller and Wichern's book.
+% 
+% REFERENCES:
+% Miller, R.B. & Wichern, D.B. (1977). "Intermediate Business Statistics"
+% San Francisco: Holden-Day.
+% 
+% McLeod, A.I. (1993). "Parsimony, Model Adequacy and Periodic Correlation
+% in Time Series Forecasting", International Statistical Review,
+% Vol. 61, pp.387--393.
+% 
+% Brief Summary Of The Data Files In The Directory mhsets/wisconsi
+% 
+% 1.  FOOD.1
+% Food and Kindred Products, Jan 1961-Oct 1975
+% 
+% 2.  METALS.1
+% Fabricated Metals
+% 
+% 3.  TRADE.1
+% Trade, Jan 1961-Oct 1975
+% 
+% 4.  TRANEQ.1
+% Transportation Equipment, Jan 1961-Oct 1975
+% ----------------------------------------------------------------------------
+% 
+% 
+% 
+% 
+% 
+%
+% File: ../data/mhsets/KORSAN/DAILYSAP.1
+%
+% File specific information:
+% Daily S&P 500 index of stocks, Jan. 1, 1980 to Oct. 8, 1992
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: last
+%
+
+@relation mhsets-DAILYSAP
+
+@attribute value REAL
+
+@data
+107.94
+105.76
+105.22
+106.52
+106.81
+108.95
+109.05
+109.89
+109.92
+110.38
+111.14
+111.05
+110.7
+111.07
+112.1
+111.51
+113.44
+113.7
+113.61
+114.85
+114.07
+115.2
+114.16
+115.12
+114.37
+114.66
+115.72
+116.28
+117.95
+117.12
+117.9
+118.44
+116.72
+115.41
+115.41
+114.6
+116.47
+115.28
+115.04
+113.33
+113.98
+112.38
+112.35
+113.66
+112.5
+112.78
+111.13
+108.65
+106.9
+106.51
+107.78
+106.92
+105.62
+105.43
+102.26
+104.1
+104.31
+103.12
+102.31
+99.280
+99.19
+98.68
+98.22
+100.68
+102.09
+102.18
+102.68
+102.15
+102.15
+100.19
+101.2
+103.11
+104.08
+103.79
+102.84
+102.63
+101.54
+101.05
+100.55
+99.8
+103.43
+103.73
+104.4
+105.16
+105.64
+105.86
+106.29
+105.46
+105.58
+106.38
+106.25
+107.18
+106.13
+104.72
+104.78
+106.3
+106.85
+106.99
+107.35
+107.67
+107.62
+107.72
+109.01
+110.62
+110.62
+111.4
+112.06
+110.27
+111.24
+110.76
+110.51
+112.61
+112.78
+113.2
+113.71
+114.66
+116.02
+115.52
+115.81
+116.09
+116.03
+116.26
+114.66
+114.06
+114.51
+115.14
+116.72
+116.19
+116.
+114.24
+114.93
+115.68
+117.46
+117.46
+118.29
+117.84
+117.98
+116.95
+117.84
+120.01
+119.3
+119.63
+121.44
+122.04
+122.51
+122.19
+121.93
+121.79
+120.78
+121.43
+122.4
+122.23
+121.67
+121.21
+120.98
+120.74
+121.55
+123.3
+123.61
+124.78
+123.79
+123.28
+125.25
+125.72
+123.39
+122.6
+123.77
+125.46
+126.02
+125.16
+124.84
+123.52
+122.08
+122.38
+122.38
+123.74
+126.12
+125.42
+124.88
+123.31
+124.07
+124.81
+125.66
+125.54
+125.67
+126.74
+128.87
+128.4
+129.25
+130.4
+129.43
+130.37
+128.72
+126.35
+123.54
+125.46
+127.13
+128.09
+129.33
+131.73
+131.
+131.65
+131.04
+130.29
+132.03
+132.02
+133.7
+132.22
+131.52
+132.61
+131.84
+131.92
+129.53
+129.85
+127.88
+128.05
+127.91
+126.29
+127.47
+129.04
+129.04
+131.33
+128.91
+129.18
+129.48
+131.26
+134.59
+136.49
+137.15
+137.75
+139.7
+139.06
+140.4
+139.11
+138.31
+139.33
+140.17
+140.17
+140.52
+137.21
+136.97
+136.71
+136.48
+134.03
+130.61
+130.48
+128.26
+127.36
+129.23
+129.45
+130.6
+132.89
+133.
+133.7
+135.78
+135.3
+135.88
+135.88
+136.57
+135.03
+135.33
+135.76
+135.76
+136.34
+137.97
+138.12
+135.08
+133.06
+133.48
+133.52
+133.29
+133.47
+134.22
+134.77
+134.37
+131.65
+131.36
+130.26
+130.23
+129.84
+131.12
+130.34
+130.24
+129.55
+126.91
+128.46
+128.59
+129.63
+130.6
+129.27
+129.24
+128.24
+127.48
+126.98
+126.98
+127.81
+128.48
+126.61
+126.58
+127.35
+127.39
+128.52
+130.1
+131.27
+132.01
+130.56
+130.86
+129.93
+129.85
+131.12
+130.46
+129.95
+133.19
+133.11
+134.68
+133.92
+134.22
+133.46
+134.08
+135.69
+134.67
+137.11
+136.27
+134.65
+134.28
+136.
+136.57
+136.32
+135.49
+133.93
+133.91
+134.31
+134.67
+134.51
+133.15
+132.68
+134.17
+134.7
+134.7
+135.45
+134.23
+134.14
+133.94
+135.14
+135.48
+134.33
+133.05
+132.81
+132.72
+130.67
+130.32
+130.78
+131.67
+131.66
+129.71
+130.72
+130.55
+131.28
+132.17
+132.54
+132.09
+132.
+131.75
+131.33
+131.33
+132.77
+133.77
+133.45
+132.59
+132.41
+130.62
+130.71
+130.96
+132.22
+132.24
+131.97
+132.32
+133.75
+133.49
+133.61
+132.15
+133.32
+131.64
+132.27
+131.95
+133.35
+132.66
+132.81
+132.56
+131.89
+131.21
+129.77
+128.64
+128.64
+127.37
+128.24
+128.32
+129.3
+129.37
+129.64
+129.65
+130.23
+130.34
+130.76
+128.72
+128.34
+127.13
+127.4
+128.46
+129.9
+129.14
+129.16
+130.01
+130.92
+130.48
+131.18
+132.67
+132.64
+131.75
+132.54
+133.85
+133.4
+133.51
+132.49
+131.22
+130.11
+130.49
+130.69
+129.23
+125.5
+125.13
+124.96
+123.51
+124.08
+122.79
+123.02
+123.49
+121.24
+120.07
+120.07
+117.98
+118.4
+120.14
+121.61
+120.66
+119.77
+118.87
+117.15
+116.26
+117.24
+116.68
+115.65
+115.01
+112.77
+115.53
+115.94
+116.18
+117.08
+119.36
+119.51
+119.39
+121.31
+122.31
+121.45
+121.21
+120.78
+118.8
+119.71
+119.19
+118.98
+120.28
+120.1
+119.64
+118.6
+118.16
+119.29
+119.45
+119.06
+121.89
+124.2
+124.8
+124.74
+123.54
+122.67
+123.29
+122.7
+122.92
+123.19
+121.67
+120.24
+121.15
+120.26
+120.71
+121.71
+121.6
+123.51
+124.05
+124.05
+125.09
+126.35
+126.1
+124.69
+125.12
+126.26
+125.19
+124.82
+125.48
+125.71
+124.93
+122.78
+122.99
+122.42
+123.12
+124.
+123.34
+122.88
+122.31
+122.54
+122.54
+122.27
+121.67
+122.3
+122.55
+122.55
+122.74
+120.05
+119.18
+118.93
+119.55
+116.78
+116.3
+114.88
+115.54
+116.33
+117.22
+115.97
+115.27
+115.75
+115.38
+115.41
+115.19
+115.74
+118.92
+120.4
+117.78
+118.01
+116.48
+116.42
+117.26
+114.63
+113.68
+114.66
+114.43
+114.38
+114.38
+114.06
+113.69
+113.82
+113.22
+111.59
+111.51
+113.47
+113.21
+113.11
+113.31
+112.68
+110.92
+109.88
+109.34
+107.34
+108.83
+109.41
+109.36
+108.61
+109.45
+109.28
+109.08
+110.3
+110.61
+112.77
+113.55
+112.97
+113.21
+111.94
+112.3
+112.27
+111.96
+113.79
+115.12
+114.73
+115.36
+115.46
+116.22
+116.22
+116.
+115.99
+115.83
+116.35
+116.81
+116.7
+115.44
+115.72
+117.19
+118.64
+119.26
+118.
+117.26
+116.13
+116.44
+116.81
+117.46
+117.67
+118.68
+119.47
+118.38
+119.42
+119.17
+118.22
+118.01
+116.71
+115.84
+114.89
+114.59
+114.89
+114.79
+114.4
+113.11
+112.66
+111.88
+111.88
+111.68
+112.04
+111.86
+110.09
+110.12
+109.63
+108.99
+109.61
+111.24
+109.96
+109.69
+108.87
+107.6
+107.28
+107.2
+108.3
+110.14
+109.83
+109.14
+110.26
+110.21
+109.61
+108.71
+107.65
+107.65
+107.29
+107.22
+107.53
+108.83
+109.57
+109.45
+110.44
+110.47
+111.07
+110.73
+111.54
+111.42
+111.47
+111.17
+110.36
+109.43
+107.73
+107.72
+107.09
+108.98
+107.83
+106.14
+105.16
+103.71
+103.08
+102.84
+102.6
+102.42
+103.85
+104.09
+109.04
+108.53
+109.16
+113.02
+116.11
+115.34
+117.58
+118.55
+117.11
+117.66
+119.51
+118.25
+120.28
+122.68
+122.68
+121.37
+122.2
+121.97
+120.97
+122.24
+123.1
+124.29
+123.77
+122.55
+122.51
+124.88
+123.99
+123.81
+123.32
+123.62
+123.24
+121.63
+120.42
+121.97
+121.51
+121.98
+125.97
+128.8
+131.05
+134.47
+134.44
+136.71
+134.57
+133.57
+136.73
+136.58
+139.23
+139.06
+138.87
+133.32
+134.48
+135.28
+133.59
+133.71
+135.47
+137.49
+142.87
+141.85
+142.16
+140.44
+143.02
+141.16
+141.76
+139.53
+137.03
+135.42
+137.93
+138.34
+137.02
+134.22
+132.93
+133.88
+133.88
+134.88
+134.2
+138.54
+138.72
+138.82
+138.69
+141.77
+142.72
+141.81
+140.
+139.57
+139.95
+137.39
+135.24
+135.3
+137.49
+136.26
+138.61
+138.83
+139.72
+139.72
+142.18
+140.77
+141.24
+140.33
+140.64
+138.34
+141.35
+141.96
+145.27
+145.18
+146.78
+145.78
+146.69
+145.73
+146.65
+146.71
+146.4
+145.27
+146.29
+143.85
+139.97
+141.75
+141.54
+144.27
+144.51
+145.3
+142.96
+143.23
+144.26
+146.14
+146.93
+145.7
+145.
+147.5
+147.63
+148.92
+148.3
+147.43
+147.44
+148.
+148.
+145.48
+146.79
+149.6
+149.74
+148.06
+150.88
+152.3
+153.48
+153.67
+153.67
+151.26
+152.87
+151.8
+151.24
+150.83
+151.36
+149.8
+149.59
+149.9
+151.19
+150.66
+152.81
+153.37
+152.67
+151.85
+151.59
+153.39
+152.96
+152.96
+153.02
+151.89
+151.04
+151.76
+152.85
+155.14
+155.82
+156.77
+158.11
+158.75
+159.74
+158.71
+160.71
+160.05
+160.42
+158.81
+161.81
+161.44
+162.95
+164.42
+162.11
+162.34
+163.31
+164.28
+166.1
+165.81
+165.95
+164.96
+164.25
+164.9
+163.4
+163.71
+163.27
+161.99
+162.14
+163.43
+165.54
+166.21
+165.48
+164.46
+164.46
+162.39
+162.55
+163.98
+164.42
+164.83
+162.77
+161.36
+161.83
+162.68
+164.84
+165.53
+167.12
+169.14
+169.13
+169.02
+170.53
+170.99
+170.57
+170.4
+168.46
+165.68
+166.64
+168.11
+168.91
+168.91
+166.6
+168.48
+167.56
+167.08
+168.11
+165.53
+165.46
+166.01
+164.29
+163.95
+164.83
+169.29
+169.06
+168.89
+169.53
+170.35
+167.59
+165.04
+162.56
+162.04
+162.01
+163.44
+161.33
+161.74
+159.18
+160.13
+161.51
+161.54
+162.16
+163.71
+163.41
+165.29
+163.55
+163.98
+164.34
+162.77
+161.25
+160.84
+162.14
+162.25
+162.58
+164.4
+164.23
+165.
+165.
+167.89
+167.96
+167.77
+166.92
+165.48
+164.8
+165.36
+164.38
+166.24
+167.62
+169.25
+168.41
+169.76
+169.51
+170.07
+168.43
+168.01
+167.23
+166.07
+165.8
+166.27
+167.74
+170.28
+170.8
+172.65
+170.34
+169.63
+169.88
+169.86
+170.43
+167.81
+166.73
+166.98
+165.95
+165.99
+166.47
+165.38
+164.84
+163.37
+163.55
+163.64
+164.84
+163.45
+162.44
+161.91
+161.76
+163.97
+164.41
+166.29
+166.58
+165.36
+166.08
+166.13
+165.09
+166.05
+166.84
+166.96
+166.96
+167.18
+166.54
+167.91
+166.4
+166.49
+165.44
+165.77
+165.47
+165.91
+165.2
+165.09
+165.62
+164.93
+163.33
+161.67
+162.39
+162.32
+162.
+163.56
+163.27
+163.22
+163.22
+164.76
+165.34
+164.86
+164.93
+164.93
+164.04
+166.78
+168.81
+169.28
+168.9
+167.95
+167.79
+167.75
+167.02
+167.18
+167.83
+167.55
+167.04
+166.21
+164.87
+165.94
+164.84
+164.24
+163.94
+162.87
+163.41
+162.74
+163.36
+160.91
+158.08
+158.74
+155.85
+155.42
+156.3
+154.95
+156.61
+156.25
+156.13
+155.74
+155.74
+154.64
+154.31
+154.29
+157.51
+159.3
+156.82
+157.06
+158.19
+159.24
+157.89
+156.25
+154.57
+155.19
+154.35
+156.34
+156.78
+156.77
+157.41
+159.27
+157.78
+158.86
+158.66
+156.69
+156.86
+156.67
+157.3
+159.88
+159.52
+159.18
+157.98
+157.66
+157.54
+155.04
+155.48
+155.45
+155.87
+155.
+157.73
+157.31
+158.32
+158.97
+157.9
+158.02
+158.02
+156.8
+158.07
+158.65
+160.3
+159.89
+160.05
+161.68
+161.9
+161.2
+159.11
+159.47
+160.52
+160.11
+160.
+158.49
+157.5
+158.
+157.99
+156.57
+155.78
+154.73
+153.88
+153.15
+151.23
+151.62
+151.62
+150.29
+150.35
+150.55
+153.24
+154.34
+153.65
+155.01
+154.92
+155.17
+153.06
+152.19
+152.13
+150.39
+149.03
+151.73
+152.61
+154.84
+154.51
+154.46
+153.97
+152.71
+151.64
+152.84
+153.18
+153.2
+153.7
+153.7
+152.76
+152.24
+153.36
+152.89
+150.56
+150.03
+150.88
+151.6
+152.38
+151.4
+150.37
+149.55
+148.95
+147.82
+148.83
+150.08
+151.19
+150.19
+150.66
+154.08
+157.99
+162.35
+162.6
+162.71
+161.75
+165.54
+165.42
+165.43
+164.42
+162.8
+163.77
+164.14
+164.94
+167.83
+167.06
+167.12
+167.51
+166.44
+167.4
+167.1
+166.6
+166.68
+166.68
+164.88
+164.29
+165.65
+164.37
+164.26
+164.45
+164.68
+167.94
+168.78
+168.87
+167.65
+166.94
+167.47
+165.67
+165.28
+165.62
+166.28
+166.96
+166.1
+164.62
+163.59
+162.44
+162.92
+162.68
+162.13
+161.67
+162.11
+162.78
+164.18
+165.77
+164.78
+164.14
+168.1
+167.96
+167.36
+167.09
+167.2
+166.31
+165.29
+164.78
+166.84
+166.09
+167.49
+167.42
+168.58
+170.41
+169.17
+168.68
+167.6
+167.36
+165.97
+165.99
+165.89
+164.1
+163.1
+164.18
+164.52
+164.52
+166.92
+165.55
+166.29
+165.02
+163.91
+163.58
+162.82
+163.38
+162.1
+162.76
+162.26
+162.83
+163.07
+162.63
+161.81
+162.69
+163.61
+168.11
+167.16
+166.38
+165.51
+166.76
+166.76
+166.47
+165.75
+166.26
+167.24
+167.24
+165.37
+164.57
+163.68
+164.24
+163.99
+165.18
+168.31
+167.91
+170.51
+170.81
+171.19
+170.73
+171.32
+175.23
+175.48
+177.3
+176.71
+177.35
+177.4
+179.18
+179.39
+179.63
+178.63
+180.35
+180.61
+180.43
+181.82
+182.19
+180.51
+180.56
+183.35
+182.41
+181.6
+181.6
+181.33
+181.18
+180.19
+179.36
+179.23
+181.17
+180.71
+181.18
+183.23
+182.06
+182.23
+180.65
+179.51
+179.1
+178.79
+179.66
+178.19
+177.84
+176.53
+176.88
+179.54
+179.08
+179.35
+179.04
+177.97
+178.43
+179.54
+179.54
+180.66
+181.27
+180.53
+179.11
+179.03
+179.03
+178.03
+178.21
+179.42
+180.19
+180.54
+180.92
+181.2
+181.68
+180.84
+181.11
+180.7
+181.88
+182.26
+183.43
+182.18
+180.63
+179.83
+178.37
+179.01
+180.08
+179.99
+180.76
+180.62
+181.92
+184.28
+184.61
+183.87
+184.54
+185.66
+187.42
+189.72
+189.64
+188.56
+187.6
+188.29
+188.29
+187.86
+187.68
+187.75
+189.55
+189.32
+190.04
+190.16
+191.06
+189.68
+189.51
+189.04
+187.61
+185.33
+187.1
+186.53
+187.34
+186.63
+186.73
+189.61
+189.15
+189.74
+190.06
+191.23
+191.85
+192.43
+192.01
+191.45
+191.45
+192.52
+191.93
+191.05
+192.37
+192.94
+193.29
+192.72
+194.72
+195.65
+194.38
+195.13
+194.35
+192.55
+191.58
+192.06
+192.4
+189.6
+189.93
+190.92
+192.11
+191.48
+190.62
+187.93
+187.68
+188.95
+188.32
+187.63
+187.3
+187.41
+187.26
+186.1
+186.38
+188.08
+189.16
+187.36
+187.17
+187.31
+188.1
+188.83
+188.93
+188.63
+188.63
+187.91
+187.37
+187.27
+188.24
+188.25
+186.9
+185.03
+183.69
+182.91
+182.88
+181.36
+181.71
+183.39
+182.05
+184.3
+182.62
+180.66
+181.29
+181.29
+182.08
+185.07
+184.06
+184.36
+183.22
+181.87
+181.87
+182.52
+182.78
+184.28
+186.37
+186.08
+187.98
+187.66
+187.04
+186.96
+188.04
+189.09
+188.5
+187.52
+187.76
+189.23
+190.07
+189.82
+191.53
+191.25
+192.37
+192.76
+192.62
+193.72
+197.29
+198.08
+197.1
+199.06
+198.11
+198.71
+198.67
+198.99
+201.41
+201.52
+200.35
+200.67
+202.54
+202.54
+202.17
+200.46
+200.86
+204.23
+203.88
+202.99
+204.25
+204.39
+206.31
+206.73
+209.94
+212.02
+210.65
+209.81
+210.02
+210.94
+208.57
+207.14
+207.14
+207.65
+209.61
+210.68
+211.28
+211.28
+209.59
+210.88
+210.65
+213.8
+207.97
+206.11
+205.96
+206.72
+206.64
+208.26
+209.17
+208.43
+207.53
+205.79
+203.49
+204.25
+206.43
+207.39
+209.81
+210.29
+209.33
+211.78
+213.96
+212.79
+212.96
+213.47
+214.56
+216.24
+215.92
+215.97
+217.4
+219.76
+219.76
+222.45
+219.76
+222.22
+224.62
+224.34
+223.79
+224.04
+226.77
+226.92
+225.42
+224.38
+224.34
+225.13
+225.57
+226.58
+231.69
+232.54
+233.19
+236.55
+234.67
+235.78
+235.6
+236.54
+233.34
+235.33
+234.72
+237.3
+238.97
+238.97
+238.9
+235.14
+235.71
+232.47
+228.69
+228.63
+233.52
+233.75
+236.44
+235.97
+237.28
+237.73
+242.22
+243.03
+242.38
+244.74
+242.42
+241.75
+242.02
+242.29
+243.08
+240.51
+235.52
+235.16
+234.79
+237.73
+237.24
+236.08
+237.13
+237.85
+237.58
+236.41
+237.54
+234.43
+232.76
+233.2
+236.11
+235.45
+240.12
+241.35
+241.35
+244.75
+246.63
+247.98
+247.35
+245.04
+245.51
+243.94
+245.65
+245.67
+239.96
+239.58
+241.13
+241.49
+245.73
+246.13
+244.35
+244.99
+244.06
+247.58
+245.26
+247.03
+248.93
+248.74
+249.6
+250.84
+252.04
+252.7
+251.79
+251.79
+244.05
+241.59
+242.82
+243.01
+242.22
+238.11
+233.66
+235.01
+236.07
+236.36
+236.24
+238.18
+238.67
+237.95
+240.22
+236.01
+234.55
+236.59
+236.12
+234.91
+235.99
+237.03
+236.84
+237.04
+236.88
+240.68
+243.34
+245.67
+246.25
+247.15
+247.38
+246.51
+249.77
+249.67
+250.19
+247.81
+252.84
+253.3
+252.84
+252.93
+252.93
+248.52
+250.08
+253.83
+250.47
+248.14
+247.67
+247.06
+235.18
+230.67
+231.94
+231.72
+231.68
+232.31
+232.21
+234.93
+235.67
+235.67
+231.83
+232.23
+229.91
+231.32
+233.6
+233.92
+233.71
+234.78
+234.41
+236.68
+235.85
+235.48
+235.91
+235.37
+238.8
+239.53
+238.84
+235.97
+235.88
+236.26
+239.28
+238.26
+238.77
+239.26
+240.94
+243.71
+243.98
+245.8
+246.2
+246.58
+245.87
+245.77
+246.13
+247.08
+246.64
+243.02
+244.5
+243.21
+236.78
+237.66
+242.05
+245.86
+247.45
+248.17
+248.77
+248.77
+249.22
+249.05
+254.
+253.85
+253.04
+251.17
+251.56
+249.28
+250.96
+248.17
+247.35
+248.21
+250.04
+247.56
+246.78
+249.73
+248.75
+246.34
+246.75
+246.75
+246.92
+244.67
+243.37
+242.17
+242.17
+246.45
+252.19
+252.78
+255.33
+257.28
+258.73
+260.3
+259.95
+262.64
+265.49
+266.28
+269.34
+269.04
+267.84
+273.91
+270.1
+269.61
+273.75
+275.4
+274.24
+274.08
+276.45
+275.99
+279.64
+281.16
+280.04
+278.16
+275.07
+277.54
+275.62
+279.7
+279.7
+285.49
+285.42
+285.57
+285.48
+282.38
+282.88
+284.
+282.96
+284.2
+283.
+284.12
+288.62
+290.52
+290.66
+288.3
+290.86
+290.31
+291.22
+289.89
+288.23
+292.47
+292.78
+294.08
+298.17
+301.16
+301.64
+300.38
+300.93
+296.13
+289.2
+291.7
+292.39
+293.63
+300.41
+301.95
+296.69
+297.26
+292.86
+292.49
+285.62
+279.16
+284.44
+286.91
+286.91
+286.09
+293.07
+287.19
+286.82
+281.52
+281.83
+282.51
+284.57
+288.36
+288.03
+289.36
+295.34
+295.47
+294.17
+293.37
+291.57
+293.3
+293.98
+294.24
+287.43
+286.65
+279.62
+278.21
+280.17
+282.16
+282.16
+289.11
+288.73
+290.76
+290.1
+289.83
+288.46
+293.47
+295.09
+293.45
+296.72
+297.28
+297.47
+298.73
+301.62
+303.48
+304.76
+304.81
+305.69
+306.97
+309.65
+308.43
+306.86
+308.96
+307.16
+307.9
+304.
+302.94
+305.63
+305.63
+304.92
+307.4
+308.29
+307.52
+308.37
+307.63
+310.68
+310.42
+312.7
+314.59
+311.39
+308.55
+308.47
+307.81
+309.27
+310.65
+312.33
+315.65
+318.05
+318.66
+317.57
+316.23
+318.45
+322.09
+323.
+328.
+333.33
+332.39
+334.65
+333.99
+334.11
+329.25
+329.83
+334.84
+335.9
+333.33
+336.77
+334.57
+331.38
+327.04
+329.8
+323.4
+321.68
+320.21
+316.7
+316.7
+313.56
+313.92
+317.13
+321.98
+323.08
+317.74
+314.86
+314.93
+314.86
+310.54
+319.5
+321.19
+319.72
+320.16
+323.2
+321.69
+321.83
+327.33
+328.07
+328.08
+319.22
+318.52
+314.16
+311.07
+309.39
+314.52
+305.23
+298.08
+282.7
+224.84
+236.83
+259.38
+248.25
+248.22
+227.67
+233.19
+233.28
+244.77
+251.79
+255.75
+250.82
+248.96
+254.48
+250.41
+243.17
+239.
+241.9
+248.52
+245.64
+246.76
+243.04
+245.55
+240.05
+242.
+242.99
+246.39
+244.1
+244.1
+240.34
+230.3
+232.
+233.45
+225.21
+223.92
+228.76
+234.91
+238.89
+233.57
+235.32
+242.19
+242.8
+248.08
+242.98
+249.16
+249.54
+249.95
+253.16
+252.02
+252.02
+245.57
+244.59
+247.86
+247.08
+247.08
+255.94
+258.63
+258.89
+261.07
+243.4
+247.49
+245.42
+245.81
+245.88
+252.05
+251.88
+249.32
+242.63
+243.14
+246.5
+252.17
+249.57
+249.38
+253.29
+257.07
+255.04
+255.57
+252.21
+252.21
+250.96
+249.1
+251.72
+256.66
+255.95
+257.63
+257.63
+259.83
+259.21
+257.91
+261.61
+265.64
+265.02
+264.43
+261.58
+262.46
+267.82
+267.22
+267.98
+267.88
+267.3
+267.38
+269.43
+269.06
+263.84
+264.94
+266.37
+266.13
+268.65
+271.22
+271.12
+268.74
+268.84
+268.91
+263.35
+258.51
+258.06
+260.07
+258.07
+258.89
+258.89
+256.09
+258.51
+265.49
+266.16
+269.43
+270.16
+271.37
+271.57
+259.75
+259.77
+259.21
+257.92
+256.13
+256.42
+260.14
+262.46
+263.93
+263.81
+262.61
+261.33
+261.56
+263.
+260.32
+258.79
+257.48
+256.54
+257.62
+253.31
+253.85
+256.78
+258.71
+255.39
+251.35
+252.57
+253.02
+250.83
+253.51
+253.76
+254.63
+253.42
+253.42
+262.16
+266.69
+265.33
+266.45
+267.05
+265.17
+271.52
+270.2
+271.26
+271.43
+274.3
+274.45
+269.77
+270.68
+268.94
+271.67
+275.66
+274.82
+273.78
+269.06
+272.31
+270.98
+273.5
+271.78
+271.78
+275.81
+272.02
+271.78
+270.02
+270.55
+267.85
+269.32
+270.26
+272.05
+270.51
+268.47
+270.
+266.66
+263.5
+264.68
+265.19
+262.5
+266.02
+272.02
+272.21
+272.06
+272.98
+271.93
+271.15
+269.98
+266.49
+261.9
+262.75
+262.55
+258.69
+260.56
+260.77
+261.03
+260.24
+256.98
+257.09
+261.13
+259.1
+259.68
+262.33
+262.51
+261.52
+258.35
+264.48
+264.48
+265.59
+265.87
+265.88
+266.84
+266.47
+267.43
+269.31
+268.13
+270.65
+268.82
+269.73
+270.16
+269.18
+269.76
+268.88
+268.26
+269.08
+272.59
+271.91
+271.38
+270.62
+271.86
+272.39
+278.07
+278.24
+277.93
+273.98
+275.22
+275.5
+276.41
+279.38
+276.97
+282.88
+283.66
+282.28
+282.38
+281.38
+277.28
+278.53
+278.97
+279.06
+279.06
+279.2
+276.31
+273.93
+275.15
+273.33
+273.69
+267.92
+267.72
+268.34
+263.82
+264.6
+266.47
+266.22
+267.21
+269.
+269.
+267.23
+268.64
+270.91
+273.7
+272.49
+271.81
+274.93
+277.59
+278.13
+276.57
+277.03
+276.52
+276.31
+275.31
+274.28
+276.29
+278.91
+277.47
+277.38
+276.87
+277.87
+277.87
+276.83
+277.08
+279.4
+277.72
+277.72
+275.31
+279.43
+280.01
+280.67
+280.98
+280.38
+282.01
+283.17
+283.87
+284.14
+283.55
+286.53
+286.9
+286.63
+284.5
+288.49
+289.14
+291.69
+293.82
+294.99
+297.47
+297.09
+296.84
+296.97
+296.04
+299.63
+298.65
+296.06
+292.02
+292.54
+291.81
+294.24
+294.81
+296.76
+296.76
+295.98
+290.91
+292.05
+287.13
+287.82
+288.86
+287.11
+289.95
+291.18
+294.81
+293.87
+294.08
+293.93
+292.88
+295.32
+295.14
+296.67
+299.44
+292.69
+289.92
+291.33
+290.49
+288.98
+288.98
+290.57
+291.59
+292.35
+292.52
+294.87
+296.39
+295.31
+296.24
+295.29
+297.16
+297.11
+298.49
+298.99
+296.4
+301.36
+301.72
+306.02
+307.15
+306.19
+309.61
+308.69
+306.75
+306.93
+309.58
+309.64
+309.12
+308.12
+308.16
+307.77
+307.61
+306.
+305.19
+305.8
+306.95
+313.84
+316.16
+315.28
+317.48
+317.97
+321.24
+321.98
+318.32
+319.14
+319.17
+321.59
+321.59
+319.05
+320.52
+321.97
+325.52
+322.03
+324.24
+326.95
+326.75
+326.69
+326.24
+323.91
+323.83
+320.08
+321.35
+321.89
+321.25
+320.48
+322.32
+328.
+326.6
+328.44
+325.81
+319.68
+317.98
+319.23
+319.23
+320.64
+321.55
+324.91
+327.07
+328.78
+329.81
+329.95
+331.84
+332.44
+331.35
+335.73
+333.51
+335.9
+333.67
+333.88
+338.05
+341.99
+342.15
+346.08
+343.75
+344.34
+344.74
+343.92
+349.41
+349.35
+346.94
+348.25
+344.74
+343.06
+344.71
+345.66
+344.45
+346.03
+340.67
+341.19
+344.7
+351.52
+350.52
+352.09
+349.84
+350.65
+351.45
+353.73
+353.73
+352.56
+349.24
+348.35
+348.76
+347.66
+348.7
+345.46
+343.16
+345.06
+346.73
+346.55
+346.47
+345.7
+347.05
+344.23
+344.33
+345.1
+348.6
+349.15
+350.87
+354.71
+356.94
+356.97
+358.78
+359.8
+359.13
+356.99
+355.39
+333.65
+342.85
+341.16
+341.76
+347.13
+347.16
+344.83
+343.7
+342.5
+337.93
+335.06
+335.07
+340.36
+341.2
+338.48
+337.62
+332.61
+334.81
+338.15
+336.57
+339.1
+339.55
+337.99
+340.54
+340.58
+341.61
+339.35
+339.59
+341.91
+341.91
+343.97
+345.61
+345.77
+343.6
+345.99
+350.63
+351.41
+349.58
+348.55
+347.59
+348.69
+348.56
+351.73
+352.75
+350.93
+350.14
+343.69
+342.46
+342.84
+344.78
+347.42
+347.42
+346.81
+348.81
+350.67
+353.4
+353.4
+359.69
+358.76
+355.67
+352.2
+353.79
+349.62
+347.31
+348.53
+339.93
+337.
+340.75
+337.4
+338.19
+339.15
+330.38
+331.61
+330.26
+326.08
+325.8
+325.2
+322.98
+329.08
+328.79
+330.92
+331.85
+329.66
+333.75
+332.96
+333.62
+330.08
+331.02
+332.01
+334.89
+332.72
+332.72
+327.99
+327.67
+325.7
+324.15
+328.67
+330.26
+331.89
+332.74
+335.54
+333.74
+337.93
+336.95
+340.27
+337.93
+338.67
+336.
+336.87
+338.07
+341.91
+343.53
+341.57
+339.74
+335.65
+337.22
+337.63
+341.5
+342.
+340.79
+339.94
+338.7
+343.64
+341.09
+340.73
+340.08
+341.37
+342.07
+341.92
+344.34
+344.34
+344.74
+344.68
+340.72
+338.09
+335.12
+331.05
+330.36
+332.03
+332.92
+329.11
+330.8
+332.25
+334.48
+335.57
+338.39
+340.53
+342.01
+342.86
+343.82
+352.
+354.75
+354.28
+354.
+354.47
+354.64
+358.
+358.43
+359.29
+358.41
+354.58
+354.58
+360.65
+360.86
+361.23
+363.16
+367.4
+366.64
+364.96
+363.15
+358.71
+361.63
+366.25
+364.9
+362.9
+362.91
+356.88
+358.47
+359.1
+360.47
+355.43
+352.31
+352.06
+355.14
+357.63
+358.02
+359.54
+360.16
+360.16
+355.68
+358.42
+359.52
+356.49
+361.23
+365.44
+367.31
+368.95
+367.52
+364.22
+365.32
+361.61
+355.31
+355.79
+357.09
+355.91
+353.44
+355.55
+356.15
+355.52
+351.48
+344.86
+334.43
+334.83
+338.35
+339.94
+335.52
+335.73
+339.39
+340.06
+332.39
+327.83
+328.51
+321.86
+316.55
+307.06
+311.51
+321.44
+321.34
+324.19
+318.71
+322.56
+322.56
+323.09
+324.39
+320.46
+323.4
+321.63
+321.04
+322.54
+318.65
+316.83
+317.77
+318.6
+316.6
+311.48
+311.32
+304.55
+308.26
+305.06
+300.97
+306.05
+314.94
+315.21
+311.4
+312.69
+311.5
+313.48
+305.1
+300.39
+295.46
+300.03
+303.23
+298.92
+298.76
+305.74
+312.48
+314.76
+312.36
+312.6
+310.17
+304.71
+301.88
+304.06
+304.
+307.02
+311.85
+314.59
+311.62
+306.01
+307.61
+313.74
+319.48
+317.67
+320.4
+317.02
+317.12
+319.34
+315.31
+316.03
+316.03
+315.1
+316.51
+318.1
+317.95
+316.42
+322.22
+324.1
+326.35
+329.92
+329.07
+327.75
+328.89
+326.44
+330.1899999999999999
+329.34
+326.82
+326.02
+330.05
+330.2
+330.12
+331.75
+329.9
+329.9
+330.85
+328.29
+328.72
+330.22
+330.22
+326.45
+321.91
+321.
+315.44
+314.9
+311.49
+314.53
+315.23
+312.49
+313.73
+316.17
+327.97
+332.23
+331.06
+328.31
+330.21
+334.78
+336.07
+336.03
+335.84
+340.91
+343.93
+343.05
+348.34
+351.26
+358.07
+356.52
+359.35
+368.58
+365.5
+369.02
+364.22
+369.06
+369.06
+369.39
+365.14
+364.97
+365.65
+367.26
+362.81
+367.74
+367.07
+370.47
+369.33
+376.72
+376.17
+375.91
+374.95
+372.96
+370.03
+374.5699999999999999
+373.5
+373.59
+372.11
+366.59
+367.92
+366.58
+367.48
+369.83
+376.3
+375.35
+375.22
+375.22
+371.3
+379.5
+378.94
+379.77
+375.36
+378.66
+373.56
+373.15
+377.63
+380.4
+381.19
+387.62
+390.45
+388.46
+384.2
+380.95
+381.76
+382.76
+379.25
+379.02
+373.66
+375.35
+380.29
+380.52
+380.8
+380.08
+377.32
+378.51
+383.25
+375.74
+376.76
+371.62
+368.57
+372.19
+372.39
+372.28
+375.35
+376.19
+374.97
+377.49
+377.49
+381.94
+382.79
+386.96
+389.83
+388.06
+387.74
+385.09
+383.6299999999999999
+379.43
+378.57
+381.05
+376.65
+377.63
+382.29
+380.13
+378.59
+375.09
+375.42
+377.75
+370.94
+370.56
+371.59
+374.4
+371.16
+377.92
+377.47
+373.33
+373.33
+374.08
+377.94
+376.11
+375.74
+376.97
+380.25
+382.39
+381.54
+381.18
+385.37
+384.22
+382.88
+379.42
+378.64
+380.96
+380.93
+383.15
+386.69
+387.81
+387.12
+387.18
+385.06
+390.62
+390.56
+389.32
+387.12
+388.02
+389.62
+389.9
+389.33
+385.58
+376.47
+379.43
+390.59
+391.33
+394.17
+393.85
+393.06
+396.64
+396.47
+395.43
+395.43
+392.15
+389.97
+389.14
+389.1
+388.57
+384.56
+385.09
+387.34
+383.59
+385.78
+385.5
+386.94
+387.56
+387.92
+385.92
+387.71
+386.88
+386.49
+385.9
+387.86
+389.2
+388.26
+384.47
+381.24
+379.5
+380.67
+376.8
+380.55
+381.45
+386.47
+391.01
+392.8
+391.92
+392.5
+390.02
+387.83
+387.94
+385.07
+384.2
+389.52
+391.48
+392.96
+392.46
+391.32
+390.28
+388.71
+389.97
+393.72
+392.89
+393.12
+396.74
+397.41
+397.15
+382.62
+385.24
+379.42
+378.53
+380.06
+376.14
+375.34
+377.96
+376.55
+376.55
+375.22
+381.4
+380.96
+380.07
+377.39
+379.1
+378.26
+377.9
+377.7
+381.55
+384.47
+384.46
+382.74
+383.48
+382.52
+387.04
+396.82
+399.33
+399.33
+404.84
+406.46
+415.14
+417.09
+417.09
+417.26
+419.34
+417.96
+417.4
+418.1
+417.61
+415.1
+414.34
+420.44
+420.77
+418.21
+418.86
+416.36
+412.64
+418.13
+414.96
+415.48
+414.99
+414.96
+410.34
+411.62
+408.79
+409.53
+413.85
+413.84
+413.82
+411.09
+413.77
+413.76
+417.13
+413.69
+412.48
+412.48
+407.38
+408.26
+413.9
+411.46
+412.27
+410.45
+415.35
+413.86
+412.7
+412.45
+412.85
+409.33
+406.51
+404.44
+405.21
+406.89
+404.03
+403.89
+405.84
+406.39
+409.58
+409.15
+409.8
+411.3
+409.91
+408.88
+407.52
+407.86
+403.5
+403.
+403.69
+404.23
+400.5
+401.55
+405.59
+398.06
+394.5
+400.64
+404.29
+406.08
+412.39
+416.28
+416.05
+416.05
+410.16
+410.26
+409.81
+411.6
+409.02
+408.45
+409.11
+412.02
+414.95
+412.53
+416.91
+416.84
+416.79
+415.85
+416.05
+418.49
+416.29
+416.4499999999999999
+413.14
+410.09
+412.81
+416.37
+415.39
+412.6
+414.02
+414.02
+411.41
+412.17
+416.74
+415.35
+417.3
+413.5
+414.59
+413.26
+413.48
+413.36
+410.06
+407.25
+409.05
+409.76
+410.29
+408.32
+402.26
+400.96
+403.67
+403.4
+404.04
+403.83
+403.12
+403.46
+408.9399999999999999
+408.14
+412.88
+411.77
+411.77
+413.84
+409.16
+410.28
+414.23
+414.62
+414.87
+417.68
+417.1
+417.54
+415.62
+413.75
+413.76
+410.93
+412.08
+411.6
+411.54
+417.52
+422.23
+423.92
+424.21
+425.09
+424.36
+422.19
+420.59
+418.88
+419.42
+418.9
+417.78
+417.73
+419.91
+420.74
+421.34
+418.19
+418.26
+414.85
+410.72
+411.61
+413.51
+413.53
+414.84
+414.03
+416.07
+417.98
+417.98
+417.0799999999999999
+417.0799999999999999
+414.44
+416.36
+419.95
+419.58
+425.27
+419.77
+419.92
+419.93
+422.93
+422.14
+417.14
+417.44
+418.47
+414.35
+416.62
+416.8
+417.8
+416.29
+410.47
+407.57
+407.18
+404.25
+407.75

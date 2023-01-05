@@ -1,0 +1,48 @@
+% analcatdata    A collection of data sets used in the book "Analyzing Categorical Data,"
+%                by Jeffrey S. Simonoff, Springer-Verlag, New York, 2003. The submission
+%                consists of a zip file containing two versions of each of 84 data sets, 
+%                plus this README file. Each data set is given in comma-delimited ASCII
+%                (.csv) form, and Microsoft Excel (.xls) form.
+% 
+% NOTICE: These data sets may be used freely for scientific, educational and/or
+%         noncommercial purposes, provided suitable acknowledgment is given (by citing
+%         the above-named reference).
+% 
+% Further details concerning the book, including information on statistical software
+% (including sample S-PLUS/R and SAS code), are available at the web site
+% 
+%             http://www.stern.nyu.edu/~jsimonof/AnalCatData
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: 4 or 5
+%
+%
+% Note: Quotes, Single-Quotes and Backslashes were removed, Blanks replaced
+%       with Underscores
+%
+
+@relation analcatdata-titanic
+
+@attribute Economic_status {Crew,First_class,Second_class,Third_class}
+@attribute Age_group {Adult,Child}
+@attribute Gender {Female,Male}
+@attribute Survived INTEGER
+@attribute At_risk INTEGER
+
+@data
+Crew,Adult,Female,20,23
+Crew,Adult,Male,192,862
+First_class,Adult,Female,140,144
+First_class,Adult,Male,57,175
+Second_class,Adult,Female,80,93
+Second_class,Adult,Male,14,168
+Third_class,Adult,Female,76,165
+Third_class,Adult,Male,75,462
+First_class,Child,Female,1,1
+First_class,Child,Male,5,5
+Second_class,Child,Female,13,13
+Second_class,Child,Male,11,11
+Third_class,Child,Female,14,31
+Third_class,Child,Male,13,48

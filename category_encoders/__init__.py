@@ -8,6 +8,7 @@
 
 from category_encoders.backward_difference import BackwardDifferenceEncoder
 from category_encoders.binary import BinaryEncoder
+from category_encoders.gray import GrayEncoder
 from category_encoders.count import CountEncoder
 from category_encoders.hashing import HashingEncoder
 from category_encoders.helmert import HelmertEncoder
@@ -23,26 +24,33 @@ from category_encoders.m_estimate import MEstimateEncoder
 from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.rankhot import RankHotEncoder
+from category_encoders.glmm import GLMMEncoder
+from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
 
-__version__ = '2.0.0'
+__version__ = '2.5.1.post0'
 
-__author__ = 'willmcginnis'
+__author__ = "willmcginnis", "cmougan", "paulwestenthanner"
 
 __all__ = [
-    'BackwardDifferenceEncoder',
-    'BinaryEncoder',
-    'HashingEncoder',
-    'HelmertEncoder',
-    'OneHotEncoder',
-    'OrdinalEncoder',
-    'SumEncoder',
-    'PolynomialEncoder',
-    'BaseNEncoder',
-    'LeaveOneOutEncoder',
-    'TargetEncoder',
-    'WOEEncoder',
-    'MEstimateEncoder',
-    'JamesSteinEncoder',
-    'CatBoostEncoder',
-    'RankHotEncoder'
+    "BackwardDifferenceEncoder",
+    "BinaryEncoder",
+    "GrayEncoder",
+    "CountEncoder",
+    "HashingEncoder",
+    "HelmertEncoder",
+    "OneHotEncoder",
+    "OrdinalEncoder",
+    "SumEncoder",
+    "PolynomialEncoder",
+    "BaseNEncoder",
+    "LeaveOneOutEncoder",
+    "TargetEncoder",
+    "WOEEncoder",
+    "MEstimateEncoder",
+    "JamesSteinEncoder",
+    "CatBoostEncoder",
+    "GLMMEncoder",
+    "QuantileEncoder",
+    "SummaryEncoder",
+    'RankHotEncoder',
 ]

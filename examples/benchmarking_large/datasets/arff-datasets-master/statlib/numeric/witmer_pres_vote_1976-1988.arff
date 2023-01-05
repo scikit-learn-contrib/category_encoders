@@ -1,0 +1,74 @@
+% A shar archive of data from the book Data Analysis: An
+% Introduction(1992) Prentice Hall bu Jeff Witmer. Submitted by
+% Jeff Witmer (fwitmer@ocvaxa.cc.oberlin.edu) [28/Jun/94] (29
+% kbytes)
+%
+% Note: description taken from this web site:
+%       http://lib.stat.cmu.edu/datasets/
+%
+% File: ../data/witmer/DATA_FILES/Pres_vote_1976-1988
+%
+%
+% Information about the dataset
+% CLASSTYPE: numeric
+% CLASSINDEX: none specific
+%
+
+@relation witmer-Pres_vote_1976-1988
+
+@attribute BUSHPerc88_ INTEGER
+@attribute REAGANPerc84 INTEGER
+@attribute REAGANPerc80__ INTEGER
+@attribute CARTERPerc76 INTEGER
+
+@data
+60,61,50,56
+62,69,62,38
+61,67,62,41
+57,61,39,65
+52,58,54,49
+54,64,57,44
+52,61,49,47
+57,60,48,53
+61,65,56,53
+60,60,41,67
+45,56,44,51
+63,73,68,38
+51,56,50,49
+60,62,57,46
+45,54,52,49
+57,67,59,46
+56,60,49,54
+55,61,52,53
+56,61,47,50
+51,53,45,53
+46,51,42,58
+54,60,50,47
+46,50,44,57
+60,62,50,51
+52,60,52,52
+53,61,58,46
+60,71,66,39
+60,67,65,48
+63,69,58,44
+57,61,53,49
+52,60,56,49
+48,54,48,52
+58,62,50,56
+56,66,65,47
+55,59,52,50
+58,69,61,49
+47,56,50,50
+51,54,50,51
+44,52,37,56
+62,64,50,57
+53,63,61,49
+58,58,49,57
+56,64,56,52
+67,75,74,35
+51,59,45,44
+60,63,54,49
+49,57,51,48
+48,55,46,58
+48,55,49,51
+61,71,64,40
