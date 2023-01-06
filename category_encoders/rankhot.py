@@ -175,16 +175,18 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         if self._dim is None:
             raise ValueError("Must train encoder before it can be used to inverse_transform data")
 
-        for switch in self.mapping:
+        for switch, ordinal_mapping in zip(self.mapping, self.ordinal_encoder.category_mapping):
             col = switch.get("col")
             cats = switch.get("mapping")
-            encodedList = self.ordinal_encoder.category_mapping[:]["col" == col].get("mapping").to_dict()
+            if col != ordinal_mapping.get("col"):
+                raise ValueError("Column order of OrdinalEncoder and RankHotEncoder do not match")
+            inv_map = {v: k for k, v in ordinal_mapping.get("mapping").to_dict().items()}
 
             arrs = X[cats.columns]
             reencode = arrs.sum(axis=1).rename(col)
 
-            inv_map = {v: k for k, v in encodedList.items()}
-            reencode2 = reencode.replace(inv_map)
+            orig_dtype = ordinal_mapping.get("data_type")
+            reencode2 = reencode.replace(inv_map).astype(orig_dtype)
             if np.any(reencode2[:] == 0):
                 reencode2[reencode2[:] == 0] = "None"
 

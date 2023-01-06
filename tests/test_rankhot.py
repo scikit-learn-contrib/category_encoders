@@ -41,19 +41,26 @@ class TestRankHotEncoder(TestCase):
         self.assertTupleEqual(inv_tf.shape, X.shape)
 
     def test_extraValue(self):
-        train = pd.DataFrame({'city': ['chicago', 'st louis']})
+        train = pd.DataFrame({'city': ['chicago', 'st louis', 'chicago', "st louis"]})
         test = pd.DataFrame({'city': ['chicago', 'los angeles']})
         enc = encoders.RankHotEncoder(handle_unknown='value')
-        enc.fit(train)
+        train_out = enc.fit_transform(train)
+        expected_mapping = pd.DataFrame([[1, 0],[1, 1],], columns=["city_1", "city_2"], index=[1,2])
+        expected_out_train = pd.DataFrame([[1, 0],[1, 1],[1, 0],[1, 1],], columns=["city_1", "city_2"])
+        expected_out_test = pd.DataFrame([[1, 0],[0, 0],], columns=["city_1", "city_2"])
+        pd.testing.assert_frame_equal(train_out, expected_out_train)
+        pd.testing.assert_frame_equal(enc.mapping[0]["mapping"], expected_mapping)
         t_f = enc.transform(test)
+        pd.testing.assert_frame_equal(t_f, expected_out_test)
         inv_tf = enc.inverse_transform(t_f)
-        self.assertEqual(t_f.shape[1] - (train.shape[1] - 1), len(test.city.unique()), "All the extra values are displayed as None after inverse transform")
-        self.assertTupleEqual(inv_tf.shape, train.shape)
+        expected_inverse_test = pd.DataFrame({'city': ['chicago', "None"]})
+        th.verify_inverse_transform(expected_inverse_test, inv_tf)
 
     def test_invariant(self):
         enc = encoders.RankHotEncoder(cols=['invariant'], drop_invariant=True)
         enc.fit(X)
-        self.assertNotEqual(X.shape[1], len(enc.feature_names_out_))
+        self.assertFalse(any([c.startswith("invariant") for c in enc.feature_names_out_]))
+        self.assertTrue(any([c.startswith("invariant") for c in enc.invariant_cols]))
 
     def test_categoricalNaming(self):
         train = pd.DataFrame({'city': ['chicago', 'st louis']})
@@ -67,6 +74,4 @@ class TestRankHotEncoder(TestCase):
         enc.fit(X)
         t_f = enc.transform(X)
         inv_tf = enc.inverse_transform(t_f)
-        self.assertTupleEqual(X.shape, inv_tf.shape, "Check shape doesn't change")
-
-
+        th.verify_inverse_transform(X, inv_tf)
