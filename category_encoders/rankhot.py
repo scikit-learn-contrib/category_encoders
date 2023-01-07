@@ -195,7 +195,7 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             orig_dtype = ordinal_mapping.get("data_type")
             reencode2 = reencode.replace(inv_map).astype(orig_dtype)
             if np.any(reencode2[:] == 0):
-                reencode2[reencode2[:] == 0] = "None"
+                reencode2[reencode2[:] == 0] = np.nan
 
             X = self.create_dataframe(X, reencode2, col)
 

@@ -53,7 +53,7 @@ class TestRankHotEncoder(TestCase):
         t_f = enc.transform(test)
         pd.testing.assert_frame_equal(t_f, expected_out_test)
         inv_tf = enc.inverse_transform(t_f)
-        expected_inverse_test = pd.DataFrame({'city': ['chicago', "None"]})
+        expected_inverse_test = pd.DataFrame({'city': ['chicago', np.nan]})
         th.verify_inverse_transform(expected_inverse_test, inv_tf)
 
     def test_invariant(self):
