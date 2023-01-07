@@ -75,3 +75,21 @@ class TestRankHotEncoder(TestCase):
         t_f = enc.transform(X)
         inv_tf = enc.inverse_transform(t_f)
         th.verify_inverse_transform(X, inv_tf)
+
+    def test_order(self):
+        """
+        Since RankHotEncoding respects the order in ordinal variables, the mapping should be independent of input order
+        """
+        train_order_1 = pd.DataFrame({'grade': ['B', 'A', 'C', 'F', 'D', 'C', 'F', 'D'],
+                                      "ord_var": [1, 3, 2, 2, 2, 1, 3, 1]})
+        train_order_2 = pd.DataFrame({'grade': ['A', 'D', 'C', 'B', 'C', 'F', 'F', 'D'],
+                                      "ord_var": [3, 1, 2, 2, 2, 1, 3, 1]})
+        enc = encoders.RankHotEncoder(cols=["grade", "ord_var"])
+        enc.fit(train_order_1)
+        mapping_order_1 = enc.ordinal_encoder.mapping
+        enc.fit(train_order_2)
+        mapping_order_2 = enc.ordinal_encoder.mapping
+        for m1, m2 in zip(mapping_order_1, mapping_order_2):
+            self.assertEqual(m1["col"], m2["col"])
+            pd.testing.assert_series_equal(m1["mapping"], m2["mapping"])
+

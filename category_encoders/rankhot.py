@@ -100,8 +100,15 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             'value': 'value',
             'indicator': 'return_nan',
         }[self.handle_missing]
+        # supply custom mapping in order to assure order of ordinal variable
+        ordered_mapping = []
+        for col in self.cols:
+            oe_col = OrdinalEncoder(verbose=self.verbose, cols=[col], handle_unknown="value", handle_missing=oe_missing_strat)
+            oe_col.fit(X[col].sort_values().to_frame(name=col))
+            ordered_mapping += oe_col.mapping
+
         self.ordinal_encoder = OrdinalEncoder(
-            verbose=self.verbose, cols=self.cols, handle_unknown="value", handle_missing=oe_missing_strat
+            verbose=self.verbose, cols=self.cols, handle_unknown="value", handle_missing=oe_missing_strat, mapping=ordered_mapping
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
