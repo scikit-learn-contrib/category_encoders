@@ -241,7 +241,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         return X, mapping_out
 
-    def _validate_supplied_mapping(self, supplied_mapping: List[Dict[str, Union[Dict, pd.Series]]]) -> List[Dict[str, pd.Series]]:
+    def _validate_supplied_mapping(self, supplied_mapping: List[Dict[str, Union[str, Dict, pd.Series]]]) -> List[Dict[str, Union[str, pd.Series]]]:
         """
         validate the supplied mapping and convert the actual mapping per column to a pandas series.
         :param supplied_mapping: mapping as list of dicts. They actual mapping can be either a dict or pd.Series

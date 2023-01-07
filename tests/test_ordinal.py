@@ -316,7 +316,27 @@ class TestOrdinalEncoder(TestCase):
                     return_df=True,
                 )
                 df[categoricals] = enc.fit_transform(df[categoricals])
-                print("ord mapping after fit")
-                print(enc.mapping)
                 recovered = enc.inverse_transform(df[categoricals])
                 pd.testing.assert_frame_equal(X[categoricals], recovered)
+
+    def test_validate_mapping(self):
+        custom_mapping = [
+            {
+                "col": "col1",
+                "mapping": {np.NaN: 0, "a": 1, "b": 2},
+            },  # The mapping from the documentation
+            {"col": "col2", "mapping": {np.NaN: -3, "x": 11, "y": 2}},
+        ]
+        expected_valid_mapping = [
+            {
+                "col": "col1",
+                "mapping": pd.Series({np.NaN: 0, "a": 1, "b": 2}),
+            },  # The mapping from the documentation
+            {"col": "col2", "mapping": pd.Series({np.NaN: -3, "x": 11, "y": 2})},
+        ]
+        enc = encoders.OrdinalEncoder()
+        actual_valid_mapping = enc._validate_supplied_mapping(custom_mapping)
+        self.assertEqual(len(actual_valid_mapping), len(expected_valid_mapping))
+        for idx in range(len(actual_valid_mapping)):
+            self.assertEqual(actual_valid_mapping[idx]["col"], expected_valid_mapping[idx]["col"])
+            pd.testing.assert_series_equal(actual_valid_mapping[idx]["mapping"], expected_valid_mapping[idx]["mapping"])
