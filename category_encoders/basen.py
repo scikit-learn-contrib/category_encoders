@@ -266,7 +266,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         out_cols = X.columns.values.tolist()
 
         for col in cols:
-            col_list = [col0 for col0 in out_cols if re.match(str(col)+'_\\d+', str(col0))]
+            col_list = [col0 for col0 in out_cols if re.match(re.escape(str(col))+'_\\d+', str(col0))]
             insert_at = out_cols.index(col_list[0])
 
             if base == 1:
