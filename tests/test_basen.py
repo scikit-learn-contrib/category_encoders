@@ -140,6 +140,16 @@ class TestBaseNEncoder(TestCase):
 
         pd.testing.assert_frame_equal(expected, original)
 
+    def test_inverse_transform_HaveRegexMetacharactersInColumnName_ExpectInversed(self):
+        train = pd.DataFrame({'state (2-letter code)': ['il', 'ny', 'ca']})
+
+        enc = encoders.BaseNEncoder()
+        enc.fit(train)
+        result = enc.transform(train)
+        original = enc.inverse_transform(result)
+
+        pd.testing.assert_frame_equal(train, original)
+
     def test_num_cols(self):
         """
         Test that BaseNEncoder produces the correct number of output columns.
