@@ -109,11 +109,6 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
         self.assertEqual(0.5, values[3])
 
-    def test_target_encoder_noncontiguous_index(self):
-        data = pd.DataFrame({'x': ['a', 'b', np.nan, 'd', 'e'], 'y': range(5)}).dropna()
-        result = encoders.TargetEncoder(cols=['x']).fit_transform(data[['x']], data['y'])
-        self.assertTrue(np.allclose(result, 2.0))
-
     def test_HandleMissingIsValueAndNanInTest_ExpectMean(self):
         df = pd.DataFrame({
             'color': ["a", "a", "a", "b", "b", "b"],
@@ -175,7 +170,7 @@ class TestTargetEncoder(TestCase):
         self.assertAlmostEqual(0.3248, values[5], delta=1e-4)
         self.assertAlmostEqual(0.6190, values[11], delta=1e-4)
         self.assertAlmostEqual(0.1309, values[13], delta=1e-4)
-        self.assertAlmostEqual(0.7381, values[15], delta=1e-4)
+        self.assertAlmostEqual(0.8370, values[15], delta=1e-4)
 
     def test_hierarchical_part_named_cols(self):
 
@@ -299,10 +294,10 @@ class TestTargetEncoder(TestCase):
         values = result['Animal'].values
         self.assertAlmostEqual(0.6261, values[0], delta=1e-4)
         self.assertAlmostEqual(0.9065, values[2], delta=1e-4)
-        self.assertAlmostEqual(0.4107, values[5], delta=1e-4)
+        self.assertAlmostEqual(0.2556, values[5], delta=1e-4)
         self.assertAlmostEqual(0.3680, values[8], delta=1e-4)
         self.assertAlmostEqual(0.4626, values[11], delta=1e-4)
-        self.assertAlmostEqual(0.2466, values[13], delta=1e-4)
+        self.assertAlmostEqual(0.1535, values[13], delta=1e-4)
         self.assertAlmostEqual(0.4741, values[14], delta=1e-4)
 
     def test_hierarchy_columnwise_compass(self):
@@ -330,7 +325,7 @@ class TestTargetEncoder(TestCase):
         result = enc.fit_transform(X[cols], y)
 
         values = result['postcode'].values
-        self.assertAlmostEqual(0.7506, values[0], delta=1e-4)
+        self.assertAlmostEqual(0.8448, values[0], delta=1e-4)
 
 
     def test_hierarchy_columnwise_missing_level(self):

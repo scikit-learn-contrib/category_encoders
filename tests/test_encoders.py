@@ -381,7 +381,7 @@ class TestEncoders(TestCase):
     def test_unique_column_is_not_predictive(self):
         # @ToDo not sure how useful this test is. TargetEncoders set the value to the default if there is only
         #  one category but they probably should not. See discussion in issue 327
-        test_encoders = ['LeaveOneOutEncoder', 'TargetEncoder', 'WOEEncoder', 'MEstimateEncoder',
+        test_encoders = ['LeaveOneOutEncoder', 'WOEEncoder', 'MEstimateEncoder',
                          'JamesSteinEncoder', 'CatBoostEncoder', 'GLMMEncoder']
         for encoder_name in test_encoders:
             enc = getattr(encoders, encoder_name)()

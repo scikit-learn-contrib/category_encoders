@@ -4,7 +4,6 @@ import pandas as pd
 from scipy.special import expit
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
-import warnings
 
 __author__ = 'chappers'
 
@@ -44,10 +43,10 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         The value must be strictly bigger than 0. Higher values mean a flatter S-curve (see min_samples_leaf).
     hierarchy: dict or dataframe
         A dictionary or a dataframe to define the hierarchy for mapping.
-        
+
         If a dictionary, this contains a dict of columns to map into hierarchies.  Dictionary key(s) should be the column name from X
         which requires mapping.  For multiple hierarchical maps, this should be a dictionary of dictionaries.
-        
+
         If dataframe: a dataframe defining columns to be used for the hierarchies.  Column names must take the form:
             HIER_colA_1, ... HIER_colA_N, HIER_colB_1, ... HIER_colB_M, ...
         where [colA, colB, ...] are given columns in cols list.  
@@ -111,20 +110,12 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
     def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_missing='value',
-                 handle_unknown='value', min_samples_leaf=1, smoothing=1.0, hierarchy=None):
+                 handle_unknown='value', min_samples_leaf=20, smoothing=10, hierarchy=None):
         super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
                          handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.ordinal_encoder = None
         self.min_samples_leaf = min_samples_leaf
-        if min_samples_leaf == 1:
-            warnings.warn("Default parameter min_samples_leaf will change in version 2.6."
-                          "See https://github.com/scikit-learn-contrib/category_encoders/issues/327",
-                          category=FutureWarning)
         self.smoothing = smoothing
-        if smoothing == 1.0:
-            warnings.warn("Default parameter smoothing will change in version 2.6."
-                          "See https://github.com/scikit-learn-contrib/category_encoders/issues/327",
-                          category=FutureWarning)
         self.mapping = None
         self._mean = None
         if isinstance(hierarchy, (dict, pd.DataFrame)) and cols is None:
@@ -203,7 +194,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             col = switch.get('col')
             if 'HIER_' not in str(col):
                 values = switch.get('mapping')
-                
+
                 scalar = prior
                 if (isinstance(self.hierarchy, dict) and col in self.hierarchy) or \
                                     (isinstance(self.hierarchy, pd.DataFrame)):
@@ -222,7 +213,6 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                 smoove = self._weighting(stats['count'])
 
                 smoothing = scalar * (1 - smoove) + stats['mean'] * smoove
-                smoothing[stats['count'] == 1] = scalar
 
                 if self.handle_unknown == 'return_nan':
                     smoothing.loc[-1] = np.nan

@@ -27,7 +27,7 @@ from category_encoders.rankhot import RankHotEncoder
 from category_encoders.glmm import GLMMEncoder
 from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
 
-__version__ = '2.5.1.post0'
+__version__ = '2.6.0'
 
 __author__ = "willmcginnis", "cmougan", "paulwestenthanner"
 

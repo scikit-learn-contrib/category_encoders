@@ -1,7 +1,23 @@
 unreleased
 ==========
-* added gray encoder
 
+v2.6.0
+======
+* added gray encoder
+* added thermometer / rank-hot encoder
+* introduce compatibility with sklearn 1.2
+  * compatibility with `feature_names_out_`
+  * remove boston housing dataset
+  * drop support for dataframes with non-homogenous data types in column names (i.e. having both string and integer column names)
+* improve performance of hashing encoder
+* improve catboost documentation
+* fix inverse transform in baseN with special character column names (issue 392)
+* fix inverse transform of ordinal encoder with custom mapping (issue 202)
+* fix re-fittable polynomial wrapper (issue 313)
+* fix numerical stability for target encoding (issue 377)
+* change default parameters of target encoding (issue 327)
+* drop support for sklearn 0.x
+ 
 v2.5.1.post0
 ============
 * fix pypi sdist
