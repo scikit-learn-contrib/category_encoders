@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Summary Encoder &mdash; Category Encoders 2.5.1.post0 documentation</title>
+  <title>Summary Encoder &mdash; Category Encoders 2.6.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -11,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -31,7 +29,7 @@
             <a href="index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.1.post0
+                2.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -48,6 +46,7 @@
 <li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helmert.html">Helmert Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
@@ -62,7 +61,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.fit"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.fit_transform()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.get_feature_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.get_feature_names_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.get_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.set_params()</span></code></a></li>
 </ul>
@@ -87,8 +87,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Summary Encoder</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Summary Encoder</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/summary.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -98,7 +98,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="summary-encoder">
+  <section id="summary-encoder">
 <h1>Summary Encoder<a class="headerlink" href="#summary-encoder" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.quantile_encoder.SummaryEncoder">
@@ -106,7 +106,7 @@
 <dd><p>Summary Encoding for categorical features.</p>
 <p>It’s an encoder designed for creating richer representations by applying quantile encoding for a set of quantiles.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of the output. 0 for none.</p>
 </dd>
@@ -128,29 +128,30 @@
 </dd>
 </dl>
 <p class="rubric">References</p>
-<dl class="citation">
-<dt class="label" id="r21e1e6e9fdbe-1"><span class="brackets">1</span></dt>
-<dd><p>Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, <a class="reference external" href="https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14">https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14</a></p>
-</dd>
-<dt class="label" id="r21e1e6e9fdbe-2"><span class="brackets">2</span></dt>
-<dd><p>A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from <a class="reference external" href="https://dl.acm.org/citation.cfm?id=507538">https://dl.acm.org/citation.cfm?id=507538</a></p>
-</dd>
-<dt class="label" id="r21e1e6e9fdbe-3"><span class="brackets">3</span></dt>
-<dd><p>On estimating probabilities in tree pruning, equation 1, from <a class="reference external" href="https://link.springer.com/chapter/10.1007/BFb0017010">https://link.springer.com/chapter/10.1007/BFb0017010</a></p>
-</dd>
-<dt class="label" id="r21e1e6e9fdbe-4"><span class="brackets">4</span></dt>
-<dd><p>Additive smoothing, from <a class="reference external" href="https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates">https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates</a></p>
-</dd>
-<dt class="label" id="r21e1e6e9fdbe-5"><span class="brackets">5</span></dt>
-<dd><p>Target encoding done the right way <a class="reference external" href="https://maxhalford.github.io/blog/target-encoding/">https://maxhalford.github.io/blog/target-encoding/</a></p>
-</dd>
-</dl>
+<div role="list" class="citation-list">
+<div class="citation" id="r21e1e6e9fdbe-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, <a class="reference external" href="https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14">https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14</a></p>
+</div>
+<div class="citation" id="r21e1e6e9fdbe-2" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from <a class="reference external" href="https://dl.acm.org/citation.cfm?id=507538">https://dl.acm.org/citation.cfm?id=507538</a></p>
+</div>
+<div class="citation" id="r21e1e6e9fdbe-3" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<p>On estimating probabilities in tree pruning, equation 1, from <a class="reference external" href="https://link.springer.com/chapter/10.1007/BFb0017010">https://link.springer.com/chapter/10.1007/BFb0017010</a></p>
+</div>
+<div class="citation" id="r21e1e6e9fdbe-4" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<p>Additive smoothing, from <a class="reference external" href="https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates">https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates</a></p>
+</div>
+<div class="citation" id="r21e1e6e9fdbe-5" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<p>Target encoding done the right way <a class="reference external" href="https://maxhalford.github.io/blog/target-encoding/">https://maxhalford.github.io/blog/target-encoding/</a></p>
+</div>
+</div>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.fit" title="category_encoders.quantile_encoder.SummaryEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y)</p></td>
 <td><p>Fits the encoder according to X and y by fitting the individual encoders.</p></td>
@@ -158,24 +159,26 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.fit_transform" title="category_encoders.quantile_encoder.SummaryEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
 <td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names" title="category_encoders.quantile_encoder.SummaryEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in" title="category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_in</span></code></a>()</p></td>
+<td><p>Returns the names of all input columns present when fitting.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out" title="category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_out</span></code></a>()</p></td>
 <td><p>Returns the names of all transformed / added columns. Returns ------- feature_names: list     A list with all feature names transformed or added. Note: potentially dropped features are not included!.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.get_params" title="category_encoders.quantile_encoder.SummaryEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.get_params" title="category_encoders.quantile_encoder.SummaryEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.set_params" title="category_encoders.quantile_encoder.SummaryEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.quantile_encoder.SummaryEncoder.set_params" title="category_encoders.quantile_encoder.SummaryEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 </tbody>
 </table>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 57%" />
-<col style="width: 43%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><strong>transform</strong></p></td>
+<tr class="row-odd"><td><p><strong>get_feature_names</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>transform</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -185,7 +188,7 @@
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/quantile_encoder.html#SummaryEncoder.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.quantile_encoder.SummaryEncoder.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Fits the encoder according to X and y by fitting the individual encoders.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd><p>Training vectors, where n_samples is the number of samples
 and n_features is the number of features.</p>
@@ -194,7 +197,7 @@ and n_features is the number of features.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>self</strong><span class="classifier">encoder</span></dt><dd><p>Returns self.</p>
 </dd>
@@ -215,8 +218,15 @@ and n_features is the number of features.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="category_encoders.quantile_encoder.SummaryEncoder.get_feature_names">
-<span class="sig-name descname"><span class="pre">get_feature_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/quantile_encoder.html#SummaryEncoder.get_feature_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in">
+<span class="sig-name descname"><span class="pre">get_feature_names_in</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/category_encoders/quantile_encoder.html#SummaryEncoder.get_feature_names_in"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the names of all input columns present when fitting.
+These columns are necessary for the transform step.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out">
+<span class="sig-name descname"><span class="pre">get_feature_names_out</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/quantile_encoder.html#SummaryEncoder.get_feature_names_out"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the names of all transformed / added columns.
 Returns
 ——-
@@ -232,14 +242,14 @@ Note: potentially dropped features are not included!</p>
 <span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.quantile_encoder.SummaryEncoder.get_params" title="Permalink to this definition"></a></dt>
 <dd><p>Get parameters for this estimator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>deep</strong><span class="classifier">bool, default=True</span></dt><dd><p>If True, will return the parameters for this estimator and
 contained subobjects that are estimators.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>params</strong><span class="classifier">dict</span></dt><dd><p>Parameter names mapped to their values.</p>
 </dd>
@@ -257,13 +267,13 @@ contained subobjects that are estimators.</p>
 parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
 possible to update each component of a nested object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>**params</strong><span class="classifier">dict</span></dt><dd><p>Estimator parameters.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>self</strong><span class="classifier">estimator instance</span></dt><dd><p>Estimator instance.</p>
 </dd>
@@ -274,7 +284,7 @@ possible to update each component of a nested object.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>

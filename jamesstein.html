@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>James-Stein Encoder &mdash; Category Encoders 2.5.1.post0 documentation</title>
+  <title>James-Stein Encoder &mdash; Category Encoders 2.6.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -11,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -31,7 +29,7 @@
             <a href="index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.1.post0
+                2.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -48,14 +46,17 @@
 <li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helmert.html">Helmert Coding</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">James-Stein Encoder</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.fit"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.fit_transform()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_feature_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_feature_names_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.transform"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.transform()</span></code></a></li>
 </ul>
@@ -88,8 +89,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>James-Stein Encoder</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">James-Stein Encoder</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/jamesstein.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -99,7 +100,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="james-stein-encoder">
+  <section id="james-stein-encoder">
 <h1>James-Stein Encoder<a class="headerlink" href="#james-stein-encoder" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.james_stein.JamesSteinEncoder">
@@ -155,7 +156,7 @@ tricky and sometimes it fails fatally. In these situations, it is better to use 
 model, which generally delivers slightly worse accuracy than binary model but does
 not suffer from fatal failures.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of the output. 0 for none.</p>
 </dd>
@@ -179,49 +180,50 @@ not suffer from fatal failures.</p>
 </dd>
 </dl>
 <p class="rubric">References</p>
-<dl class="citation">
-<dt class="label" id="r50705e07df56-1"><span class="brackets">1</span></dt>
-<dd><p>Parametric empirical Bayes inference: Theory and applications, equations 1.19 &amp; 1.20, from</p>
-</dd>
-</dl>
+<div role="list" class="citation-list">
+<div class="citation" id="r50705e07df56-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Parametric empirical Bayes inference: Theory and applications, equations 1.19 &amp; 1.20, from</p>
+</div>
+</div>
 <p><a class="reference external" href="https://www.jstor.org/stable/2287098">https://www.jstor.org/stable/2287098</a></p>
-<dl class="citation">
-<dt class="label" id="r50705e07df56-2"><span class="brackets">2</span></dt>
-<dd><p>Empirical Bayes for multiple sample sizes, from</p>
-</dd>
-</dl>
+<div role="list" class="citation-list">
+<div class="citation" id="r50705e07df56-2" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<p>Empirical Bayes for multiple sample sizes, from</p>
+</div>
+</div>
 <p><a class="reference external" href="http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/">http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/</a></p>
-<dl class="citation">
-<dt class="label" id="r50705e07df56-3"><span class="brackets">3</span></dt>
-<dd><p>Shrinkage Estimation of Log-odds Ratios for Comparing Mobility Tables, from</p>
-</dd>
-</dl>
+<div role="list" class="citation-list">
+<div class="citation" id="r50705e07df56-3" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<p>Shrinkage Estimation of Log-odds Ratios for Comparing Mobility Tables, from</p>
+</div>
+</div>
 <p><a class="reference external" href="https://journals.sagepub.com/doi/abs/10.1177/0081175015570097">https://journals.sagepub.com/doi/abs/10.1177/0081175015570097</a></p>
-<dl class="citation">
-<dt class="label" id="r50705e07df56-4"><span class="brackets">4</span></dt>
-<dd><p>Stein’s paradox and group rationality, from</p>
-</dd>
-</dl>
+<div role="list" class="citation-list">
+<div class="citation" id="r50705e07df56-4" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
+<p>Stein’s paradox and group rationality, from</p>
+</div>
+</div>
 <p><a class="reference external" href="http://www.philos.rug.nl/~romeyn/presentation/">http://www.philos.rug.nl/~romeyn/presentation/</a><a href="#id6"><span class="problematic" id="id7">2017_romeijn_</span></a>-_Paris_Stein.pdf</p>
-<dl class="citation">
-<dt class="label" id="r50705e07df56-5"><span class="brackets">5</span></dt>
-<dd><p>Stein’s Paradox in Statistics, from</p>
-</dd>
-</dl>
+<div role="list" class="citation-list">
+<div class="citation" id="r50705e07df56-5" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></span>
+<p>Stein’s Paradox in Statistics, from</p>
+</div>
+</div>
 <p><a class="reference external" href="http://statweb.stanford.edu/~ckirby/brad/other/Article1977.pdf">http://statweb.stanford.edu/~ckirby/brad/other/Article1977.pdf</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>feature_names</strong></dt><dd></dd>
+<dt><strong>feature_names_out_</strong></dt><dd></dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.fit" title="category_encoders.james_stein.JamesSteinEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
 <td><p>Fits the encoder according to X and y.</p></td>
@@ -229,11 +231,17 @@ not suffer from fatal failures.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.fit_transform" title="category_encoders.james_stein.JamesSteinEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
 <td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names" title="category_encoders.james_stein.JamesSteinEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_in" title="category_encoders.james_stein.JamesSteinEncoder.get_feature_names_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_in</span></code></a>()</p></td>
+<td><p>Returns the names of all input columns present when fitting.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_out" title="category_encoders.james_stein.JamesSteinEncoder.get_feature_names_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_out</span></code></a>()</p></td>
 <td><p>Returns the names of all transformed / added columns.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_params" title="category_encoders.james_stein.JamesSteinEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_params" title="category_encoders.james_stein.JamesSteinEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.set_output" title="category_encoders.james_stein.JamesSteinEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
+<td><p>Set output container.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.set_params" title="category_encoders.james_stein.JamesSteinEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
@@ -243,8 +251,15 @@ not suffer from fatal failures.</p>
 </tr>
 </tbody>
 </table>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>get_feature_names</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of output. 0 for none.</p>
 </dd>
@@ -268,18 +283,14 @@ specified at fit time. Passing an int will fill with this int value.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Attributes</dt>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
-<dt><strong>feature_names</strong></dt><dd></dd>
+<dt><strong>feature_names_out_</strong></dt><dd></dd>
 </dl>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.fit" title="category_encoders.james_stein.JamesSteinEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
 <td><p>Fits the encoder according to X and y.</p></td>
@@ -287,11 +298,17 @@ specified at fit time. Passing an int will fill with this int value.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.fit_transform" title="category_encoders.james_stein.JamesSteinEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
 <td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names" title="category_encoders.james_stein.JamesSteinEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_in" title="category_encoders.james_stein.JamesSteinEncoder.get_feature_names_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_in</span></code></a>()</p></td>
+<td><p>Returns the names of all input columns present when fitting.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_out" title="category_encoders.james_stein.JamesSteinEncoder.get_feature_names_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_out</span></code></a>()</p></td>
 <td><p>Returns the names of all transformed / added columns.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_params" title="category_encoders.james_stein.JamesSteinEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.get_params" title="category_encoders.james_stein.JamesSteinEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.set_output" title="category_encoders.james_stein.JamesSteinEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
+<td><p>Set output container.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.james_stein.JamesSteinEncoder.set_params" title="category_encoders.james_stein.JamesSteinEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
@@ -301,12 +318,19 @@ specified at fit time. Passing an int will fill with this int value.</p>
 </tr>
 </tbody>
 </table>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>get_feature_names</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.james_stein.JamesSteinEncoder.fit">
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.james_stein.JamesSteinEncoder.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Fits the encoder according to X and y.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd><p>Training vectors, where n_samples is the number of samples
 and n_features is the number of features.</p>
@@ -315,7 +339,7 @@ and n_features is the number of features.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>self</strong><span class="classifier">encoder</span></dt><dd><p>Returns self.</p>
 </dd>
@@ -336,11 +360,18 @@ and n_features is the number of features.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="category_encoders.james_stein.JamesSteinEncoder.get_feature_names">
-<span class="sig-name descname"><span class="pre">get_feature_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="category_encoders.james_stein.JamesSteinEncoder.get_feature_names_in">
+<span class="sig-name descname"><span class="pre">get_feature_names_in</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_in" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the names of all input columns present when fitting.
+These columns are necessary for the transform step.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.james_stein.JamesSteinEncoder.get_feature_names_out">
+<span class="sig-name descname"><span class="pre">get_feature_names_out</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_out" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the names of all transformed / added columns.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>feature_names: list</dt><dd><p>A list with all feature names transformed or added.
 Note: potentially dropped features (because the feature is constant/invariant) are not included!</p>
@@ -355,16 +386,43 @@ Note: potentially dropped features (because the feature is constant/invariant) a
 <span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.james_stein.JamesSteinEncoder.get_params" title="Permalink to this definition"></a></dt>
 <dd><p>Get parameters for this estimator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>deep</strong><span class="classifier">bool, default=True</span></dt><dd><p>If True, will return the parameters for this estimator and
 contained subobjects that are estimators.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>params</strong><span class="classifier">dict</span></dt><dd><p>Parameter names mapped to their values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.james_stein.JamesSteinEncoder.set_output">
+<span class="sig-name descname"><span class="pre">set_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.james_stein.JamesSteinEncoder.set_output" title="Permalink to this definition"></a></dt>
+<dd><p>Set output container.</p>
+<p>See <span class="xref std std-ref">sphx_glr_auto_examples_miscellaneous_plot_set_output.py</span>
+for an example on how to use the API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>transform</strong><span class="classifier">{“default”, “pandas”}, default=None</span></dt><dd><p>Configure output of <cite>transform</cite> and <cite>fit_transform</cite>.</p>
+<ul class="simple">
+<li><p><cite>“default”</cite>: Default output format of a transformer</p></li>
+<li><p><cite>“pandas”</cite>: DataFrame output</p></li>
+<li><p><cite>None</cite>: Transform configuration is unchanged</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">estimator instance</span></dt><dd><p>Estimator instance.</p>
 </dd>
 </dl>
 </dd>
@@ -380,13 +438,13 @@ contained subobjects that are estimators.</p>
 parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
 possible to update each component of a nested object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>**params</strong><span class="classifier">dict</span></dt><dd><p>Estimator parameters.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>self</strong><span class="classifier">estimator instance</span></dt><dd><p>Estimator instance.</p>
 </dd>
@@ -403,7 +461,7 @@ possible to update each component of a nested object.</p>
 in order to avoid overfitting.
 On training data transform should be called with y, on test data without.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd></dd>
 <dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples] or None</span></dt><dd></dd>
@@ -411,7 +469,7 @@ On training data transform should be called with y, on test data without.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>p</strong><span class="classifier">array or DataFrame, shape = [n_samples, n_features_out]</span></dt><dd><p>Transformed values with encoding applied.</p>
 </dd>
@@ -422,7 +480,7 @@ On training data transform should be called with y, on test data without.</p>
 
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>

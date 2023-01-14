@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.leave_one_out &mdash; Category Encoders 2.5.1.post0 documentation</title>
+  <title>category_encoders.leave_one_out &mdash; Category Encoders 2.6.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -11,9 +11,6 @@
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -29,7 +26,7 @@
             <a href="../../index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.1.post0
+                2.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -46,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../count.html">Count Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../helmert.html">Helmert Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
@@ -75,9 +73,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>category_encoders.leave_one_out</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">category_encoders.leave_one_out</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -97,7 +95,7 @@
 
 
 <div class="viewcode-block" id="LeaveOneOutEncoder"><a class="viewcode-back" href="../../leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder">[docs]</a><span class="k">class</span> <span class="nc">LeaveOneOutEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Leave one out coding for categorical features.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Leave one out coding for categorical features.</span>
 
 <span class="sd">    This is very similar to target encoding but excludes the current row&#39;s</span>
 <span class="sd">    target when calculating the mean target for a level to reduce the effect</span>
@@ -129,31 +127,28 @@
 <span class="sd">    -------</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
-<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import load_boston</span>
-<span class="sd">    &gt;&gt;&gt; bunch = load_boston()</span>
+<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
-<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)</span>
-<span class="sd">    &gt;&gt;&gt; enc = LeaveOneOutEncoder(cols=[&#39;CHAS&#39;, &#39;RAD&#39;]).fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
+<span class="sd">    &gt;&gt;&gt; enc = LeaveOneOutEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;]).fit(X, y)</span>
 <span class="sd">    &gt;&gt;&gt; numeric_dataset = enc.transform(X)</span>
 <span class="sd">    &gt;&gt;&gt; print(numeric_dataset.info())</span>
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="sd">    RangeIndex: 506 entries, 0 to 505</span>
-<span class="sd">    Data columns (total 13 columns):</span>
-<span class="sd">    CRIM       506 non-null float64</span>
-<span class="sd">    ZN         506 non-null float64</span>
-<span class="sd">    INDUS      506 non-null float64</span>
-<span class="sd">    CHAS       506 non-null float64</span>
-<span class="sd">    NOX        506 non-null float64</span>
-<span class="sd">    RM         506 non-null float64</span>
-<span class="sd">    AGE        506 non-null float64</span>
-<span class="sd">    DIS        506 non-null float64</span>
-<span class="sd">    RAD        506 non-null float64</span>
-<span class="sd">    TAX        506 non-null float64</span>
-<span class="sd">    PTRATIO    506 non-null float64</span>
-<span class="sd">    B          506 non-null float64</span>
-<span class="sd">    LSTAT      506 non-null float64</span>
-<span class="sd">    dtypes: float64(13)</span>
-<span class="sd">    memory usage: 51.5 KB</span>
+<span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
+<span class="sd">    Data columns (total 7 columns):</span>
+<span class="sd">     #   Column       Non-Null Count  Dtype  </span>
+<span class="sd">    ---  ------       --------------  -----  </span>
+<span class="sd">     0   Id           1460 non-null   float64</span>
+<span class="sd">     1   MSSubClass   1460 non-null   float64</span>
+<span class="sd">     2   MSZoning     1460 non-null   object </span>
+<span class="sd">     3   LotFrontage  1201 non-null   float64</span>
+<span class="sd">     4   YearBuilt    1460 non-null   float64</span>
+<span class="sd">     5   Heating      1460 non-null   float64</span>
+<span class="sd">     6   CentralAir   1460 non-null   float64</span>
+<span class="sd">    dtypes: float64(6), object(1)</span>
+<span class="sd">    memory usage: 80.0+ KB</span>
 <span class="sd">    None</span>
 
 <span class="sd">    References</span>
@@ -223,7 +218,7 @@
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">return_map</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LeaveOneOutEncoder.transform_leave_one_out"><a class="viewcode-back" href="../../leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.transform_leave_one_out">[docs]</a>    <span class="k">def</span> <span class="nf">transform_leave_one_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Leave one out encoding uses a single column of floats to represent the means of the target variables.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 

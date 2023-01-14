@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Category Encoders 2.5.1.post0 documentation</title>
+  <title>Index &mdash; Category Encoders 2.6.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -11,9 +11,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -29,7 +26,7 @@
             <a href="index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.1.post0
+                2.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -46,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helmert.html">Helmert Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
@@ -75,8 +73,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Index</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Index</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -253,44 +251,84 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_dummies">get_dummies() (category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
-      <li><a href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.get_feature_names">get_feature_names() (category_encoders.backward_difference.BackwardDifferenceEncoder method)</a>
+      <li><a href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.get_feature_names_in">get_feature_names_in() (category_encoders.backward_difference.BackwardDifferenceEncoder method)</a>
 
       <ul>
-        <li><a href="basen.html#category_encoders.basen.BaseNEncoder.get_feature_names">(category_encoders.basen.BaseNEncoder method)</a>
+        <li><a href="basen.html#category_encoders.basen.BaseNEncoder.get_feature_names_in">(category_encoders.basen.BaseNEncoder method)</a>
 </li>
-        <li><a href="binary.html#category_encoders.binary.BinaryEncoder.get_feature_names">(category_encoders.binary.BinaryEncoder method)</a>
+        <li><a href="binary.html#category_encoders.binary.BinaryEncoder.get_feature_names_in">(category_encoders.binary.BinaryEncoder method)</a>
 </li>
-        <li><a href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.get_feature_names">(category_encoders.cat_boost.CatBoostEncoder method)</a>
+        <li><a href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.get_feature_names_in">(category_encoders.cat_boost.CatBoostEncoder method)</a>
 </li>
-        <li><a href="count.html#category_encoders.count.CountEncoder.get_feature_names">(category_encoders.count.CountEncoder method)</a>
+        <li><a href="count.html#category_encoders.count.CountEncoder.get_feature_names_in">(category_encoders.count.CountEncoder method)</a>
 </li>
-        <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names">(category_encoders.glmm.GLMMEncoder method)</a>
+        <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names_in">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
-        <li><a href="hashing.html#category_encoders.hashing.HashingEncoder.get_feature_names">(category_encoders.hashing.HashingEncoder method)</a>
+        <li><a href="hashing.html#category_encoders.hashing.HashingEncoder.get_feature_names_in">(category_encoders.hashing.HashingEncoder method)</a>
 </li>
-        <li><a href="helmert.html#category_encoders.helmert.HelmertEncoder.get_feature_names">(category_encoders.helmert.HelmertEncoder method)</a>
+        <li><a href="helmert.html#category_encoders.helmert.HelmertEncoder.get_feature_names_in">(category_encoders.helmert.HelmertEncoder method)</a>
 </li>
-        <li><a href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.get_feature_names">(category_encoders.james_stein.JamesSteinEncoder method)</a>
+        <li><a href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_in">(category_encoders.james_stein.JamesSteinEncoder method)</a>
 </li>
-        <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_feature_names">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
+        <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_feature_names_in">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
-        <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_feature_names">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+        <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_feature_names_in">(category_encoders.m_estimate.MEstimateEncoder method)</a>
 </li>
-        <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_feature_names">(category_encoders.one_hot.OneHotEncoder method)</a>
+        <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_feature_names_in">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
-        <li><a href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.get_feature_names">(category_encoders.ordinal.OrdinalEncoder method)</a>
+        <li><a href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.get_feature_names_in">(category_encoders.ordinal.OrdinalEncoder method)</a>
 </li>
-        <li><a href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.get_feature_names">(category_encoders.polynomial.PolynomialEncoder method)</a>
+        <li><a href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.get_feature_names_in">(category_encoders.polynomial.PolynomialEncoder method)</a>
 </li>
-        <li><a href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.get_feature_names">(category_encoders.quantile_encoder.QuantileEncoder method)</a>
+        <li><a href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.get_feature_names_in">(category_encoders.quantile_encoder.QuantileEncoder method)</a>
 </li>
-        <li><a href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names">(category_encoders.quantile_encoder.SummaryEncoder method)</a>
+        <li><a href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in">(category_encoders.quantile_encoder.SummaryEncoder method)</a>
 </li>
-        <li><a href="sum.html#category_encoders.sum_coding.SumEncoder.get_feature_names">(category_encoders.sum_coding.SumEncoder method)</a>
+        <li><a href="sum.html#category_encoders.sum_coding.SumEncoder.get_feature_names_in">(category_encoders.sum_coding.SumEncoder method)</a>
 </li>
-        <li><a href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.get_feature_names">(category_encoders.target_encoder.TargetEncoder method)</a>
+        <li><a href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.get_feature_names_in">(category_encoders.target_encoder.TargetEncoder method)</a>
 </li>
-        <li><a href="woe.html#category_encoders.woe.WOEEncoder.get_feature_names">(category_encoders.woe.WOEEncoder method)</a>
+        <li><a href="woe.html#category_encoders.woe.WOEEncoder.get_feature_names_in">(category_encoders.woe.WOEEncoder method)</a>
+</li>
+      </ul></li>
+      <li><a href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.get_feature_names_out">get_feature_names_out() (category_encoders.backward_difference.BackwardDifferenceEncoder method)</a>
+
+      <ul>
+        <li><a href="basen.html#category_encoders.basen.BaseNEncoder.get_feature_names_out">(category_encoders.basen.BaseNEncoder method)</a>
+</li>
+        <li><a href="binary.html#category_encoders.binary.BinaryEncoder.get_feature_names_out">(category_encoders.binary.BinaryEncoder method)</a>
+</li>
+        <li><a href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.get_feature_names_out">(category_encoders.cat_boost.CatBoostEncoder method)</a>
+</li>
+        <li><a href="count.html#category_encoders.count.CountEncoder.get_feature_names_out">(category_encoders.count.CountEncoder method)</a>
+</li>
+        <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names_out">(category_encoders.glmm.GLMMEncoder method)</a>
+</li>
+        <li><a href="hashing.html#category_encoders.hashing.HashingEncoder.get_feature_names_out">(category_encoders.hashing.HashingEncoder method)</a>
+</li>
+        <li><a href="helmert.html#category_encoders.helmert.HelmertEncoder.get_feature_names_out">(category_encoders.helmert.HelmertEncoder method)</a>
+</li>
+        <li><a href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_out">(category_encoders.james_stein.JamesSteinEncoder method)</a>
+</li>
+        <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_feature_names_out">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
+</li>
+        <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_feature_names_out">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_feature_names_out">(category_encoders.one_hot.OneHotEncoder method)</a>
+</li>
+        <li><a href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.get_feature_names_out">(category_encoders.ordinal.OrdinalEncoder method)</a>
+</li>
+        <li><a href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.get_feature_names_out">(category_encoders.polynomial.PolynomialEncoder method)</a>
+</li>
+        <li><a href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.get_feature_names_out">(category_encoders.quantile_encoder.QuantileEncoder method)</a>
+</li>
+        <li><a href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out">(category_encoders.quantile_encoder.SummaryEncoder method)</a>
+</li>
+        <li><a href="sum.html#category_encoders.sum_coding.SumEncoder.get_feature_names_out">(category_encoders.sum_coding.SumEncoder method)</a>
+</li>
+        <li><a href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.get_feature_names_out">(category_encoders.target_encoder.TargetEncoder method)</a>
+</li>
+        <li><a href="woe.html#category_encoders.woe.WOEEncoder.get_feature_names_out">(category_encoders.woe.WOEEncoder method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -447,6 +485,44 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.set_output">set_output() (category_encoders.backward_difference.BackwardDifferenceEncoder method)</a>
+
+      <ul>
+        <li><a href="basen.html#category_encoders.basen.BaseNEncoder.set_output">(category_encoders.basen.BaseNEncoder method)</a>
+</li>
+        <li><a href="binary.html#category_encoders.binary.BinaryEncoder.set_output">(category_encoders.binary.BinaryEncoder method)</a>
+</li>
+        <li><a href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.set_output">(category_encoders.cat_boost.CatBoostEncoder method)</a>
+</li>
+        <li><a href="count.html#category_encoders.count.CountEncoder.set_output">(category_encoders.count.CountEncoder method)</a>
+</li>
+        <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.set_output">(category_encoders.glmm.GLMMEncoder method)</a>
+</li>
+        <li><a href="hashing.html#category_encoders.hashing.HashingEncoder.set_output">(category_encoders.hashing.HashingEncoder method)</a>
+</li>
+        <li><a href="helmert.html#category_encoders.helmert.HelmertEncoder.set_output">(category_encoders.helmert.HelmertEncoder method)</a>
+</li>
+        <li><a href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.set_output">(category_encoders.james_stein.JamesSteinEncoder method)</a>
+</li>
+        <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.set_output">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
+</li>
+        <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.set_output">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.set_output">(category_encoders.one_hot.OneHotEncoder method)</a>
+</li>
+        <li><a href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.set_output">(category_encoders.ordinal.OrdinalEncoder method)</a>
+</li>
+        <li><a href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.set_output">(category_encoders.polynomial.PolynomialEncoder method)</a>
+</li>
+        <li><a href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.set_output">(category_encoders.quantile_encoder.QuantileEncoder method)</a>
+</li>
+        <li><a href="sum.html#category_encoders.sum_coding.SumEncoder.set_output">(category_encoders.sum_coding.SumEncoder method)</a>
+</li>
+        <li><a href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.set_output">(category_encoders.target_encoder.TargetEncoder method)</a>
+</li>
+        <li><a href="woe.html#category_encoders.woe.WOEEncoder.set_output">(category_encoders.woe.WOEEncoder method)</a>
+</li>
+      </ul></li>
       <li><a href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.set_params">set_params() (category_encoders.backward_difference.BackwardDifferenceEncoder method)</a>
 
       <ul>

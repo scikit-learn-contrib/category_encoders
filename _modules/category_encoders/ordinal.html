@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.ordinal &mdash; Category Encoders 2.5.1.post0 documentation</title>
+  <title>category_encoders.ordinal &mdash; Category Encoders 2.6.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -11,9 +11,6 @@
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -29,7 +26,7 @@
             <a href="../../index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.1.post0
+                2.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -46,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../count.html">Count Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../helmert.html">Helmert Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
@@ -75,9 +73,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>category_encoders.ordinal</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">category_encoders.ordinal</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -93,12 +91,13 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;willmcginnis&#39;</span>
 
 
 <div class="viewcode-block" id="OrdinalEncoder"><a class="viewcode-back" href="../../ordinal.html#category_encoders.ordinal.OrdinalEncoder">[docs]</a><span class="k">class</span> <span class="nc">OrdinalEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">UnsupervisedTransformerMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Encodes categorical features as ordinal, in one ordered feature.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Encodes categorical features as ordinal, in one ordered feature.</span>
 
 <span class="sd">    Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed</span>
 <span class="sd">    in; in this case, we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes</span>
@@ -119,7 +118,7 @@
 <span class="sd">        a mapping of class to label to use for the encoding, optional.</span>
 <span class="sd">        the dict contains the keys &#39;col&#39; and &#39;mapping&#39;.</span>
 <span class="sd">        the value of &#39;col&#39; should be the feature name.</span>
-<span class="sd">        the value of &#39;mapping&#39; should be a dictionary of &#39;original_label&#39; to &#39;encoded_label&#39;.</span>
+<span class="sd">        the value of &#39;mapping&#39; should be a dictionary or pd.Series of &#39;original_label&#39; to &#39;encoded_label&#39;.</span>
 <span class="sd">        example mapping: [</span>
 <span class="sd">            {&#39;col&#39;: &#39;col1&#39;, &#39;mapping&#39;: {None: 0, &#39;a&#39;: 1, &#39;b&#39;: 2}},</span>
 <span class="sd">            {&#39;col&#39;: &#39;col2&#39;, &#39;mapping&#39;: {None: 0, &#39;x&#39;: 1, &#39;y&#39;: 2}}</span>
@@ -134,31 +133,28 @@
 <span class="sd">    -------</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
-<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import load_boston</span>
-<span class="sd">    &gt;&gt;&gt; bunch = load_boston()</span>
+<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
-<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)</span>
-<span class="sd">    &gt;&gt;&gt; enc = OrdinalEncoder(cols=[&#39;CHAS&#39;, &#39;RAD&#39;]).fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
+<span class="sd">    &gt;&gt;&gt; enc = OrdinalEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;]).fit(X, y)</span>
 <span class="sd">    &gt;&gt;&gt; numeric_dataset = enc.transform(X)</span>
 <span class="sd">    &gt;&gt;&gt; print(numeric_dataset.info())</span>
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="sd">    RangeIndex: 506 entries, 0 to 505</span>
-<span class="sd">    Data columns (total 13 columns):</span>
-<span class="sd">    CRIM       506 non-null float64</span>
-<span class="sd">    ZN         506 non-null float64</span>
-<span class="sd">    INDUS      506 non-null float64</span>
-<span class="sd">    CHAS       506 non-null int64</span>
-<span class="sd">    NOX        506 non-null float64</span>
-<span class="sd">    RM         506 non-null float64</span>
-<span class="sd">    AGE        506 non-null float64</span>
-<span class="sd">    DIS        506 non-null float64</span>
-<span class="sd">    RAD        506 non-null int64</span>
-<span class="sd">    TAX        506 non-null float64</span>
-<span class="sd">    PTRATIO    506 non-null float64</span>
-<span class="sd">    B          506 non-null float64</span>
-<span class="sd">    LSTAT      506 non-null float64</span>
-<span class="sd">    dtypes: float64(11), int64(2)</span>
-<span class="sd">    memory usage: 51.5 KB</span>
+<span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
+<span class="sd">    Data columns (total 7 columns):</span>
+<span class="sd">     #   Column       Non-Null Count  Dtype  </span>
+<span class="sd">    ---  ------       --------------  -----  </span>
+<span class="sd">     0   Id           1460 non-null   float64</span>
+<span class="sd">     1   MSSubClass   1460 non-null   float64</span>
+<span class="sd">     2   MSZoning     1460 non-null   object </span>
+<span class="sd">     3   LotFrontage  1201 non-null   float64</span>
+<span class="sd">     4   YearBuilt    1460 non-null   float64</span>
+<span class="sd">     5   Heating      1460 non-null   int64  </span>
+<span class="sd">     6   CentralAir   1460 non-null   int64  </span>
+<span class="sd">    dtypes: float64(4), int64(2), object(1)</span>
+<span class="sd">    memory usage: 80.0+ KB</span>
 <span class="sd">    None</span>
 
 <span class="sd">    References</span>
@@ -179,6 +175,8 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
                          <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping_supplied</span> <span class="o">=</span> <span class="n">mapping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping_supplied</span><span class="p">:</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_supplied_mapping</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="n">mapping</span>
 
     <span class="nd">@property</span>
@@ -210,7 +208,7 @@
         <span class="k">return</span> <span class="n">X</span>
 
 <div class="viewcode-block" id="OrdinalEncoder.inverse_transform"><a class="viewcode-back" href="../../ordinal.html#category_encoders.ordinal.OrdinalEncoder.inverse_transform">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform the inverse transformation to encoded data. Will attempt best case reconstruction, which means</span>
 <span class="sd">        it will return nan for handle_missing and handle_unknown settings that break the bijection. We issue</span>
 <span class="sd">        warnings when some of those cases occur.</span>
@@ -264,7 +262,7 @@
 
 <div class="viewcode-block" id="OrdinalEncoder.ordinal_encoding"><a class="viewcode-back" href="../../ordinal.html#category_encoders.ordinal.OrdinalEncoder.ordinal_encoding">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">ordinal_encoding</span><span class="p">(</span><span class="n">X_in</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Ordinal encoding uses a single column of integers to represent the classes. An optional mapping dict can be passed</span>
 <span class="sd">        in, in this case we use the knowledge that there is some true order to the classes themselves. Otherwise, the classes</span>
 <span class="sd">        are assumed to have no true order and integers are selected at random.</span>
@@ -308,9 +306,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mapping_out</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-
                 <span class="n">nan_identity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                
                 <span class="n">categories</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
                 <span class="k">if</span> <span class="n">util</span><span class="o">.</span><span class="n">is_category</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
                     <span class="c1"># Avoid using pandas category dtype meta-data if possible, see #235, #238.</span>
@@ -330,7 +326,32 @@
 
                 <span class="n">mapping_out</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;col&#39;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s1">&#39;data_type&#39;</span><span class="p">:</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">},</span> <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">mapping_out</span></div></div>
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">mapping_out</span></div>
+
+    <span class="k">def</span> <span class="nf">_validate_supplied_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supplied_mapping</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        validate the supplied mapping and convert the actual mapping per column to a pandas series.</span>
+<span class="sd">        :param supplied_mapping: mapping as list of dicts. They actual mapping can be either a dict or pd.Series</span>
+<span class="sd">        :return: the mapping with all actual mappings being pandas series</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Invalid supplied mapping, must be of type List[Dict[str, Union[Dict, pd.Series]]].&quot;</span> \
+              <span class="s2">&quot;For an example refer to the documentation&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">supplied_mapping</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">mapping_el</span> <span class="ow">in</span> <span class="n">supplied_mapping</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping_el</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;col&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mapping_el</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Mapping must contain a key &#39;col&#39; for each column to encode&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;mapping&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mapping_el</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Mapping must contain a key &#39;mapping&#39; for each column to encode&quot;</span><span class="p">)</span>
+            <span class="n">mapping</span> <span class="o">=</span> <span class="n">mapping_el</span><span class="p">[</span><span class="s2">&quot;mapping&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping_el</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="c1"># convert to dict in order to standardise</span>
+                <span class="n">mapping_el</span><span class="p">[</span><span class="s2">&quot;mapping&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;data_type&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mapping_el</span><span class="p">:</span>
+                <span class="n">mapping_el</span><span class="p">[</span><span class="s2">&quot;data_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapping_el</span><span class="p">[</span><span class="s2">&quot;mapping&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="k">return</span> <span class="n">supplied_mapping</span></div>
 </pre></div>
 
            </div>

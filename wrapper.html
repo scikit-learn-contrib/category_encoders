@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wrappers &mdash; Category Encoders 2.5.1.post0 documentation</title>
+  <title>Wrappers &mdash; Category Encoders 2.6.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -11,9 +12,6 @@
   <![endif]-->
   
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
@@ -30,7 +28,7 @@
             <a href="index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.1.post0
+                2.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -47,6 +45,7 @@
 <li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="helmert.html">Helmert Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
@@ -88,8 +87,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Wrappers</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Wrappers</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/wrapper.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -99,11 +98,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="wrappers">
+  <section id="wrappers">
 <h1>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.wrapper.PolynomialWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">PolynomialWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">PolynomialWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseEncoder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper" title="Permalink to this definition"></a></dt>
 <dd><p>Extend supervised encoders to n-class labels, where n &gt;= 2.</p>
 <p>The label can be numerical (e.g.: 0, 1, 2, 3,…,n), string or categorical (pandas.Categorical).
 The label is first encoded into n-1 binary columns. Subsequently, the inner supervised encoder
@@ -113,7 +112,7 @@ is executed for each binarized label.</p>
 <p>The implementation is experimental and the API may change in the future.
 The order of the returned features may change in the future.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>feature_encoder: Object</strong></dt><dd><p>an instance of a supervised encoder.</p>
 </dd>
@@ -122,10 +121,6 @@ The order of the returned features may change in the future.</p>
 </dl>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.fit_transform" title="category_encoders.wrapper.PolynomialWrapper.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
 <td><p>Fit to data, then transform it.</p></td>
@@ -133,16 +128,15 @@ The order of the returned features may change in the future.</p>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code>(*[, transform])</p></td>
+<td><p>Set output container.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 </tbody>
 </table>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 57%" />
-<col style="width: 43%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><strong>fit</strong></p></td>
 <td></td>
@@ -159,7 +153,7 @@ The order of the returned features may change in the future.</p>
 <p>Fits transformer to <cite>X</cite> and <cite>y</cite> with optional parameters <cite>fit_params</cite>
 and returns a transformed version of <cite>X</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>X</strong><span class="classifier">array-like of shape (n_samples, n_features)</span></dt><dd><p>Input samples.</p>
 </dd>
@@ -169,7 +163,7 @@ and returns a transformed version of <cite>X</cite>.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>X_new</strong><span class="classifier">ndarray array of shape (n_samples, n_features_new)</span></dt><dd><p>Transformed array.</p>
 </dd>
@@ -220,7 +214,7 @@ this wrapper uses 5 folds by default.</p>
 <p>Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper. The remaining
 encoders can be used without this wrapper.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>feature_encoder: Object</strong></dt><dd><p>an instance of a supervised encoder.</p>
 </dd>
@@ -235,10 +229,6 @@ encoders can be used without this wrapper.</p>
 </dl>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.fit" title="category_encoders.wrapper.NestedCVWrapper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y, **kwargs)</p></td>
 <td><p>Calls fit on the base feature_encoder without nested cross validation</p></td>
@@ -249,10 +239,13 @@ encoders can be used without this wrapper.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code>(*[, transform])</p></td>
+<td><p>Set output container.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.transform" title="category_encoders.wrapper.NestedCVWrapper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.transform" title="category_encoders.wrapper.NestedCVWrapper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
 <td><p>Calls transform on the base feature_encoder without nested cross validation</p></td>
 </tr>
 </tbody>
@@ -273,7 +266,7 @@ encoders can be used without this wrapper.</p>
 and n_features is the number of features.</p>
 </div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>y</strong> – array-like, shape = [n_samples]
 Target values for the supervised encoder.</p></li>
@@ -284,7 +277,7 @@ full X &amp; y sets. No nested folds are used here</p></li>
 <li><p><strong>fit_params</strong> – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>array, shape = [n_samples, n_numeric + N]
 Transformed values with encoding applied. Returns multiple arrays if X_test is not None</p>
 </dd>
@@ -299,7 +292,7 @@ Transformed values with encoding applied. Returns multiple arrays if X_test is n
 
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>

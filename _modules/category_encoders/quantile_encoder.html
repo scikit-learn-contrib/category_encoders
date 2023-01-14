@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.quantile_encoder &mdash; Category Encoders 2.5.1.post0 documentation</title>
+  <title>category_encoders.quantile_encoder &mdash; Category Encoders 2.6.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -11,9 +11,6 @@
   <![endif]-->
   
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -29,7 +26,7 @@
             <a href="../../index.html" class="icon icon-home"> Category Encoders
           </a>
               <div class="version">
-                2.5.1.post0
+                2.6.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -46,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../count.html">Count Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../helmert.html">Helmert Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
@@ -75,9 +73,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>category_encoders.quantile_encoder</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">category_encoders.quantile_encoder</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -90,17 +88,22 @@
 <span></span><span class="sd">&quot;&quot;&quot;Quantile Encoder&quot;&quot;&quot;</span>
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;david26694&quot;</span><span class="p">,</span> <span class="s2">&quot;cmougan&quot;</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
-<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span>
-<span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span>
+<span class="kn">from</span> <span class="nn">sklearn.exceptions</span> <span class="kn">import</span> <span class="n">NotFittedError</span>
+
+<span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
+<span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
 
 
 <div class="viewcode-block" id="QuantileEncoder"><a class="viewcode-back" href="../../quantile.html#category_encoders.quantile_encoder.QuantileEncoder">[docs]</a><span class="k">class</span> <span class="nc">QuantileEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Quantile Encoding for categorical features.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Quantile Encoding for categorical features.</span>
 
 <span class="sd">    This a statistically modified version of target MEstimate encoder where selected features</span>
 <span class="sd">    are replaced by the statistical quantile instead of the mean. Replacing with the</span>
@@ -131,31 +134,28 @@
 <span class="sd">    -------</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
-<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import load_boston</span>
-<span class="sd">    &gt;&gt;&gt; bunch = load_boston()</span>
+<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
-<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)</span>
-<span class="sd">    &gt;&gt;&gt; enc = QuantileEncoder(cols=[&#39;CHAS&#39;, &#39;RAD&#39;], quantile=0.5, m=1.0).fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
+<span class="sd">    &gt;&gt;&gt; enc = QuantileEncoder(cols=[&quot;CentralAir&quot;, &quot;Heating&quot;], quantile=0.5, m=1.0).fit(X, y)</span>
 <span class="sd">    &gt;&gt;&gt; numeric_dataset = enc.transform(X)</span>
 <span class="sd">    &gt;&gt;&gt; print(numeric_dataset.info())</span>
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="sd">    RangeIndex: 506 entries, 0 to 505</span>
-<span class="sd">    Data columns (total 13 columns):</span>
-<span class="sd">    CRIM       506 non-null float64</span>
-<span class="sd">    ZN         506 non-null float64</span>
-<span class="sd">    INDUS      506 non-null float64</span>
-<span class="sd">    CHAS       506 non-null float64</span>
-<span class="sd">    NOX        506 non-null float64</span>
-<span class="sd">    RM         506 non-null float64</span>
-<span class="sd">    AGE        506 non-null float64</span>
-<span class="sd">    DIS        506 non-null float64</span>
-<span class="sd">    RAD        506 non-null float64</span>
-<span class="sd">    TAX        506 non-null float64</span>
-<span class="sd">    PTRATIO    506 non-null float64</span>
-<span class="sd">    B          506 non-null float64</span>
-<span class="sd">    LSTAT      506 non-null float64</span>
-<span class="sd">    dtypes: float64(13)</span>
-<span class="sd">    memory usage: 51.5 KB</span>
+<span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
+<span class="sd">    Data columns (total 7 columns):</span>
+<span class="sd">     #   Column       Non-Null Count  Dtype  </span>
+<span class="sd">    ---  ------       --------------  -----  </span>
+<span class="sd">     0   Id           1460 non-null   float64</span>
+<span class="sd">     1   MSSubClass   1460 non-null   float64</span>
+<span class="sd">     2   MSZoning     1460 non-null   object </span>
+<span class="sd">     3   LotFrontage  1201 non-null   float64</span>
+<span class="sd">     4   YearBuilt    1460 non-null   float64</span>
+<span class="sd">     5   Heating      1460 non-null   float64</span>
+<span class="sd">     6   CentralAir   1460 non-null   float64</span>
+<span class="sd">    dtypes: float64(6), object(1)</span>
+<span class="sd">    memory usage: 80.0+ KB</span>
 <span class="sd">    None</span>
 
 <span class="sd">    References</span>
@@ -253,7 +253,7 @@
 
 <span class="c1"># todo does not fit in schema since it is an ensemble of other encoders</span>
 <div class="viewcode-block" id="SummaryEncoder"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder">[docs]</a><span class="k">class</span> <span class="nc">SummaryEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">TransformerWithTargetMixin</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Summary Encoding for categorical features.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Summary Encoding for categorical features.</span>
 
 <span class="sd">    It&#39;s an encoder designed for creating richer representations by applying quantile encoding for a set of quantiles.</span>
 
@@ -280,39 +280,33 @@
 <span class="sd">    -------</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
-<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import load_boston</span>
-<span class="sd">    &gt;&gt;&gt; bunch = load_boston()</span>
+<span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
-<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)</span>
-<span class="sd">    &gt;&gt;&gt; enc = SummaryEncoder(cols=[&quot;CHAS&quot;, &quot;RAD&quot;], quantiles=[0.25, 0.5, 0.75]).fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
+<span class="sd">    &gt;&gt;&gt; enc = SummaryEncoder(cols=[&quot;CentralAir&quot;, &quot;Heating&quot;], quantiles=[0.25, 0.5, 0.75]).fit(X, y)</span>
 <span class="sd">    &gt;&gt;&gt; numeric_dataset = enc.transform(X)</span>
 <span class="sd">    &gt;&gt;&gt; print(numeric_dataset.info())</span>
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
-<span class="sd">    RangeIndex: 506 entries, 0 to 505</span>
-<span class="sd">    Data columns (total 19 columns):</span>
-<span class="sd">    #   Column   Non-Null Count  Dtype  </span>
-<span class="sd">    ---  ------   --------------  -----  </span>
-<span class="sd">    0   CRIM     506 non-null    float64</span>
-<span class="sd">    1   ZN       506 non-null    float64</span>
-<span class="sd">    2   INDUS    506 non-null    float64</span>
-<span class="sd">    3   CHAS     506 non-null    float64</span>
-<span class="sd">    4   NOX      506 non-null    float64</span>
-<span class="sd">    5   RM       506 non-null    float64</span>
-<span class="sd">    6   AGE      506 non-null    float64</span>
-<span class="sd">    7   DIS      506 non-null    float64</span>
-<span class="sd">    8   RAD      506 non-null    float64</span>
-<span class="sd">    9   TAX      506 non-null    float64</span>
-<span class="sd">    10  PTRATIO  506 non-null    float64</span>
-<span class="sd">    11  B        506 non-null    float64</span>
-<span class="sd">    12  LSTAT    506 non-null    float64</span>
-<span class="sd">    13  CHAS_25  506 non-null    float64</span>
-<span class="sd">    14  RAD_25   506 non-null    float64</span>
-<span class="sd">    15  CHAS_50  506 non-null    float64</span>
-<span class="sd">    16  RAD_50   506 non-null    float64</span>
-<span class="sd">    17  CHAS_75  506 non-null    float64</span>
-<span class="sd">    18  RAD_75   506 non-null    float64</span>
-<span class="sd">    dtypes: float64(19)</span>
-<span class="sd">    memory usage: 75.2 KB</span>
+<span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
+<span class="sd">    Data columns (total 11 columns):</span>
+<span class="sd">     #   Column         Non-Null Count  Dtype  </span>
+<span class="sd">    ---  ------         --------------  -----  </span>
+<span class="sd">     0   Id             1460 non-null   float64</span>
+<span class="sd">     1   MSSubClass     1460 non-null   float64</span>
+<span class="sd">     2   MSZoning       1460 non-null   object </span>
+<span class="sd">     3   LotFrontage    1201 non-null   float64</span>
+<span class="sd">     4   YearBuilt      1460 non-null   float64</span>
+<span class="sd">     5   Heating_25     1460 non-null   float64</span>
+<span class="sd">     6   Heating_50     1460 non-null   float64</span>
+<span class="sd">     7   Heating_75     1460 non-null   float64</span>
+<span class="sd">     8   CentralAir_25  1460 non-null   float64</span>
+<span class="sd">     9   CentralAir_50  1460 non-null   float64</span>
+<span class="sd">     10  CentralAir_75  1460 non-null   float64</span>
+<span class="sd">    dtypes: float64(10), object(1)</span>
+<span class="sd">    memory usage: 125.6+ KB</span>
+<span class="sd">    None</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -346,13 +340,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">=</span> <span class="n">handle_unknown</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">=</span> <span class="n">handle_missing</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names_out_</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span> <span class="o">=</span> <span class="n">quantiles</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder_list</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="SummaryEncoder.fit"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fits the encoder according to X and y by fitting the individual encoders.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fits the encoder according to X and y by fitting the individual encoders.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -396,7 +390,7 @@
             <span class="n">enc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">y</span><span class="p">)</span>
             <span class="n">encoder_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">enc</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span> <span class="o">+=</span> <span class="n">enc</span><span class="o">.</span><span class="n">invariant_cols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names_out_</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span>
             <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span>
             <span class="p">[</span>
                 <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_col_name</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">enc</span><span class="o">.</span><span class="n">quantile</span><span class="p">)</span> <span class="k">for</span> <span class="n">enc</span> <span class="ow">in</span> <span class="n">encoder_list</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">enc</span><span class="o">.</span><span class="n">invariant_cols</span><span class="p">]</span>
@@ -423,7 +417,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">new_feat</span> <span class="o">=</span> <span class="n">X_encoded</span><span class="p">[[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">X_encoded</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">orig_cols</span><span class="p">]]</span>
                 <span class="n">transformed_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">transformed_df</span><span class="p">,</span> <span class="n">new_feat</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">feature_order</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">transformed_df</span><span class="p">]</span>
+        <span class="n">feature_order</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">transformed_df</span><span class="p">]</span>
         <span class="n">transformed_df</span> <span class="o">=</span> <span class="n">transformed_df</span><span class="p">[</span><span class="n">feature_order</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="ow">or</span> <span class="n">override_return_df</span><span class="p">:</span>
@@ -431,8 +425,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">transformed_df</span><span class="o">.</span><span class="n">values</span>
 
-<div class="viewcode-block" id="SummaryEncoder.get_feature_names"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;`get_feature_names` is deprecated in all of sklearn. Use `get_feature_names_out` instead.&quot;</span><span class="p">,</span>
+                      <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SummaryEncoder.get_feature_names_out"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the names of all transformed / added columns.</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -441,10 +440,20 @@
 <span class="sd">            Note: potentially dropped features are not included!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must fit data first. Affected feature names are not known before.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names_out_</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span><span class="s2">&quot;Must fit data first. Affected feature names are not known before.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names_out_</span></div>
+
+<div class="viewcode-block" id="SummaryEncoder.get_feature_names_in"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names_in</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the names of all input columns present when fitting.</span>
+<span class="sd">        These columns are necessary for the transform step.</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span><span class="s2">&quot;Estimator has to be fitted to return feature names.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_col_name</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quantile</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
