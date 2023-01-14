@@ -23,6 +23,7 @@ from category_encoders.woe import WOEEncoder
 from category_encoders.m_estimate import MEstimateEncoder
 from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.cat_boost import CatBoostEncoder
+from category_encoders.rankhot import RankHotEncoder
 from category_encoders.glmm import GLMMEncoder
 from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
 
@@ -51,4 +52,5 @@ __all__ = [
     "GLMMEncoder",
     "QuantileEncoder",
     "SummaryEncoder",
+    'RankHotEncoder',
 ]

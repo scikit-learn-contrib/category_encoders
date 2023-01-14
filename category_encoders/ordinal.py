@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import category_encoders.utils as util
 import warnings
+from typing import Dict, List, Union
 
 __author__ = 'willmcginnis'
 
@@ -30,7 +31,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         a mapping of class to label to use for the encoding, optional.
         the dict contains the keys 'col' and 'mapping'.
         the value of 'col' should be the feature name.
-        the value of 'mapping' should be a dictionary of 'original_label' to 'encoded_label'.
+        the value of 'mapping' should be a dictionary or pd.Series of 'original_label' to 'encoded_label'.
         example mapping: [
             {'col': 'col1', 'mapping': {None: 0, 'a': 1, 'b': 2}},
             {'col': 'col2', 'mapping': {None: 0, 'x': 1, 'y': 2}}
@@ -87,6 +88,8 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
                          handle_unknown=handle_unknown, handle_missing=handle_missing)
         self.mapping_supplied = mapping is not None
+        if self.mapping_supplied:
+            mapping = self._validate_supplied_mapping(mapping)
         self.mapping = mapping
 
     @property
@@ -237,3 +240,28 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 mapping_out.append({'col': col, 'mapping': data, 'data_type': X[col].dtype}, )
 
         return X, mapping_out
+
+    def _validate_supplied_mapping(self, supplied_mapping: List[Dict[str, Union[str, Dict, pd.Series]]]) -> List[Dict[str, Union[str, pd.Series]]]:
+        """
+        validate the supplied mapping and convert the actual mapping per column to a pandas series.
+        :param supplied_mapping: mapping as list of dicts. They actual mapping can be either a dict or pd.Series
+        :return: the mapping with all actual mappings being pandas series
+        """
+        msg = "Invalid supplied mapping, must be of type List[Dict[str, Union[Dict, pd.Series]]]." \
+              "For an example refer to the documentation"
+        if not isinstance(supplied_mapping, list):
+            raise ValueError(msg)
+        for mapping_el in supplied_mapping:
+            if not isinstance(mapping_el, dict):
+                raise ValueError(msg)
+            if "col" not in mapping_el:
+                raise KeyError("Mapping must contain a key 'col' for each column to encode")
+            if "mapping" not in mapping_el:
+                raise KeyError("Mapping must contain a key 'mapping' for each column to encode")
+            mapping = mapping_el["mapping"]
+            if isinstance(mapping_el, dict):
+                # convert to dict in order to standardise
+                mapping_el["mapping"] = pd.Series(mapping)
+            if "data_type" not in mapping_el:
+                mapping_el["data_type"] = mapping_el["mapping"].index.dtype
+        return supplied_mapping
