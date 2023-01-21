@@ -253,7 +253,6 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.mapping = None
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
-        self.feature_names_out_ = None
         self.quantiles = quantiles
         self.m = m
         self.encoder_list = None
@@ -278,6 +277,8 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         """
         X, y = util.convert_inputs(X, y)
+        self.feature_names_in_ = X.columns.tolist()
+        self.n_features_in_ = len(self.feature_names_in_)
 
         if self.use_default_cols:
             self.cols = util.get_obj_cols(X)
@@ -343,30 +344,38 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
                       category=FutureWarning)
         return self.get_feature_names_out()
 
-    def get_feature_names_out(self):
+    def get_feature_names_out(self) -> List[str]:
         """
         Returns the names of all transformed / added columns.
+
+        Note that in sklearn the get_feature_names_out function takes the feature_names_in as an argument
+        and determines the output feature names using the input. A fit is usually not necessary and if so a
+        NotFittedError is raised.
+        We just require a fit all the time and return the fitted output columns.
+
         Returns
         -------
         feature_names: list
             A list with all feature names transformed or added.
-            Note: potentially dropped features are not included!
-        """
+            Note: potentially dropped features (because the feature is constant/invariant) are not included!
 
-        if not isinstance(self.feature_names_out_, list):
-            raise NotFittedError("Must fit data first. Affected feature names are not known before.")
+        """
+        out_feats = getattr(self, "feature_names_out_", None)
+        if not isinstance(out_feats, list):
+            raise NotFittedError("Estimator has to be fitted to return feature names.")
         else:
-            return self.feature_names_out_
+            return out_feats
 
     def get_feature_names_in(self) -> List[str]:
         """
         Returns the names of all input columns present when fitting.
         These columns are necessary for the transform step.
-       """
-        if not isinstance(self.cols, list):
+        """
+        in_feats = getattr(self, "feature_names_in_", None)
+        if not isinstance(in_feats, list):
             raise NotFittedError("Estimator has to be fitted to return feature names.")
         else:
-            return self.cols
+            return in_feats
 
     @staticmethod
     def _get_col_name(col: str, quantile: float) -> str:

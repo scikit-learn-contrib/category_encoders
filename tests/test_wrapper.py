@@ -77,10 +77,10 @@ class TestMultiClassWrapper(TestCase):
         result_first_fit = wrapper.fit_transform(x, y1)
         expected_categories_1 = {"cat", "dog"}  # 'bee' is dropped since first label is always dropped
         expected_categories_2 = {"cat", "duck"}
-        self.assertEqual(set(wrapper.label_encoder.category_mapping[0]["mapping"].index), {"bee", "cat", "dog"})
+        self.assertEqual(set(wrapper.label_encoder.ordinal_encoder.category_mapping[0]["mapping"].index), {"bee", "cat", "dog"})
         self.assertEqual(set(wrapper.feature_encoders.keys()), expected_categories_1)
         result_second_fit = wrapper.fit_transform(x, y2)
-        self.assertEqual(set(wrapper.label_encoder.category_mapping[0]["mapping"].index), {"bee", "cat", "duck"})
+        self.assertEqual(set(wrapper.label_encoder.ordinal_encoder.category_mapping[0]["mapping"].index), {"bee", "cat", "duck"})
         self.assertEqual(set(wrapper.feature_encoders.keys()), expected_categories_2)
 
 
