@@ -224,7 +224,6 @@ class BaseEncoder(BaseEstimator):
     verbose: int
     drop_invariant: bool
     invariant_cols: List[str] = []
-    feature_names_out_: Union[None, List[str]] = None
     return_df: bool
     supervised: bool
     encoding_relation: EncodingRelation
@@ -378,20 +377,22 @@ class BaseEncoder(BaseEstimator):
             Note: potentially dropped features (because the feature is constant/invariant) are not included!
 
         """
-        if not isinstance(self.feature_names_out_, list):
+        out_feats = getattr(self, "feature_names_out_", None)
+        if not isinstance(out_feats, list):
             raise NotFittedError("Estimator has to be fitted to return feature names.")
         else:
-            return self.feature_names_out_
+            return out_feats
 
     def get_feature_names_in(self) -> List[str]:
         """
         Returns the names of all input columns present when fitting.
         These columns are necessary for the transform step.
-       """
-        if not isinstance(self.feature_names_in_, list):
+        """
+        in_feats = getattr(self, "feature_names_in_", None)
+        if not isinstance(in_feats, list):
             raise NotFittedError("Estimator has to be fitted to return feature names.")
         else:
-            return self.feature_names_in_
+            return in_feats
 
     @abstractmethod
     def _fit(self, X: pd.DataFrame, y: Optional[pd.Series], **kwargs):
