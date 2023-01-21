@@ -253,7 +253,6 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.mapping = None
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
-        self.feature_names_out_ = None
         self.quantiles = quantiles
         self.m = m
         self.encoder_list = None
@@ -278,6 +277,8 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
 
         """
         X, y = util.convert_inputs(X, y)
+        self.feature_names_in_ = X.columns.tolist()
+        self.n_features_in_ = len(self.feature_names_in_)
 
         if self.use_default_cols:
             self.cols = util.get_obj_cols(X)

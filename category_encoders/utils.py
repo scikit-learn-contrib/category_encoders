@@ -264,8 +264,7 @@ class BaseEncoder(BaseEstimator):
         self.invariant_cols = []
         self.verbose = verbose
         self.use_default_cols = cols is None  # if True, even a repeated call of fit() will select string columns from X
-        self.cols = cols  # This cannot be called `feature_names_in_` since it is a parameter. This does not feel right
-        self.feature_names_out_ = None
+        self.cols = cols  # note that cols are only the columns to be encoded, feature_names_in_ are all columns
         self.mapping = None
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
@@ -292,6 +291,8 @@ class BaseEncoder(BaseEstimator):
         """
         self._check_fit_inputs(X, y)
         X, y = convert_inputs(X, y)
+        self.feature_names_in_ = X.columns.tolist()
+        self.n_features_in_ = len(self.feature_names_in_)
 
         self._dim = X.shape[1]
         self._determine_fit_columns(X)
@@ -365,6 +366,11 @@ class BaseEncoder(BaseEstimator):
         """
         Returns the names of all transformed / added columns.
 
+        Note that in sklearn the get_feature_names_out function takes the feature_names_in as an argument
+        and determines the output feature names using the input. A fit is usually not necessary and if so a
+        NotFittedError is raised.
+        We just require a fit all the time and return the fitted output columns.
+
         Returns
         -------
         feature_names: list
@@ -382,10 +388,10 @@ class BaseEncoder(BaseEstimator):
         Returns the names of all input columns present when fitting.
         These columns are necessary for the transform step.
        """
-        if not isinstance(self.cols, list):
+        if not isinstance(self.feature_names_in_, list):
             raise NotFittedError("Estimator has to be fitted to return feature names.")
         else:
-            return self.cols
+            return self.feature_names_in_
 
     @abstractmethod
     def _fit(self, X: pd.DataFrame, y: Optional[pd.Series], **kwargs):

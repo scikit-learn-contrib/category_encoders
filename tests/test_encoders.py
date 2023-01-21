@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import sklearn
 import tests.helpers as th
-from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted
+from sklearn.utils.estimator_checks import check_transformer_general, check_transformers_unfitted, check_n_features_in
 from sklearn.compose import ColumnTransformer
 from unittest import TestCase
 from copy import deepcopy
@@ -244,6 +244,15 @@ class TestEncoders(TestCase):
                 encoder = getattr(encoders, encoder_name)()
                 check_transformer_general(encoder_name, encoder)
                 check_transformers_unfitted(encoder_name, encoder)
+                check_n_features_in(encoder_name, encoder)
+                train = pd.DataFrame({'city': ['chicago', 'los angeles']})
+                y = pd.Series([1, 0])
+                encoder.fit(train, y)
+                self.assertTrue(hasattr(encoder, "feature_names_out_"))
+                self.assertListEqual(encoder.feature_names_in_, ["city"])
+                self.assertEqual(encoder.n_features_in_, 1)
+                self.assertIsInstance(encoder.get_feature_names_out(), list)
+                self.assertIsInstance(encoder.get_feature_names_in(), list)
 
     def test_inverse_transform(self):
         # we do not allow None in these data (but "none" column without any missing value is ok)
