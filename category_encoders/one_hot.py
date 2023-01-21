@@ -100,7 +100,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     @property
     def category_mapping(self):
-        return self.ordinal_encoder.category_mapping
+        return self.mapping
 
     def _fit(self, X, y=None, **kwargs):
         oe_missing_strat = {

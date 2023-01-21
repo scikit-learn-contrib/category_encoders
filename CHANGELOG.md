@@ -1,5 +1,6 @@
 unreleased
 ==========
+* fixed: return correct mapping in one hot encoder `category_mapping` property (issue #256)
 
 v2.6.0
 ======
