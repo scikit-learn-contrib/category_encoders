@@ -40,6 +40,8 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         'value' will encode a missing value as 0 in every dummy column.
         'indicator' will treat missingness as its own category, adding an additional dummy column
         (whether there are missing values in the training set or not).
+        'ignore' will encode missing values as 0 in every dummy column, NOT adding an additional category.
+        
 
     Example
     -------
@@ -108,6 +110,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             'return_nan': 'return_nan',
             'value': 'value',
             'indicator': 'return_nan',
+            'ignore': 'return_nan'
         }[self.handle_missing]
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
@@ -137,7 +140,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             append_nan_to_index = False
             for cat_name, class_ in values.items():
-                if pd.isna(cat_name) and self.handle_missing == 'return_nan':
+                if pd.isna(cat_name) and self.handle_missing in ['return_nan', 'ignore']:
                     # we don't want a mapping column if return_nan
                     # but do add the index to the end
                     append_nan_to_index = class_
@@ -175,7 +178,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             if self.handle_missing == 'return_nan':
                 base_df.loc[-2] = np.nan
-            elif self.handle_missing == 'value':
+            elif self.handle_missing in ['value','ignore']:
                 base_df.loc[-2] = 0
 
             mapping.append({'col': col, 'mapping': base_df})
