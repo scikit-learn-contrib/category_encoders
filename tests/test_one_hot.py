@@ -159,6 +159,31 @@ class TestOneHotEncoderTestCase(TestCase):
             result,
             pd.DataFrame({'x_A': [1, np.nan, 0], 'x_B': [0, np.nan, 1]}),
         )
+        
+    def test_HandleMissingIgnore(self):
+        train = pd.DataFrame({'x': ['A', 'B', np.nan],
+                              'y': ['A', None, 'A'],
+                              'z': [np.NaN, 'B', 'B']})
+        train['z'] = train['z'].astype('category')
+        
+        expected_result = pd.DataFrame({'x_A': [1, 0, 0],
+                                        'x_B': [0, 1, 0],
+                                        'y_A': [1, 0, 1],
+                                        'z_B': [0, 1, 1]})    
+        encoder = encoders.OneHotEncoder(handle_missing='ignore', use_cat_names=True)
+        result = encoder.fit_transform(train)
+        
+        pd.testing.assert_frame_equal(result, expected_result)
+        
+    def test_HandleMissingIgnore_ExpectMappingUsed(self):
+        train = pd.DataFrame({'city': ['Chicago', np.NaN,'Geneva']})
+        expected_result = pd.DataFrame({'city_1': [1, 0, 0],
+                                        'city_3': [0, 0, 1]})
+
+        encoder = encoders.OneHotEncoder(handle_missing='ignore')
+        result = encoder.fit(train).transform(train)
+
+        pd.testing.assert_frame_equal(expected_result, result)
 
     def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
         train = ['A', 'B', np.nan]
