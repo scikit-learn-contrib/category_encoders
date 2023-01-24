@@ -177,6 +177,18 @@ class TestOrdinalEncoder(TestCase):
 
         self.assertEqual(expected, result)
 
+    def test_NoGaps(self):
+        train = pd.DataFrame({"city": ["New York", np.nan, "Rio", None, "Rosenheim"]})
+        expected_mapping_value = pd.Series([1, 2, 3, 4], index=["New York", "Rio", "Rosenheim", np.nan])
+        expected_mapping_return_nan = pd.Series([1, 2, 3, -2], index=["New York", "Rio", "Rosenheim", np.nan])
+
+        enc_value = encoders.OrdinalEncoder(cols=["city"], handle_missing="value")
+        enc_value.fit(train)
+        pd.testing.assert_series_equal(expected_mapping_value, enc_value.mapping[0]["mapping"])
+        enc_return_nan = encoders.OrdinalEncoder(cols=["city"], handle_missing="return_nan")
+        enc_return_nan.fit(train)
+        pd.testing.assert_series_equal(expected_mapping_return_nan, enc_return_nan.mapping[0]["mapping"])
+
     def test_HaveNoneAndNan_ExpectCodesAsOne(self):
         train = pd.DataFrame({"city": [np.nan, None]})
         expected = [1, 1]

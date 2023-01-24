@@ -220,7 +220,12 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             mapping_out = []
             for col in cols:
                 nan_identity = np.nan
-                categories = list(X[col].unique())
+                categories = X[col].unique()
+                # make nan last category
+                if pd.isna(categories).any():
+                    categories = [c for c in categories if not pd.isna(c)] + [nan_identity]
+                else:
+                    categories = categories.tolist()
                 if util.is_category(X[col].dtype):
                     # Avoid using pandas category dtype meta-data if possible, see #235, #238.
                     if X[col].dtype.ordered:

@@ -636,8 +636,8 @@ class TestEncoders(TestCase):
                 result5 = enc5.fit_transform(x5, y)
                 self.assertTrue((result1.values == result5.values).all())
 
-                # gray encoder and rankhot re-orders inputs so that nan is last, hence the output is changed
-                if encoder_name not in ["GrayEncoder", "RankHotEncoder"]:
+                # gray encoder and rankhot and ordinal re-orders inputs so that nan is last, hence the output is changed
+                if encoder_name not in ["GrayEncoder", "RankHotEncoder", "OrdinalEncoder"]:
                     enc6 = getattr(encoders, encoder_name)()
                     result6 = enc6.fit_transform(x6, y)
                     self.assertTrue((result1.values == result6.values).all())

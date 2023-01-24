@@ -80,7 +80,9 @@ def convert_inputs(X, y, columns=None, index=None, deep=False):
         # N.B.: If either was already pandas, it keeps its index.
 
         if any(X.index != y.index):
-            raise ValueError("`X` and `y` both have indexes, but they do not match.")
+            msg = "`X` and `y` both have indexes, but they do not match. If you are shuffling your input data on " \
+                  "purpose (e.g. via permutation_test_score) use np arrays instead of data frames / series"
+            raise ValueError(msg)
         if X.shape[0] != y.shape[0]:
             raise ValueError("The length of X is " + str(X.shape[0]) + " but length of y is " + str(y.shape[0]) + ".")
     return X, y
