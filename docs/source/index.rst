@@ -52,11 +52,12 @@ To use:
     encoder = ce.MEstimateEncoder(cols=[...])
     encoder = ce.OneHotEncoder(cols=[...])
     encoder = ce.OrdinalEncoder(cols=[...])
-    encoder = ce.SumEncoder(cols=[...])
     encoder = ce.PolynomialEncoder(cols=[...])
+    encoder = ce.QuantileEncoder(cols=[...])
+    encoder = ce.RankHotEncoder(cols=[...])
+    encoder = ce.SumEncoder(cols=[...])
     encoder = ce.TargetEncoder(cols=[...])
     encoder = ce.WOEEncoder(cols=[...])
-    encoder = ce.QuantileEncoder(cols=[...])
 
     encoder.fit(X, y)
     X_cleaned = encoder.transform(X_dirty)
@@ -85,6 +86,7 @@ Contents:
    ordinal
    polynomial
    quantile
+   rankhot
    sum
    summary
    targetencoder

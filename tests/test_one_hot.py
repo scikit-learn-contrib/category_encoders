@@ -159,31 +159,38 @@ class TestOneHotEncoderTestCase(TestCase):
             result,
             pd.DataFrame({'x_A': [1, np.nan, 0], 'x_B': [0, np.nan, 1]}),
         )
-        
+
     def test_HandleMissingIgnore(self):
         train = pd.DataFrame({'x': ['A', 'B', np.nan],
                               'y': ['A', None, 'A'],
                               'z': [np.NaN, 'B', 'B']})
         train['z'] = train['z'].astype('category')
-        
+
         expected_result = pd.DataFrame({'x_A': [1, 0, 0],
                                         'x_B': [0, 1, 0],
                                         'y_A': [1, 0, 1],
                                         'z_B': [0, 1, 1]})    
         encoder = encoders.OneHotEncoder(handle_missing='ignore', use_cat_names=True)
         result = encoder.fit_transform(train)
-        
+
         pd.testing.assert_frame_equal(result, expected_result)
-        
+
     def test_HandleMissingIgnore_ExpectMappingUsed(self):
-        train = pd.DataFrame({'city': ['Chicago', np.NaN,'Geneva']})
+        train = pd.DataFrame({'city': ['Chicago', np.NaN, 'Geneva']})
         expected_result = pd.DataFrame({'city_1': [1, 0, 0],
-                                        'city_3': [0, 0, 1]})
+                                        'city_2': [0, 0, 1]})
 
         encoder = encoders.OneHotEncoder(handle_missing='ignore')
         result = encoder.fit(train).transform(train)
+        expected_mapping = pd.DataFrame([
+            [1, 0],
+            [0, 1],
+            [0, 0],
+            [0, 0],
+        ], columns=["city_1", "city_2"], index=[1, 2, -2, -1])
 
         pd.testing.assert_frame_equal(expected_result, result)
+        pd.testing.assert_frame_equal(expected_mapping, encoder.category_mapping[0]["mapping"])
 
     def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
         train = ['A', 'B', np.nan]
@@ -271,7 +278,7 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(handle_missing='return_nan', handle_unknown='return_nan')
         enc.fit(train)
         result = enc.transform(test)
-        
+
         message = 'inverse_transform is not supported because transform impute '\
                   'the unknown category nan when encode city'
 

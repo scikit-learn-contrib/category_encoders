@@ -226,7 +226,7 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             index = []
             new_columns = []
 
-            for cat_name, class_ in values.iteritems():
+            for cat_name, class_ in values.items():
                 if self.use_cat_names:
                     n_col_name = f"{col}_{cat_name}"
                     found_count = found_column_counts.get(n_col_name, 0)
