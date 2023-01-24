@@ -1,6 +1,8 @@
 unreleased
 ==========
+
 * added: ignore option for one-hot-encoding
+* fixed: external dependency in unit test
 * fixed: gaps in ordinal encoding if nan values are present
 * fixed: sklearn complicance: add `feature_names_in_` attribute
 * fixed: add RankHotEncoder in documentation

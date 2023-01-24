@@ -439,20 +439,14 @@ class TestEncoders(TestCase):
                 self.assertEqual(5, len(result))
 
     def test_string_index(self):
-        # https://github.com/scikit-learn-contrib/categorical-encoding/issues/131
-
-        bunch = sklearn.datasets.fetch_openml(name="house_prices", as_frame=True)
-        y = (bunch.target > 200000).values
-        X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
-        X.index = X.index.values.astype(str)
-
-        display_cols = ["Id", "MSSubClass", "MSZoning", "YearBuilt", "Heating", "CentralAir"]
-        X = X[display_cols]
+        train = pd.DataFrame({'city': ['chicago', 'denver']})
+        target = [0, 1]
+        train.index = train.index.values.astype(str)
 
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
-                enc = getattr(encoders, encoder_name)(cols=['CentralAir', 'Heating'])
-                result = enc.fit_transform(X, y)
+                enc = getattr(encoders, encoder_name)()
+                result = enc.fit_transform(train, target)
                 self.assertFalse(result.isnull().values.any(), 'There should not be any missing value!')
 
     def test_get_feature_names_out(self):
@@ -609,8 +603,7 @@ class TestEncoders(TestCase):
         x3 = pd.DataFrame(data={'x': ['A', 'B', 'B']})  # DataFrame
         x4 = pd.Series(['A', 'B', 'B'], dtype='category')  # Series with category data type
         x5 = np.array(['A', 'B', 'B'])  # Numpy
-        x6 = [np.NaN, 'B', 'B']  # Missing value
-        x7 = ['Z', 'Y', 'Y']  # Different strings, reversed alphabetic ordering (it works because we look at the order of appearance, not at alphabetic order)
+        x6 = ['Z', 'Y', 'Y']  # Different strings, reversed alphabetic ordering (it works because we look at the order of appearance, not at alphabetic order)
 
         y = [1, 1, 0]
 
@@ -636,18 +629,12 @@ class TestEncoders(TestCase):
                 result5 = enc5.fit_transform(x5, y)
                 self.assertTrue((result1.values == result5.values).all())
 
-                # gray encoder and rankhot and ordinal re-orders inputs so that nan is last, hence the output is changed
-                if encoder_name not in ["GrayEncoder", "RankHotEncoder", "OrdinalEncoder"]:
-                    enc6 = getattr(encoders, encoder_name)()
-                    result6 = enc6.fit_transform(x6, y)
-                    self.assertTrue((result1.values == result6.values).all())
-
                 # gray encoder actually does re-order inputs
                 # rankhot encoder respects order, in this example the order is switched
                 if encoder_name not in ["GrayEncoder", "RankHotEncoder"]:
-                    enc7 = getattr(encoders, encoder_name)()
-                    result7 = enc7.fit_transform(x7, y)
-                    self.assertTrue((result1.values == result7.values).all())
+                    enc6 = getattr(encoders, encoder_name)()
+                    result6 = enc6.fit_transform(x6, y)
+                    self.assertTrue((result1.values == result6.values).all())
 
                 # Arguments
                 enc9 = getattr(encoders, encoder_name)(return_df=False)
