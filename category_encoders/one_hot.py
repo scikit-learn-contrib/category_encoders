@@ -1,6 +1,7 @@
 """One-hot or dummy coding"""
 import numpy as np
 import pandas as pd
+from sklearn.exceptions import NotFittedError
 import warnings
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
@@ -178,7 +179,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             if self.handle_missing == 'return_nan':
                 base_df.loc[-2] = np.nan
-            elif self.handle_missing in ['value','ignore']:
+            elif self.handle_missing in ['value', 'ignore']:
                 base_df.loc[-2] = 0
 
             mapping.append({'col': col, 'mapping': base_df})
@@ -308,3 +309,15 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             out_cols = X.columns.values.tolist()
 
         return X
+
+    def get_feature_names_out(self, input_features=None) -> np.ndarray:
+        if self.mapping is None:
+            raise NotFittedError("Estimator needs to be fitted to compute feature names out")
+        feature_names = []
+        for i, c in enumerate(input_features):
+            c_features = [
+                input_features[i] + "_" + out_c.split("_", maxsplit=1)[1]
+                for out_c in self.mapping[i]["mapping"].columns
+            ]
+            feature_names.extend(c_features)
+        return np.array(feature_names)
