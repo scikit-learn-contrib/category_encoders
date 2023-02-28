@@ -23,11 +23,11 @@ y = pd.DataFrame(np_y)
 class TestEncodersFeaturesOut(TestCase):
 
     def test_feature_names_out(self):
-        if sklearn.__version__ < "1.2.0":
-            return
-        else:
-            sklearn.set_config(transform_output="pandas")
         for encoder_name in encoders.__all__:
+            if sklearn.__version__ < "1.2.0":
+                continue
+            else:
+                sklearn.set_config(transform_output="pandas")
             with self.subTest(encoder_name=encoder_name):
                 encoder = getattr(encoders, encoder_name)()
                 X_t = encoder.fit_transform(X, y)
@@ -97,3 +97,4 @@ class TestEncodersFeaturesOut(TestCase):
                         ]
                     )
                 )
+            sklearn.set_config(transform_output="default")
