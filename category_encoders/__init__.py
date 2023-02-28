@@ -26,6 +26,29 @@ from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.rankhot import RankHotEncoder
 from category_encoders.glmm import GLMMEncoder
 from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
+import sklearn
+import warnings
+from textwrap import dedent
+
+if sklearn.__version__ < '1.2.0':
+    warnings.warn(
+        message=dedent(f"""\
+        You are using version {sklearn.__version__} of scikit-learn.
+        You should consider upgrading the library to at least version "1.2.0".
+        Starting from this version, get_feature_names_out() will be fully supported and will perform \
+        consistently for all estimators even, if they are part of a composed estimator (by \
+        using Pipeline, ColumnTransformer or any other complex object). 
+        """),
+        category=ImportWarning
+    )
+else:
+    if sklearn.get_config().get("transform_output", "default") == "default":
+        sklearn.set_config(transform_output="pandas")
+        warnings.warn(
+            message=dedent(f"""scikit-learn output configuration has been set to pandas \
+            to ensure full compatibility of category_encoders with scikit-learn."""),
+            category=RuntimeWarning
+        )
 
 __version__ = '2.6.0'
 

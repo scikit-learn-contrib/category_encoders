@@ -358,7 +358,7 @@ class BaseEncoder(BaseEstimator):
         else:
             self.cols = convert_cols_to_list(self.cols)
 
-    def get_feature_names(self) -> np.ndarray:
+    def get_feature_names(self) -> List[str]:
         warnings.warn("`get_feature_names` is deprecated in all of sklearn. Use `get_feature_names_out` instead.",
                       category=FutureWarning)
         return self.get_feature_names_out()
@@ -367,25 +367,23 @@ class BaseEncoder(BaseEstimator):
         """
         Returns the names of all transformed / added columns.
 
-        It requires a fitted estimator, and it returns the fitted output columns.
+        Note that in sklearn the get_feature_names_out function takes the feature_names_in as an argument
+        and determines the output feature names using the input. A fit is usually not necessary and if so a
+        NotFittedError is raised.
+        We just require a fit all the time and return the fitted output columns.
 
         Returns
         -------
         feature_names: np.ndarray
-            A numpy ndarray with all feature names transformed or added.
+            A numpy array with all feature names transformed or added.
             Note: potentially dropped features (because the feature is constant/invariant) are not included!
 
         """
-        if self.encoding_relation != EncodingRelation.ONE_TO_ONE:
-            raise NotImplementedError("This method must be overriden by the Encoder")
         out_feats = getattr(self, "feature_names_out_", None)
         if not isinstance(out_feats, list):
             raise NotFittedError("Estimator has to be fitted to return feature names.")
         else:
-            if input_features is not None:
-                return input_features
-            else:
-                return np.array(out_feats)
+            return np.array(out_feats, dtype=object)
 
     def get_feature_names_in(self) -> List[str]:
         """
