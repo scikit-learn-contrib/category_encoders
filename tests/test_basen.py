@@ -2,7 +2,7 @@ import pandas as pd
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
 import category_encoders as encoders
-
+from .helpers import list_to_dataframe
 
 class TestBaseNEncoder(TestCase):
 
@@ -64,6 +64,8 @@ class TestBaseNEncoder(TestCase):
     def test_HandleUnknown_HaveUnknown_ExpectIndicatorInTest(self):
         train = ['A', 'B', 'C']
         test = ['A', 'B', 'C', 'D']
+        train = list_to_dataframe(train)
+        test = list_to_dataframe(test)
 
         encoder = encoders.BaseNEncoder(handle_unknown='indicator')
         encoder.fit(train)
@@ -77,6 +79,7 @@ class TestBaseNEncoder(TestCase):
 
     def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
         train = ['A', 'B']
+        train = list_to_dataframe(train)
 
         encoder = encoders.BaseNEncoder(handle_unknown='indicator')
         result = encoder.fit_transform(train)

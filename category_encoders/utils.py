@@ -260,6 +260,12 @@ class BaseEncoder(BaseEstimator):
         kwargs: dict.
             additional encoder specific parameters like regularisation.
         """
+        if sklearn.__version__ >= '1.2.0':
+            if return_df == False:
+                warnings.warn("This argument will be deprecated (as in newer versions the return value will always be "
+                              "a pandas dataframe)",
+                              category=DeprecationWarning)
+                return_df = True
         self.return_df = return_df
         self.drop_invariant = drop_invariant
         self.invariant_cols = []

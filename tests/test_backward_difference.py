@@ -2,6 +2,7 @@ import pandas as pd
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import numpy as np
 import category_encoders as encoders
+from .helpers import list_to_dataframe, list_of_lists_to_dataframe
 
 
 class TestBackwardsEncoder(TestCase):
@@ -9,6 +10,8 @@ class TestBackwardsEncoder(TestCase):
     def test_backwards_difference_encoder_preserve_dimension_1(self):
         train = ['A', 'B', 'C']
         test = ['A', 'D', 'E']
+        train = list_to_dataframe(train)
+        test = list_to_dataframe(test)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
@@ -22,6 +25,8 @@ class TestBackwardsEncoder(TestCase):
     def test_backwards_difference_encoder_preserve_dimension_2(self):
         train = ['A', 'B', 'C']
         test = ['B', 'D', 'E']
+        train = list_to_dataframe(train)
+        test = list_to_dataframe(test)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
@@ -35,6 +40,8 @@ class TestBackwardsEncoder(TestCase):
     def test_backwards_difference_encoder_preserve_dimension_3(self):
         train = ['A', 'B', 'C']
         test = ['A', 'B', 'C', None]
+        train = list_to_dataframe(train)
+        test = list_to_dataframe(test)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
@@ -49,6 +56,8 @@ class TestBackwardsEncoder(TestCase):
     def test_backwards_difference_encoder_preserve_dimension_4(self):
         train = ['A', 'B', 'C']
         test = ['D', 'B', 'C', None]
+        train = list_to_dataframe(train)
+        test = list_to_dataframe(test)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
@@ -62,6 +71,7 @@ class TestBackwardsEncoder(TestCase):
 
     def test_backwards_difference_encoder_2cols(self):
         train = [['A', 'A'], ['B', 'B'], ['C', 'C']]
+        train = list_of_lists_to_dataframe(train)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
@@ -89,6 +99,7 @@ class TestBackwardsEncoder(TestCase):
 
     def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
         train = ['A', 'B', np.nan]
+        train = list_to_dataframe(train)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_missing='indicator')
         result = encoder.fit_transform(train)
@@ -100,6 +111,7 @@ class TestBackwardsEncoder(TestCase):
 
     def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
         train = ['A', 'B']
+        train = list_to_dataframe(train)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_missing='indicator')
         result = encoder.fit_transform(train)
@@ -111,6 +123,8 @@ class TestBackwardsEncoder(TestCase):
     def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
         train = ['A', 'B']
         test = ['A', 'B', np.nan]
+        train = list_to_dataframe(train)
+        test = list_to_dataframe(test)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_missing='indicator')
         encoder.fit(train)
@@ -124,6 +138,8 @@ class TestBackwardsEncoder(TestCase):
     def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
         train = ['A', 'B']
         test = ['A', 'B', 'C']
+        train = list_to_dataframe(train)
+        test = list_to_dataframe(test)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_unknown='indicator')
         encoder.fit(train)
@@ -136,6 +152,7 @@ class TestBackwardsEncoder(TestCase):
 
     def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
         train = ['A', 'B']
+        train = list_to_dataframe(train)
 
         encoder = encoders.BackwardDifferenceEncoder(handle_unknown='indicator')
         result = encoder.fit_transform(train)
