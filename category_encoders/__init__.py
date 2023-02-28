@@ -41,14 +41,6 @@ if sklearn.__version__ < '1.2.0':
         """),
         category=ImportWarning
     )
-else:
-    if sklearn.get_config().get("transform_output", "default") == "default":
-        sklearn.set_config(transform_output="pandas")
-        warnings.warn(
-            message=dedent(f"""scikit-learn output configuration has been set to pandas \
-            to ensure full compatibility of category_encoders with scikit-learn."""),
-            category=RuntimeWarning
-        )
 
 __version__ = '2.6.0'
 

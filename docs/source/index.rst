@@ -14,7 +14,16 @@ transformers in this library all share a few useful properties:
  * Can explicitly configure which columns in the data are encoded by name or index, or infer non-numeric columns regardless of input type
  * Can drop any columns with very low variance based on training set optionally
  * Portability: train a transformer on data, pickle it, reuse it later and get the same thing out.
- * Full compatibility with sklearn pipelines, input an array-like dataset like any other transformer
+ * Full compatibility with sklearn pipelines, input an array-like dataset like any other transformer (\*)
+
+(\*) For full compatibility with Pipelines and ColumnTransformers, and consistent behaviour of `get_feature_names_out`, it's recommended to upgrade `sklearn` to a version at least '1.2.0' and to set output as pandas:
+
+.. code-block:: python
+
+    import sklearn
+    sklearn.set_config(transform_output="pandas")
+
+
 
 Usage
 -----
