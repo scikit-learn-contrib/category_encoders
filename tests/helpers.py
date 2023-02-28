@@ -72,15 +72,3 @@ def deep_round(A, ndigits=5):
     """
     return [[round(val, ndigits) for val in sublst] for sublst in A]
 
-
-def list_to_dataframe(a):
-    return pd.DataFrame({"a": a})
-
-
-def list_of_lists_to_dataframe(a):
-    num_rows = len(a)
-    num_cols = len(a[0])
-    return pd.DataFrame({
-        f"col_{i}": [a[j][i] for j in range(num_rows)]
-        for i in range(num_cols)
-    })
