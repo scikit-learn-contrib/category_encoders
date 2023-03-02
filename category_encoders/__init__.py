@@ -26,6 +26,7 @@ from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.rankhot import RankHotEncoder
 from category_encoders.glmm import GLMMEncoder
 from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
+from category_encoders.response_coding import ResponseCoding
 
 __version__ = '2.6.0'
 
@@ -53,4 +54,5 @@ __all__ = [
     "QuantileEncoder",
     "SummaryEncoder",
     'RankHotEncoder',
+    'ResponseCoding',
 ]
