@@ -2,6 +2,7 @@ import warnings
 from datetime import timedelta
 
 import numpy as np
+from numpy.testing import assert_array_equal
 import pandas as pd
 import sklearn
 import tests.helpers as th
@@ -251,7 +252,7 @@ class TestEncoders(TestCase):
                 self.assertTrue(hasattr(encoder, "feature_names_out_"))
                 self.assertListEqual(encoder.feature_names_in_, ["city"])
                 self.assertEqual(encoder.n_features_in_, 1)
-                self.assertIsInstance(encoder.get_feature_names_out(), list)
+                self.assertIsInstance(encoder.get_feature_names_out(), np.ndarray)
                 self.assertIsInstance(encoder.get_feature_names_in(), list)
 
     def test_inverse_transform(self):
@@ -456,11 +457,11 @@ class TestEncoders(TestCase):
                 # Target encoders also need y
                 if enc._get_tags().get('supervised_encoder'):
                     obtained = enc.fit(X, y).get_feature_names_out()
-                    expected = enc.transform(X, y).columns.tolist()
+                    expected = np.array(enc.transform(X, y).columns)
                 else:
                     obtained = enc.fit(X).get_feature_names_out()
-                    expected = enc.transform(X).columns.tolist()
-                self.assertEqual(obtained, expected)
+                    expected = np.array(enc.transform(X).columns)
+                assert_array_equal(obtained, expected)
 
     def test_get_feature_names_out_drop_invariant(self):
         # TODO: What could a DF look like that results in constant
@@ -471,11 +472,11 @@ class TestEncoders(TestCase):
                 # Target encoders also need y
                 if enc._get_tags().get('supervised_encoder'):
                     obtained = enc.fit(X, y).get_feature_names_out()
-                    expected = enc.transform(X, y).columns.tolist()
+                    expected = np.array(enc.transform(X, y).columns)
                 else:
                     obtained = enc.fit(X).get_feature_names_out()
-                    expected = enc.transform(X).columns.tolist()
-                self.assertEqual(obtained, expected)
+                    expected = np.array(enc.transform(X).columns)
+                assert_array_equal(obtained, expected)
 
     def test_get_feature_names_out_not_set(self):
         for encoder_name in encoders.__all__:

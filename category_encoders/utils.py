@@ -363,7 +363,7 @@ class BaseEncoder(BaseEstimator):
                       category=FutureWarning)
         return self.get_feature_names_out()
 
-    def get_feature_names_out(self) -> List[str]:
+    def get_feature_names_out(self, input_features=None) -> np.ndarray:
         """
         Returns the names of all transformed / added columns.
 
@@ -374,8 +374,8 @@ class BaseEncoder(BaseEstimator):
 
         Returns
         -------
-        feature_names: list
-            A list with all feature names transformed or added.
+        feature_names: np.ndarray
+            A numpy array with all feature names transformed or added.
             Note: potentially dropped features (because the feature is constant/invariant) are not included!
 
         """
@@ -383,7 +383,7 @@ class BaseEncoder(BaseEstimator):
         if not isinstance(out_feats, list):
             raise NotFittedError("Estimator has to be fitted to return feature names.")
         else:
-            return out_feats
+            return np.array(out_feats, dtype=object)
 
     def get_feature_names_in(self) -> List[str]:
         """

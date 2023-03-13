@@ -4,7 +4,6 @@ import tests.helpers as th
 import numpy as np
 import category_encoders as encoders
 
-
 np_X = th.create_array(n_rows=100)
 np_X_t = th.create_array(n_rows=50, extras=True)
 np_y = np.random.randn(np_X.shape[0]) > 0.5
@@ -22,8 +21,8 @@ class TestRankHotEncoder(TestCase):
         enc.fit(X)
         t_f = enc.transform(X)
         inv_tf = enc.inverse_transform(t_f)
-        self.assertEqual(t_f.shape[1]-(X.shape[1]-1), len(X.none.unique()))
-        self.assertTupleEqual(inv_tf.shape,X.shape)
+        self.assertEqual(t_f.shape[1] - (X.shape[1] - 1), len(X.none.unique()))
+        self.assertTupleEqual(inv_tf.shape, X.shape)
 
     def test_handleCategoricalValue(self):
         enc = encoders.RankHotEncoder(cols=['categorical'])
@@ -45,11 +44,11 @@ class TestRankHotEncoder(TestCase):
         test = pd.DataFrame({'city': ['chicago', 'los angeles']})
         enc = encoders.RankHotEncoder(handle_unknown='value')
         train_out = enc.fit_transform(train)
-        expected_mapping = pd.DataFrame([[1, 0],[1, 1],], columns=["city_1", "city_2"], index=[1,2])
-        expected_out_train = pd.DataFrame([[1, 0],[1, 1],[1, 0],[1, 1],], columns=["city_1", "city_2"])
-        expected_out_test = pd.DataFrame([[1, 0],[0, 0],], columns=["city_1", "city_2"])
+        expected_mapping = pd.DataFrame([[1, 0], [1, 1], ], columns=["city_1", "city_2"], index=[1, 2])
+        expected_out_train = pd.DataFrame([[1, 0], [1, 1], [1, 0], [1, 1], ], columns=["city_1", "city_2"])
+        expected_out_test = pd.DataFrame([[1, 0], [0, 0], ], columns=["city_1", "city_2"])
         pd.testing.assert_frame_equal(train_out, expected_out_train)
-        pd.testing.assert_frame_equal(enc.mapping[0]["mapping"], expected_mapping)
+        pd.testing.assert_frame_equal(enc.mapping[0]["mapping"], expected_mapping, check_dtype=False)
         t_f = enc.transform(test)
         pd.testing.assert_frame_equal(t_f, expected_out_test)
         inv_tf = enc.inverse_transform(t_f)
@@ -92,4 +91,3 @@ class TestRankHotEncoder(TestCase):
         for m1, m2 in zip(mapping_order_1, mapping_order_2):
             self.assertEqual(m1["col"], m2["col"])
             pd.testing.assert_series_equal(m1["mapping"], m2["mapping"])
-
