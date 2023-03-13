@@ -74,7 +74,30 @@ To use:
 All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. If
 the cols parameter isn't passed, every non-numeric column will be converted. See below for detailed documentation
 
+Known issues:
+----
+
+`CategoryEncoders` internally works with `pandas DataFrames` as apposed to `sklearn` which works with `numpy arrays`. This can cause problems in `sklearn` versions prior to 1.2.0. In order to ensure full compatibility with `sklearn` set `sklearn` to also output `DataFrames`. This can be done by
+
+.. code-block::python
+
+   sklearn.set_config(transform_output="pandas")
+
+for a whole project or just for a single pipeline using
+
+.. code-block::python
+
+   Pipeline(
+       steps=[
+           ("preprocessor", SomePreprocessor().set_output("pandas"),
+           ("encoder", SomeEncoder()),
+       ]
+   )
+
+If you experience another bug, feel free to report it on [github](https://github.com/scikit-learn-contrib/category_encoders/issues)
+
 Contents:
+----
 
 .. toctree::
    :maxdepth: 3

@@ -30,17 +30,6 @@ import sklearn
 import warnings
 from textwrap import dedent
 
-if sklearn.__version__ < '1.2.0':
-    warnings.warn(
-        message=dedent(f"""\
-        You are using version {sklearn.__version__} of scikit-learn.
-        You should consider upgrading the library to at least version "1.2.0".
-        Starting from this version, get_feature_names_out() will be fully supported and will perform \
-        consistently for all estimators even, if they are part of a composed estimator (by \
-        using Pipeline, ColumnTransformer or any other complex object). 
-        """),
-        category=ImportWarning
-    )
 
 __version__ = '2.6.0'
 
