@@ -26,9 +26,6 @@ from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.rankhot import RankHotEncoder
 from category_encoders.glmm import GLMMEncoder
 from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
-import sklearn
-import warnings
-from textwrap import dedent
 
 
 __version__ = '2.6.0'
