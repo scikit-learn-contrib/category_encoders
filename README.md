@@ -148,6 +148,7 @@ References
  10. Simple Count or Frequency Encoding. From https://www.datacamp.com/community/tutorials/encoding-methodologies
  11. Transforming categorical features to numerical features. From https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
  12. Andrew Gelman and Jennifer Hill (2006). Data Analysis Using Regression and Multilevel/Hierarchical Models. From https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf
- 13. Carlos Mougan, David Masip, Jordi Nin and Oriol Pujol (2021). Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems. https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14
+ 13. Carlos Mougan, David Masip, Jordi Nin and Oriol Pujol (2021). Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems. Modeling Decisions for Artificial Intelligence, 2021. Springer International Publishing https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14
  14. Gray Encoding. From https://en.wikipedia.org/wiki/Gray_code 
  15. Jacob Buckman, Aurko Roy, Colin Raffel, Ian Goodfellow: Thermometer Encoding: One Hot Way To Resist Adversarial Examples. From https://openreview.net/forum?id=S18Su--CW
+ 16. Fairness implications of encoding protected categorical attributes. Carlos Mougan, Jose Alvarez, Salvatore Ruggieri, and Steffen Staab.  In Proceedings of the 2023 AAAI/ACM Conference on AI, Ethics, and Society, AIES ’21, https://arxiv.org/abs/2201.11358
