@@ -229,7 +229,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 if util.is_category(X[col].dtype):
                     # Avoid using pandas category dtype meta-data if possible, see #235, #238.
                     if X[col].dtype.ordered:
-                        categories = [c for c in X[col].dtype.categories if c in categories]
+                        categories = list(set(categories).intersection(set(X[col].dtype.categories)))
                     if X[col].isna().any():
                         categories += [np.nan]
 
