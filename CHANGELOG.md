@@ -1,12 +1,16 @@
 unreleased
 ==========
 
+v2.6.1
+======
 * added: ignore option for one-hot-encoding
 * fixed: external dependency in unit test
 * fixed: gaps in ordinal encoding if nan values are present
-* fixed: sklearn complicance: add `feature_names_in_` attribute
+* fixed: sklearn compliance: add `feature_names_in_` attribute
+* fixed: sklearn compliance: `get_feature_names_out` function has the correct signature
 * fixed: add RankHotEncoder in documentation
 * fixed: return correct mapping in one hot encoder `category_mapping` property (issue #256)
+* refactor: quadratic runtime in ordinal encoder (issue #407)
 
 v2.6.0
 ======
