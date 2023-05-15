@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.quantile_encoder &mdash; Category Encoders 2.6.0 documentation</title>
+  <title>category_encoders.quantile_encoder &mdash; Category Encoders 2.6.1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -23,14 +23,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> Category Encoders
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Category Encoders
           </a>
               <div class="version">
-                2.6.0
+                2.6.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -53,6 +57,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../polynomial.html">Polynomial Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../quantile.html">Quantile Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rankhot.html">RankHotEncoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../sum.html">Sum Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../summary.html">Summary Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../targetencoder.html">Target Encoder</a></li>
@@ -73,7 +78,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">category_encoders.quantile_encoder</li>
       <li class="wy-breadcrumbs-aside">
@@ -340,7 +345,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">=</span> <span class="n">handle_unknown</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">=</span> <span class="n">handle_missing</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names_out_</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span> <span class="o">=</span> <span class="n">quantiles</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder_list</span> <span class="o">=</span> <span class="kc">None</span>
@@ -365,6 +369,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">convert_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_names_in_</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_features_in_</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names_in_</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_default_cols</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">get_obj_cols</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
@@ -430,30 +436,38 @@
                       <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SummaryEncoder.get_feature_names_out"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SummaryEncoder.get_feature_names_out"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_features</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the names of all transformed / added columns.</span>
+
+<span class="sd">        Note that in sklearn the get_feature_names_out function takes the feature_names_in as an argument</span>
+<span class="sd">        and determines the output feature names using the input. A fit is usually not necessary and if so a</span>
+<span class="sd">        NotFittedError is raised.</span>
+<span class="sd">        We just require a fit all the time and return the fitted output columns.</span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        feature_names: list</span>
+<span class="sd">        feature_names: np.ndarray</span>
 <span class="sd">            A list with all feature names transformed or added.</span>
-<span class="sd">            Note: potentially dropped features are not included!</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            Note: potentially dropped features (because the feature is constant/invariant) are not included!</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names_out_</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span><span class="s2">&quot;Must fit data first. Affected feature names are not known before.&quot;</span><span class="p">)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_feats</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;feature_names_out_&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_feats</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span><span class="s2">&quot;Estimator has to be fitted to return feature names.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_names_out_</span></div>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_feats</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SummaryEncoder.get_feature_names_in"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names_in</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the names of all input columns present when fitting.</span>
 <span class="sd">        These columns are necessary for the transform step.</span>
-<span class="sd">       &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">in_feats</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;feature_names_in_&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_feats</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span><span class="s2">&quot;Estimator has to be fitted to return feature names.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span></div>
+            <span class="k">return</span> <span class="n">in_feats</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_col_name</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quantile</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

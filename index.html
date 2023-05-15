@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Category Encoders &mdash; Category Encoders 2.6.0 documentation</title>
+  <title>Category Encoders &mdash; Category Encoders 2.6.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> Category Encoders
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Category Encoders
           </a>
               <div class="version">
-                2.6.0
+                2.6.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,6 +59,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="polynomial.html">Polynomial Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quantile.html">Quantile Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rankhot.html">RankHotEncoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sum.html">Sum Coding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="summary.html">Summary Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="targetencoder.html">Target Encoder</a></li>
@@ -75,7 +80,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a></li>
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Category Encoders</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
@@ -97,9 +102,14 @@ transformers in this library all share a few useful properties:</p>
 <li><p>Can explicitly configure which columns in the data are encoded by name or index, or infer non-numeric columns regardless of input type</p></li>
 <li><p>Can drop any columns with very low variance based on training set optionally</p></li>
 <li><p>Portability: train a transformer on data, pickle it, reuse it later and get the same thing out.</p></li>
-<li><p>Full compatibility with sklearn pipelines, input an array-like dataset like any other transformer</p></li>
+<li><p>Full compatibility with sklearn pipelines, input an array-like dataset like any other transformer (*)</p></li>
 </ul>
 </div></blockquote>
+<p>(*) For full compatibility with Pipelines and ColumnTransformers, and consistent behaviour of <cite>get_feature_names_out</cite>, it’s recommended to upgrade <cite>sklearn</cite> to a version at least ‘1.2.0’ and to set output as pandas:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sklearn</span>
+<span class="n">sklearn</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">transform_output</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
 <p>install as:</p>
@@ -127,11 +137,12 @@ transformers in this library all share a few useful properties:</p>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">MEstimateEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
-<span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">SumEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">PolynomialEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">QuantileEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">RankHotEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">SumEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">TargetEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">WOEEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
-<span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">QuantileEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 
 <span class="n">encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="n">X_cleaned</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_dirty</span><span class="p">)</span>
@@ -139,7 +150,15 @@ transformers in this library all share a few useful properties:</p>
 </div>
 <p>All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. If
 the cols parameter isn’t passed, every non-numeric column will be converted. See below for detailed documentation</p>
-<p>Contents:</p>
+</section>
+<section id="known-issues">
+<h2>Known issues:<a class="headerlink" href="#known-issues" title="Permalink to this heading"></a></h2>
+<p><cite>CategoryEncoders</cite> internally works with <cite>pandas DataFrames</cite> as apposed to <cite>sklearn</cite> which works with <cite>numpy arrays</cite>. This can cause problems in <cite>sklearn</cite> versions prior to 1.2.0. In order to ensure full compatibility with <cite>sklearn</cite> set <cite>sklearn</cite> to also output <cite>DataFrames</cite>. This can be done by</p>
+<p>for a whole project or just for a single pipeline using</p>
+<p>If you experience another bug, feel free to report it on [github](<a class="reference external" href="https://github.com/scikit-learn-contrib/category_encoders/issues">https://github.com/scikit-learn-contrib/category_encoders/issues</a>)</p>
+</section>
+<section id="contents">
+<h2>Contents:<a class="headerlink" href="#contents" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="backward_difference.html">Backward Difference Coding</a><ul>
@@ -235,7 +254,24 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder"><code class="docutils literal notranslate"><span class="pre">GrayEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.basen_encode"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.basen_encode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.basen_to_integer"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.basen_to_integer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.col_transform"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.col_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.fit"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.get_feature_names_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.get_feature_names_out()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.inverse_transform"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.inverse_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.set_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.set_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.transform"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder"><code class="docutils literal notranslate"><span class="pre">HashingEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.fit"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.fit()</span></code></a></li>
@@ -365,6 +401,20 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.transform"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rankhot.html">RankHotEncoder</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.fit"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.get_feature_names_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.get_feature_names_out()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.set_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.set_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.transform"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.transform()</span></code></a></li>
 </ul>
 </li>
 </ul>
