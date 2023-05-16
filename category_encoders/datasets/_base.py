@@ -25,7 +25,7 @@ def load_compass():
 
     """
     data_filename = "data/compass.csv"
-    stream = files(__name__) / data_filename
+    stream = files("category_encoders.datasets") / data_filename
 
     with as_file(stream) as f:
         df = pd.read_csv(f, encoding='latin-1')
@@ -60,7 +60,7 @@ def load_postcodes(target_type='binary'):
 
     """
     data_filename = "data/postcode_dataset_100.csv"
-    stream = files(__name__) / data_filename
+    stream = files("category_encoders.datasets") / data_filename
 
     with as_file(stream) as f:
         df = pd.read_csv(f, encoding='latin-1')
