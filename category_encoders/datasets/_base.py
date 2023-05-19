@@ -2,7 +2,11 @@
 Base IO code for datasets
 """
 
-import pkg_resources
+try:
+    from importlib.resources import files, as_file
+except ImportError:
+    from importlib_resources import files, as_file
+
 import pandas as pd
 
 def load_compass():
@@ -21,9 +25,9 @@ def load_compass():
 
     """
     data_filename = "data/compass.csv"
-    stream = pkg_resources.resource_filename(__name__, data_filename)
+    stream = files("category_encoders.datasets") / data_filename
 
-    with open(stream) as f:
+    with as_file(stream) as f:
         df = pd.read_csv(f, encoding='latin-1')
     X = df[['index', 'compass', 'HIER_compass_1']]
     y = df['target']
@@ -56,9 +60,9 @@ def load_postcodes(target_type='binary'):
 
     """
     data_filename = "data/postcode_dataset_100.csv"
-    stream = pkg_resources.resource_filename(__name__, data_filename)
+    stream = files("category_encoders.datasets") / data_filename
 
-    with open(stream) as f:
+    with as_file(stream) as f:
         df = pd.read_csv(f, encoding='latin-1')
     X = df[df.columns[~df.columns.str.startswith('target')]]
     y = df[f'target_{target_type}']

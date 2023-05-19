@@ -38,6 +38,7 @@ setup(
       'statsmodels>=0.9.0',
       'pandas>=1.0.5',
       'patsy>=0.5.1',
+      'importlib_resources ; python_version<"3.9"',
     ],
     author_email='will@pedalwrencher.com',
     package_data={'': ['datasets/data/*.csv']},
