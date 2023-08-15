@@ -1,6 +1,12 @@
 unreleased
 ==========
 
+v2.6.2
+======
+* fixed: issue 414 - broken link
+* fixed: issue 412 - timestamp types in ordinal encoder
+* fixed: `importlib` instead of `pkg_resources`
+
 v2.6.1
 ======
 * added: ignore option for one-hot-encoding
