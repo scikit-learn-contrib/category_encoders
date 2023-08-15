@@ -4,16 +4,18 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weight of Evidence &mdash; Category Encoders 2.6.1 documentation</title>
+  <title>Weight of Evidence &mdash; Category Encoders 2.6.2 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=1fc3131f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -33,7 +35,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.1
+                2.6.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -70,9 +72,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.woe.WOEEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.fit_transform()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.get_feature_names_out()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.get_metadata_routing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.get_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.set_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.set_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.woe.WOEEncoder.transform"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.transform()</span></code></a></li>
 </ul>
 </li>
@@ -160,14 +164,20 @@ When regularization is 0, you may encounter division by zero.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_feature_names_out" title="category_encoders.woe.WOEEncoder.get_feature_names_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_out</span></code></a>([input_features])</p></td>
 <td><p>Returns the names of all transformed / added columns.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_params" title="category_encoders.woe.WOEEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_metadata_routing" title="category_encoders.woe.WOEEncoder.get_metadata_routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code></a>()</p></td>
+<td><p>Get metadata routing of this object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_params" title="category_encoders.woe.WOEEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_output" title="category_encoders.woe.WOEEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_output" title="category_encoders.woe.WOEEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
 <td><p>Set output container.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_params" title="category_encoders.woe.WOEEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_params" title="category_encoders.woe.WOEEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_transform_request" title="category_encoders.woe.WOEEncoder.set_transform_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_transform_request</span></code></a>(*[, override_return_df])</p></td>
+<td><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.transform" title="category_encoders.woe.WOEEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y, override_return_df])</p></td>
 <td><p>Perform the transformation to new categorical data.</p></td>
@@ -222,14 +232,20 @@ specified at fit time. Passing an int will fill with this int value.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_feature_names_out" title="category_encoders.woe.WOEEncoder.get_feature_names_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_out</span></code></a>([input_features])</p></td>
 <td><p>Returns the names of all transformed / added columns.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_params" title="category_encoders.woe.WOEEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_metadata_routing" title="category_encoders.woe.WOEEncoder.get_metadata_routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code></a>()</p></td>
+<td><p>Get metadata routing of this object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.get_params" title="category_encoders.woe.WOEEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_output" title="category_encoders.woe.WOEEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_output" title="category_encoders.woe.WOEEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
 <td><p>Set output container.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_params" title="category_encoders.woe.WOEEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_params" title="category_encoders.woe.WOEEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.set_transform_request" title="category_encoders.woe.WOEEncoder.set_transform_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_transform_request</span></code></a>(*[, override_return_df])</p></td>
+<td><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.woe.WOEEncoder.transform" title="category_encoders.woe.WOEEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y, override_return_df])</p></td>
 <td><p>Perform the transformation to new categorical data.</p></td>
@@ -304,6 +320,23 @@ Note: potentially dropped features (because the feature is constant/invariant) a
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.woe.WOEEncoder.get_metadata_routing">
+<span class="sig-name descname"><span class="pre">get_metadata_routing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.woe.WOEEncoder.get_metadata_routing" title="Permalink to this definition"></a></dt>
+<dd><p>Get metadata routing of this object.</p>
+<p>Please check <span class="xref std std-ref">User Guide</span> on how the routing
+mechanism works.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>routing</strong><span class="classifier">MetadataRequest</span></dt><dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">MetadataRequest</span></code> encapsulating
+routing information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.woe.WOEEncoder.get_params">
 <span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.woe.WOEEncoder.get_params" title="Permalink to this definition"></a></dt>
 <dd><p>Get parameters for this estimator.</p>
@@ -369,6 +402,49 @@ possible to update each component of a nested object.</p>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>self</strong><span class="classifier">estimator instance</span></dt><dd><p>Estimator instance.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.woe.WOEEncoder.set_transform_request">
+<span class="sig-name descname"><span class="pre">set_transform_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_return_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#category_encoders.woe.WOEEncoder" title="category_encoders.woe.WOEEncoder"><span class="pre">WOEEncoder</span></a></span></span><a class="headerlink" href="#category_encoders.woe.WOEEncoder.set_transform_request" title="Permalink to this definition"></a></dt>
+<dd><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method.</p>
+<p>Note that this method is only relevant if
+<code class="docutils literal notranslate"><span class="pre">enable_metadata_routing=True</span></code> (see <code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.set_config()</span></code>).
+Please see <span class="xref std std-ref">User Guide</span> on how the routing
+mechanism works.</p>
+<p>The options for each parameter are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: metadata is requested, and passed to <code class="docutils literal notranslate"><span class="pre">transform</span></code> if provided. The request is ignored if metadata is not provided.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: metadata is not requested and the meta-estimator will not pass it to <code class="docutils literal notranslate"><span class="pre">transform</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: metadata is not requested, and the meta-estimator will raise an error if the user provides it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: metadata should be passed to the meta-estimator with this given alias instead of the original name.</p></li>
+</ul>
+<p>The default (<code class="docutils literal notranslate"><span class="pre">sklearn.utils.metadata_routing.UNCHANGED</span></code>) retains the
+existing request. This allows you to change the request for some
+parameters and not others.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.3.</span></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method is only relevant if this estimator is used as a
+sub-estimator of a meta-estimator, e.g. used inside a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">pipeline.Pipeline</span></code>. Otherwise it has no effect.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>override_return_df</strong><span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">override_return_df</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">transform</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">object</span></dt><dd><p>The updated object.</p>
 </dd>
 </dl>
 </dd>

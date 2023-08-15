@@ -3,16 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.helmert &mdash; Category Encoders 2.6.1 documentation</title>
+  <title>category_encoders.helmert &mdash; Category Encoders 2.6.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=1fc3131f"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -30,7 +32,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.1
+                2.6.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -164,8 +166,8 @@
 <span class="sd">    https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/</span>
 
 <span class="sd">    .. [2] Gregory Carey (2003). Coding Categorical Variables, from</span>
-<span class="sd">    http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf</span>
-
+<span class="sd">    http://ibgwww.colorado.edu/~carey/p5741ndir/Coding_Categorical_Variables.pdf</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">get_contrast_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values_to_encode</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContrastMatrix</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">Helmert</span><span class="p">()</span><span class="o">.</span><span class="n">code_without_intercept</span><span class="p">(</span><span class="n">values_to_encode</span><span class="p">)</span></div>
