@@ -77,8 +77,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
-    http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
-
+    http://ibgwww.colorado.edu/~carey/p5741ndir/Coding_Categorical_Variables.pdf
     """
     prefit_ordinal = False
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
