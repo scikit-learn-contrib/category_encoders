@@ -177,6 +177,33 @@ class TestOrdinalEncoder(TestCase):
 
         self.assertEqual(expected, result)
 
+    def test_Timestamp(self):
+        df = pd.DataFrame(
+            {
+                "timestamps": {
+                    0: pd.Timestamp("1997-09-03 00:00:00"),
+                    1: pd.Timestamp("1997-09-03 00:00:00"),
+                    2: pd.Timestamp("2000-09-03 00:00:00"),
+                    3: pd.Timestamp("1997-09-03 00:00:00"),
+                    4: pd.Timestamp("1999-09-04 00:00:00"),
+                    5: pd.Timestamp("2001-09-03 00:00:00"),
+                },
+            }
+        )
+        enc = encoders.OrdinalEncoder(cols=["timestamps"])
+        encoded_df = enc.fit_transform(df)
+        expected_index = [pd.Timestamp("1997-09-03 00:00:00"),
+                          pd.Timestamp("2000-09-03 00:00:00"),
+                          pd.Timestamp("1999-09-04 00:00:00"),
+                          pd.Timestamp("2001-09-03 00:00:00"),
+                          pd.NaT
+                          ]
+        expected_mapping = pd.Series([1, 2, 3, 4, -2], index=expected_index)
+        expected_values = [1, 1, 2, 1, 3, 4]
+
+        pd.testing.assert_series_equal(expected_mapping, enc.mapping[0]["mapping"])
+        self.assertListEqual(expected_values, encoded_df["timestamps"].tolist())
+
     def test_NoGaps(self):
         train = pd.DataFrame({"city": ["New York", np.nan, "Rio", None, "Rosenheim"]})
         expected_mapping_value = pd.Series([1, 2, 3, 4], index=["New York", "Rio", "Rosenheim", np.nan])
