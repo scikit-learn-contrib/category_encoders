@@ -224,7 +224,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 if pd.isna(categories).any():
                     categories = [c for c in categories if not pd.isna(c)] + [nan_identity]
                 else:
-                    categories = categories.tolist()
+                    categories = list(categories)
                 if util.is_category(X[col].dtype):
                     # Avoid using pandas category dtype meta-data if possible, see #235, #238.
                     if X[col].dtype.ordered:
