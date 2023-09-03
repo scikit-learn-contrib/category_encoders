@@ -79,13 +79,13 @@ Known issues:
 
 `CategoryEncoders` internally works with `pandas DataFrames` as apposed to `sklearn` which works with `numpy arrays`. This can cause problems in `sklearn` versions prior to 1.2.0. In order to ensure full compatibility with `sklearn` set `sklearn` to also output `DataFrames`. This can be done by
 
-.. code-block::python
+.. code-block:: python
 
    sklearn.set_config(transform_output="pandas")
 
 for a whole project or just for a single pipeline using
 
-.. code-block::python
+.. code-block:: python
 
    Pipeline(
        steps=[
