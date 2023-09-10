@@ -6,6 +6,7 @@ import warnings
 import pandas as pd
 import numpy as np
 import sklearn.base
+from pandas.core.dtypes.dtypes import CategoricalDtype
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.exceptions import NotFittedError
 from typing import Dict, List, Optional, Union
@@ -25,7 +26,7 @@ def convert_cols_to_list(cols):
         return list(cols)
     elif isinstance(cols, tuple):
         return list(cols)
-    elif pd.api.types.is_categorical_dtype(cols):
+    elif isinstance(cols, CategoricalDtype):
         return cols.astype(object).tolist()
 
     return cols
@@ -47,7 +48,7 @@ def get_obj_cols(df):
 
 
 def is_category(dtype):
-    return pd.api.types.is_categorical_dtype(dtype)
+    return isinstance(dtype, CategoricalDtype)
 
 
 def convert_inputs(X, y, columns=None, index=None, deep=False):
