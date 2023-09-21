@@ -1,5 +1,5 @@
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
-from category_encoders.utils import convert_input_vector, convert_inputs
+from category_encoders.utils import convert_input_vector, convert_inputs, get_categorical_cols
 import pandas as pd
 import numpy as np
 
@@ -114,3 +114,9 @@ class TestUtils(TestCase):
 
         # shape mismatch
         self.assertRaises(ValueError, convert_inputs, barray, [1, 2, 3, 4])
+
+    def test_get_categorical_cols(self):
+        df = pd.DataFrame({"col": ["a", "b"]})
+        self.assertEqual(get_categorical_cols(df.astype("object")), ["col"])
+        self.assertEqual(get_categorical_cols(df.astype("category")), ["col"])
+        self.assertEqual(get_categorical_cols(df.astype("string")), ["col"])

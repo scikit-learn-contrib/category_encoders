@@ -281,7 +281,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         self.n_features_in_ = len(self.feature_names_in_)
 
         if self.use_default_cols:
-            self.cols = util.get_obj_cols(X)
+            self.cols = util.get_categorical_cols(X)
         else:
             self.cols = util.convert_cols_to_list(self.cols)
 
