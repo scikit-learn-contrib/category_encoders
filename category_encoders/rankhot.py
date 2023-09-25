@@ -119,7 +119,7 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     def _transform(self, X_in, override_return_df=False):
         X = X_in.copy(deep=True)
         X = self.ordinal_encoder.transform(X)
-        input_cols = X.columns.values.tolist()
+        input_cols = X.columns.tolist()
 
         if self.handle_unknown == "error":
             if X[self.cols].isin([-1]).any().any():
@@ -178,7 +178,7 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     def inverse_transform(self, X_in):
         X = X_in.copy(deep=True)
-        cols = X.columns.values.tolist()
+        cols = X.columns.tolist()
         if self._dim is None:
             raise ValueError("Must train encoder before it can be used to inverse_transform data")
 

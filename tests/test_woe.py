@@ -99,13 +99,13 @@ class TestWeightOfEvidenceEncoder(TestCase):
         enc.fit(X, np_y)
         X1 = enc.transform(X_t)
         th.verify_numeric(X1)
-        self.assertTrue(X1.isnull().values.any())
+        self.assertTrue(X1.isna().values.any())
         self.assertEqual(len(list(X_t)), len(list(X1)), 'The count of attributes must not change')
         self.assertEqual(len(X_t), len(X1), 'The count of rows must not change')
 
         X2 = enc.transform(X_t, np_y_t)
         th.verify_numeric(X2)
-        self.assertTrue(X1.isnull().values.any())
+        self.assertTrue(X1.isna().values.any())
         self.assertEqual(len(list(X_t)), len(list(X2)), 'The count of attributes must not change')
         self.assertEqual(len(X_t), len(X2), 'The count of rows must not change')
 

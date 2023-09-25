@@ -86,14 +86,14 @@ class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return X
 
     @abstractmethod
-    def get_contrast_matrix(self, values_to_encode: np.array) -> ContrastMatrix:
+    def get_contrast_matrix(self, values_to_encode: np.ndarray) -> ContrastMatrix:
         raise NotImplementedError
 
     def fit_contrast_coding(self, col, values, handle_missing, handle_unknown):
         if handle_missing == 'value':
             values = values[values > 0]
 
-        values_to_encode = values.values
+        values_to_encode = values.to_numpy()
 
         if len(values) < 2:
             return pd.DataFrame(index=values_to_encode)

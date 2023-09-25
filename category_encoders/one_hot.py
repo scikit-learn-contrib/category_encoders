@@ -227,7 +227,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
-            return X if self.return_df else X.values
+            return X if self.return_df else X.to_numpy()
 
         for switch in self.ordinal_encoder.mapping:
             column_mapping = switch.get('mapping')
@@ -236,11 +236,11 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
                 for col in self.cols:
-                    if X[switch.get('col')].isnull().any():
+                    if X[switch.get('col')].isna().any():
                         warnings.warn("inverse_transform is not supported because transform impute "
                                       f"the unknown category nan when encode {col}")
 
-        return X if self.return_df else X.values
+        return X if self.return_df else X.to_numpy()
 
     def get_dummies(self, X_in):
         """
@@ -258,7 +258,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         X = X_in.copy(deep=True)
 
-        cols = X.columns.values.tolist()
+        cols = X.columns.tolist()
 
         for switch in self.mapping:
             col = switch.get('col')
@@ -290,7 +290,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         numerical: DataFrame
 
         """
-        out_cols = X.columns.values.tolist()
+        out_cols = X.columns.tolist()
         mapped_columns = []
         for switch in mapping:
             col = switch.get('col')
@@ -305,6 +305,6 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 X.loc[X[existing_col] == 1, col] = val
                 mapped_columns.append(existing_col)
             X = X.drop(mod.columns, axis=1)
-            out_cols = X.columns.values.tolist()
+            out_cols = X.columns.tolist()
 
         return X

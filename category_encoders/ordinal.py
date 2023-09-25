@@ -151,7 +151,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
-            return X if self.return_df else X.values
+            return X if self.return_df else X.to_numpy()
 
         if self.handle_unknown == 'value':
             for col in self.cols:
@@ -161,7 +161,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
             for col in self.cols:
-                if X[col].isnull().any():
+                if X[col].isna().any():
                     warnings.warn("inverse_transform is not supported because transform impute "
                                   f"the unknown category nan when encode {col}")
 
@@ -170,7 +170,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             inverse = pd.Series(data=column_mapping.index, index=column_mapping.values)
             X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
 
-        return X if self.return_df else X.values
+        return X if self.return_df else X.to_numpy()
 
     @staticmethod
     def ordinal_encoding(X_in, mapping=None, cols=None, handle_unknown='value', handle_missing='value'):
@@ -185,7 +185,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         X = X_in.copy(deep=True)
 
         if cols is None:
-            cols = X.columns.values
+            cols = X.columns
 
         if mapping is not None:
             mapping_out = mapping
@@ -197,7 +197,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 X[column] = pd.Series([el if el is not None else np.NaN for el in X[column]], index=X[column].index)
                 X[column] = X[column].map(col_mapping)
                 if util.is_category(X[column].dtype):
-                    nan_identity = col_mapping.loc[col_mapping.index.isna()].values[0]
+                    nan_identity = col_mapping.loc[col_mapping.index.isna()].array[0]
                     X[column] = X[column].cat.add_categories(nan_identity)
                     X[column] = X[column].fillna(nan_identity)
                 try:
@@ -208,7 +208,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 if handle_unknown == 'value':
                     X[column] = X[column].fillna(-1)
                 elif handle_unknown == 'error':
-                    missing = X[column].isnull()
+                    missing = X[column].isna()
                     if any(missing):
                         raise ValueError(f'Unexpected categories found in column {column}')
 
@@ -237,7 +237,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
                 data = pd.Series(index=index, data=range(1, len(index) + 1))
 
-                if handle_missing == 'value' and ~data.index.isnull().any():
+                if handle_missing == 'value' and ~data.index.isna().any():
                     data.loc[nan_identity] = -2
                 elif handle_missing == 'return_nan':
                     data.loc[nan_identity] = -2

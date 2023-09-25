@@ -194,9 +194,9 @@ class TestEncoders(TestCase):
                 result = enc.transform(test).iloc[1, :]
 
                 if len(result) == 1:
-                    self.assertTrue(result.isnull().all())
+                    self.assertTrue(result.isna().all())
                 else:
-                    self.assertTrue(result[1:].isnull().all())
+                    self.assertTrue(result[1:].isna().all())
 
     def test_handle_missing_return_nan_train(self):
         X = pd.DataFrame({'city': ['chicago', 'los angeles', np.NaN]})
@@ -208,9 +208,9 @@ class TestEncoders(TestCase):
                 result = enc.fit_transform(X, y).iloc[2, :]
 
                 if len(result) == 1:
-                    self.assertTrue(result.isnull().all())
+                    self.assertTrue(result.isna().all())
                 else:
-                    self.assertTrue(result[1:].isnull().all())
+                    self.assertTrue(result[1:].isna().all())
 
     def test_handle_missing_return_nan_test(self):
         X = pd.DataFrame({'city': ['chicago', 'los angeles', 'chicago']})
@@ -223,9 +223,9 @@ class TestEncoders(TestCase):
                 result = enc.fit(X, y).transform(X_t).iloc[2, :]
 
                 if len(result) == 1:
-                    self.assertTrue(result.isnull().all())
+                    self.assertTrue(result.isna().all())
                 else:
-                    self.assertTrue(result[1:].isnull().all())
+                    self.assertTrue(result[1:].isna().all())
 
     def test_handle_unknown_value(self):
         train = pd.DataFrame({'city': ['chicago', 'los angeles']})
@@ -237,7 +237,7 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(handle_unknown='value')
                 enc.fit(train, y)
                 result = enc.transform(test)
-                self.assertFalse(result.iloc[1, :].isnull().all())
+                self.assertFalse(result.iloc[1, :].isna().all())
 
     def test_sklearn_compliance(self):
         for encoder_name in encoders.__all__:
@@ -448,7 +448,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 result = enc.fit_transform(train, target)
-                self.assertFalse(result.isnull().values.any(), 'There should not be any missing value!')
+                self.assertFalse(result.isna().values.any(), 'There should not be any missing value!')
 
     def test_get_feature_names_out(self):
         for encoder_name in encoders.__all__:
