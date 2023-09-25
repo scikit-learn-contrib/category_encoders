@@ -6,6 +6,7 @@ import warnings
 import pandas as pd
 import numpy as np
 import sklearn.base
+from pandas.api.types import is_object_dtype, is_string_dtype
 from pandas.core.dtypes.dtypes import CategoricalDtype
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.exceptions import NotFittedError
@@ -32,14 +33,15 @@ def convert_cols_to_list(cols):
     return cols
 
 
-def get_obj_cols(df):
+def get_categorical_cols(df):
     """
-    Returns names of 'object' columns in the DataFrame.
+    Returns names of categorical columns in the DataFrame. These
+    include columns of types: object, category, string, string[pyarrow].
     """
     obj_cols = []
-    for idx, dt in enumerate(df.dtypes):
-        if dt == 'object' or is_category(dt):
-            obj_cols.append(df.columns.values[idx])
+    for col, dtype in df.dtypes.items():
+        if is_object_dtype(dtype) or is_category(dtype) or is_string_dtype(dtype):
+            obj_cols.append(col)
 
     if not obj_cols:
         print("Warning: No categorical columns found. Calling 'transform' will only return input data.")
@@ -99,10 +101,11 @@ def convert_input(X, columns=None, deep=False, index=None):
         if isinstance(X, pd.Series):
             X = pd.DataFrame(X, copy=deep)
         else:
-            if columns is not None and np.size(X,1) != len(columns):
+            if columns is not None and np.size(X, 1) != len(columns):
                 raise ValueError('The count of the column names does not correspond to the count of the columns')
             if isinstance(X, list):
-                X = pd.DataFrame(X, columns=columns, copy=deep, index=index)  # lists are always copied, but for consistency, we still pass the argument
+                X = pd.DataFrame(X, columns=columns, copy=deep,
+                                 index=index)  # lists are always copied, but for consistency, we still pass the argument
             elif isinstance(X, (np.generic, np.ndarray)):
                 X = pd.DataFrame(X, columns=columns, copy=deep, index=index)
             elif isinstance(X, csr_matrix):
@@ -126,34 +129,34 @@ def convert_input_vector(y, index):
     if isinstance(y, pd.Series):
         return y
     elif isinstance(y, np.ndarray):
-        if len(np.shape(y))==1:  # vector
+        if len(np.shape(y)) == 1:  # vector
             return pd.Series(y, name='target', index=index)
-        elif len(np.shape(y))==2 and np.shape(y)[0]==1:  # single row in a matrix
+        elif len(np.shape(y)) == 2 and np.shape(y)[0] == 1:  # single row in a matrix
             return pd.Series(y[0, :], name='target', index=index)
-        elif len(np.shape(y))==2 and np.shape(y)[1]==1:  # single column in a matrix
+        elif len(np.shape(y)) == 2 and np.shape(y)[1] == 1:  # single column in a matrix
             return pd.Series(y[:, 0], name='target', index=index)
         else:
             raise ValueError(f'Unexpected input shape: {np.shape(y)}')
     elif np.isscalar(y):
         return pd.Series([y], name='target', index=index)
     elif isinstance(y, list):
-        if len(y)==0:  # empty list
+        if len(y) == 0:  # empty list
             return pd.Series(y, name='target', index=index, dtype=float)
-        elif len(y)>0 and not isinstance(y[0], list):  # vector
+        elif len(y) > 0 and not isinstance(y[0], list):  # vector
             return pd.Series(y, name='target', index=index)
-        elif len(y)>0 and isinstance(y[0], list) and len(y[0])==1: # single row in a matrix
+        elif len(y) > 0 and isinstance(y[0], list) and len(y[0]) == 1:  # single row in a matrix
             flatten = lambda y: [item for sublist in y for item in sublist]
             return pd.Series(flatten(y), name='target', index=index)
-        elif len(y)==1 and len(y[0])==0 and isinstance(y[0], list): # single empty column in a matrix
+        elif len(y) == 1 and len(y[0]) == 0 and isinstance(y[0], list):  # single empty column in a matrix
             return pd.Series(y[0], name='target', index=index, dtype=float)
-        elif len(y)==1 and isinstance(y[0], list): # single column in a matrix
+        elif len(y) == 1 and isinstance(y[0], list):  # single column in a matrix
             return pd.Series(y[0], name='target', index=index, dtype=type(y[0][0]))
         else:
             raise ValueError('Unexpected input shape')
     elif isinstance(y, pd.DataFrame):
-        if len(list(y))==0: # empty DataFrame
+        if len(list(y)) == 0:  # empty DataFrame
             return pd.Series(name='target', index=index, dtype=float)
-        if len(list(y))==1: # a single column
+        if len(list(y)) == 1:  # a single column
             return y.iloc[:, 0]
         else:
             raise ValueError(f'Unexpected input shape: {y.shape}')
@@ -274,7 +277,7 @@ class BaseEncoder(BaseEstimator):
 
     def fit(self, X, y=None, **kwargs):
         """Fits the encoder according to X and y.
- 
+
         Parameters
         ----------
 
@@ -355,7 +358,7 @@ class BaseEncoder(BaseEstimator):
         """
         # if columns aren't passed, just use every string column
         if self.use_default_cols:
-            self.cols = get_obj_cols(X)
+            self.cols = get_categorical_cols(X)
         else:
             self.cols = convert_cols_to_list(self.cols)
 
