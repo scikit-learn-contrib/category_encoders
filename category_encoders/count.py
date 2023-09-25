@@ -154,7 +154,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                   and X[col].isna().any()
                   and self._handle_missing[col] != 'return_nan'
             ):
-                X[col].replace(np.nan, 0, inplace=True)
+                X[col] = X[col].replace(np.nan, 0)
 
             elif (
                     self._handle_unknown[col] == 'error'

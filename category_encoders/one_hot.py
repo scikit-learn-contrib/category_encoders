@@ -304,7 +304,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 val = positive_indexes[i]
                 X.loc[X[existing_col] == 1, col] = val
                 mapped_columns.append(existing_col)
-            X.drop(mod.columns, axis=1, inplace=True)
+            X = X.drop(mod.columns, axis=1)
             out_cols = X.columns.values.tolist()
 
         return X

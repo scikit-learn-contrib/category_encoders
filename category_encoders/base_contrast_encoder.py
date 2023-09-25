@@ -132,7 +132,7 @@ class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             # reindex actually applies the mapping
             base_df = mod.reindex(X[col])
-            base_df.set_index(X.index, inplace=True)
+            base_df = base_df.set_index(X.index)
             X = pd.concat([base_df, X], axis=1)
 
             old_column_index = cols.index(col)

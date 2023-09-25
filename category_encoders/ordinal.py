@@ -206,7 +206,7 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     X[column] = X[column].astype(float)
 
                 if handle_unknown == 'value':
-                    X[column].fillna(-1, inplace=True)
+                    X[column] = X[column].fillna(-1)
                 elif handle_unknown == 'error':
                     missing = X[column].isnull()
                     if any(missing):

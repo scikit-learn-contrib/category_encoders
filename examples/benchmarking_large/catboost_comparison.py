@@ -93,7 +93,7 @@ for dataset_name in datasets:
                 categorical_indexes.append(i)
 
     # Simple missing value treatment
-    X.fillna(-999, inplace=True)
+    X = X.fillna(-999)
 
     # Perform cross-validation
     pool = Pool(X, y, categorical_indexes)

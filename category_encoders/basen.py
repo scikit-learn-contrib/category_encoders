@@ -237,7 +237,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             mod = switch.get('mapping')
 
             base_df = mod.reindex(X[col])
-            base_df.set_index(X.index, inplace=True)
+            base_df = base_df.set_index(X.index)
             X = pd.concat([base_df, X], axis=1)
 
             old_column_index = cols.index(col)
@@ -275,7 +275,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 len0 = len(col_list)
                 value_array = np.array([base ** (len0 - 1 - i) for i in range(len0)])
             X.insert(insert_at, col, np.dot(X[col_list].values, value_array.T))
-            X.drop(col_list, axis=1, inplace=True)
+            X = X.drop(col_list, axis=1)
             out_cols = X.columns.values.tolist()
 
         return X
