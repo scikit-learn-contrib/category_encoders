@@ -119,7 +119,7 @@ class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     @staticmethod
     def transform_contrast_coding(X, mapping):
-        cols = X.columns.values.tolist()
+        cols = X.columns.tolist()
 
         # See issue 370 if it is necessary to add an intercept or not.
         X['intercept'] = pd.Series([1] * X.shape[0], index=X.index)

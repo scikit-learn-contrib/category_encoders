@@ -87,7 +87,7 @@ for dataset_name in datasets:
 
     # Get indexes (not names) of categorical features
     categorical_indexes = []
-    for col in X.select_dtypes(exclude=[np.number]).columns.values:
+    for col in X.select_dtypes(exclude=[np.number]).columns:
         for i, col2 in enumerate(X.columns):
             if col == col2:
                 categorical_indexes.append(i)

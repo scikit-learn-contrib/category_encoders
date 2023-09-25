@@ -21,7 +21,7 @@ class TestSumEncoder(TestCase):
         expected = [a_encoding,
                     [1, 0, 0],
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(test_t.to_numpy().tolist(), expected)
 
     def test_sum_encoder_preserve_dimension_2(self):
         train = ['A', 'B', 'C']
@@ -34,7 +34,7 @@ class TestSumEncoder(TestCase):
         expected = [b_encoding,
                     [1, 0, 0],
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(test_t.to_numpy().tolist(), expected)
 
     def test_sum_encoder_preserve_dimension_3(self):
         train = ['A', 'B', 'C']
@@ -48,7 +48,7 @@ class TestSumEncoder(TestCase):
                     b_encoding,
                     c_encoding,
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(test_t.to_numpy().tolist(), expected)
 
     def test_sum_encoder_preserve_dimension_4(self):
         train = ['A', 'B', 'C']
@@ -62,7 +62,7 @@ class TestSumEncoder(TestCase):
                     b_encoding,
                     c_encoding,
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(test_t.to_numpy().tolist(), expected)
 
     def test_sum_encoder_2cols(self):
         train = [['A', 'A'], ['B', 'B'], ['C', 'C']]
@@ -74,7 +74,7 @@ class TestSumEncoder(TestCase):
         expected = [[1, a_encoding[1], a_encoding[2], a_encoding[1], a_encoding[2]],
                     [1, b_encoding[1], b_encoding[2], b_encoding[1], b_encoding[2]],
                     [1, c_encoding[1], c_encoding[2], c_encoding[1], c_encoding[2]]]
-        self.assertEqual(obtained.values.tolist(), expected)
+        self.assertEqual(obtained.to_numpy().tolist(), expected)
 
     def test_sum_encoder_2StringCols_ExpectCorrectOrder(self):
         train = pd.DataFrame({'col1': [1, 2, 3, 4],
@@ -87,7 +87,7 @@ class TestSumEncoder(TestCase):
         encoder = encoders.SumEncoder(handle_unknown='value', handle_missing='value')
 
         encoder.fit(train)
-        columns = encoder.transform(train).columns.values
+        columns = encoder.transform(train).columns.to_numpy()
 
         self.assertTrue(np.array_equal(expected_columns, columns))
 
@@ -100,7 +100,7 @@ class TestSumEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding,
                     c_encoding]
-        self.assertTrue(np.array_equal(result.values.tolist(), expected))
+        self.assertTrue(np.array_equal(result.to_numpy().tolist(), expected))
 
     def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -110,7 +110,7 @@ class TestSumEncoder(TestCase):
 
         expected = [a_encoding,
                     b_encoding]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
         train = ['A', 'B']
@@ -123,7 +123,7 @@ class TestSumEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding,
                     c_encoding]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
         train = ['A', 'B']
@@ -136,7 +136,7 @@ class TestSumEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding,
                     c_encoding]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -146,4 +146,4 @@ class TestSumEncoder(TestCase):
 
         expected = [a_encoding,
                     b_encoding]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)

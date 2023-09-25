@@ -307,7 +307,7 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)()
                 transformed = enc.fit_transform(x, y)
                 result = enc.inverse_transform(transformed)
-                self.assertTrue((x == result.values).all())
+                self.assertTrue((x == result.to_numpy()).all())
 
     def test_inverse_numpy(self):
         # See issue #196
@@ -357,7 +357,7 @@ class TestEncoders(TestCase):
 
                 encoder = getattr(encoders, encoder_name)()
                 result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
-                columns = result.columns.values
+                columns = result.columns
 
                 self.assertTrue('target' in columns[-1],
                                 "Target must be the last column as in the input. This is a tricky test because 'y' is named 'target' as well.")
@@ -384,7 +384,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 encoder = getattr(encoders, encoder_name)(cols=['feature'])
                 result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
-                columns = result.columns.values
+                columns = result.columns
 
                 self.assertTrue('ignore' in columns, "Column 'ignore' is missing in: " + str(columns))
 
@@ -442,13 +442,13 @@ class TestEncoders(TestCase):
     def test_string_index(self):
         train = pd.DataFrame({'city': ['chicago', 'denver']})
         target = [0, 1]
-        train.index = train.index.values.astype(str)
+        train.index = train.index.astype(str)
 
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 result = enc.fit_transform(train, target)
-                self.assertFalse(result.isna().values.any(), 'There should not be any missing value!')
+                self.assertFalse(result.isna().any(axis=None), 'There should not be any missing value!')
 
     def test_get_feature_names_out(self):
         for encoder_name in encoders.__all__:
@@ -503,7 +503,7 @@ class TestEncoders(TestCase):
                 result = enc.fit_transform(data.x, data.y)
                 enc2 = getattr(encoders, encoder_name)()
                 result2 = enc2.fit_transform(data2.x, data2.y)
-                self.assertTrue((result.values == result2.values).all())
+                self.assertTrue((result.to_numpy() == result2.to_numpy()).all())
 
     def test_column_transformer(self):
         # see issue #169
@@ -620,31 +620,31 @@ class TestEncoders(TestCase):
 
                 enc3 = getattr(encoders, encoder_name)()
                 result3 = enc3.fit_transform(x3, y)
-                self.assertTrue((result1.values == result3.values).all())
+                self.assertTrue( (result1.to_numpy() == result3.to_numpy()).all() )
 
                 enc4 = getattr(encoders, encoder_name)()
                 result4 = enc4.fit_transform(x4, y)
-                self.assertTrue((result1.values == result4.values).all())
+                self.assertTrue(result1.equals(result4))
 
                 enc5 = getattr(encoders, encoder_name)()
                 result5 = enc5.fit_transform(x5, y)
-                self.assertTrue((result1.values == result5.values).all())
+                self.assertTrue(result1.equals(result5))
 
                 # gray encoder actually does re-order inputs
                 # rankhot encoder respects order, in this example the order is switched
                 if encoder_name not in ["GrayEncoder", "RankHotEncoder"]:
                     enc6 = getattr(encoders, encoder_name)()
                     result6 = enc6.fit_transform(x6, y)
-                    self.assertTrue((result1.values == result6.values).all())
+                    self.assertTrue(result1.equals(result6))
 
                 # Arguments
                 enc9 = getattr(encoders, encoder_name)(return_df=False)
                 result9 = enc9.fit_transform(x1, y)
-                self.assertTrue((result1.values == result9).all())
+                self.assertTrue((result1.to_numpy() == result9).all())
 
                 enc10 = getattr(encoders, encoder_name)(verbose=True)
                 result10 = enc10.fit_transform(x1, y)
-                self.assertTrue((result1.values == result10.values).all())
+                self.assertTrue(result1.equals(result10))
 
                 # Note: If the encoder does not support these arguments/argument values, it is OK/expected to fail.
                 # Note: The indicator approach is not tested because it adds columns -> the encoders that support it are expected to fail.
@@ -655,7 +655,7 @@ class TestEncoders(TestCase):
 
                 enc12 = getattr(encoders, encoder_name)(handle_unknown='value', handle_missing='value')
                 result12 = enc12.fit_transform(x1, y)
-                self.assertTrue((result1.values == result12.values).all(), 'The data do not contain any missing or new value -> the result should be unchanged.')
+                self.assertTrue(result1.equals(result12), 'The data do not contain any missing or new value -> the result should be unchanged.')
 
                 # enc13 = getattr(encoders, encoder_name)(handle_unknown='error', handle_missing='error', cols=['x'])  # Quite a few algorithms fail here because of handle_missing
                 # result13 = enc13.fit_transform(x3, y)

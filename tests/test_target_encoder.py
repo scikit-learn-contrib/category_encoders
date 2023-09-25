@@ -74,7 +74,7 @@ class TestTargetEncoder(TestCase):
              'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
         encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
         result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
-        values = result['Trend'].values
+        values = result['Trend'].array
         self.assertAlmostEqual(0.5874, values[0], delta=1e-4)
         self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
         self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
@@ -89,7 +89,7 @@ class TestTargetEncoder(TestCase):
              'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
         encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
         result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
-        values = result['Trend'].values
+        values = result['Trend'].array
         self.assertAlmostEqual(0.5874, values[0], delta=1e-4)
         self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
         self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
@@ -103,7 +103,7 @@ class TestTargetEncoder(TestCase):
              'target': [1, 1, 0, 0, 1, 0, 0, 0, 1, 1]})
         encoder = encoders.TargetEncoder(cols=['Trend'], min_samples_leaf=k, smoothing=f)
         result = encoder.fit_transform(binary_cat_example, binary_cat_example['target'])
-        values = result['Trend'].values
+        values = result['Trend'].array
         self.assertAlmostEqual(0.5874, values[0], delta=1e-4)
         self.assertAlmostEqual(0.5874, values[1], delta=1e-4)
         self.assertAlmostEqual(0.4125, values[2], delta=1e-4)
@@ -141,7 +141,7 @@ class TestTargetEncoder(TestCase):
 
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map, cols=['Compass'])
         result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
-        values = result['Compass'].values
+        values = result['Compass'].array
         self.assertAlmostEqual(0.6226, values[0], delta=1e-4)
         self.assertAlmostEqual(0.9038, values[2], delta=1e-4)
         self.assertAlmostEqual(0.1766, values[5], delta=1e-4)
@@ -153,19 +153,19 @@ class TestTargetEncoder(TestCase):
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map, cols=['Compass', 'Speed', 'Animal'])
         result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
 
-        values = result['Compass'].values
+        values = result['Compass'].array
         self.assertAlmostEqual(0.6226, values[0], delta=1e-4)
         self.assertAlmostEqual(0.9038, values[2], delta=1e-4)
         self.assertAlmostEqual(0.1766, values[5], delta=1e-4)
         self.assertAlmostEqual(0.4605, values[7], delta=1e-4)
         self.assertAlmostEqual(0.4033, values[11], delta=1e-4)
 
-        values = result['Speed'].values
+        values = result['Speed'].array
         self.assertAlmostEqual(0.6827, values[0], delta=1e-4)
         self.assertAlmostEqual(0.3962, values[4], delta=1e-4)
         self.assertAlmostEqual(0.4460, values[7], delta=1e-4)
 
-        values = result['Animal'].values
+        values = result['Animal'].array
         self.assertAlmostEqual(0.7887, values[0], delta=1e-4)
         self.assertAlmostEqual(0.3248, values[5], delta=1e-4)
         self.assertAlmostEqual(0.6190, values[11], delta=1e-4)
@@ -177,14 +177,14 @@ class TestTargetEncoder(TestCase):
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map, cols=['Compass'])
         result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
 
-        values = result['Compass'].values
+        values = result['Compass'].array
         self.assertAlmostEqual(0.6226, values[0], delta=1e-4)
         self.assertAlmostEqual(0.9038, values[2], delta=1e-4)
         self.assertAlmostEqual(0.1766, values[5], delta=1e-4)
         self.assertAlmostEqual(0.4605, values[7], delta=1e-4)
         self.assertAlmostEqual(0.4033, values[11], delta=1e-4)
 
-        values = result['Speed'].values
+        values = result['Speed'].array
         self.assertEqual('slow', values[0])
 
     def test_hierarchy_pandas_index(self):
@@ -204,7 +204,7 @@ class TestTargetEncoder(TestCase):
         enc = encoders.TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=self.hierarchical_map, cols=cols)
         result = enc.fit_transform(df, df['world'])
 
-        values = result['hello'].values
+        values = result['hello'].array
         self.assertAlmostEqual(0.3616, values[0], delta=1e-4)
         self.assertAlmostEqual(0.4541, values[1], delta=1e-4)
         self.assertAlmostEqual(0.2425, values[2], delta=1e-4)
@@ -216,7 +216,7 @@ class TestTargetEncoder(TestCase):
                                      cols=['Plant'])
         result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
 
-        values = result['Plant'].values
+        values = result['Plant'].array
         self.assertAlmostEqual(0.6828, values[0], delta=1e-4)
         self.assertAlmostEqual(0.5, values[4], delta=1e-4)
         self.assertAlmostEqual(0.5, values[8], delta=1e-4)
@@ -236,7 +236,7 @@ class TestTargetEncoder(TestCase):
                                      cols=['Plant'])
         result = enc.fit_transform(self.hierarchical_cat_example, self.hierarchical_cat_example['target'])
 
-        values = result['Plant'].values
+        values = result['Plant'].array
         self.assertAlmostEqual(0.6828, values[0], delta=1e-4)
         self.assertAlmostEqual(0.5, values[4], delta=1e-4)
         self.assertAlmostEqual(0.5, values[8], delta=1e-4)
@@ -291,7 +291,7 @@ class TestTargetEncoder(TestCase):
                                      cols=['Animal'])
         result = enc.fit_transform(hierarchy_multi_level_df, hierarchy_multi_level_df['target'])
 
-        values = result['Animal'].values
+        values = result['Animal'].array
         self.assertAlmostEqual(0.6261, values[0], delta=1e-4)
         self.assertAlmostEqual(0.9065, values[2], delta=1e-4)
         self.assertAlmostEqual(0.2556, values[5], delta=1e-4)
@@ -308,7 +308,7 @@ class TestTargetEncoder(TestCase):
                                      cols=['compass'])
         result = enc.fit_transform(X[cols], y)
 
-        values = result['compass'].values
+        values = result['compass'].array
         self.assertAlmostEqual(0.6226, values[0], delta=1e-4)
         self.assertAlmostEqual(0.9038, values[2], delta=1e-4)
         self.assertAlmostEqual(0.1766, values[5], delta=1e-4)
@@ -324,7 +324,7 @@ class TestTargetEncoder(TestCase):
                                      cols=['postcode'])
         result = enc.fit_transform(X[cols], y)
 
-        values = result['postcode'].values
+        values = result['postcode'].array
         self.assertAlmostEqual(0.8448, values[0], delta=1e-4)
 
 

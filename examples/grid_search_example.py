@@ -21,7 +21,7 @@ print(__doc__)
 
 # first get data from the mushroom dataset
 X, y, _ = get_mushroom_data()
-X = X.values  # use numpy array not dataframe here
+X = X.to_numpy()  # use numpy array not dataframe here
 n_samples = X.shape[0]
 
 # split the dataset in two equal parts
