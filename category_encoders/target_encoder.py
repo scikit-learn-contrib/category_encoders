@@ -134,7 +134,7 @@ class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             self.hierarchy = hierarchy
             self.hierarchy_depth = {}
             for col in self.cols:
-                HIER_cols = self.hierarchy.columns[self.hierarchy.columns.str.startswith(f'HIER_{col}')].array
+                HIER_cols = self.hierarchy.columns[self.hierarchy.columns.str.startswith(f'HIER_{col}')].tolist()
                 HIER_levels = [int(i.replace(f'HIER_{col}_', '')) for i in HIER_cols]
                 if np.array_equal(sorted(HIER_levels), np.arange(1, max(HIER_levels)+1)):
                     self.hierarchy_depth[col] = max(HIER_levels)
