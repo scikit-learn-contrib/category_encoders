@@ -149,6 +149,7 @@ class TestEncoders(TestCase):
     def test_handle_missing_error(self):
         non_null = pd.DataFrame({'city': ['chicago', 'los angeles'], 'color': ['red', np.nan]})  # only 'city' column is going to be transformed
         has_null = pd.DataFrame({'city': ['chicago', np.nan], 'color': ['red', np.nan]})
+        has_null_pd = pd.DataFrame({'city': ['chicago', pd.NA], 'color': ['red', pd.NA]}, dtype="string")
         y = pd.Series([1, 0])
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
@@ -157,6 +158,9 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(handle_missing='error', cols='city')
                 with self.assertRaises(ValueError):
                     enc.fit(has_null, y)
+
+                with self.assertRaises(ValueError):
+                    enc.fit(has_null_pd, y)
 
                 enc.fit(non_null, y)    # we raise an error only if a missing value is in one of the transformed columns
 
