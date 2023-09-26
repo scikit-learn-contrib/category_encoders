@@ -199,33 +199,37 @@ class TestEncoders(TestCase):
                     self.assertTrue(result[1:].isnull().all())
 
     def test_handle_missing_return_nan_train(self):
-        X = pd.DataFrame({'city': ['chicago', 'los angeles', np.NaN]})
+        X_np = pd.DataFrame({'city': ['chicago', 'los angeles', np.NaN]})
+        X_pd = pd.DataFrame({'city': ['chicago', 'los angeles', pd.NA]}, dtype="string")
         y = pd.Series([1, 0, 1])
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
-            with self.subTest(encoder_name=encoder_name):
-                enc = getattr(encoders, encoder_name)(handle_missing='return_nan')
-                result = enc.fit_transform(X, y).iloc[2, :]
+            for X in (X_np, X_pd):
+                with self.subTest(encoder_name=encoder_name):
+                    enc = getattr(encoders, encoder_name)(handle_missing='return_nan')
+                    result = enc.fit_transform(X, y).iloc[2, :]
 
-                if len(result) == 1:
-                    self.assertTrue(result.isnull().all())
-                else:
-                    self.assertTrue(result[1:].isnull().all())
+                    if len(result) == 1:
+                        self.assertTrue(result.isnull().all())
+                    else:
+                        self.assertTrue(result[1:].isnull().all())
 
     def test_handle_missing_return_nan_test(self):
         X = pd.DataFrame({'city': ['chicago', 'los angeles', 'chicago']})
-        X_t = pd.DataFrame({'city': ['chicago', 'los angeles', np.NaN]})
+        X_np = pd.DataFrame({'city': ['chicago', 'los angeles', np.NaN]})
+        X_pd = pd.DataFrame({'city': ['chicago', 'los angeles', pd.NA]}, dtype="string")
         y = pd.Series([1, 0, 1])
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):  # HashingEncoder supports new values by design -> excluded
-            with self.subTest(encoder_name=encoder_name):
-                enc = getattr(encoders, encoder_name)(handle_missing='return_nan')
-                result = enc.fit(X, y).transform(X_t).iloc[2, :]
+            for X_na in (X_np, X_pd):
+                with self.subTest(encoder_name=encoder_name):
+                    enc = getattr(encoders, encoder_name)(handle_missing='return_nan')
+                    result = enc.fit(X, y).transform(X_na).iloc[2, :]
 
-                if len(result) == 1:
-                    self.assertTrue(result.isnull().all())
-                else:
-                    self.assertTrue(result[1:].isnull().all())
+                    if len(result) == 1:
+                        self.assertTrue(result.isnull().all())
+                    else:
+                        self.assertTrue(result[1:].isnull().all())
 
     def test_handle_unknown_value(self):
         train = pd.DataFrame({'city': ['chicago', 'los angeles']})
