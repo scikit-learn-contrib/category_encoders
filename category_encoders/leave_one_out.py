@@ -110,7 +110,7 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         X = X_in.copy(deep=True)
 
         if cols is None:
-            cols = X.columns.values
+            cols = X.columns
 
         self._mean = y.mean()
 
@@ -143,7 +143,7 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             unique_train = colmap.index
             unseen_values = pd.Series([x for x in X[col].unique() if x not in unique_train], dtype=unique_train.dtype)
 
-            is_nan = X[col].isnull()
+            is_nan = X[col].isna()
             is_unknown_value = X[col].isin(unseen_values.dropna().astype(object))
 
             if X[col].dtype.name == 'category': # Pandas 0.24 tries hard to preserve categorical data type
@@ -161,7 +161,7 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                 # excluding this row's y, it's (sum - y) / (count - 1)
                 level_means = (X[col].map(colmap['sum']) - y) / (X[col].map(colmap['count']) - 1)
                 # The 'where' fills in singleton levels (count = 1 -> div by 0) with the global mean
-                X[col] = level_means.where(X[col].map(colmap['count'][level_notunique]).notnull(), self._mean)
+                X[col] = level_means.where(X[col].map(colmap['count'][level_notunique]).notna(), self._mean)
 
             if self.handle_unknown == 'value':
                 X.loc[is_unknown_value, col] = self._mean
@@ -169,7 +169,7 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
                 X.loc[is_unknown_value, col] = np.nan
 
             if self.handle_missing == 'value':
-                X.loc[is_nan & unseen_values.isnull().any(), col] = self._mean
+                X.loc[is_nan & unseen_values.isna().any(), col] = self._mean
             elif self.handle_missing == 'return_nan':
                 X.loc[is_nan, col] = np.nan
 

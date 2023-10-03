@@ -63,14 +63,14 @@ class TestJamesSteinEncoder(TestCase):
         X = np.array(['a', 'b', 'c'])
         y = np.array([1, 0, 1])
         out = encoders.JamesSteinEncoder(model='pooled').fit_transform(X, y)
-        self.assertTrue(all(np.var(out) == 0),
+        self.assertTrue(all(np.var(out, axis=0) == 0),
                           'This is not a standard behaviour of James-Stein estimator. But it helps a lot if we treat id-like attributes as non-predictive.')
 
     def test_ids_large_pooled(self):
         X = np.array(['a', 'b', 'c', 'd', 'e'])
         y = np.array([1, 0, 1, 0, 1])
         out = encoders.JamesSteinEncoder(model='pooled').fit_transform(X, y)
-        self.assertTrue(all(np.var(out) == 0),
+        self.assertTrue(all(np.var(out, axis=0) == 0),
                           'This is not a standard behaviour of James-Stein estimator. But it helps a lot if we treat id-like attributes as non-predictive.')
 
     # Beta
@@ -96,14 +96,14 @@ class TestJamesSteinEncoder(TestCase):
         X = np.array(['a', 'b', 'c'])
         y = np.array([1, 0, 1])
         out = encoders.JamesSteinEncoder(model='beta').fit_transform(X, y)
-        self.assertTrue(all(np.var(out) == 0),
+        self.assertTrue(all(np.var(out, axis=0) == 0),
                         'This is not a standard behaviour of James-Stein estimator. But it helps a lot if we treat id-like attributes as non-predictive.')
 
     def test_ids_large_beta(self):
         X = np.array(['a', 'b', 'c', 'd', 'e'])
         y = np.array([1, 0, 1, 0, 1])
         out = encoders.JamesSteinEncoder(model='beta').fit_transform(X, y)
-        self.assertTrue(all(np.var(out) == 0),
+        self.assertTrue(all(np.var(out, axis=0) == 0),
                         'This is not a standard behaviour of James-Stein estimator. But it helps a lot if we treat id-like attributes as non-predictive.')
 
     # Binary
@@ -126,12 +126,12 @@ class TestJamesSteinEncoder(TestCase):
         X = np.array(['a', 'b', 'c'])
         y = np.array([1, 0, 1])
         out = encoders.JamesSteinEncoder(model='binary').fit_transform(X, y)
-        self.assertTrue(all(np.var(out) == 0),
+        self.assertTrue(all(np.var(out, axis=0) == 0),
                           'This is not a standard behaviour of James-Stein estimator. But it helps a lot if we treat id-like attributes as non-predictive.')
 
     def test_identifiers_large_binary(self):
         X = np.array(['a', 'b', 'c', 'd', 'e'])
         y = np.array([1, 0, 1, 0, 1])
         out = encoders.JamesSteinEncoder(model='binary').fit_transform(X, y)
-        self.assertTrue(all(np.var(out) == 0),
+        self.assertTrue(all(np.var(out, axis=0) == 0),
                           'This is not a standard behaviour of James-Stein estimator. But it helps a lot if we treat id-like attributes as non-predictive.')

@@ -337,7 +337,7 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
         if self.return_df or override_return_df:
             return transformed_df
         else:
-            return transformed_df.values
+            return transformed_df.to_numpy()
 
     def get_feature_names(self) -> List[str]:
         warnings.warn("`get_feature_names` is deprecated in all of sklearn. Use `get_feature_names_out` instead.",

@@ -121,7 +121,7 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             unique_train = colmap.index
             unseen_values = pd.Series([x for x in X[col].unique() if x not in unique_train], dtype=unique_train.dtype)
 
-            is_nan = X[col].isnull()
+            is_nan = X[col].isna()
             is_unknown_value = X[col].isin(unseen_values.dropna().astype(object))
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
@@ -153,7 +153,7 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             if self.handle_missing == 'value':
                 # only set value if there are actually missing values.
                 # In case of pd.Categorical columns setting values that are not seen in pd.Categorical gives an error.
-                nan_cond = is_nan & unseen_values.isnull().any()
+                nan_cond = is_nan & unseen_values.isna().any()
                 if nan_cond.any():
                     X.loc[nan_cond, col] = self._mean
             elif self.handle_missing == 'return_nan':

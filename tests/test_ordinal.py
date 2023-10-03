@@ -46,7 +46,7 @@ class TestOrdinalEncoder(TestCase):
         result = encoder.fit_transform(data)
         self.assertEqual(2, len(result[0].unique()), "We expect two unique values in the column")
         self.assertEqual(2, len(result[1].unique()), "We expect two unique values in the column")
-        self.assertFalse(np.isnan(result.values[1, 1]))
+        self.assertFalse(np.isnan(result.iloc[1, 1]))
 
         encoder = encoders.OrdinalEncoder(handle_missing="return_nan")
         result = encoder.fit_transform(data)

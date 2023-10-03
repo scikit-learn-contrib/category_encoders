@@ -12,9 +12,9 @@ def get_cars_data():
     """
 
     df = pd.read_csv('source_data/cars/car.data.txt')
-    X = df.reindex(columns=[x for x in df.columns.values if x != 'class'])
+    X = df.reindex(columns=[x for x in df.columns if x != 'class'])
     y = df.reindex(columns=['class'])
-    y = preprocessing.LabelEncoder().fit_transform(y.values.reshape(-1, ))
+    y = preprocessing.LabelEncoder().fit_transform(y.to_numpy().ravel())
 
     mapping = [
         {'col': 'buying', 'mapping': [('vhigh', 0), ('high', 1), ('med', 2), ('low', 3)]},
@@ -36,9 +36,9 @@ def get_mushroom_data():
     """
 
     df = pd.read_csv('source_data/mushrooms/agaricus-lepiota.csv')
-    X = df.reindex(columns=[x for x in df.columns.values if x != 'class'])
+    X = df.reindex(columns=[x for x in df.columns if x != 'class'])
     y = df.reindex(columns=['class'])
-    y = preprocessing.LabelEncoder().fit_transform(y.values.reshape(-1, ))
+    y = preprocessing.LabelEncoder().fit_transform(y.to_numpy().ravel())
 
     # this data is truly categorical, with no known concept of ordering
     mapping = None
@@ -54,14 +54,14 @@ def get_splice_data():
     """
 
     df = pd.read_csv('source_data/splice/splice.csv')
-    X = df.reindex(columns=[x for x in df.columns.values if x != 'class'])
+    X = df.reindex(columns=[x for x in df.columns if x != 'class'])
     X['dna'] = X['dna'].map(lambda x: list(str(x).strip()))
     for idx in range(60):
         X['dna_%d' % (idx, )] = X['dna'].map(lambda x: x[idx])
     del X['dna']
 
     y = df.reindex(columns=['class'])
-    y = preprocessing.LabelEncoder().fit_transform(y.values.reshape(-1, ))
+    y = preprocessing.LabelEncoder().fit_transform(y.to_numpy().ravel())
 
     # this data is truly categorical, with no known concept of ordering
     mapping = None

@@ -306,7 +306,7 @@ class BaseEncoder(BaseEstimator):
             raise ValueError('X does not contain the columns listed in cols')
 
         if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
+            if X[self.cols].isna().any().any():
                 raise ValueError('Columns to be encoded can not contain null')
 
         self._fit(X, y, **kwargs)
@@ -329,7 +329,7 @@ class BaseEncoder(BaseEstimator):
 
     def _check_transform_inputs(self, X):
         if self.handle_missing == 'error':
-            if X[self.cols].isnull().any().any():
+            if X[self.cols].isna().any().any():
                 raise ValueError('Columns to be encoded can not contain null')
 
         if self._dim is None:
@@ -346,7 +346,7 @@ class BaseEncoder(BaseEstimator):
         if self.return_df or override_return_df:
             return X
         else:
-            return X.values
+            return X.to_numpy()
 
     def _determine_fit_columns(self, X: pd.DataFrame) -> None:
         """ Determine columns used by encoder.

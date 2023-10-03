@@ -154,11 +154,11 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                   and X[col].isna().any()
                   and self._handle_missing[col] != 'return_nan'
             ):
-                X[col].replace(np.nan, 0, inplace=True)
+                X[col] = X[col].replace(np.nan, 0)
 
             elif (
                     self._handle_unknown[col] == 'error'
-                    and X[col].isnull().any()
+                    and X[col].isna().any()
             ):
                 raise ValueError(f'Missing data found in column {col} at transform time.')
         return X
@@ -168,7 +168,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         X = X_in.copy(deep=True)
 
         if self.cols is None:
-            self.cols = X.columns.values
+            self.cols = X.columns
 
         self.mapping = {}
 
@@ -202,12 +202,12 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             elif self._combine_min_nan_groups[col] == 'force':
                 min_groups_idx = (
                     (mapper < self._min_group_size[col])
-                    | (mapper.index.isnull())
+                    | (mapper.index.isna())
                 )
             else:
                 min_groups_idx = (
                     (mapper < self._min_group_size[col])
-                    & (~mapper.index.isnull())
+                    & (~mapper.index.isna())
                 )
 
             min_groups_sum = mapper.loc[min_groups_idx].sum()
@@ -215,7 +215,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             if (
                 min_groups_sum > 0
                 and min_groups_idx.sum() > 1
-                and not min_groups_idx.loc[~min_groups_idx.index.isnull()].all()
+                and not min_groups_idx.loc[~min_groups_idx.index.isna()].all()
             ):
                 if isinstance(self._min_group_name[col], str):
                     min_group_mapper_name = self._min_group_name[col]

@@ -91,7 +91,7 @@ class GrayEncoder(BaseNEncoder):
             col = col_to_encode["col"]
             bin_mapping = col_to_encode["mapping"]
             n_cols_out = bin_mapping.shape[1]
-            null_cond = (bin_mapping.index < 0) | (bin_mapping.isnull().all(1))
+            null_cond = (bin_mapping.index < 0) | (bin_mapping.isna().all(1))
             map_null = bin_mapping[null_cond]
             map_non_null = bin_mapping[~null_cond].copy()
             ordinal_mapping = [m for m in self.ordinal_encoder.mapping if m.get("col") == col]

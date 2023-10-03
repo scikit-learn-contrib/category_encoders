@@ -17,7 +17,7 @@ class TestBackwardsEncoder(TestCase):
         expected = [[1, -2 / 3.0, -1 / 3.0],
                     [1, 0, 0],
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(test_t.to_numpy().tolist(), expected)
 
     def test_backwards_difference_encoder_preserve_dimension_2(self):
         train = ['A', 'B', 'C']
@@ -30,7 +30,7 @@ class TestBackwardsEncoder(TestCase):
         expected = [[1, 1 / 3.0, -1 / 3.0],
                     [1, 0, 0],
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(test_t.to_numpy().tolist(), expected)
 
     def test_backwards_difference_encoder_preserve_dimension_3(self):
         train = ['A', 'B', 'C']
@@ -44,7 +44,7 @@ class TestBackwardsEncoder(TestCase):
                     [1, 1 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, 2 / 3.0],
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(test_t.to_numpy().tolist(), expected)
 
     def test_backwards_difference_encoder_preserve_dimension_4(self):
         train = ['A', 'B', 'C']
@@ -58,7 +58,7 @@ class TestBackwardsEncoder(TestCase):
                     [1, 1 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, 2 / 3.0],
                     [1, 0, 0]]
-        self.assertEqual(test_t.values.tolist(), expected)
+        self.assertEqual(test_t.to_numpy().tolist(), expected)
 
     def test_backwards_difference_encoder_2cols(self):
         train = [['A', 'A'], ['B', 'B'], ['C', 'C']]
@@ -70,7 +70,7 @@ class TestBackwardsEncoder(TestCase):
         expected = [[1, -2 / 3.0, -1 / 3.0, -2 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, -1 / 3.0, 1 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, 2 / 3.0, 1 / 3.0, 2 / 3.0]]
-        self.assertEqual(obtained.values.tolist(), expected)
+        self.assertEqual(obtained.to_numpy().tolist(), expected)
 
     def test_backwards_difference_encoder_2StringCols_ExpectCorrectOrder(self):
         train = pd.DataFrame({'col1': [1, 2, 3, 4],
@@ -83,7 +83,7 @@ class TestBackwardsEncoder(TestCase):
         encoder = encoders.BackwardDifferenceEncoder(handle_unknown='value', handle_missing='value')
 
         encoder.fit(train)
-        columns = encoder.transform(train).columns.values
+        columns = encoder.transform(train).columns
 
         self.assertTrue(np.array_equal(expected_columns, columns))
 
@@ -96,7 +96,7 @@ class TestBackwardsEncoder(TestCase):
         expected = [[1, -2 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, 2 / 3.0]]
-        self.assertTrue(np.array_equal(result.values.tolist(), expected))
+        self.assertTrue(np.array_equal(result.to_numpy().tolist(), expected))
 
     def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -106,7 +106,7 @@ class TestBackwardsEncoder(TestCase):
 
         expected = [[1, -2 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, -1 / 3.0]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
         train = ['A', 'B']
@@ -119,7 +119,7 @@ class TestBackwardsEncoder(TestCase):
         expected = [[1, -2 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, 2 / 3.0]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
         train = ['A', 'B']
@@ -132,7 +132,7 @@ class TestBackwardsEncoder(TestCase):
         expected = [[1, -2 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, 2 / 3.0]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -142,4 +142,4 @@ class TestBackwardsEncoder(TestCase):
 
         expected = [[1, -2 / 3.0, -1 / 3.0],
                     [1, 1 / 3.0, -1 / 3.0]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
