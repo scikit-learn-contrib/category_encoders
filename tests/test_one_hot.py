@@ -20,12 +20,12 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='indicator')
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertIn('extra_-1', out.columns.values)
+        self.assertIn('extra_-1', out.columns)
 
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='return_nan')
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertEqual(len([x for x in out.columns.values if str(x).startswith('extra_')]), 3)
+        self.assertEqual(len([x for x in out.columns if str(x).startswith('extra_')]), 3)
 
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='error')
         # The exception is already raised in fit() because transform() is called there to get
@@ -37,12 +37,12 @@ class TestOneHotEncoderTestCase(TestCase):
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, handle_unknown='return_nan', use_cat_names=True)
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertIn('extra_A', out.columns.values)
+        self.assertIn('extra_A', out.columns)
 
         enc = encoders.OneHotEncoder(verbose=1, return_df=True, use_cat_names=True, handle_unknown='indicator')
         enc.fit(X)
         out = enc.transform(X_t)
-        self.assertIn('extra_-1', out.columns.values)
+        self.assertIn('extra_-1', out.columns)
 
         # test inverse_transform
         X_i = th.create_dataset(n_rows=100, has_missing=False)
@@ -145,7 +145,7 @@ class TestOneHotEncoderTestCase(TestCase):
         expected = [[1, 0],
                     [0, 1],
                     [0, 1]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
         self.assertRaisesRegex(ValueError, '.*null.*', encoder.transform, data_w_missing)
 
@@ -201,7 +201,7 @@ class TestOneHotEncoderTestCase(TestCase):
         expected = [[1, 0, 0],
                     [0, 1, 0],
                     [0, 0, 1]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -211,7 +211,7 @@ class TestOneHotEncoderTestCase(TestCase):
 
         expected = [[1, 0, 0],
                     [0, 1, 0]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
         train = ['A', 'B']
@@ -223,12 +223,12 @@ class TestOneHotEncoderTestCase(TestCase):
 
         expected_1 = [[1, 0, 0],
                       [0, 1, 0]]
-        self.assertEqual(encoded_train.values.tolist(), expected_1)
+        self.assertEqual(encoded_train.to_numpy().tolist(), expected_1)
 
         expected_2 = [[1, 0, 0],
                       [0, 1, 0],
                       [0, 0, 1]]
-        self.assertEqual(encoded_test.values.tolist(), expected_2)
+        self.assertEqual(encoded_test.to_numpy().tolist(), expected_2)
 
     def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
         train = ['A', 'B']
@@ -241,7 +241,7 @@ class TestOneHotEncoderTestCase(TestCase):
         expected = [[1, 0, 0],
                     [0, 1, 0],
                     [0, 0, 1]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -251,7 +251,7 @@ class TestOneHotEncoderTestCase(TestCase):
 
         expected = [[1, 0, 0],
                     [0, 1, 0]]
-        self.assertEqual(result.values.tolist(), expected)
+        self.assertEqual(result.to_numpy().tolist(), expected)
 
     def test_inverse_transform_HaveNanInTrainAndHandleMissingValue_ExpectReturnedWithNan(self):
         train = pd.DataFrame({'city': ['chicago', np.nan]})

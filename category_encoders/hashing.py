@@ -246,7 +246,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         if self.return_df or override_return_df:
             return X
         else:
-            return X.values
+            return X.to_numpy()
 
     @staticmethod
     def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
@@ -294,11 +294,11 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             X = X_in
 
         if cols is None:
-            cols = X.columns.values
+            cols = X.columns
 
         def hash_fn(x):
             tmp = [0 for _ in range(N)]
-            for val in x.values:
+            for val in x.array:
                 if val is not None:
                     hasher = hashlib.new(hashing_method)
                     if sys.version_info[0] == 2:
@@ -311,7 +311,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         new_cols = [f'col_{d}' for d in range(N)]
 
         X_cat = X.loc[:, cols]
-        X_num = X.loc[:, [x for x in X.columns.values if x not in cols]]
+        X_num = X.loc[:, [x for x in X.columns if x not in cols]]
 
         X_cat = X_cat.apply(hash_fn, axis=1, result_type='expand')
         X_cat.columns = new_cols

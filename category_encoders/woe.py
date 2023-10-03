@@ -90,7 +90,7 @@ class WOEEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         unique = y.unique()
         if len(unique) != 2:
             raise ValueError("The target column y must be binary. But the target contains " + str(len(unique)) + " unique value(s).")
-        if y.isnull().any():
+        if y.isna().any():
             raise ValueError("The target column y must not contain missing values.")
         if np.max(unique) < 1:
             raise ValueError("The target column y must be binary with values {0, 1}. Value 1 was not found in the target.")

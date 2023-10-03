@@ -16,7 +16,7 @@ class TestMEstimateEncoder(TestCase):
         expected = [[1],
                     [0.5],
                     [3./4.]]  # The prior probability
-        self.assertEqual(scored.values.tolist(), expected)
+        self.assertEqual(scored.to_numpy().tolist(), expected)
 
     def test_reference_m1(self):
         x = ['A', 'A', 'B', 'B']
@@ -30,4 +30,4 @@ class TestMEstimateEncoder(TestCase):
         expected = [[(2+3./4.)/(2+1)],
                     [(1+3./4.)/(2+1)],
                     [3./4.]]  # The prior probability
-        self.assertEqual(scored.values.tolist(), expected)
+        self.assertEqual(scored.to_numpy().tolist(), expected)

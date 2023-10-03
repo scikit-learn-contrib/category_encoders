@@ -22,7 +22,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [a_encoding,
                     [1, 0, 0],
                     [1, 0, 0]]
-        self.assertEqual(deep_round(test_t.values.tolist()), deep_round(expected))
+        self.assertEqual(deep_round(test_t.to_numpy().tolist()), deep_round(expected))
 
     def test_polynomial_encoder_preserve_dimension_2(self):
         train = ['A', 'B', 'C']
@@ -35,7 +35,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [b_encoding,
                     [1, 0, 0],
                     [1, 0, 0]]
-        self.assertEqual(deep_round(test_t.values.tolist()), deep_round(expected))
+        self.assertEqual(deep_round(test_t.to_numpy().tolist()), deep_round(expected))
 
     def test_polynomial_encoder_preserve_dimension_3(self):
         train = ['A', 'B', 'C']
@@ -49,7 +49,7 @@ class TestPolynomialEncoder(TestCase):
                     b_encoding,
                     c_encoding,
                     [1, 0, 0]]
-        self.assertEqual(deep_round(test_t.values.tolist()), deep_round(expected))
+        self.assertEqual(deep_round(test_t.to_numpy().tolist()), deep_round(expected))
 
     def test_polynomial_encoder_preserve_dimension_4(self):
         train = ['A', 'B', 'C']
@@ -63,7 +63,7 @@ class TestPolynomialEncoder(TestCase):
                     b_encoding,
                     c_encoding,
                     [1, 0, 0]]
-        self.assertEqual(deep_round(test_t.values.tolist()), deep_round(expected))
+        self.assertEqual(deep_round(test_t.to_numpy().tolist()), deep_round(expected))
 
     def test_polynomial_encoder_2cols(self):
         train = [['A', 'A'], ['B', 'B'], ['C', 'C']]
@@ -75,7 +75,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [[1, a_encoding[1], a_encoding[2], a_encoding[1], a_encoding[2]],
                     [1, b_encoding[1], b_encoding[2], b_encoding[1], b_encoding[2]],
                     [1, c_encoding[1], c_encoding[2], c_encoding[1], c_encoding[2]]]
-        self.assertEqual(deep_round(obtained.values.tolist()), deep_round(expected))
+        self.assertEqual(deep_round(obtained.to_numpy().tolist()), deep_round(expected))
 
     def test_polynomial_encoder_2StringCols_ExpectCorrectOrder(self):
         train = pd.DataFrame({'col1': [1, 2, 3, 4],
@@ -88,7 +88,7 @@ class TestPolynomialEncoder(TestCase):
         encoder = encoders.PolynomialEncoder(handle_unknown='value', handle_missing='value')
 
         encoder.fit(train)
-        columns = encoder.transform(train).columns.values
+        columns = encoder.transform(train).columns.to_numpy()
 
         self.assertTrue(np.array_equal(expected_columns, columns))
 
@@ -101,7 +101,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding,
                     c_encoding]
-        self.assertTrue(np.array_equal(deep_round(result.values.tolist()), deep_round(expected)))
+        self.assertTrue(np.array_equal(deep_round(result.to_numpy().tolist()), deep_round(expected)))
 
     def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -111,7 +111,7 @@ class TestPolynomialEncoder(TestCase):
 
         expected = [a_encoding,
                     b_encoding]
-        self.assertEqual(deep_round(result.values.tolist()), deep_round(expected))
+        self.assertEqual(deep_round(result.to_numpy().tolist()), deep_round(expected))
 
     def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
         train = ['A', 'B']
@@ -124,7 +124,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding,
                     c_encoding]
-        self.assertEqual(deep_round(result.values.tolist()), deep_round(expected))
+        self.assertEqual(deep_round(result.to_numpy().tolist()), deep_round(expected))
 
     def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
         train = ['A', 'B']
@@ -137,7 +137,7 @@ class TestPolynomialEncoder(TestCase):
         expected = [a_encoding,
                     b_encoding,
                     c_encoding]
-        self.assertEqual(deep_round(result.values.tolist()), deep_round(expected))
+        self.assertEqual(deep_round(result.to_numpy().tolist()), deep_round(expected))
 
     def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
         train = ['A', 'B']
@@ -147,4 +147,4 @@ class TestPolynomialEncoder(TestCase):
 
         expected = [a_encoding,
                     b_encoding]
-        self.assertEqual(deep_round(result.values.tolist()), deep_round(expected))
+        self.assertEqual(deep_round(result.to_numpy().tolist()), deep_round(expected))

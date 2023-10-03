@@ -55,7 +55,7 @@ class TestLeaveOneOutEncoder(TestCase):
         encoder = encoders.LeaveOneOutEncoder(handle_unknown='value')
         result = encoder.fit(X, y).transform(X, y)
 
-        self.assertFalse(result.isnull().any().any(), 'There should not be any missing value')
+        self.assertFalse(result.isna().any().any(), 'There should not be any missing value')
         expected = pd.DataFrame(data=[y.mean(), 0.5, 0, 0.5, y.mean()], columns=['col'])
         pd.testing.assert_frame_equal(expected, result)
 

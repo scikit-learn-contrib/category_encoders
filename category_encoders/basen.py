@@ -188,20 +188,20 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
-            return X if self.return_df else X.values
+            return X if self.return_df else X.to_numpy()
 
         for switch in self.ordinal_encoder.mapping:
             column_mapping = switch.get('mapping')
-            inverse = pd.Series(data=column_mapping.index, index=column_mapping.values)
+            inverse = pd.Series(data=column_mapping.index, index=column_mapping.array)
             X[switch.get('col')] = X[switch.get('col')].map(inverse).astype(switch.get('data_type'))
 
             if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
                 for col in self.cols:
-                    if X[switch.get('col')].isnull().any():
+                    if X[switch.get('col')].isna().any():
                         warnings.warn("inverse_transform is not supported because transform impute "
                                       f"the unknown category nan when encode {col}")
 
-        return X if self.return_df else X.values
+        return X if self.return_df else X.to_numpy()
 
     def calc_required_digits(self, values):
         # figure out how many digits we need to represent the classes present
@@ -212,7 +212,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         return digits
 
-    def basen_encode(self, X_in, cols=None):
+    def basen_encode(self, X_in: pd.DataFrame, cols=None):
         """
         Basen encoding encodes the integers as basen code with one column per digit.
 
@@ -230,14 +230,14 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         X = X_in.copy(deep=True)
 
-        cols = X.columns.values.tolist()
+        cols = X.columns.tolist()
 
         for switch in self.mapping:
             col = switch.get('col')
             mod = switch.get('mapping')
 
             base_df = mod.reindex(X[col])
-            base_df.set_index(X.index, inplace=True)
+            base_df = base_df.set_index(X.index)
             X = pd.concat([base_df, X], axis=1)
 
             old_column_index = cols.index(col)
@@ -245,7 +245,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         return X.reindex(columns=cols)
 
-    def basen_to_integer(self, X, cols, base):
+    def basen_to_integer(self, X: pd.DataFrame, cols, base):
         """
         Convert basen code as integers.
 
@@ -263,7 +263,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         numerical: DataFrame
 
         """
-        out_cols = X.columns.values.tolist()
+        out_cols = X.columns.tolist()
 
         for col in cols:
             col_list = [col0 for col0 in out_cols if re.match(re.escape(str(col))+'_\\d+', str(col0))]
@@ -275,8 +275,8 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 len0 = len(col_list)
                 value_array = np.array([base ** (len0 - 1 - i) for i in range(len0)])
             X.insert(insert_at, col, np.dot(X[col_list].values, value_array.T))
-            X.drop(col_list, axis=1, inplace=True)
-            out_cols = X.columns.values.tolist()
+            X = X.drop(col_list, axis=1)
+            out_cols = X.columns.tolist()
 
         return X
 

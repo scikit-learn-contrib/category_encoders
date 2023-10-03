@@ -87,13 +87,13 @@ for dataset_name in datasets:
 
     # Get indexes (not names) of categorical features
     categorical_indexes = []
-    for col in X.select_dtypes(exclude=[np.number]).columns.values:
+    for col in X.select_dtypes(exclude=[np.number]).columns:
         for i, col2 in enumerate(X.columns):
             if col == col2:
                 categorical_indexes.append(i)
 
     # Simple missing value treatment
-    X.fillna(-999, inplace=True)
+    X = X.fillna(-999)
 
     # Perform cross-validation
     pool = Pool(X, y, categorical_indexes)

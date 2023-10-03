@@ -35,7 +35,7 @@ class TestMultiClassWrapper(TestCase):
         wrapper = PolynomialWrapper(encoders.TargetEncoder())
         result2 = wrapper.fit_transform(x, y)
 
-        self.assertTrue((result.values == result2.values).all(), 'The content should be the same regardless whether we pass Numpy or Pandas data type.')
+        self.assertTrue((result.to_numpy() == result2.to_numpy()).all(), 'The content should be the same regardless whether we pass Numpy or Pandas data type.')
 
     def test_transform_only_selected(self):
         x = pd.DataFrame([

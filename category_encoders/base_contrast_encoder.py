@@ -86,14 +86,14 @@ class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return X
 
     @abstractmethod
-    def get_contrast_matrix(self, values_to_encode: np.array) -> ContrastMatrix:
+    def get_contrast_matrix(self, values_to_encode: np.ndarray) -> ContrastMatrix:
         raise NotImplementedError
 
     def fit_contrast_coding(self, col, values, handle_missing, handle_unknown):
         if handle_missing == 'value':
             values = values[values > 0]
 
-        values_to_encode = values.values
+        values_to_encode = values.to_numpy()
 
         if len(values) < 2:
             return pd.DataFrame(index=values_to_encode)
@@ -119,7 +119,7 @@ class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     @staticmethod
     def transform_contrast_coding(X, mapping):
-        cols = X.columns.values.tolist()
+        cols = X.columns.tolist()
 
         # See issue 370 if it is necessary to add an intercept or not.
         X['intercept'] = pd.Series([1] * X.shape[0], index=X.index)
@@ -132,7 +132,7 @@ class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             # reindex actually applies the mapping
             base_df = mod.reindex(X[col])
-            base_df.set_index(X.index, inplace=True)
+            base_df = base_df.set_index(X.index)
             X = pd.concat([base_df, X], axis=1)
 
             old_column_index = cols.index(col)

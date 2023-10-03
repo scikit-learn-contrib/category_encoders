@@ -108,7 +108,7 @@ for dataset_name in datasets:
     y = y.iloc[perm].reset_index(drop=True)
 
     # X, y, fold_count, nominal_columns = csv_loader.load(dataset_name)
-    non_numeric = list(X.select_dtypes(exclude=[np.number]).columns.values)
+    non_numeric = list(X.select_dtypes(exclude=[np.number]).columns)
     for encoder in encoders:
         print("Encoding:", dataset_name, y.name, encoder.__class__.__name__)
         folds, fit_encoder_time, score_encoder_time = train_encoder(X, y, fold_count, encoder)
