@@ -105,7 +105,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     default_int_np_array = np.array(np.zeros((2,2), dtype='int'))
 
     def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False,
-                 return_df=True, hash_method='md5'):
+                 return_df=True, hash_method='md5', process_creation_method='fork'):
         super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
                          handle_unknown="does not apply", handle_missing="does not apply")
 
@@ -121,6 +121,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         else:
             self.max_process = max_process
         self.max_sample = int(max_sample)
+        self.process_creation_method = process_creation_method
         self.auto_sample = max_sample <= 0
         self.data_lines = 0
         self.X = None
@@ -130,40 +131,6 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     def _fit(self, X, y=None, **kwargs):
         pass
-
-    def require_data(self, data_lock, new_start, done_index, hashing_parts, process_index):
-        is_finished = False
-        while not is_finished:
-            if data_lock.acquire():
-                if new_start.value:
-                    end_index = 0
-                    new_start.value = False
-                else:
-                    end_index = done_index.value
-
-                if all([self.data_lines > 0, end_index < self.data_lines]):
-                    start_index = end_index
-                    if (self.data_lines - end_index) <= self.max_sample:
-                        end_index = self.data_lines
-                    else:
-                        end_index += self.max_sample
-                    done_index.value = end_index
-                    data_lock.release()
-
-                    data_part = self.X.iloc[start_index: end_index]
-                    # Always get df and check it after merge all data parts
-                    data_part = self.hashing_trick(X_in=data_part, hashing_method=self.hash_method,
-                                                   N=self.n_components, cols=self.cols)
-                    part_index = int(math.ceil(end_index / self.max_sample))
-                    hashing_parts.put({part_index: data_part})
-                    is_finished = end_index >= self.data_lines
-                    if self.verbose == 5:
-                        print(f"Process - {process_index} done hashing data : {start_index} ~ {end_index}")
-                else:
-                    data_lock.release()
-                    is_finished = True
-            else:
-                data_lock.release()
 
     def _transform(self, X, override_return_df=False):
         """Perform the transformation to new categorical data.
@@ -194,15 +161,14 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         if not list(self.cols):
             return X
 
-        X = self.hashing_trick(X, hashing_method=self.hash_method, N=self.n_components, cols=self.cols, max_process=self.max_process)
-
-        if self.drop_invariant:
-            X = X.drop(columns=self.invariant_cols)
-
-        if self.return_df or override_return_df:
-            return X
-        else:
-            return X.to_numpy()
+        X = self.hashing_trick(
+            X, 
+            hashing_method=self.hash_method,
+            N=self.n_components, 
+            cols=self.cols, 
+        )
+        
+        return X
 
     @staticmethod
     def hash_chunk(shm_result, np_df, N, shm_offset):
@@ -217,25 +183,24 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     column_index = int(hasher.hexdigest(), 16) % N
                     row_index = (shm_offset + i)*N
                     shm_index = row_index + column_index
-                    # print(f"Incrementing shm at index {shm_index}, shm_offset: {shm_offset}, row_index: {row_index}")
                     shm_result[shm_index] += 1
 
-    @staticmethod
-    def hashing_trick_with_np_parallel(df, N, max_process):
+    def hashing_trick_with_np_parallel(self, df, N):
         np_df = df.to_numpy()
         shm_result = multiprocessing.RawArray(HashingEncoder.default_int_np_array.dtype.char, len(df)*N)
 
         n_process = []
-        chunk_size = int(len(np_df)/max_process)
-        for i in range(0, max_process-1):
-            process = multiprocessing.Process(target=HashingEncoder.hash_chunk,
+        chunk_size = int(len(np_df)/self.max_process)
+        ctx = multiprocessing.get_context(self.process_creation_method)
+        for i in range(0, self.max_process-1):
+            process = ctx.Process(target=self.hash_chunk,
                 args=(shm_result, np_df[i*chunk_size:((i+1)*chunk_size)], N, i*chunk_size))
             n_process.append(process)
 
         # The last process processes all the rest of the dataframe, because the number of rows might not
         # be divisible by max_process. 
-        process = multiprocessing.Process(target=HashingEncoder.hash_chunk,
-            args=(shm_result, np_df[(max_process-1)*chunk_size:], N, (max_process-1)*chunk_size))
+        process = ctx.Process(target=self.hash_chunk,
+            args=(shm_result, np_df[(self.max_process-1)*chunk_size:], N, (self.max_process-1)*chunk_size))
         n_process.append(process)
 
         for process in n_process:
@@ -245,7 +210,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         np_result = np.array(shm_result, 'int')
 
-        return pd.DataFrame(np_result.reshape(len(df), N))
+        return pd.DataFrame(np_result.reshape(len(df), N), index=df.index)
 
     @staticmethod
     def hashing_trick_with_np_no_parallel(df, N):
@@ -254,10 +219,9 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         HashingEncoder.hash_chunk(np_result, np_df, N, 0)
         
-        return pd.DataFrame(np_result.reshape(len(df), N))
+        return pd.DataFrame(np_result.reshape(len(df), N), index=df.index)
 
-    @staticmethod
-    def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False, max_process=1):
+    def hashing_trick(self, X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
         """A basic hashing implementation with configurable dimensionality/precision
 
         Performs the hashing trick on a pandas dataframe, `X`, using the hashing method from hashlib
@@ -309,10 +273,10 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         X_cat = X.loc[:, cols]
         X_num = X.loc[:, [x for x in X.columns if x not in cols]]
 
-        if max_process == 1:
-            X_cat = HashingEncoder.hashing_trick_with_np_no_parallel(X_cat, N)
+        if self.max_process == 1:
+            X_cat = self.hashing_trick_with_np_no_parallel(X_cat, N)
         else:
-            X_cat = HashingEncoder.hashing_trick_with_np_parallel(X_cat, N, max_process)
+            X_cat = self.hashing_trick_with_np_parallel(X_cat, N)
 
         X_cat.columns = new_cols
 
