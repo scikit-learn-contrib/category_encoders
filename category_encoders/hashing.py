@@ -175,12 +175,9 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         for i, row in enumerate(np_df):
             for val in row:
                 if val is not None:
-                    hasher = hashlib.new('md5')
-                    if sys.version_info[0] == 2:
-                        hasher.update(str(val))
-                    else:
-                        hasher.update(bytes(str(val), 'utf-8'))
-                    column_index = int(hasher.hexdigest(), 16) % N
+                    hasher = hashlib.md5()
+                    hasher.update(bytes(str(val), 'utf-8'))
+                    column_index = int.from_bytes(hasher.digest(), byteorder='big') % N
                     row_index = (shm_offset + i)*N
                     shm_index = row_index + column_index
                     shm_result[shm_index] += 1
