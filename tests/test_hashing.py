@@ -42,3 +42,17 @@ class TestHashingEncoder(TestCase):
                          set(target_columns))
                    ) == df_encoded_multi_process.shape[1]
                )
+
+    def test_simple_example(self):
+        df = pd.DataFrame({
+         'strings': ["aaaa", "bbbb", "cccc"],
+         "more_strings": ["aaaa", "dddd", "eeee"],
+        })
+        encoder = encoders.HashingEncoder(n_components=4, max_process=2)
+        encoder.fit(df)
+        assert encoder.transform(df).equals(pd.DataFrame({
+            "col_0": [0,1,1],
+            "col_1": [2,0,1],
+            "col_2": [0,1,0],
+            "col_3": [0,0,0]
+        }))
