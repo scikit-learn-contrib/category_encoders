@@ -5,6 +5,7 @@ import hashlib
 import category_encoders.utils as util
 import multiprocessing
 import pandas as pd
+import numpy as np
 import math
 import platform
 
@@ -249,6 +250,23 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             return X.to_numpy()
 
     @staticmethod
+    def hashing_trick_with_np(df, N):
+        np_df = df.to_numpy()
+        np_result = np.zeros((len(df),N), dtype='int')
+
+        for i, row in enumerate(np_df):
+            for val in row:
+                if val is not None:
+                    hasher = hashlib.new('md5')
+                    if sys.version_info[0] == 2:
+                        hasher.update(str(val))
+                    else:
+                        hasher.update(bytes(str(val), 'utf-8'))
+                    np_result[i, int(hasher.hexdigest(), 16) % N] += 1
+        
+        return pd.DataFrame(np_result)
+
+    @staticmethod
     def hashing_trick(X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
         """A basic hashing implementation with configurable dimensionality/precision
 
@@ -296,24 +314,12 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         if cols is None:
             cols = X.columns
 
-        def hash_fn(x):
-            tmp = [0 for _ in range(N)]
-            for val in x.array:
-                if val is not None:
-                    hasher = hashlib.new(hashing_method)
-                    if sys.version_info[0] == 2:
-                        hasher.update(str(val))
-                    else:
-                        hasher.update(bytes(str(val), 'utf-8'))
-                    tmp[int(hasher.hexdigest(), 16) % N] += 1
-            return tmp
-
         new_cols = [f'col_{d}' for d in range(N)]
 
         X_cat = X.loc[:, cols]
         X_num = X.loc[:, [x for x in X.columns if x not in cols]]
 
-        X_cat = X_cat.apply(hash_fn, axis=1, result_type='expand')
+        X_cat = HashingEncoder.hashing_trick_with_np(X_cat, N)
         X_cat.columns = new_cols
 
         X = pd.concat([X_cat, X_num], axis=1)
