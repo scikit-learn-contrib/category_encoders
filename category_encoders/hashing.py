@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import math
 import platform
+from concurrent.futures import ProcessPoolExecutor
 
 __author__ = 'willmcginnis', 'LiuShulun'
 
@@ -108,7 +109,6 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     """
     prefit_ordinal = False
     encoding_relation = util.EncodingRelation.ONE_TO_M
-    default_int_np_array = np.array(np.zeros((2,2), dtype='int'))
 
     def __init__(self, max_process=0, max_sample=0, verbose=0, n_components=8, cols=None, drop_invariant=False,
                  return_df=True, hash_method='md5', process_creation_method='fork'):
@@ -179,16 +179,17 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return X
 
     @staticmethod
-    def hash_chunk(hash_method, shared_memory_result, np_df, N, shared_memory_offset):
+    def hash_chunk(args):
+        hash_method, np_df, N = args
         # Calling getattr outside the loop saves some time in the loop
         hasher_constructor = getattr(hashlib, hash_method)
         # Same when the call to getattr is implicit
         int_from_bytes = int.from_bytes
+        result = np.zeros((np_df.shape[0], N), dtype='int')
         for i, row in enumerate(np_df):
             for val in row:
                 if val is not None:
                     hasher = hasher_constructor()
-                    hasher.update(bytes(str(val), 'utf-8'))
                     # Computes an integer index from the hasher digest. The endian is 
                     # "big" as the code use to read:
                     # column_index = int(hasher.hexdigest(), 16) % N
@@ -196,45 +197,36 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     # even if the system is little endian.
                     # Building the index that way is about 30% faster than using the 
                     # hexdigest.
+                    hasher.update(bytes(str(val), 'utf-8'))
                     column_index = int_from_bytes(hasher.digest(), byteorder='big') % N
-                    row_index = (shared_memory_offset + i)*N
-                    shared_memory_index = row_index + column_index
-                    shared_memory_result[shared_memory_index] += 1
+                    result[i, column_index] += 1
+        return result
 
-    def hashing_trick_with_np_parallel(self, df, N):
+    def hashing_trick_with_np_parallel(self, df, N: int):
         np_df = df.to_numpy()
-        shared_memory_result = multiprocessing.RawArray(HashingEncoder.default_int_np_array.dtype.char, len(df)*N)
-
-        process_list = []
-        chunk_size = int(len(np_df)/self.max_process)
         ctx = multiprocessing.get_context(self.process_creation_method)
-        for i in range(0, self.max_process-1):
-            process = ctx.Process(target=self.hash_chunk,
-                args=(self.hash_method, shared_memory_result, np_df[i*chunk_size:((i+1)*chunk_size)], N, i*chunk_size))
-            process_list.append(process)
 
-        # The last process processes all the rest of the dataframe, because the number of rows might not
-        # be divisible by max_process. 
-        process = ctx.Process(target=self.hash_chunk,
-            args=(self.hash_method, shared_memory_result, np_df[(self.max_process-1)*chunk_size:], N, (self.max_process-1)*chunk_size))
-        process_list.append(process)
+        with ProcessPoolExecutor(max_workers=self.max_process, mp_context=ctx) as executor:
+            result = np.concatenate(list(
+                executor.map(
+                    self.hash_chunk,
+                    zip(
+                        [self.hash_method]*self.max_process,
+                        np.array_split(np_df, self.max_process),
+                        [N]*self.max_process
+                    )
+                )
+            ))
 
-        for process in process_list:
-            process.start()
-        for process in process_list:
-            process.join()
-
-        np_result = np.array(shared_memory_result, 'int')
-
-        return pd.DataFrame(np_result.reshape(len(df), N), index=df.index)
+        return pd.DataFrame(result, index=df.index)
 
     def hashing_trick_with_np_no_parallel(self, df, N):
         np_df = df.to_numpy()
-        np_result = np.zeros((len(df)*N), dtype='int')
 
-        HashingEncoder.hash_chunk(self.hash_method, np_result, np_df, N, 0)
+        result = HashingEncoder.hash_chunk((self.hash_method, np_df, N))
+
+        return pd.DataFrame(result, index=df.index)
         
-        return pd.DataFrame(np_result.reshape(len(df), N), index=df.index)
 
     def hashing_trick(self, X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
         """A basic hashing implementation with configurable dimensionality/precision
