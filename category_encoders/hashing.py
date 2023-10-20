@@ -57,6 +57,12 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     n_components: int
         how many bits to use to represent the feature. By default, we use 8 bits.
         For high-cardinality features, consider using up-to 32 bits.
+    process_creation_method: string
+        either "fork", "spawn" or "forkserver" (availability depends on your 
+        platform). See https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods
+        for more details and tradeoffs. Defaults to "fork" on linux/macos as it
+        is the fastest option and to "spawn" on windows as it is the only one
+        available
 
     Example
     -------
@@ -110,7 +116,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                          handle_unknown="does not apply", handle_missing="does not apply")
 
         if max_process not in range(1, 128):
-            if platform.system == 'Windows':
+            if platform.system() == 'Windows':
                 self.max_process = 1
             else:
                 self.max_process = int(math.ceil(multiprocessing.cpu_count() / 2))
@@ -121,7 +127,10 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         else:
             self.max_process = max_process
         self.max_sample = int(max_sample)
-        self.process_creation_method = process_creation_method
+        if platform.system() == 'Windows':
+            self.process_creation_method = "spawn"
+        else:
+            self.process_creation_method = process_creation_method
         self.data_lines = 0
         self.X = None
 
@@ -170,7 +179,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return X
 
     @staticmethod
-    def hash_chunk(hash_method, shm_result, np_df, N, shm_offset):
+    def hash_chunk(hash_method, shared_memory_result, np_df, N, shared_memory_offset):
         # Calling getattr outside the loop saves some time in the loop
         hasher_constructor = getattr(hashlib, hash_method)
         # Same when the call to getattr is implicit
@@ -188,26 +197,26 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     # Building the index that way is about 30% faster than using the 
                     # hexdigest.
                     column_index = int_from_bytes(hasher.digest(), byteorder='big') % N
-                    row_index = (shm_offset + i)*N
-                    shm_index = row_index + column_index
-                    shm_result[shm_index] += 1
+                    row_index = (shared_memory_offset + i)*N
+                    shared_memory_index = row_index + column_index
+                    shared_memory_result[shared_memory_index] += 1
 
     def hashing_trick_with_np_parallel(self, df, N):
         np_df = df.to_numpy()
-        shm_result = multiprocessing.RawArray(HashingEncoder.default_int_np_array.dtype.char, len(df)*N)
+        shared_memory_result = multiprocessing.RawArray(HashingEncoder.default_int_np_array.dtype.char, len(df)*N)
 
         process_list = []
         chunk_size = int(len(np_df)/self.max_process)
         ctx = multiprocessing.get_context(self.process_creation_method)
         for i in range(0, self.max_process-1):
             process = ctx.Process(target=self.hash_chunk,
-                args=(self.hash_method, shm_result, np_df[i*chunk_size:((i+1)*chunk_size)], N, i*chunk_size))
+                args=(self.hash_method, shared_memory_result, np_df[i*chunk_size:((i+1)*chunk_size)], N, i*chunk_size))
             process_list.append(process)
 
         # The last process processes all the rest of the dataframe, because the number of rows might not
         # be divisible by max_process. 
         process = ctx.Process(target=self.hash_chunk,
-            args=(self.hash_method, shm_result, np_df[(self.max_process-1)*chunk_size:], N, (self.max_process-1)*chunk_size))
+            args=(self.hash_method, shared_memory_result, np_df[(self.max_process-1)*chunk_size:], N, (self.max_process-1)*chunk_size))
         process_list.append(process)
 
         for process in process_list:
@@ -215,7 +224,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         for process in process_list:
             process.join()
 
-        np_result = np.array(shm_result, 'int')
+        np_result = np.array(shared_memory_result, 'int')
 
         return pd.DataFrame(np_result.reshape(len(df), N), index=df.index)
 
