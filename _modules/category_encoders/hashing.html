@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.hashing &mdash; Category Encoders 2.6.2 documentation</title>
+  <title>category_encoders.hashing &mdash; Category Encoders 2.6.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=1fc3131f"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=bbbb9706"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.2
+                2.6.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -340,7 +340,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="ow">or</span> <span class="n">override_return_df</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">X</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">values</span>
+            <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
 
 <div class="viewcode-block" id="HashingEncoder.hashing_trick"><a class="viewcode-back" href="../../hashing.html#category_encoders.hashing.HashingEncoder.hashing_trick">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">hashing_trick</span><span class="p">(</span><span class="n">X_in</span><span class="p">,</span> <span class="n">hashing_method</span><span class="o">=</span><span class="s1">&#39;md5&#39;</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">make_copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -388,11 +388,11 @@
             <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span>
 
         <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
 
         <span class="k">def</span> <span class="nf">hash_fn</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
-            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">hasher</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">hashing_method</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -405,7 +405,7 @@
         <span class="n">new_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;col_</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
 
         <span class="n">X_cat</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">cols</span><span class="p">]</span>
-        <span class="n">X_num</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]]</span>
+        <span class="n">X_num</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]]</span>
 
         <span class="n">X_cat</span> <span class="o">=</span> <span class="n">X_cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">hash_fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">result_type</span><span class="o">=</span><span class="s1">&#39;expand&#39;</span><span class="p">)</span>
         <span class="n">X_cat</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">new_cols</span>

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Category Encoders &mdash; Category Encoders 2.6.2 documentation</title>
+  <title>Category Encoders &mdash; Category Encoders 2.6.3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=1fc3131f"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=bbbb9706"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.2
+                2.6.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -156,7 +156,18 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <section id="known-issues">
 <h2>Known issues:<a class="headerlink" href="#known-issues" title="Permalink to this heading"></a></h2>
 <p><cite>CategoryEncoders</cite> internally works with <cite>pandas DataFrames</cite> as apposed to <cite>sklearn</cite> which works with <cite>numpy arrays</cite>. This can cause problems in <cite>sklearn</cite> versions prior to 1.2.0. In order to ensure full compatibility with <cite>sklearn</cite> set <cite>sklearn</cite> to also output <cite>DataFrames</cite>. This can be done by</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sklearn</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">transform_output</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>for a whole project or just for a single pipeline using</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Pipeline</span><span class="p">(</span>
+    <span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;preprocessor&quot;</span><span class="p">,</span> <span class="n">SomePreprocessor</span><span class="p">()</span><span class="o">.</span><span class="n">set_output</span><span class="p">(</span><span class="s2">&quot;pandas&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;encoder&quot;</span><span class="p">,</span> <span class="n">SomeEncoder</span><span class="p">()),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>If you experience another bug, feel free to report it on [github](<a class="reference external" href="https://github.com/scikit-learn-contrib/category_encoders/issues">https://github.com/scikit-learn-contrib/category_encoders/issues</a>)</p>
 </section>
 <section id="contents">

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BaseN &mdash; Category Encoders 2.6.2 documentation</title>
+  <title>BaseN &mdash; Category Encoders 2.6.3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=1fc3131f"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=bbbb9706"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.2
+                2.6.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -306,7 +306,7 @@ specified at fit time. Passing an int will fill with this int value.</p>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.basen.BaseNEncoder.basen_encode">
-<span class="sig-name descname"><span class="pre">basen_encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/basen.html#BaseNEncoder.basen_encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.basen.BaseNEncoder.basen_encode" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">basen_encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_in</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/basen.html#BaseNEncoder.basen_encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.basen.BaseNEncoder.basen_encode" title="Permalink to this definition"></a></dt>
 <dd><p>Basen encoding encodes the integers as basen code with one column per digit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -326,7 +326,7 @@ specified at fit time. Passing an int will fill with this int value.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.basen.BaseNEncoder.basen_to_integer">
-<span class="sig-name descname"><span class="pre">basen_to_integer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/basen.html#BaseNEncoder.basen_to_integer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.basen.BaseNEncoder.basen_to_integer" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">basen_to_integer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/basen.html#BaseNEncoder.basen_to_integer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.basen.BaseNEncoder.basen_to_integer" title="Permalink to this definition"></a></dt>
 <dd><p>Convert basen code as integers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -509,7 +509,7 @@ parameters and not others.</p>
 <p class="admonition-title">Note</p>
 <p>This method is only relevant if this estimator is used as a
 sub-estimator of a meta-estimator, e.g. used inside a
-<code class="xref py py-class docutils literal notranslate"><span class="pre">pipeline.Pipeline</span></code>. Otherwise it has no effect.</p>
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code>. Otherwise it has no effect.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -603,7 +603,7 @@ parameters and not others.</p>
 <p class="admonition-title">Note</p>
 <p>This method is only relevant if this estimator is used as a
 sub-estimator of a meta-estimator, e.g. used inside a
-<code class="xref py py-class docutils literal notranslate"><span class="pre">pipeline.Pipeline</span></code>. Otherwise it has no effect.</p>
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code>. Otherwise it has no effect.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

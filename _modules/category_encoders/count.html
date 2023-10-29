@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.count &mdash; Category Encoders 2.6.2 documentation</title>
+  <title>category_encoders.count &mdash; Category Encoders 2.6.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=1fc3131f"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=bbbb9706"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.2
+                2.6.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -248,11 +248,11 @@
                   <span class="ow">and</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
                   <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_missing</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;return_nan&#39;</span>
             <span class="p">):</span>
-                <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
             <span class="k">elif</span> <span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_handle_unknown</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span>
-                    <span class="ow">and</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+                    <span class="ow">and</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
             <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Missing data found in column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1"> at transform time.&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">X</span>
@@ -262,7 +262,7 @@
         <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -296,12 +296,12 @@
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_min_nan_groups</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;force&#39;</span><span class="p">:</span>
                 <span class="n">min_groups_idx</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="p">(</span><span class="n">mapper</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
-                    <span class="o">|</span> <span class="p">(</span><span class="n">mapper</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isnull</span><span class="p">())</span>
+                    <span class="o">|</span> <span class="p">(</span><span class="n">mapper</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">())</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">min_groups_idx</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="p">(</span><span class="n">mapper</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
-                    <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">mapper</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isnull</span><span class="p">())</span>
+                    <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">mapper</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">())</span>
                 <span class="p">)</span>
 
             <span class="n">min_groups_sum</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_groups_idx</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -309,7 +309,7 @@
             <span class="k">if</span> <span class="p">(</span>
                 <span class="n">min_groups_sum</span> <span class="o">&gt;</span> <span class="mi">0</span>
                 <span class="ow">and</span> <span class="n">min_groups_idx</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">min_groups_idx</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">min_groups_idx</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="n">min_groups_idx</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">min_groups_idx</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
             <span class="p">):</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_group_name</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="n">min_group_mapper_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_name</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
