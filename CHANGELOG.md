@@ -1,6 +1,12 @@
 unreleased
 ==========
 
+v2.6.3
+======
+* fixed: issue 424 - pandas NaNs
+* fixed: pandas deprecations and ruff linter suggestions
+* fixed: issue 421 - detect pandas categorical type as categorical column
+
 v2.6.2
 ======
 * fixed: issue 414 - broken link
