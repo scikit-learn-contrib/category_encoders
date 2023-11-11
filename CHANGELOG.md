@@ -1,5 +1,10 @@
 unreleased
 ==========
+* improved: performance of the hashing encoder (about twice as fast)
+  * deprecate the `max_sample`` parameter, it has no use anymore
+  * add `process_creation_method` parameter
+  * use concurrent.futures.ProcessPoolExecutor instead of hand-managed queues
+  * optimisations to hashlib calls, remove python 2 checks, fork instead of spawn
 
 v2.6.3
 ======
