@@ -1,6 +1,5 @@
 """The hashing module contains all methods and classes related to the hashing trick."""
 
-import sys
 import hashlib
 import category_encoders.utils as util
 import multiprocessing
@@ -179,8 +178,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return X
 
     @staticmethod
-    def hash_chunk(args):
-        hash_method, np_df, N = args
+    def hash_chunk(hash_method: str, np_df: np.ndarray, N: int) -> np.ndarray:
         # Calling getattr outside the loop saves some time in the loop
         hasher_constructor = getattr(hashlib, hash_method)
         # Same when the call to getattr is implicit
@@ -202,7 +200,7 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     result[i, column_index] += 1
         return result
 
-    def hashing_trick_with_np_parallel(self, df, N: int):
+    def hashing_trick_with_np_parallel(self, df: pd.DataFrame, N: int) -> pd.DataFrame:
         np_df = df.to_numpy()
         ctx = multiprocessing.get_context(self.process_creation_method)
 
@@ -210,23 +208,20 @@ class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             result = np.concatenate(list(
                 executor.map(
                     self.hash_chunk,
-                    zip(
-                        [self.hash_method]*self.max_process,
-                        np.array_split(np_df, self.max_process),
-                        [N]*self.max_process
-                    )
+                    [self.hash_method]*self.max_process,
+                    np.array_split(np_df, self.max_process),
+                    [N]*self.max_process
                 )
             ))
 
         return pd.DataFrame(result, index=df.index)
 
-    def hashing_trick_with_np_no_parallel(self, df, N):
+    def hashing_trick_with_np_no_parallel(self, df: pd.DataFrame, N: int) -> pd.DataFrame:
         np_df = df.to_numpy()
 
-        result = HashingEncoder.hash_chunk((self.hash_method, np_df, N))
+        result = HashingEncoder.hash_chunk(self.hash_method, np_df, N)
 
         return pd.DataFrame(result, index=df.index)
-        
 
     def hashing_trick(self, X_in, hashing_method='md5', N=2, cols=None, make_copy=False):
         """A basic hashing implementation with configurable dimensionality/precision
