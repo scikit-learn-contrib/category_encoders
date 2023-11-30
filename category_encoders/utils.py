@@ -6,12 +6,13 @@ import warnings
 import pandas as pd
 import numpy as np
 import sklearn.base
-from pandas.api.types import is_object_dtype, is_string_dtype
+from pandas.api.types import is_object_dtype, is_string_dtype, is_numeric_dtype
 from pandas.core.dtypes.dtypes import CategoricalDtype
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.exceptions import NotFittedError
 from typing import Dict, List, Optional, Union
 from scipy.sparse import csr_matrix
+from sklearn.preprocessing import LabelEncoder
 
 __author__ = 'willmcginnis'
 
@@ -294,10 +295,17 @@ class BaseEncoder(BaseEstimator):
             Returns self.
 
         """
-        self._check_fit_inputs(X, y)
         X, y = convert_inputs(X, y)
+        self._check_fit_inputs(X, y)
         self.feature_names_in_ = X.columns.tolist()
         self.n_features_in_ = len(self.feature_names_in_)
+
+        if self._get_tags().get('supervised_encoder'):
+            if not is_numeric_dtype(y):
+                self.lab_encoder_ = LabelEncoder()
+                y = self.lab_encoder_.fit_transform(y)
+            else:
+                self.lab_encoder_ = None
 
         self._dim = X.shape[1]
         self._determine_fit_columns(X)
@@ -324,8 +332,12 @@ class BaseEncoder(BaseEstimator):
         return self
 
     def _check_fit_inputs(self, X, y):
-        if self._get_tags().get('supervised_encoder') and y is None:
-            raise ValueError('Supervised encoders need a target for the fitting. The target cannot be None')
+        if self._get_tags().get('supervised_encoder'):
+            if y is None:
+                raise ValueError('Supervised encoders need a target for the fitting. The target cannot be None')
+            else:
+                if y.isna().any(): # Target column should never have missing values
+                    raise ValueError("The target column y must not contain missing values.")
 
     def _check_transform_inputs(self, X):
         if self.handle_missing == 'error':
@@ -435,6 +447,8 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
         # first check the type
         X, y = convert_inputs(X, y, deep=True)
         self._check_transform_inputs(X)
+        if y is not None and self.lab_encoder_ is not None:
+            y = self.lab_encoder_.transform(y)
 
         if not list(self.cols):
             return X

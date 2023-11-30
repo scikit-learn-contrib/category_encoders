@@ -103,7 +103,6 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     def _fit(self, X, y, **kwargs):
         X = X.copy(deep=True)
-        y = y.astype(float) #Incase y is bool or categorical.
         self._mean = y.mean()
         self.mapping = {col: self._fit_column_map(X[col], y) for col in self.cols}
 
