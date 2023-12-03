@@ -3,6 +3,7 @@ import numpy as np
 from category_encoders.ordinal import OrdinalEncoder
 import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
+import pandas as pd
 
 __author__ = 'Jan Motl'
 
@@ -87,6 +88,7 @@ class WOEEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
     def _fit(self, X, y, **kwargs):
         # The label must be binary with values {0,1}
+        y = pd.Series(y)
         unique = y.unique()
         if len(unique) != 2:
             raise ValueError("The target column y must be binary. But the target contains " + str(len(unique)) + " unique value(s).")
