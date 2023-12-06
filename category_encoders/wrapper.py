@@ -78,7 +78,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
     def fit(self, X, y, **kwargs):
         # unite the input into pandas types
         X, y = utils.convert_inputs(X, y)
-        y = pd.DataFrame(y, columns=['target'])
+        y = pd.DataFrame(y.rename('target'))
 
         # apply one-hot-encoder on the label
         self.label_encoder = encoders.OneHotEncoder(handle_missing='error',
