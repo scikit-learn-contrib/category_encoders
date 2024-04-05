@@ -1,5 +1,6 @@
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
-from category_encoders.utils import convert_input_vector, convert_inputs, get_categorical_cols
+from category_encoders.utils import convert_input_vector, convert_inputs, get_categorical_cols, BaseEncoder
+from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 import numpy as np
 
@@ -120,3 +121,25 @@ class TestUtils(TestCase):
         self.assertEqual(get_categorical_cols(df.astype("object")), ["col"])
         self.assertEqual(get_categorical_cols(df.astype("category")), ["col"])
         self.assertEqual(get_categorical_cols(df.astype("string")), ["col"])
+
+
+class TestBaseEncoder(TestCase):
+    def setUp(self):
+        class DummyEncoder(BaseEncoder, BaseEstimator, TransformerMixin):
+            def _fit(self, X, y=None):
+                return self
+
+            def transform(self, X, y=None, override_return_df=False):
+                return X
+
+        self.encoder = DummyEncoder()
+
+    def test_sklearn_pandas_out_refit(self):
+        # Thanks to Issue#437
+        df = pd.DataFrame({"C1": ["a", "a"], "C2": ["c", "d"]})
+        self.encoder.set_output(transform="pandas")
+        self.encoder.fit_transform(df.iloc[:1])
+        out = self.encoder.fit_transform(
+                df.rename(columns={'C1': 'X1', 'C2': 'X2'})
+        )
+        self.assertTrue(list(out.columns) == ['X1', 'X2'])
