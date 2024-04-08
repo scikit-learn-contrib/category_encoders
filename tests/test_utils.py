@@ -1,6 +1,10 @@
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
+import pytest
 from category_encoders.utils import convert_input_vector, convert_inputs, get_categorical_cols, BaseEncoder
+
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn import __version__ as skl_version
+from packaging.version import Version
 import pandas as pd
 import numpy as np
 
@@ -134,6 +138,7 @@ class TestBaseEncoder(TestCase):
 
         self.encoder = DummyEncoder()
 
+    @pytest.mark.skipif(Version(skl_version) < Version('1.2'), reason="requires sklean > 1.2")
     def test_sklearn_pandas_out_refit(self):
         # Thanks to Issue#437
         df = pd.DataFrame({"C1": ["a", "a"], "C2": ["c", "d"]})
