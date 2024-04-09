@@ -320,6 +320,7 @@ class BaseEncoder(BaseEstimator):
         self._fit(X, y, **kwargs)
 
         # for finding invariant columns transform without y (as is done on the test set)
+        self.feature_names_out_ = None  # Issue#437
         X_transformed = self.transform(X, override_return_df=True)
         self.feature_names_out_ = X_transformed.columns.tolist()
 
