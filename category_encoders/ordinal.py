@@ -195,7 +195,8 @@ class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
                 # Convert to object to accept np.nan (dtype string doesn't)
                 # fillna changes None and pd.NA to np.nan
-                X[column] = X[column].astype("object").fillna(np.nan).map(col_mapping)
+                with pd.option_context('future.no_silent_downcasting', True):
+                    X[column] = X[column].astype("object").fillna(np.nan).map(col_mapping)
                 if util.is_category(X[column].dtype):
                     nan_identity = col_mapping.loc[col_mapping.index.isna()].array[0]
                     X[column] = X[column].cat.add_categories(nan_identity)
