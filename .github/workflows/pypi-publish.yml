@@ -21,7 +21,7 @@ jobs:
           pip install wheel
           python setup.py bdist_wheel sdist
       - name: Publish package
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: willmcg4132
           password: ${{ secrets.pypi_password }}
