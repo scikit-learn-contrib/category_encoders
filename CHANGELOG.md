@@ -1,5 +1,7 @@
 unreleased
 ==========
+* fixed: Future Warning in Pandas
+* fixed: np.NaNs in numpy 2.x
 * improved: performance of the hashing encoder (about twice as fast)
   * deprecate the `max_sample`` parameter, it has no use anymore
   * add `process_creation_method` parameter
