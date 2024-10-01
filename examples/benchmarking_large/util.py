@@ -12,7 +12,7 @@ from sklearn.preprocessing import StandardScaler
 
 def train_encoder(X, y, fold_count, encoder):
     """
-    Defines folds and performs the data preprocessing (categorical encoding, NaN imputation, normalization)
+    Defines folds and performs the data preprocessing (categorical encoding, nan imputation, normalization)
     Returns a list with {X_train, y_train, X_test, y_test}, average fit_encoder_time and average score_encoder_time
 
     Note: We normalize all features (not only numerical features) because otherwise SVM would

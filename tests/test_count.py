@@ -169,7 +169,7 @@ class TestCountEncoder(TestCase):
         self.assertTrue(pd.Series([9, 7, 4]).isin(out['na_categorical']).all())
         self.assertEqual(out['na_categorical'].unique().shape[0], 3)
         self.assertTrue(enc.mapping is not None)
-        self.assertIn(np.NaN, enc.mapping['na_categorical'])
+        self.assertIn(np.nan, enc.mapping['na_categorical'])
 
     def test_count_combine_min_nan_groups_dict(self):
         """Test the combine_min_nan_groups dict  on 'none' and 'na_categorical'."""

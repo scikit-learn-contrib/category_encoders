@@ -203,7 +203,7 @@ class TestEncoders(TestCase):
                     self.assertTrue(result[1:].isna().all())
 
     def test_handle_missing_return_nan_train(self):
-        X_np = pd.DataFrame({'city': ['chicago', 'los angeles', np.NaN]})
+        X_np = pd.DataFrame({'city': ['chicago', 'los angeles', np.nan]})
         X_pd = pd.DataFrame({'city': ['chicago', 'los angeles', pd.NA]}, dtype="string")
         y = pd.Series([1, 0, 1])
 
@@ -220,7 +220,7 @@ class TestEncoders(TestCase):
 
     def test_handle_missing_return_nan_test(self):
         X = pd.DataFrame({'city': ['chicago', 'los angeles', 'chicago']})
-        X_np = pd.DataFrame({'city': ['chicago', 'los angeles', np.NaN]})
+        X_np = pd.DataFrame({'city': ['chicago', 'los angeles', np.nan]})
         X_pd = pd.DataFrame({'city': ['chicago', 'los angeles', pd.NA]}, dtype="string")
         y = pd.Series([1, 0, 1])
 
@@ -586,8 +586,8 @@ class TestEncoders(TestCase):
     def test_missing_values(self):
         # by default, treat missing values as another valid value
         x_placeholder = pd.Series(['a', 'b', 'b', 'c', 'c'])
-        x_nan = pd.Series(['a', 'b', 'b', np.NaN, np.NaN])
-        x_float = pd.DataFrame({'col1': [1.0, 2.0, 2.0, np.NaN, np.NaN]})
+        x_nan = pd.Series(['a', 'b', 'b', np.nan, np.nan])
+        x_float = pd.DataFrame({'col1': [1.0, 2.0, 2.0, np.nan, np.nan]})
         y = [0, 1, 1, 1, 1]
 
         for encoder_name in (set(encoders.__all__) - {'HashingEncoder'}):   # HashingEncoder currently violates it

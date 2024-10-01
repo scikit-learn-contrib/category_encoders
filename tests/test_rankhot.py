@@ -16,7 +16,7 @@ y_t = pd.DataFrame(np_y_t)
 
 class TestRankHotEncoder(TestCase):
 
-    def test_handleNaNvalue(self):
+    def test_handlenanvalue(self):
         enc = encoders.RankHotEncoder(handle_unknown='value', cols=['none'])
         enc.fit(X)
         t_f = enc.transform(X)
