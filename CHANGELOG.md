@@ -1,5 +1,8 @@
 unreleased
 ==========
+
+v2.6.4
+======
 * fixed: Future Warning in Pandas
 * fixed: np.NaNs in numpy 2.x
 * improved: performance of the hashing encoder (about twice as fast)

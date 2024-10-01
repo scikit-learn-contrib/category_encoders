@@ -28,7 +28,7 @@ from category_encoders.glmm import GLMMEncoder
 from category_encoders.quantile_encoder import QuantileEncoder, SummaryEncoder
 
 
-__version__ = '2.6.3'
+__version__ = '2.6.4'
 
 __author__ = "willmcginnis", "cmougan", "paulwestenthanner"
 
