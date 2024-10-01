@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.count &mdash; Category Encoders 2.6.3 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>category_encoders.count &mdash; Category Encoders 2.6.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=bbbb9706"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=703207cb"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +34,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.3
+                2.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -133,11 +135,11 @@
 <span class="sd">            (otherwise it will be a numpy array).</span>
 <span class="sd">        handle_missing: str</span>
 <span class="sd">            how to handle missing values at fit time. Options are &#39;error&#39;, &#39;return_nan&#39;,</span>
-<span class="sd">            and &#39;value&#39;. Default &#39;value&#39;, which treat NaNs as a countable category at</span>
+<span class="sd">            and &#39;value&#39;. Default &#39;value&#39;, which treat nans as a countable category at</span>
 <span class="sd">            fit time.</span>
 <span class="sd">        handle_unknown: str, int or dict of {column : option, ...}.</span>
 <span class="sd">            how to handle unknown labels at transform time. Options are &#39;error&#39;</span>
-<span class="sd">            &#39;return_nan&#39;, &#39;value&#39; and int. Defaults to None which uses NaN behaviour</span>
+<span class="sd">            &#39;return_nan&#39;, &#39;value&#39; and int. Defaults to None which uses nan behaviour</span>
 <span class="sd">            specified at fit time. Passing an int will fill with this int value.</span>
 <span class="sd">        normalize: bool or dict of {column : bool, ...}.</span>
 <span class="sd">            whether to normalize the counts to the range (0, 1). See Pandas `value_counts`</span>
@@ -156,9 +158,9 @@
 <span class="sd">            Note: The default name can be long and may keep changing, for example, </span>
 <span class="sd">            in cross-validation.</span>
 <span class="sd">        combine_min_nan_groups: bool or dict of {column : bool, ...}.</span>
-<span class="sd">            whether to combine the leftovers group with NaN group. Default True. Can</span>
+<span class="sd">            whether to combine the leftovers group with nan group. Default True. Can</span>
 <span class="sd">            also be forced to combine with &#39;force&#39; meaning small groups are effectively</span>
-<span class="sd">            counted as NaNs. Force can only be used when &#39;handle_missing&#39; is &#39;value&#39; or &#39;error&#39;.</span>
+<span class="sd">            counted as nans. Force can only be used when &#39;handle_missing&#39; is &#39;value&#39; or &#39;error&#39;.</span>
 <span class="sd">            Note: Will not force if it creates a binary or invariant column.</span>
 
 
@@ -231,7 +233,7 @@
     <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
             <span class="c1"># Treat None as np.nan</span>
-            <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">el</span> <span class="k">if</span> <span class="n">el</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]],</span> <span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">el</span> <span class="k">if</span> <span class="n">el</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]],</span> <span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">util</span><span class="o">.</span><span class="n">is_category</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
                     <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
@@ -274,7 +276,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapping_values</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_missing</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
             
             <span class="c1"># elif self._handle_missing[col] == &#39;value&#39;:</span>
             <span class="c1">#test_count.py failing     self.mapping[col].loc[-2] = 0</span>

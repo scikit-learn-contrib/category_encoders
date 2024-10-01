@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.ordinal &mdash; Category Encoders 2.6.3 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>category_encoders.ordinal &mdash; Category Encoders 2.6.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=bbbb9706"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=703207cb"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +34,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.3
+                2.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -289,7 +291,11 @@
 
                 <span class="c1"># Convert to object to accept np.nan (dtype string doesn&#39;t)</span>
                 <span class="c1"># fillna changes None and pd.NA to np.nan</span>
-                <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;object&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">col_mapping</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s1">&#39;future.no_silent_downcasting&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                        <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;object&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">col_mapping</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">pd</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">OptionError</span><span class="p">:</span>  <span class="c1"># old pandas versions</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;object&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">col_mapping</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">util</span><span class="o">.</span><span class="n">is_category</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
                     <span class="n">nan_identity</span> <span class="o">=</span> <span class="n">col_mapping</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">col_mapping</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">add_categories</span><span class="p">(</span><span class="n">nan_identity</span><span class="p">)</span>

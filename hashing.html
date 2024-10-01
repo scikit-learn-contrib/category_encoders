@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hashing &mdash; Category Encoders 2.6.3 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Hashing &mdash; Category Encoders 2.6.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=bbbb9706"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=703207cb"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
@@ -35,7 +37,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.3
+                2.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -114,7 +116,7 @@
 <h1>Hashing<a class="headerlink" href="#hashing" title="Permalink to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.hashing.HashingEncoder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.hashing.</span></span><span class="sig-name descname"><span class="pre">HashingEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_invariant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'md5'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/hashing.html#HashingEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.hashing.HashingEncoder" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.hashing.</span></span><span class="sig-name descname"><span class="pre">HashingEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_invariant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'md5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_creation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fork'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/hashing.html#HashingEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.hashing.HashingEncoder" title="Permalink to this definition"></a></dt>
 <dd><p>A multivariate hashing implementation with configurable dimensionality/precision.</p>
 <p>The advantage of this encoder is that it does not maintain a dictionary of observed categories.
 Consequently, the encoder does not grow in size and accepts new values during data scoring
@@ -153,6 +155,12 @@ It is not recommended to set it larger than the default value.</p>
 </dd>
 <dt><strong>n_components: int</strong></dt><dd><p>how many bits to use to represent the feature. By default, we use 8 bits.
 For high-cardinality features, consider using up-to 32 bits.</p>
+</dd>
+<dt><strong>process_creation_method: string</strong></dt><dd><p>either “fork”, “spawn” or “forkserver” (availability depends on your 
+platform). See <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods">https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods</a>
+for more details and tradeoffs. Defaults to “fork” on linux/macos as it
+is the fastest option and to “spawn” on windows as it is the only one
+available</p>
 </dd>
 </dl>
 </dd>
@@ -210,7 +218,13 @@ For high-cardinality features, consider using up-to 32 bits.</p>
 <tr class="row-odd"><td><p><strong>get_feature_names</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>require_data</strong></p></td>
+<tr class="row-even"><td><p><strong>hash_chunk</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>hashing_trick_with_np_no_parallel</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>hashing_trick_with_np_parallel</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -229,11 +243,11 @@ will be encoded.</p>
 (otherwise it will be a numpy array).</p>
 </dd>
 <dt><strong>handle_missing: str</strong></dt><dd><p>how to handle missing values at fit time. Options are ‘error’, ‘return_nan’,
-and ‘value’. Default ‘value’, which treat NaNs as a countable category at
+and ‘value’. Default ‘value’, which treat nans as a countable category at
 fit time.</p>
 </dd>
 <dt><strong>handle_unknown: str, int or dict of {column</strong><span class="classifier">option, …}.</span></dt><dd><p>how to handle unknown labels at transform time. Options are ‘error’
-‘return_nan’, ‘value’ and int. Defaults to None which uses NaN behaviour
+‘return_nan’, ‘value’ and int. Defaults to None which uses nan behaviour
 specified at fit time. Passing an int will fill with this int value.</p>
 </dd>
 <dt><strong>kwargs: dict.</strong></dt><dd><p>additional encoder specific parameters like regularisation.</p>
@@ -284,7 +298,13 @@ specified at fit time. Passing an int will fill with this int value.</p>
 <tr class="row-odd"><td><p><strong>get_feature_names</strong></p></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><p><strong>require_data</strong></p></td>
+<tr class="row-even"><td><p><strong>hash_chunk</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>hashing_trick_with_np_no_parallel</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>hashing_trick_with_np_parallel</strong></p></td>
 <td></td>
 </tr>
 </tbody>
@@ -404,7 +424,7 @@ contained subobjects that are estimators.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.hashing.HashingEncoder.hashing_trick">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hashing_trick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashing_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'md5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/hashing.html#HashingEncoder.hashing_trick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.hashing.HashingEncoder.hashing_trick" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">hashing_trick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashing_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'md5'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/hashing.html#HashingEncoder.hashing_trick"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.hashing.HashingEncoder.hashing_trick" title="Permalink to this definition"></a></dt>
 <dd><p>A basic hashing implementation with configurable dimensionality/precision</p>
 <p>Performs the hashing trick on a pandas dataframe, <cite>X</cite>, using the hashing method from hashlib
 identified by <cite>hashing_method</cite>.  The number of output dimensions (<cite>N</cite>), and columns to hash (<cite>cols</cite>) are

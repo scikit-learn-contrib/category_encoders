@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.woe &mdash; Category Encoders 2.6.3 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>category_encoders.woe &mdash; Category Encoders 2.6.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=bbbb9706"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=703207cb"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +34,7 @@
             Category Encoders
           </a>
               <div class="version">
-                2.6.3
+                2.6.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -97,6 +99,7 @@
 <span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
 <span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
 <span class="kn">from</span> <span class="nn">sklearn.utils.random</span> <span class="kn">import</span> <span class="n">check_random_state</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jan Motl&#39;</span>
 
@@ -181,6 +184,7 @@
 
     <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># The label must be binary with values {0,1}</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="n">unique</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The target column y must be binary. But the target contains &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; unique value(s).&quot;</span><span class="p">)</span>
