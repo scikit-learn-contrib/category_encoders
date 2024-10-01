@@ -163,7 +163,7 @@ class TestOneHotEncoderTestCase(TestCase):
     def test_HandleMissingIgnore(self):
         train = pd.DataFrame({'x': ['A', 'B', np.nan],
                               'y': ['A', None, 'A'],
-                              'z': [np.NaN, 'B', 'B']})
+                              'z': [np.nan, 'B', 'B']})
         train['z'] = train['z'].astype('category')
 
         expected_result = pd.DataFrame({'x_A': [1, 0, 0],
@@ -176,7 +176,7 @@ class TestOneHotEncoderTestCase(TestCase):
         pd.testing.assert_frame_equal(result, expected_result)
 
     def test_HandleMissingIgnore_ExpectMappingUsed(self):
-        train = pd.DataFrame({'city': ['Chicago', np.NaN, 'Geneva']})
+        train = pd.DataFrame({'city': ['Chicago', np.nan, 'Geneva']})
         expected_result = pd.DataFrame({'city_1': [1, 0, 0],
                                         'city_2': [0, 0, 1]})
 

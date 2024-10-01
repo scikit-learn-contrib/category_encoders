@@ -255,11 +255,11 @@ class BaseEncoder(BaseEstimator):
             (otherwise it will be a numpy array).
         handle_missing: str
             how to handle missing values at fit time. Options are 'error', 'return_nan',
-            and 'value'. Default 'value', which treat NaNs as a countable category at
+            and 'value'. Default 'value', which treat nans as a countable category at
             fit time.
         handle_unknown: str, int or dict of {column : option, ...}.
             how to handle unknown labels at transform time. Options are 'error'
-            'return_nan', 'value' and int. Defaults to None which uses NaN behaviour
+            'return_nan', 'value' and int. Defaults to None which uses nan behaviour
             specified at fit time. Passing an int will fill with this int value.
         kwargs: dict.
             additional encoder specific parameters like regularisation.

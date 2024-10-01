@@ -39,11 +39,11 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             (otherwise it will be a numpy array).
         handle_missing: str
             how to handle missing values at fit time. Options are 'error', 'return_nan',
-            and 'value'. Default 'value', which treat NaNs as a countable category at
+            and 'value'. Default 'value', which treat nans as a countable category at
             fit time.
         handle_unknown: str, int or dict of {column : option, ...}.
             how to handle unknown labels at transform time. Options are 'error'
-            'return_nan', 'value' and int. Defaults to None which uses NaN behaviour
+            'return_nan', 'value' and int. Defaults to None which uses nan behaviour
             specified at fit time. Passing an int will fill with this int value.
         normalize: bool or dict of {column : bool, ...}.
             whether to normalize the counts to the range (0, 1). See Pandas `value_counts`
@@ -62,9 +62,9 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             Note: The default name can be long and may keep changing, for example, 
             in cross-validation.
         combine_min_nan_groups: bool or dict of {column : bool, ...}.
-            whether to combine the leftovers group with NaN group. Default True. Can
+            whether to combine the leftovers group with nan group. Default True. Can
             also be forced to combine with 'force' meaning small groups are effectively
-            counted as NaNs. Force can only be used when 'handle_missing' is 'value' or 'error'.
+            counted as nans. Force can only be used when 'handle_missing' is 'value' or 'error'.
             Note: Will not force if it creates a binary or invariant column.
 
 
@@ -137,7 +137,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     def _transform(self, X):
         for col in self.cols:
             # Treat None as np.nan
-            X[col] = pd.Series([el if el is not None else np.NaN for el in X[col]], index=X[col].index)
+            X[col] = pd.Series([el if el is not None else np.nan for el in X[col]], index=X[col].index)
             if self.handle_missing == "value":
                 if not util.is_category(X[col].dtype):
                     X[col] = X[col].fillna(np.nan)
@@ -180,7 +180,7 @@ class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             self.mapping[col] = mapping_values
 
             if self._handle_missing[col] == 'return_nan':
-                self.mapping[col][np.NaN] = np.NaN
+                self.mapping[col][np.nan] = np.nan
             
             # elif self._handle_missing[col] == 'value':
             #test_count.py failing     self.mapping[col].loc[-2] = 0

@@ -135,19 +135,19 @@ class TestOrdinalEncoder(TestCase):
         custom_mapping = [
             {
                 "col": "col1",
-                "mapping": {np.NaN: 0, "a": 1, "b": 2},
+                "mapping": {np.nan: 0, "a": 1, "b": 2},
             },  # The mapping from the documentation
-            {"col": "col2", "mapping": {np.NaN: -3, "x": 11, "y": 2}},
+            {"col": "col2", "mapping": {np.nan: -3, "x": 11, "y": 2}},
         ]
         custom_mapping_series = [
             {
                 "col": "col1",
-                "mapping": pd.Series({np.NaN: 0, "a": 1, "b": 2}),
+                "mapping": pd.Series({np.nan: 0, "a": 1, "b": 2}),
             },  # The mapping from the documentation
-            {"col": "col2", "mapping": pd.Series({np.NaN: -3, "x": 11, "y": 2})},
+            {"col": "col2", "mapping": pd.Series({np.nan: -3, "x": 11, "y": 2})},
         ]
 
-        train = pd.DataFrame({"col1": ["a", "a", "b", np.NaN], "col2": ["x", "y", np.NaN, np.NaN]})
+        train = pd.DataFrame({"col1": ["a", "a", "b", np.nan], "col2": ["x", "y", np.nan, np.nan]})
 
         for mapping in [custom_mapping, custom_mapping_series]:
             with self.subTest():
@@ -168,7 +168,7 @@ class TestOrdinalEncoder(TestCase):
 
         self.assertEqual(expected, result)
 
-    def test_HaveNaNInTrain_ExpectCodedAsOne(self):
+    def test_HavenanInTrain_ExpectCodedAsOne(self):
         train = pd.DataFrame({"city": [np.nan]})
         expected = [1]
 
@@ -362,16 +362,16 @@ class TestOrdinalEncoder(TestCase):
         custom_mapping = [
             {
                 "col": "col1",
-                "mapping": {np.NaN: 0, "a": 1, "b": 2},
+                "mapping": {np.nan: 0, "a": 1, "b": 2},
             },  # The mapping from the documentation
-            {"col": "col2", "mapping": {np.NaN: -3, "x": 11, "y": 2}},
+            {"col": "col2", "mapping": {np.nan: -3, "x": 11, "y": 2}},
         ]
         expected_valid_mapping = [
             {
                 "col": "col1",
-                "mapping": pd.Series({np.NaN: 0, "a": 1, "b": 2}),
+                "mapping": pd.Series({np.nan: 0, "a": 1, "b": 2}),
             },  # The mapping from the documentation
-            {"col": "col2", "mapping": pd.Series({np.NaN: -3, "x": 11, "y": 2})},
+            {"col": "col2", "mapping": pd.Series({np.nan: -3, "x": 11, "y": 2})},
         ]
         enc = encoders.OrdinalEncoder()
         actual_valid_mapping = enc._validate_supplied_mapping(custom_mapping)

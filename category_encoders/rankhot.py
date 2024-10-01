@@ -154,7 +154,7 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     elif self.handle_missing == "return_nan":
                         return [np.nan] * len(default_value)
                     else:
-                        raise ValueError("Unhandled NaN")
+                        raise ValueError("Unhandled nan")
                 return encoding_dict.get(row.iloc[0], default_value)
 
             encoded = encode_feature_series.to_frame().apply(apply_coding, axis=1, result_type="expand")
