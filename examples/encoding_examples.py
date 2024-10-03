@@ -6,6 +6,7 @@ import gc
 import time
 import warnings
 
+import category_encoders
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -14,7 +15,6 @@ from sklearn.exceptions import DataConversionWarning
 from sklearn.model_selection import cross_validate
 from sklearn.preprocessing import StandardScaler
 
-import category_encoders
 from examples.source_data.loaders import get_cars_data
 
 warnings.filterwarnings(action='ignore', category=DataConversionWarning)
@@ -29,7 +29,6 @@ def score_models(clf, X, y, encoder, runs=1):
     Takes in a classifier that supports multiclass classification, and X and a y, and returns a cross validation score.
 
     """
-
     scores = []
 
     X_test = None
@@ -54,17 +53,20 @@ def main(loader, name):
     Here we iterate through the datasets and score them with a classifier using different encodings.
 
     """
-
     scores = []
     raw_scores_ds = {}
 
     # first get the dataset
     X, y, mapping = loader()
 
-    clf = linear_model.LogisticRegression(solver='lbfgs', multi_class='auto', max_iter=200, random_state=0)
+    clf = linear_model.LogisticRegression(
+        solver='lbfgs', multi_class='auto', max_iter=200, random_state=0
+    )
 
     # try each encoding method available, which works on multiclass problems
-    encoders = (set(category_encoders.__all__) - {'WOEEncoder'})  # WoE is currently only for binary targets
+    encoders = set(category_encoders.__all__) - {
+        'WOEEncoder'
+    }  # WoE is currently only for binary targets
 
     for encoder_name in encoders:
         encoder = getattr(category_encoders, encoder_name)
@@ -74,7 +76,17 @@ def main(loader, name):
         raw_scores_ds[encoder_name] = raw_scores
         gc.collect()
 
-    results = pd.DataFrame(scores, columns=['Encoding', 'Dataset', 'Dimensionality', 'Avg. Score', 'Score StDev', 'Elapsed Time'])
+    results = pd.DataFrame(
+        scores,
+        columns=[
+            'Encoding',
+            'Dataset',
+            'Dimensionality',
+            'Avg. Score',
+            'Score StDev',
+            'Elapsed Time',
+        ],
+    )
 
     raw = pd.DataFrame.from_dict(raw_scores_ds)
     ax = raw.plot(kind='box', return_type='axes')

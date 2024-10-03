@@ -15,5 +15,12 @@ if __name__ == '__main__':
     # normalize compression
     df['compression (smaller better)'] = df['final_df_size(MB)'] / df['initial_df_size(MB)']
 
-    df = df.reindex(columns=['dataset', 'version', 'memory_factor (smaller better)', 'compression (smaller better)'])
+    df = df.reindex(
+        columns=[
+            'dataset',
+            'version',
+            'memory_factor (smaller better)',
+            'compression (smaller better)',
+        ]
+    )
     print(df)

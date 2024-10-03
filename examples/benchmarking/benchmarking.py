@@ -1,7 +1,9 @@
-from memory_profiler import profile
 import gc
+
 import category_encoders as ce
-from examples.source_data.loaders import get_mushroom_data, get_cars_data, get_splice_data
+from memory_profiler import profile
+
+from examples.source_data.loaders import get_mushroom_data
 
 __author__ = 'willmcginnis'
 
@@ -109,6 +111,7 @@ def sum_coding():
 def control():
     X, _, _ = get_mushroom_data()
     del X
+
 
 if __name__ == '__main__':
     gc.collect()

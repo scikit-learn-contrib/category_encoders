@@ -1,9 +1,11 @@
-import pandas as pd
+"""Unit tests for the Weight of Evidence encoder."""
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
-import tests.helpers as th
-import numpy as np
 
 import category_encoders as encoders
+import numpy as np
+import pandas as pd
+
+import tests.helpers as th
 
 np_X = th.create_array(n_rows=100)
 np_X_t = th.create_array(n_rows=50, extras=True)
@@ -16,8 +18,20 @@ y_t = pd.DataFrame(np_y_t)
 
 
 class TestWeightOfEvidenceEncoder(TestCase):
+    """Unit tests for the Weight of Evidence encoder."""
+
     def test_woe(self):
-        cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 'categorical', 'na_categorical', 'categorical_int']
+        """Test the Weight of Evidence encoder."""
+        cols = [
+            'unique_str',
+            'underscore',
+            'extra',
+            'none',
+            'invariant',
+            'categorical',
+            'na_categorical',
+            'categorical_int',
+        ]
 
         # balanced label with balanced features
         X_balanced = pd.DataFrame(data=['1', '1', '1', '2', '2', '2'], columns=['col1'])
@@ -25,37 +39,53 @@ class TestWeightOfEvidenceEncoder(TestCase):
         enc = encoders.WOEEncoder()
         enc.fit(X_balanced, y_balanced)
         X1 = enc.transform(X_balanced)
-        self.assertTrue(all(X1.sum() < 0.001),
-                        "When the class label is balanced, WoE should sum to 0 in each transformed column")
+        self.assertTrue(
+            all(X1.sum() < 0.001),
+            'When the class label is balanced, WoE should sum to 0 in each transformed column',
+        )
 
         enc = encoders.WOEEncoder(cols=cols)
         enc.fit(X, np_y)
         X1 = enc.transform(X_t)
         th.verify_numeric(X1[cols])
-        self.assertTrue(np.isfinite(X1[cols].to_numpy()).all(),
-                        'There must not be any nan, inf or -inf in the transformed columns')
+        self.assertTrue(
+            np.isfinite(X1[cols].to_numpy()).all(),
+            'There must not be any nan, inf or -inf in the transformed columns',
+        )
         self.assertEqual(len(list(X_t)), len(list(X1)), 'The count of attributes must not change')
         self.assertEqual(len(X_t), len(X1), 'The count of rows must not change')
         X2 = enc.transform(X_t, np_y_t)
         th.verify_numeric(X2)
-        self.assertTrue(np.isfinite(X2[cols].to_numpy()).all(),
-                        'There must not be any nan, inf or -inf in the transformed columns')
+        self.assertTrue(
+            np.isfinite(X2[cols].to_numpy()).all(),
+            'There must not be any nan, inf or -inf in the transformed columns',
+        )
         self.assertEqual(len(list(X_t)), len(list(X2)), 'The count of attributes must not change')
         self.assertEqual(len(X_t), len(X2), 'The count of rows must not change')
         X3 = enc.transform(X, np_y)
         th.verify_numeric(X3)
-        self.assertTrue(np.isfinite(X3[cols].to_numpy()).all(),
-                        'There must not be any nan, inf or -inf in the transformed columns')
+        self.assertTrue(
+            np.isfinite(X3[cols].to_numpy()).all(),
+            'There must not be any nan, inf or -inf in the transformed columns',
+        )
         self.assertEqual(len(list(X)), len(list(X3)), 'The count of attributes must not change')
         self.assertEqual(len(X), len(X3), 'The count of rows must not change')
-        self.assertTrue(X3['unique_str'].var() < 0.001, 'The unique string column must not be predictive of the label')
+        self.assertTrue(
+            X3['unique_str'].var() < 0.001,
+            'The unique string column must not be predictive of the label',
+        )
         X4 = enc.fit_transform(X, np_y)
         th.verify_numeric(X4)
-        self.assertTrue(np.isfinite(X4[cols].to_numpy()).all(),
-                        'There must not be any nan, inf or -inf in the transformed columns')
+        self.assertTrue(
+            np.isfinite(X4[cols].to_numpy()).all(),
+            'There must not be any nan, inf or -inf in the transformed columns',
+        )
         self.assertEqual(len(list(X)), len(list(X4)), 'The count of attributes must not change')
         self.assertEqual(len(X), len(X4), 'The count of rows must not change')
-        self.assertTrue(X4['unique_str'].var() < 0.001, 'The unique string column must not be predictive of the label')
+        self.assertTrue(
+            X4['unique_str'].var() < 0.001,
+            'The unique string column must not be predictive of the label',
+        )
 
         enc = encoders.WOEEncoder()
         enc.fit(X, np_y)
@@ -73,7 +103,7 @@ class TestWeightOfEvidenceEncoder(TestCase):
         enc.fit(X, np_y)
         X1 = enc.transform(X_t, np_y_t)
         X2 = enc.transform(X_t, np_y_t)
-        self.assertTrue(X1.equals(X2), "When the seed is given, the results must be identical")
+        self.assertTrue(X1.equals(X2), 'When the seed is given, the results must be identical')
         th.verify_numeric(X1)
         th.verify_numeric(X2)
 
@@ -109,39 +139,48 @@ class TestWeightOfEvidenceEncoder(TestCase):
         self.assertEqual(len(list(X_t)), len(list(X2)), 'The count of attributes must not change')
         self.assertEqual(len(X_t), len(X2), 'The count of rows must not change')
 
-    def test_HaveArrays_ExpectCalculatedProperly(self):
+    def test_expect_calculated_properly(self):
+        """Test that the expected value for the following tests is calculated properly."""
         X = ['a', 'a', 'b', 'b']
         y = [1, 0, 0, 0]
         enc = encoders.WOEEncoder()
 
         result = enc.fit_transform(X, y)
 
-        expected = pd.Series([0.5108256237659906, .5108256237659906, -0.587786664902119, -0.587786664902119], name=0)
+        expected = pd.Series(
+            [0.5108256237659906, 0.5108256237659906, -0.587786664902119, -0.587786664902119], name=0
+        )
         pd.testing.assert_series_equal(expected, result[0])
 
-    def test_HandleMissingValue_HaveMissingInTrain_ExpectEncoded(self):
-        X = ['a', 'a', np.nan, np.nan]
-        y = [1, 0, 0, 0]
-        enc = encoders.WOEEncoder(handle_missing='value')
+    def test_handle_missing_value(self):
+        """Test that missing values in the training set are encoded with the mean of the target."""
+        with self.subTest("with NaN in the training set."):
+            X = ['a', 'a', np.nan, np.nan]
+            y = [1, 0, 0, 0]
+            enc = encoders.WOEEncoder(handle_missing='value')
 
-        result = enc.fit_transform(X, y)
+            result = enc.fit_transform(X, y)
 
-        expected = pd.Series([0.5108256237659906, .5108256237659906, -0.587786664902119, -0.587786664902119], name=0)
-        pd.testing.assert_series_equal(expected, result[0])
+            expected = pd.Series(
+                [0.5108256237659906, 0.5108256237659906, -0.587786664902119, -0.587786664902119],
+                name=0
+            )
+            pd.testing.assert_series_equal(expected, result[0])
 
-    def test_HandleMissingValue_HaveMissingInTest_ExpectEncodedWithZero(self):
-        X = ['a', 'a', 'b', 'b']
-        y = [1, 0, 0, 0]
-        test = ['a', np.nan]
-        enc = encoders.WOEEncoder(handle_missing='value')
+        with self.subTest("without NaN in the training set."):
+            X = ['a', 'a', 'b', 'b']
+            y = [1, 0, 0, 0]
+            test = ['a', np.nan]
+            enc = encoders.WOEEncoder(handle_missing='value')
 
-        enc.fit(X, y)
-        result = enc.transform(test)
+            enc.fit(X, y)
+            result = enc.transform(test)
 
-        expected = pd.Series([0.5108256237659906, 0], name=0)
-        pd.testing.assert_series_equal(expected, result[0])
+            expected = pd.Series([0.5108256237659906, 0], name=0)
+            pd.testing.assert_series_equal(expected, result[0])
 
-    def test_HandleUnknownValue_HaveUnknown_ExpectEncodedWithZero(self):
+    def test_unknown_value_is_zero(self):
+        """Test that unknown values are encoded with zero."""
         X = ['a', 'a', 'b', 'b']
         y = [1, 0, 0, 0]
         test = ['a', 'c']

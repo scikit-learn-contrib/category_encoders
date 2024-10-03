@@ -1,12 +1,16 @@
-import pandas as pd
+"""Tests for the BaseNEncoder class."""
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
-import numpy as np
+
 import category_encoders as encoders
+import numpy as np
+import pandas as pd
 
 
 class TestBaseNEncoder(TestCase):
+    """Tests for the BaseNEncoder class."""
 
-    def test_fit_transform_have_base_2_expect_Correct_Encoding(self):
+    def test_fit_transform_have_base_2_expect_correct_encoding(self):
+        """Test the BaseNEncoder with base 2."""
         train = pd.Series(['a', 'b', 'c', 'd'])
 
         result = encoders.BaseNEncoder(base=2).fit_transform(train)
@@ -17,7 +21,8 @@ class TestBaseNEncoder(TestCase):
         self.assertListEqual([0, 1, 1], result.iloc[2, :].tolist())
         self.assertListEqual([1, 0, 0], result.iloc[3, :].tolist())
 
-    def test_inverse_transform_HaveData_ExpectResultReturned(self):
+    def test_inverse_transform(self):
+        """Test the BaseNEncoder inverse_transform method."""
         train = pd.Series(list('abcd')).to_frame('letter')
 
         enc = encoders.BaseNEncoder(base=2)
@@ -26,7 +31,8 @@ class TestBaseNEncoder(TestCase):
 
         pd.testing.assert_frame_equal(train, inversed_result)
 
-    def test_HaveIndicatorAndNanValue_ExpectNewColumn(self):
+    def test_handle_missing_indicator_with_nan(self):
+        """Test the BaseNEncoder with handle_missing='indicator'."""
         train = pd.Series(['a', 'b', 'c', np.nan])
 
         result = encoders.BaseNEncoder(handle_missing='indicator', base=2).fit_transform(train)
@@ -37,31 +43,34 @@ class TestBaseNEncoder(TestCase):
         self.assertListEqual([0, 1, 1], result.iloc[2, :].tolist())
         self.assertListEqual([1, 0, 0], result.iloc[3, :].tolist())
 
-    def test_HandleMissingIndicator_HaveNoNan_ExpectThirdColumn(self):
+    def test_handle_missing_indicator_without_nan(self):
+        """Test the BaseNEncoder with handle_missing='indicator'.
+
+        This should add a column for predict if there was no missing value in the training set.
+        """
         train = pd.Series(['a', 'b', 'c'])
 
-        result = encoders.BaseNEncoder(handle_missing='indicator', base=2).fit_transform(train)
+        encoder = encoders.BaseNEncoder(handle_missing='indicator', base=2)
+        result = encoder.fit_transform(train)
 
         self.assertEqual(3, result.shape[0])
         self.assertListEqual([0, 0, 1], result.iloc[0, :].tolist())
         self.assertListEqual([0, 1, 0], result.iloc[1, :].tolist())
         self.assertListEqual([0, 1, 1], result.iloc[2, :].tolist())
 
-    def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
-        train = pd.Series(['a', 'b', 'c'])
-        test = pd.Series(['a', 'b', 'c', np.nan])
+        with self.subTest("should work with a missing value in test set"):
+            test = pd.Series(['a', 'b', 'c', np.nan])
 
-        encoder = encoders.BaseNEncoder(handle_missing='indicator')
-        encoder.fit(train)
-        result = encoder.transform(test)
+            result = encoder.transform(test)
 
-        self.assertEqual(4, result.shape[0])
-        self.assertListEqual([0, 0, 1], result.iloc[0, :].tolist())
-        self.assertListEqual([0, 1, 0], result.iloc[1, :].tolist())
-        self.assertListEqual([0, 1, 1], result.iloc[2, :].tolist())
-        self.assertListEqual([1, 0, 0], result.iloc[3, :].tolist())
+            self.assertEqual(4, result.shape[0])
+            self.assertListEqual([0, 0, 1], result.iloc[0, :].tolist())
+            self.assertListEqual([0, 1, 0], result.iloc[1, :].tolist())
+            self.assertListEqual([0, 1, 1], result.iloc[2, :].tolist())
+            self.assertListEqual([1, 0, 0], result.iloc[3, :].tolist())
 
-    def test_HandleUnknown_HaveUnknown_ExpectIndicatorInTest(self):
+    def test_handle_unknown_indicator(self):
+        """Test the BaseNEncoder with handle_unknown='indicator'."""
         train = ['A', 'B', 'C']
         test = ['A', 'B', 'C', 'D']
 
@@ -75,7 +84,8 @@ class TestBaseNEncoder(TestCase):
         self.assertListEqual([0, 1, 1], result.iloc[2, :].tolist())
         self.assertListEqual([1, 0, 0], result.iloc[3, :].tolist())
 
-    def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
+    def test_handle_unknown_indicator_no_unknowns(self):
+        """Should create an indicator column even if no unknown values appear in the test set."""
         train = ['A', 'B']
 
         encoder = encoders.BaseNEncoder(handle_unknown='indicator')
@@ -85,62 +95,65 @@ class TestBaseNEncoder(TestCase):
         self.assertListEqual([0, 1], result.iloc[0, :].tolist())
         self.assertListEqual([1, 0], result.iloc[1, :].tolist())
 
-    def test_inverse_transform_HaveNanInTrainAndHandleMissingValue_ExpectReturnedWithNan(self):
+    def test_inverse_transform_have_nan_in_train(self):
+        """Test the BaseNEncoder inverse_transform method with NaN in the training set."""
         train = pd.DataFrame({'city': ['chicago', np.nan]})
 
-        enc = encoders.BaseNEncoder(handle_missing='value', handle_unknown='value')
-        result = enc.fit_transform(train)
-        original = enc.inverse_transform(result)
+        handle_missing = ["value", "return_nan"]
+        for handle_missing_strategy in handle_missing:
+            with self.subTest(f"Should work for handle_missing='{handle_missing_strategy}"):
+                enc = encoders.BaseNEncoder(handle_missing=handle_missing_strategy,
+                                            handle_unknown='value')
+                result = enc.fit_transform(train)
+                original = enc.inverse_transform(result)
+                pd.testing.assert_frame_equal(train, original)
 
-        pd.testing.assert_frame_equal(train, original)
+    def test_inverse_transform_not_supported_with_unknown_values(self):
+        """Test that inverse_transform is not supported if a nan could be either missing or unknown.
 
-    def test_inverse_transform_HaveNanInTrainAndHandleMissingReturnNan_ExpectReturnedWithNan(self):
-        train = pd.DataFrame({'city': ['chicago', np.nan]})
-
-        enc = encoders.BaseNEncoder(handle_missing='return_nan', handle_unknown='value')
-        result = enc.fit_transform(train)
-        original = enc.inverse_transform(result)
-
-        pd.testing.assert_frame_equal(train, original)
-
-    def test_inverse_transform_BothFieldsAreReturnNanWithNan_ExpectValueError(self):
+        This happens if both handle_missing and handle_unkown are set to 'return_nan'.
+        """
         train = pd.DataFrame({'city': ['chicago', np.nan]})
         test = pd.DataFrame({'city': ['chicago', 'los angeles']})
 
         enc = encoders.BaseNEncoder(handle_missing='return_nan', handle_unknown='return_nan')
         enc.fit(train)
         result = enc.transform(test)
-        
-        message = 'inverse_transform is not supported because transform impute '\
-                  'the unknown category nan when encode city'
 
-        with self.assertWarns(UserWarning, msg=message) as w:
+        message = (
+            'inverse_transform is not supported because transform impute '
+            'the unknown category nan when encode city'
+        )
+
+        with self.assertWarns(UserWarning, msg=message):
             enc.inverse_transform(result)
 
-    def test_inverse_transform_HaveMissingAndNoUnknown_ExpectInversed(self):
+    def test_inverse_transform_with_missing_and_unknown(self):
+        """Test the BaseNEncoder inverse_transform method with missing and unknown values.
+
+        In the case of handle_missing='value' and handle_unknown='return_nan',
+        the inverse_transform can distinguish between missing and unknown values and
+        hence should work. Unknown values are encoded as nan in the inverse.
+        """
         train = pd.DataFrame({'city': ['chicago', np.nan]})
-        test = pd.DataFrame({'city': ['chicago', 'los angeles']})
 
         enc = encoders.BaseNEncoder(handle_missing='value', handle_unknown='return_nan')
         enc.fit(train)
-        result = enc.transform(test)
-        original = enc.inverse_transform(result)
+        with self.subTest("should work with only unknown values"):
+            test = pd.DataFrame({'city': ['chicago', 'los angeles']})
+            result = enc.transform(test)
+            original = enc.inverse_transform(result)
+            pd.testing.assert_frame_equal(train, original)
 
-        pd.testing.assert_frame_equal(train, original)
+        with self.subTest("should inverse transform unknowns and missing values to NaN"):
+            test = pd.DataFrame({'city': ['chicago', np.nan, 'los angeles']})
+            expected = pd.DataFrame({'city': ['chicago', np.nan, np.nan]})
+            result = enc.transform(test)
+            original = enc.inverse_transform(result)
+            pd.testing.assert_frame_equal(expected, original)
 
-    def test_inverse_transform_HaveHandleMissingValueAndHandleUnknownReturnNan_ExpectBestInverse(self):
-        train = pd.DataFrame({'city': ['chicago', np.nan]})
-        test = pd.DataFrame({'city': ['chicago', np.nan, 'los angeles']})
-        expected = pd.DataFrame({'city': ['chicago', np.nan, np.nan]})
-
-        enc = encoders.BaseNEncoder(handle_missing='value', handle_unknown='return_nan')
-        enc.fit(train)
-        result = enc.transform(test)
-        original = enc.inverse_transform(result)
-
-        pd.testing.assert_frame_equal(expected, original)
-
-    def test_inverse_transform_HaveRegexMetacharactersInColumnName_ExpectInversed(self):
+    def test_inverse_transform_have_regex_metacharacters_in_column_name(self):
+        """Test the inverse_transform method with regex metacharacters in column name."""
         train = pd.DataFrame({'state (2-letter code)': ['il', 'ny', 'ca']})
 
         enc = encoders.BaseNEncoder()
@@ -151,8 +164,7 @@ class TestBaseNEncoder(TestCase):
         pd.testing.assert_frame_equal(train, original)
 
     def test_num_cols(self):
-        """
-        Test that BaseNEncoder produces the correct number of output columns.
+        """Test that BaseNEncoder produces the correct number of output columns.
 
         Since the value 0 is reserved for encoding unseen values, there need to be enough digits to
         represent up to nvals + 1 distinct encodings, where nvals is the number of distinct input
@@ -161,8 +173,9 @@ class TestBaseNEncoder(TestCase):
         This test specifically checks the case where BaseNEncoder is initialized with
         handle_unknown='value' and handle_missing='value' (i.e. the defaults).
         """
+
         def num_cols(nvals, base):
-            """Returns the number of columns output for a given number of distinct input values"""
+            """Returns the number of columns output for a given number of distinct input values."""
             vals = [str(i) for i in range(nvals)]
             df = pd.DataFrame({'vals': vals})
             encoder = encoders.BaseNEncoder(base=base)

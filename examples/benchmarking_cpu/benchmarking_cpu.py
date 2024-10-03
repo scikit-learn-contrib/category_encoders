@@ -1,9 +1,10 @@
-import psutil
-import time
-import pandas as pd
-import numpy as np
 import multiprocessing
+import time
+
 import category_encoders as encoders
+import numpy as np
+import pandas as pd
+import psutil
 import tests.helpers as th
 
 __author__ = 'LiuShulun'
@@ -28,7 +29,15 @@ benchmark_repeat = 3
 data_lines = 10000
 
 # benchmarking result format
-result_cols = ['encoder', 'used_processes', 'X_shape', 'min_time(s)', 'average_time(s)', 'max_cpu_utilization(%)', 'average_cpu_utilization(%)']
+result_cols = [
+    'encoder',
+    'used_processes',
+    'X_shape',
+    'min_time(s)',
+    'average_time(s)',
+    'max_cpu_utilization(%)',
+    'average_cpu_utilization(%)',
+]
 results = []
 cpu_utilization = multiprocessing.Manager().Queue()
 
@@ -38,7 +47,16 @@ np_y = np.random.randn(np_X.shape[0]) > 0.5
 X = th.create_dataset(n_rows=data_lines)
 X_t = th.create_dataset(n_rows=int(data_lines / 2), extras=True)
 
-cols = ['unique_str', 'underscore', 'extra', 'none', 'invariant', 321, 'categorical', 'na_categorical']
+cols = [
+    'unique_str',
+    'underscore',
+    'extra',
+    'none',
+    'invariant',
+    321,
+    'categorical',
+    'na_categorical',
+]
 
 
 def get_cpu_utilization():
@@ -65,7 +83,7 @@ for encoder_name in encoders.__all__:
         rsl = [encoder_name, index + 1, X.shape]
 
         if encoder_name == 'HashingEncoder':
-            enc = encoders.HashingEncoder(max_process=index+1, cols=cols)
+            enc = encoders.HashingEncoder(max_process=index + 1, cols=cols)
         else:
             enc = getattr(encoders, encoder_name)(cols=cols)
 

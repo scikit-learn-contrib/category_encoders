@@ -1,7 +1,9 @@
-import pandas as pd
-from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
-import numpy as np
+"""Unit tests for the SumEncoder."""
+from unittest import TestCase
+
 import category_encoders as encoders
+import numpy as np
+import pandas as pd
 
 a_encoding = [1, 1, 0]
 b_encoding = [1, 0, 1]
@@ -9,81 +11,69 @@ c_encoding = [1, -1, -1]
 
 
 class TestSumEncoder(TestCase):
+    """Unit tests for the SumEncoder."""
 
-    def test_sum_encoder_preserve_dimension_1(self):
+    def test_unknown_and_missing(self):
+        """Test the SumEncoder with the handle unknown = 'value' strategy."""
         train = ['A', 'B', 'C']
-        test = ['A', 'D', 'E']
 
         encoder = encoders.SumEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
-        test_t = encoder.transform(test)
+        dim_1_test = ['A', 'D', 'E']
+        dim_1_expected = [a_encoding, [1, 0, 0], [1, 0, 0]]
+        dim_2_test = ['B', 'D', 'E']
+        dim_2_expected = [b_encoding, [1, 0, 0], [1, 0, 0]]
+        dim_3_test = ['A', 'B', 'C', None]
+        dim_3_expected = [a_encoding, b_encoding, c_encoding, [1, 0, 0]]
 
-        expected = [a_encoding,
-                    [1, 0, 0],
-                    [1, 0, 0]]
-        self.assertEqual(test_t.to_numpy().tolist(), expected)
-
-    def test_sum_encoder_preserve_dimension_2(self):
-        train = ['A', 'B', 'C']
-        test = ['B', 'D', 'E']
-
-        encoder = encoders.SumEncoder(handle_unknown='value', handle_missing='value')
-        encoder.fit(train)
-        test_t = encoder.transform(test)
-
-        expected = [b_encoding,
-                    [1, 0, 0],
-                    [1, 0, 0]]
-        self.assertEqual(test_t.to_numpy().tolist(), expected)
-
-    def test_sum_encoder_preserve_dimension_3(self):
-        train = ['A', 'B', 'C']
-        test = ['A', 'B', 'C', None]
-
-        encoder = encoders.SumEncoder(handle_unknown='value', handle_missing='value')
-        encoder.fit(train)
-        test_t = encoder.transform(test)
-
-        expected = [a_encoding,
-                    b_encoding,
-                    c_encoding,
-                    [1, 0, 0]]
-        self.assertEqual(test_t.to_numpy().tolist(), expected)
-
-    def test_sum_encoder_preserve_dimension_4(self):
-        train = ['A', 'B', 'C']
-        test = ['D', 'B', 'C', None]
-
-        encoder = encoders.SumEncoder(handle_unknown='value', handle_missing='value')
-        encoder.fit(train)
-        test_t = encoder.transform(test)
-
-        expected = [[1, 0, 0],
-                    b_encoding,
-                    c_encoding,
-                    [1, 0, 0]]
-        self.assertEqual(test_t.to_numpy().tolist(), expected)
+        dim_4_test = ['D', 'B', 'C', None]
+        dim_4_expected = [[1, 0, 0], b_encoding, c_encoding, [1, 0, 0]]
+        cases = {"should preserve dimension 1": (dim_1_test, dim_1_expected),
+                 "should preserve dimension 2": (dim_2_test, dim_2_expected),
+                 "should preserve dimension 3": (dim_3_test, dim_3_expected),
+                 "should preserve dimension 4": (dim_4_test, dim_4_expected),
+                 }
+        for case, (test_data, expected) in cases.items():
+            with self.subTest(case=case):
+                test_t = encoder.transform(test_data)
+                self.assertEqual(test_t.to_numpy().tolist(), expected)
 
     def test_sum_encoder_2cols(self):
+        """Test the SumEncoder with two columns."""
         train = [['A', 'A'], ['B', 'B'], ['C', 'C']]
 
         encoder = encoders.SumEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
         obtained = encoder.transform(train)
 
-        expected = [[1, a_encoding[1], a_encoding[2], a_encoding[1], a_encoding[2]],
-                    [1, b_encoding[1], b_encoding[2], b_encoding[1], b_encoding[2]],
-                    [1, c_encoding[1], c_encoding[2], c_encoding[1], c_encoding[2]]]
+        expected = [
+            [1, a_encoding[1], a_encoding[2], a_encoding[1], a_encoding[2]],
+            [1, b_encoding[1], b_encoding[2], b_encoding[1], b_encoding[2]],
+            [1, c_encoding[1], c_encoding[2], c_encoding[1], c_encoding[2]],
+        ]
         self.assertEqual(obtained.to_numpy().tolist(), expected)
 
-    def test_sum_encoder_2StringCols_ExpectCorrectOrder(self):
-        train = pd.DataFrame({'col1': [1, 2, 3, 4],
-                              'col2': ['A', 'B', 'C', 'D'],
-                              'col3': [1, 2, 3, 4],
-                              'col4': ['A', 'B', 'C', 'A']
-                              },
-                             columns=['col1', 'col2', 'col3', 'col4'])
-        expected_columns = ['intercept', 'col1', 'col2_0', 'col2_1', 'col2_2', 'col3', 'col4_0', 'col4_1']
+    def test_multiple_columns_correct_order(self):
+        """Test that the order is correct when auto-detecting multiple columns."""
+        train = pd.DataFrame(
+            {
+                'col1': [1, 2, 3, 4],
+                'col2': ['A', 'B', 'C', 'D'],
+                'col3': [1, 2, 3, 4],
+                'col4': ['A', 'B', 'C', 'A'],
+            },
+            columns=['col1', 'col2', 'col3', 'col4'],
+        )
+        expected_columns = [
+            'intercept',
+            'col1',
+            'col2_0',
+            'col2_1',
+            'col2_2',
+            'col3',
+            'col4_0',
+            'col4_1',
+        ]
         encoder = encoders.SumEncoder(handle_unknown='value', handle_missing='value')
 
         encoder.fit(train)
@@ -91,59 +81,36 @@ class TestSumEncoder(TestCase):
 
         self.assertTrue(np.array_equal(expected_columns, columns))
 
-    def test_HandleMissingIndicator_NanInTrain_ExpectAsColumn(self):
-        train = ['A', 'B', np.nan]
+    def test_handle_missing_is_indicator(self):
+        """Test that missing values are encoded with an indicator column."""
+        with self.subTest("missing values in the training set are encoded with an "
+                          "indicator column"):
+            train = ['A', 'B', np.nan]
 
-        encoder = encoders.SumEncoder(handle_missing='indicator', handle_unknown='value')
-        result = encoder.fit_transform(train)
+            encoder = encoders.SumEncoder(handle_missing='indicator', handle_unknown='value')
+            result = encoder.fit_transform(train)
 
-        expected = [a_encoding,
-                    b_encoding,
-                    c_encoding]
-        self.assertTrue(np.array_equal(result.to_numpy().tolist(), expected))
+            expected = [a_encoding, b_encoding, c_encoding]
+            self.assertListEqual(result.to_numpy().tolist(), expected)
 
-    def test_HandleMissingIndicator_HaveNoNan_ExpectSecondColumn(self):
-        train = ['A', 'B']
+        with self.subTest("should fit an indicator column for missing values "
+                          "even if not present in the training set"):
+            train = ['A', 'B']
 
-        encoder = encoders.SumEncoder(handle_missing='indicator', handle_unknown='value')
-        result = encoder.fit_transform(train)
+            encoder = encoders.SumEncoder(handle_missing='indicator', handle_unknown='value')
+            result = encoder.fit_transform(train)
 
-        expected = [a_encoding,
-                    b_encoding]
-        self.assertEqual(result.to_numpy().tolist(), expected)
+            expected = [a_encoding, b_encoding]
+            self.assertEqual(result.to_numpy().tolist(), expected)
 
-    def test_HandleMissingIndicator_NanNoNanInTrain_ExpectAsNanColumn(self):
-        train = ['A', 'B']
-        test = ['A', 'B', np.nan]
+            test = ['A', 'B', np.nan]
+            result = encoder.transform(test)
+            expected = [a_encoding, b_encoding, c_encoding]
+            self.assertEqual(result.to_numpy().tolist(), expected)
 
-        encoder = encoders.SumEncoder(handle_missing='indicator', handle_unknown='value')
-        encoder.fit(train)
-        result = encoder.transform(test)
-
-        expected = [a_encoding,
-                    b_encoding,
-                    c_encoding]
-        self.assertEqual(result.to_numpy().tolist(), expected)
-
-    def test_HandleUnknown_HaveNoUnknownInTrain_ExpectIndicatorInTest(self):
-        train = ['A', 'B']
-        test = ['A', 'B', 'C']
-
-        encoder = encoders.SumEncoder(handle_unknown='indicator', handle_missing='value')
-        encoder.fit(train)
-        result = encoder.transform(test)
-
-        expected = [a_encoding,
-                    b_encoding,
-                    c_encoding]
-        self.assertEqual(result.to_numpy().tolist(), expected)
-
-    def test_HandleUnknown_HaveOnlyKnown_ExpectSecondColumn(self):
-        train = ['A', 'B']
-
-        encoder = encoders.SumEncoder(handle_unknown='indicator', handle_missing='value')
-        result = encoder.fit_transform(train)
-
-        expected = [a_encoding,
-                    b_encoding]
-        self.assertEqual(result.to_numpy().tolist(), expected)
+            # unknown value should be encoded with value strategy,
+            # i.e. indicator 1 and all other columns zeros
+            test = ['A', 'B', 'C']
+            result = encoder.transform(test)
+            expected = [a_encoding, b_encoding, [1, 0, 0]]
+            self.assertEqual(result.to_numpy().tolist(), expected)

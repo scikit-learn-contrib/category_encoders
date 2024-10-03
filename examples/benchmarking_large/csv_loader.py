@@ -1,8 +1,5 @@
-import arff
 import numpy as np
 import pandas as pd
-import requests
-
 
 """
 Read data in arff format from URL. 
@@ -10,9 +7,11 @@ Read data in arff format from URL.
 E.g.: csv_loader.load('car.csv')
 
 """
+
+
 def load(file_name):
     # Load CSV from file
-    df = pd.read_csv('./datasets/article/' + file_name, sep = None, na_values='?')
+    df = pd.read_csv('./datasets/article/' + file_name, sep=None, na_values='?')
 
     # Target column estimation
     if 'class' in list(df):
@@ -83,7 +82,7 @@ def load(file_name):
     # Justification: OneHotEncoding and TargetEncoder work only with binary numerical output.
     # Approach: Take a majority class as 1 and the rest as 0.
     majority_class = y_unique[np.argmax(y_counts)]
-    df[target] = (df[target]==majority_class).astype('uint8')
+    df[target] = (df[target] == majority_class).astype('uint8')
 
     # Determine the count of folds that is not going to cause issues.
     # We identify the least common class label and then return min(10, minority_class_count).
@@ -98,7 +97,7 @@ def load(file_name):
 
     # Estimate, which columns are nominal. If there is no string column in the data, assume that all integers are nominal.
     nominal_columns = [key for key, value in X.dtypes.items() if ('object' in value.name)]
-    if len(nominal_columns)==0:
+    if len(nominal_columns) == 0:
         nominal_columns = [key for key, value in X.dtypes.items() if ('int' in value.name)]
 
     # Data type estimation
@@ -109,4 +108,3 @@ def load(file_name):
             pass
 
     return X, y, fold_count, nominal_columns
-

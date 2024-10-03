@@ -1,6 +1,12 @@
 unreleased
 ==========
 
+* Refactor: Use poetry as packaging tool
+* Refactor: Add more typing
+* Change `feature_names_in_` and `feature_names_out_` to `np.ndarray` instead of lists.
+* Breaking: Do not allow scalar values as target variable (of length 1) anymore
+* Breaking: Force dataframe column names to be strings.
+
 v2.6.4
 ======
 * fixed: Future Warning in Pandas

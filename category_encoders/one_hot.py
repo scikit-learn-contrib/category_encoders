@@ -1,29 +1,34 @@
-"""One-hot or dummy coding"""
+"""One-hot or dummy coding."""
+
+import warnings
+
 import numpy as np
 import pandas as pd
-import warnings
-from category_encoders.ordinal import OrdinalEncoder
+
 import category_encoders.utils as util
+from category_encoders.ordinal import OrdinalEncoder
 
 __author__ = 'willmcginnis'
 
 
 class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
-    """Onehot (or dummy) coding for categorical features, produces one feature per category, each binary.
+    """Onehot (or dummy) coding for categorical features, produces a binary feature per category.
 
     Parameters
     ----------
-
     verbose: int
         integer indicating verbosity of the output. 0 for none.
     cols: list
         a list of columns to encode, if None, all string columns will be encoded.
     drop_invariant: bool
-        boolean for whether or not to drop columns with 0 variance.
+        boolean for whether to drop columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+        boolean for whether to return a pandas DataFrame from transform
+        (otherwise it will be a numpy array).
     use_cat_names: bool
-        if True, category values will be included in the encoded column names. Since this can result in duplicate column names, duplicates are suffixed with '#' symbol until a unique name is generated.
+        if True, category values will be included in the encoded column names.
+        Since this can result in duplicate column names, duplicates are suffixed with '#'
+        symbol until a unique name is generated.
         If False, category indices will be used instead of the category values.
     handle_unknown: str
         options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
@@ -40,16 +45,25 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         'value' will encode a missing value as 0 in every dummy column.
         'indicator' will treat missingness as its own category, adding an additional dummy column
         (whether there are missing values in the training set or not).
-        'ignore' will encode missing values as 0 in every dummy column, NOT adding an additional category.
-        
+        'ignore' will encode missing values as 0 in every dummy column,
+        NOT adding an additional category.
+
 
     Example
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
     >>> from sklearn.datasets import fetch_openml
-    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
-    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
+    >>> bunch = fetch_openml(name='house_prices', as_frame=True)
+    >>> display_cols = [
+    ...     'Id',
+    ...     'MSSubClass',
+    ...     'MSZoning',
+    ...     'LotFrontage',
+    ...     'YearBuilt',
+    ...     'Heating',
+    ...     'CentralAir',
+    ... ]
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
     >>> enc = OneHotEncoder(cols=['CentralAir', 'Heating'], handle_unknown='indicator').fit(X, y)
@@ -58,23 +72,23 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 1460 entries, 0 to 1459
     Data columns (total 15 columns):
-     #   Column         Non-Null Count  Dtype  
-    ---  ------         --------------  -----  
+     #   Column         Non-Null Count  Dtype
+    ---  ------         --------------  -----
      0   Id             1460 non-null   float64
      1   MSSubClass     1460 non-null   float64
-     2   MSZoning       1460 non-null   object 
+     2   MSZoning       1460 non-null   object
      3   LotFrontage    1201 non-null   float64
      4   YearBuilt      1460 non-null   float64
-     5   Heating_1      1460 non-null   int64  
-     6   Heating_2      1460 non-null   int64  
-     7   Heating_3      1460 non-null   int64  
-     8   Heating_4      1460 non-null   int64  
-     9   Heating_5      1460 non-null   int64  
-     10  Heating_6      1460 non-null   int64  
-     11  Heating_-1     1460 non-null   int64  
-     12  CentralAir_1   1460 non-null   int64  
-     13  CentralAir_2   1460 non-null   int64  
-     14  CentralAir_-1  1460 non-null   int64  
+     5   Heating_1      1460 non-null   int64
+     6   Heating_2      1460 non-null   int64
+     7   Heating_3      1460 non-null   int64
+     8   Heating_4      1460 non-null   int64
+     9   Heating_5      1460 non-null   int64
+     10  Heating_6      1460 non-null   int64
+     11  Heating_-1     1460 non-null   int64
+     12  CentralAir_1   1460 non-null   int64
+     13  CentralAir_2   1460 non-null   int64
+     14  CentralAir_-1  1460 non-null   int64
     dtypes: float64(4), int64(10), object(1)
     memory usage: 171.2+ KB
     None
@@ -87,21 +101,37 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     .. [2] Gregory Carey (2003). Coding Categorical Variables, from
     http://ibgwww.colorado.edu/~carey/p5741ndir/Coding_Categorical_Variables.pdf
-    
+
     """
+
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.ONE_TO_N_UNIQUE
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
-                 handle_missing='value', handle_unknown='value', use_cat_names=False):
-        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
-                         handle_unknown=handle_unknown, handle_missing=handle_missing)
-        self.mapping = None
+    def __init__(
+        self,
+        verbose: int = 0,
+        cols: list[str] | None = None,
+        drop_invariant: bool = False,
+        return_df: bool = True,
+        handle_missing: str = 'value',
+        handle_unknown: str = 'value',
+        use_cat_names: bool = False,
+    ):
+        super().__init__(
+            verbose=verbose,
+            cols=cols,
+            drop_invariant=drop_invariant,
+            return_df=return_df,
+            handle_unknown=handle_unknown,
+            handle_missing=handle_missing,
+        )
+        self.mapping: list[dict[str, pd.DataFrame]] | None = None
         self.ordinal_encoder = None
         self.use_cat_names = use_cat_names
 
     @property
-    def category_mapping(self):
+    def category_mapping(self) -> list[dict[str, pd.DataFrame]] | None:
+        """Return the mapping."""
         return self.mapping
 
     def _fit(self, X, y=None, **kwargs):
@@ -110,7 +140,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             'return_nan': 'return_nan',
             'value': 'value',
             'indicator': 'return_nan',
-            'ignore': 'return_nan'
+            'ignore': 'return_nan',
         }[self.handle_missing]
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose,
@@ -121,7 +151,14 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         self.mapping = self.generate_mapping()
 
-    def generate_mapping(self):
+    def generate_mapping(self) -> list[dict[str, str | pd.DataFrame]] | None:
+        """Generate one-hot-encoding mapping.
+
+        The mapping is a list [
+        {'col': '<column name 1>', 'mapping': mapping_df},
+        ...
+        ]
+        """
         mapping = []
         found_column_counts = {}
 
@@ -146,18 +183,18 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                     append_nan_to_index = class_
                     continue
                 if self.use_cat_names:
-                    n_col_name = f"{col}_{cat_name}"
+                    n_col_name = f'{col}_{cat_name}'
                     found_count = found_column_counts.get(n_col_name, 0)
                     found_column_counts[n_col_name] = found_count + 1
                     n_col_name += '#' * found_count
                 else:
-                    n_col_name = f"{col}_{class_}"
+                    n_col_name = f'{col}_{class_}'
 
                 index.append(class_)
                 new_columns.append(n_col_name)
 
             if self.handle_unknown == 'indicator':
-                n_col_name = f"{col}_-1"
+                n_col_name = f'{col}_-1'
                 if self.use_cat_names:
                     found_count = found_column_counts.get(n_col_name, 0)
                     found_column_counts[n_col_name] = found_count + 1
@@ -178,7 +215,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             if self.handle_missing == 'return_nan':
                 base_df.loc[-2] = np.nan
-            elif self.handle_missing in ['value','ignore']:
+            elif self.handle_missing in ['value', 'ignore']:
                 base_df.loc[-2] = 0
 
             mapping.append({'col': col, 'mapping': base_df})
@@ -195,7 +232,7 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         X = self.get_dummies(X)
         return X
 
-    def inverse_transform(self, X_in):
+    def inverse_transform(self, X_in: util.X_type) -> pd.DataFrame | np.ndarray:
         """
         Perform the inverse transformation to encoded data.
 
@@ -208,7 +245,6 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         p: array, the same size of X_in
 
         """
-
         # fail fast
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
@@ -221,8 +257,10 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         # then make sure that it is the right size
         if X.shape[1] != self._dim:
             if self.drop_invariant:
-                raise ValueError(f"Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should "
-                                 "be False when transforming the data")
+                raise ValueError(
+                    f'Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should '
+                    'be False when transforming the data'
+                )
             else:
                 raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
@@ -237,14 +275,17 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
                 for col in self.cols:
                     if X[switch.get('col')].isna().any():
-                        warnings.warn("inverse_transform is not supported because transform impute "
-                                      f"the unknown category nan when encode {col}")
+                        warnings.warn(
+                            'inverse_transform is not supported because transform impute '
+                            f'the unknown category nan when encode {col}',
+                            stacklevel=4,
+                        )
 
         return X if self.return_df else X.to_numpy()
 
-    def get_dummies(self, X_in):
+    def get_dummies(self, X_in: pd.DataFrame) -> pd.DataFrame:
         """
-        Convert numerical variable into dummy variables
+        Convert numerical variable into dummy variables.
 
         Parameters
         ----------
@@ -255,7 +296,6 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         dummies : DataFrame
 
         """
-
         X = X_in.copy(deep=True)
 
         cols = X.columns.tolist()
@@ -269,21 +309,25 @@ class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             X = pd.concat([base_df, X], axis=1)
 
             old_column_index = cols.index(col)
-            cols[old_column_index: old_column_index + 1] = mod.columns
+            cols[old_column_index : old_column_index + 1] = mod.columns
 
         X = X.reindex(columns=cols)
 
         return X
 
-    def reverse_dummies(self, X, mapping):
+    @staticmethod
+    def reverse_dummies(
+        X: pd.DataFrame, mapping: list[dict[str, str | pd.DataFrame]]
+    ) -> pd.DataFrame:
         """
-        Convert dummy variable into numerical variables
+        Convert dummy variable into numerical variables.
 
         Parameters
         ----------
         X : DataFrame
         mapping: list-like
-              Contains mappings of column to be transformed to it's new columns and value represented
+              Contains mappings of column to be transformed to it's new columns and
+              value represented.
 
         Returns
         -------

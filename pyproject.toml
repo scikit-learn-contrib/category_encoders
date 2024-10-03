@@ -1,0 +1,61 @@
+[tool.poetry]
+name = "category_encoders"
+version = "2.6.4"
+description = "A package for encoding categorical variables for machine learning"
+authors = ["PaulWestenthanner <paul@westenthanner.dev>"]
+license = "BSD-3"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+numpy = ">=1.14.0"
+scikit-learn = ">=1.0.0"
+scipy = ">=1.0.0"
+statsmodels = ">=0.9.0"
+pandas = ">=1.0.5"
+patsy = ">=0.5.1"
+
+
+[tool.poetry.dev-dependencies]
+numpydoc = "^1.8.0"
+ruff = "^0.6.8"
+sphinx = "^7.4.7"
+sphinx_rtd_theme = "^2.0.0"
+pytest = "^8.3.3"
+pytest-subtests = "^0.14.1"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["category_encoders", "tests"]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "N",  # PEP8 naming convetions
+    "D"  # pydocstyle
+]
+ignore = [
+    "D401",  # imperative mood
+    "N803",  # allow X as a name for data
+    "N806",  # allow X as a name for data
+    "N816",  # allow mixed case names such as np_X_t as a name for data
+    "B023",  # todo re-add this rule
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

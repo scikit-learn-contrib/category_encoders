@@ -1,11 +1,14 @@
-"""BaseX encoding"""
+"""BaseX encoding."""
 
-import pandas as pd
-import numpy as np
 import re
-from category_encoders.ordinal import OrdinalEncoder
-import category_encoders.utils as util
 import warnings
+from typing import Any
+
+import numpy as np
+import pandas as pd
+
+import category_encoders.utils as util
+from category_encoders.ordinal import OrdinalEncoder
 
 __author__ = 'willmcginnis'
 
@@ -32,13 +35,14 @@ def _ceillogint(n, base):
 
 
 class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
-    """Base-N encoder encodes the categories into arrays of their base-N representation.  A base of 1 is equivalent to
-    one-hot encoding (not really base-1, but useful), a base of 2 is equivalent to binary encoding. N=number of actual
-    categories is equivalent to vanilla ordinal encoding.
+    """Base-N encoder encodes the categories into arrays of their base-N representation.
+
+    A base of 1 is equivalent to one-hot encoding (not really base-1, but useful),
+    a base of 2 is equivalent to binary encoding.
+    N=number of actual categories is equivalent to vanilla ordinal encoding.
 
     Parameters
     ----------
-
     verbose: int
         integer indicating verbosity of the output. 0 for none.
     cols: list
@@ -46,25 +50,35 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     drop_invariant: bool
         boolean for whether or not to drop columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+        boolean for whether to return a pandas DataFrame from transform
+        (otherwise it will be a numpy array).
     base: int
-        when the downstream model copes well with nonlinearities (like decision tree), use higher base.
+        when the downstream model copes well with nonlinearities (like decision tree),
+        use higher base.
     handle_unknown: str
-        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has unknown categories.  This can cause
-        unexpected changes in dimension in some cases.
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
+        Warning: if indicator is used, an extra column will be added in if the transform matrix
+        has unknown categories. This can cause unexpected changes in dimension in some cases.
     handle_missing: str
-        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'. Warning: if indicator is used,
-        an extra column will be added in if the transform matrix has nan values.  This can cause
-        unexpected changes in dimension in some cases.
+        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
+        Warning: if indicator is used, an extra column will be added in if the transform matrix
+        has nan values. This can cause unexpected changes in dimension in some cases.
 
     Example
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
     >>> from sklearn.datasets import fetch_openml
-    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
-    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
+    >>> bunch = fetch_openml(name='house_prices', as_frame=True)
+    >>> display_cols = [
+    ...     'Id',
+    ...     'MSSubClass',
+    ...     'MSZoning',
+    ...     'LotFrontage',
+    ...     'YearBuilt',
+    ...     'Heating',
+    ...     'CentralAir',
+    ... ]
     >>> y = bunch.target
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
     >>> enc = BaseNEncoder(cols=['CentralAir', 'Heating']).fit(X, y)
@@ -73,18 +87,18 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 1460 entries, 0 to 1459
     Data columns (total 10 columns):
-     #   Column        Non-Null Count  Dtype  
-    ---  ------        --------------  -----  
+     #   Column        Non-Null Count  Dtype
+    ---  ------        --------------  -----
      0   Id            1460 non-null   float64
      1   MSSubClass    1460 non-null   float64
-     2   MSZoning      1460 non-null   object 
+     2   MSZoning      1460 non-null   object
      3   LotFrontage   1201 non-null   float64
      4   YearBuilt     1460 non-null   float64
-     5   Heating_0     1460 non-null   int64  
-     6   Heating_1     1460 non-null   int64  
-     7   Heating_2     1460 non-null   int64  
-     8   CentralAir_0  1460 non-null   int64  
-     9   CentralAir_1  1460 non-null   int64  
+     5   Heating_0     1460 non-null   int64
+     6   Heating_1     1460 non-null   int64
+     7   Heating_2     1460 non-null   int64
+     8   CentralAir_0  1460 non-null   int64
+     9   CentralAir_1  1460 non-null   int64
     dtypes: float64(4), int64(5), object(1)
     memory usage: 114.2+ KB
     None
@@ -94,10 +108,25 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.N_TO_M
 
-    def __init__(self, verbose=0, cols=None, mapping=None, drop_invariant=False, return_df=True, base=2,
-                 handle_unknown='value', handle_missing='value'):
-        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
-                         handle_unknown=handle_unknown, handle_missing=handle_missing)
+    def __init__(
+        self,
+        verbose=0,
+        cols=None,
+        mapping=None,
+        drop_invariant=False,
+        return_df=True,
+        base=2,
+        handle_unknown='value',
+        handle_missing='value',
+    ):
+        super().__init__(
+            verbose=verbose,
+            cols=cols,
+            drop_invariant=drop_invariant,
+            return_df=return_df,
+            handle_unknown=handle_unknown,
+            handle_missing=handle_missing,
+        )
         self.mapping = mapping
         self.ordinal_encoder = None
         self.base = base
@@ -105,16 +134,21 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
     def _fit(self, X, y=None, **kwargs):
         # train an ordinal pre-encoder
         self.ordinal_encoder = OrdinalEncoder(
-            verbose=self.verbose,
-            cols=self.cols,
-            handle_unknown='value',
-            handle_missing='value'
+            verbose=self.verbose, cols=self.cols, handle_unknown='value', handle_missing='value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
-        self.mapping = self.fit_base_n_encoding(X)
+        self.mapping = self.fit_base_n_encoding()
 
-    def fit_base_n_encoding(self, X):
+    def fit_base_n_encoding(self) -> list[dict[str, Any]]:
+        """Fit the base n encoder.
+
+        Returns
+        -------
+        list[dict[str, Any]]
+            List containing encoding mappings for each column.
+
+        """
         mappings_out = []
 
         for switch in self.ordinal_encoder.category_mapping:
@@ -128,9 +162,11 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 values = np.append(values, -1)
 
             digits = self.calc_required_digits(values)
-            X_unique = pd.DataFrame(index=values,
-                                    columns=[f"{col}_{x}" for x in range(digits)],
-                                    data=np.array([self.col_transform(x, digits) for x in range(1, len(values) + 1)]))
+            X_unique = pd.DataFrame(
+                index=values,
+                columns=[f'{col}_{x}' for x in range(digits)],
+                data=np.array([self.col_transform(x, digits) for x in range(1, len(values) + 1)]),
+            )
 
             if self.handle_unknown == 'return_nan':
                 X_unique.loc[-1] = np.nan
@@ -169,12 +205,12 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         p: array, the same size of X_in
 
         """
-
         # fail fast
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
-        # unite the type into pandas dataframe (it makes the input size detection code easier...) and make deep copy
+        # unite the type into pandas dataframe. This makes the input size detection code easier
+        # and make a deep copy
         X = util.convert_input(X_in, columns=self.feature_names_out_, deep=True)
 
         X = self.basen_to_integer(X, self.cols, self.base)
@@ -182,8 +218,10 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         # make sure that it is the right size
         if X.shape[1] != self._dim:
             if self.drop_invariant:
-                raise ValueError(f"Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should "
-                                 "be False when transforming the data")
+                raise ValueError(
+                    f'Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should '
+                    'be False when transforming the data'
+                )
             else:
                 raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
@@ -198,13 +236,27 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             if self.handle_unknown == 'return_nan' and self.handle_missing == 'return_nan':
                 for col in self.cols:
                     if X[switch.get('col')].isna().any():
-                        warnings.warn("inverse_transform is not supported because transform impute "
-                                      f"the unknown category nan when encode {col}")
+                        warnings.warn(
+                            'inverse_transform is not supported because transform impute '
+                            f'the unknown category nan when encode {col}',
+                            stacklevel=4,
+                        )
 
         return X if self.return_df else X.to_numpy()
 
-    def calc_required_digits(self, values):
-        # figure out how many digits we need to represent the classes present
+    def calc_required_digits(self, values: list) -> int:
+        """Figure out how many digits we need to represent the classes present.
+
+        Parameters
+        ----------
+        values: list
+            list of values.
+
+        Returns
+        -------
+        int
+            number of digits necessary for encoding.
+        """
         if self.base == 1:
             digits = len(values) + 1
         else:
@@ -227,7 +279,6 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         dummies : DataFrame
 
         """
-
         X = X_in.copy(deep=True)
 
         cols = X.columns.tolist()
@@ -241,7 +292,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             X = pd.concat([base_df, X], axis=1)
 
             old_column_index = cols.index(col)
-            cols[old_column_index: old_column_index + 1] = mod.columns
+            cols[old_column_index : old_column_index + 1] = mod.columns
 
         return X.reindex(columns=cols)
 
@@ -266,7 +317,9 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         out_cols = X.columns.tolist()
 
         for col in cols:
-            col_list = [col0 for col0 in out_cols if re.match(re.escape(str(col))+'_\\d+', str(col0))]
+            col_list = [
+                col0 for col0 in out_cols if re.match(re.escape(str(col)) + '_\\d+', str(col0))
+            ]
             insert_at = out_cols.index(col_list[0])
 
             if base == 1:
@@ -281,10 +334,7 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         return X
 
     def col_transform(self, col, digits):
-        """
-        The lambda body to transform the column values
-        """
-
+        """The lambda body to transform the column values."""
         if col is None or float(col) < 0.0:
             return None
         else:
@@ -295,7 +345,25 @@ class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
                 return [0 for _ in range(digits - len(col))] + col
 
     @staticmethod
-    def number_to_base(n, b, limit):
+    def number_to_base(n: int, b: int, limit: int) -> list[int]:
+        """Convert number to base n representation (as list of digits).
+
+        The list will be of length `limit`.
+
+        Parameters
+        ----------
+        n: int
+            number to convert
+        b: int
+            base
+        limit: int
+            length of representation.
+
+        Returns
+        -------
+        list[int]
+            base n representation as list of length limit containing the digits.
+        """
         if b == 1:
             return [0 if n != _ else 1 for _ in range(limit)]
 

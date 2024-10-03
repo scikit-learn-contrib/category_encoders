@@ -1,36 +1,91 @@
-import pandas as pd
+"""Tests for the CountEncoder."""
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
-import numpy as np
+
 import category_encoders as encoders
+import numpy as np
+import pandas as pd
 
+X = pd.DataFrame(
+    {
+        'none': [
+            'A',
+            'A',
+            'B',
+            None,
+            None,
+            'C',
+            None,
+            'C',
+            None,
+            'B',
+            'A',
+            'A',
+            'C',
+            'B',
+            'B',
+            'A',
+            'A',
+            None,
+            'B',
+            None,
+        ],
+        'na_categorical': [
+            'A',
+            'A',
+            'C',
+            'A',
+            'B',
+            'C',
+            'C',
+            'A',
+            np.nan,
+            'B',
+            'A',
+            'C',
+            'C',
+            'A',
+            'B',
+            'C',
+            np.nan,
+            'A',
+            np.nan,
+            np.nan,
+        ],
+    }
+)
 
-X = pd.DataFrame({
-    'none': [
-        'A', 'A', 'B', None, None, 'C', None, 'C', None, 'B',
-        'A', 'A', 'C', 'B', 'B', 'A', 'A', None, 'B', None
-    ],
-    'na_categorical': [
-        'A', 'A', 'C', 'A', 'B', 'C', 'C', 'A', np.nan, 'B', 'A',
-        'C', 'C', 'A', 'B', 'C', np.nan, 'A', np.nan, np.nan
-    ]
-})
+X_t = pd.DataFrame(
+    {
+        'none': ['A', 'C', None, 'B', 'C', 'C', None, None, 'A', 'A', 'C', 'A', 'B', 'A', 'A'],
+        'na_categorical': [
+            'C',
+            'C',
+            'A',
+            'B',
+            'C',
+            'A',
+            np.nan,
+            'B',
+            'A',
+            'A',
+            'B',
+            np.nan,
+            'A',
+            np.nan,
+            'A',
+        ],
+    }
+)
 
-X_t = pd.DataFrame({
-    'none': [
-        'A', 'C', None, 'B', 'C', 'C', None, None, 'A',
-        'A', 'C', 'A', 'B', 'A', 'A'
-    ],
-    'na_categorical': [
-        'C', 'C', 'A', 'B', 'C', 'A', np.nan, 'B', 'A', 'A',
-        'B', np.nan, 'A', np.nan, 'A'
-    ]
-})
 
 class TestCountEncoder(TestCase):
+    """Unit tests for the CountEncoder."""
 
     def test_count_defaults(self):
-        """Test the defaults are working as expected on 'none' and 'categorical' 
-        which are the most extreme edge cases for the count encoder."""
+        """Test the defaults are working as expected on 'none' and 'categorical'.
+
+        These are the most extreme edge cases for the count encoder.
+        """
         enc = encoders.CountEncoder(verbose=1)
         enc.fit(X)
         out = enc.transform(X_t)
@@ -44,9 +99,7 @@ class TestCountEncoder(TestCase):
 
     def test_count_handle_missing_string(self):
         """Test the handle_missing string on 'none' and 'na_categorical'."""
-        enc = encoders.CountEncoder(
-            handle_missing='return_nan'
-        )
+        enc = encoders.CountEncoder(handle_missing='return_nan')
 
         enc.fit(X)
         out = enc.transform(X_t)
@@ -61,11 +114,11 @@ class TestCountEncoder(TestCase):
         self.assertTrue(out['na_categorical'].isna().sum() == 3)
 
     def test_count_handle_missing_dict(self):
-        """Test the handle_missing dict on 'none' and 'na_categorical'. 
-        We want to see differing behaviour between 'none' and 'na_cat' cols."""
-        enc = encoders.CountEncoder(
-            handle_missing={'na_categorical': 'return_nan'}
-        )
+        """Test the handle_missing dict on 'none' and 'na_categorical'.
+
+        We want to see differing behaviour between 'none' and 'na_cat' cols.
+        """
+        enc = encoders.CountEncoder(handle_missing={'na_categorical': 'return_nan'})
 
         enc.fit(X)
         out = enc.transform(X_t)
@@ -81,8 +134,10 @@ class TestCountEncoder(TestCase):
 
     def test_count_handle_unknown_string(self):
         """Test the handle_unknown string  on 'none' and 'na_categorical'.
+
         The 'handle_missing' must be set to 'return_nan' in order to test
-        'handle_unkown' correctly."""
+        'handle_unkown' correctly.
+        """
         enc = encoders.CountEncoder(
             handle_missing='return_nan',
             handle_unknown='return_nan',
@@ -103,10 +158,7 @@ class TestCountEncoder(TestCase):
         """Test the 'handle_unkown' dict with all non-default options."""
         enc = encoders.CountEncoder(
             handle_missing='return_nan',
-            handle_unknown={
-                'none': -1,
-                'na_categorical': 'return_nan'
-            },
+            handle_unknown={'none': -1, 'na_categorical': 'return_nan'},
         )
 
         enc.fit(X)
@@ -137,9 +189,7 @@ class TestCountEncoder(TestCase):
 
     def test_count_min_group_size_dict(self):
         """Test the min_group_size dict on 'none' and 'na_categorical'."""
-        enc = encoders.CountEncoder(
-            min_group_size={'none': 6, 'na_categorical': 7}
-        )
+        enc = encoders.CountEncoder(min_group_size={'none': 6, 'na_categorical': 7})
 
         enc.fit(X)
         out = enc.transform(X_t)
@@ -155,10 +205,7 @@ class TestCountEncoder(TestCase):
 
     def test_count_combine_min_nan_groups_bool(self):
         """Test the min_nan_groups_bool on 'none' and 'na_categorical'."""
-        enc = encoders.CountEncoder(
-            min_group_size=7,
-            combine_min_nan_groups=False
-        )
+        enc = encoders.CountEncoder(min_group_size=7, combine_min_nan_groups=False)
 
         enc.fit(X)
         out = enc.transform(X_t)
@@ -174,14 +221,8 @@ class TestCountEncoder(TestCase):
     def test_count_combine_min_nan_groups_dict(self):
         """Test the combine_min_nan_groups dict  on 'none' and 'na_categorical'."""
         enc = encoders.CountEncoder(
-            min_group_size={
-                'none': 6,
-                'na_categorical': 7
-            },
-            combine_min_nan_groups={
-                'none': 'force',
-                'na_categorical': False
-            }
+            min_group_size={'none': 6, 'na_categorical': 7},
+            combine_min_nan_groups={'none': 'force', 'na_categorical': False},
         )
 
         enc.fit(X)
@@ -198,10 +239,7 @@ class TestCountEncoder(TestCase):
 
     def test_count_min_group_name_string(self):
         """Test the min_group_name string on 'none' and 'na_categorical'."""
-        enc = encoders.CountEncoder(
-            min_group_size=6,
-            min_group_name='dave'
-        )
+        enc = encoders.CountEncoder(min_group_size=6, min_group_name='dave')
 
         enc.fit(X)
 
@@ -213,12 +251,8 @@ class TestCountEncoder(TestCase):
     def test_count_min_group_name_dict(self):
         """Test the min_group_name dict on 'none' and 'na_categorical'."""
         enc = encoders.CountEncoder(
-            min_group_size={
-                'none': 6, 'na_categorical': 6
-            },
-            min_group_name={
-                'none': 'dave', 'na_categorical': None
-            }
+            min_group_size={'none': 6, 'na_categorical': 6},
+            min_group_name={'none': 'dave', 'na_categorical': None},
         )
 
         enc.fit(X)
@@ -231,10 +265,7 @@ class TestCountEncoder(TestCase):
 
     def test_count_normalize_bool(self):
         """Test the normalize bool on 'none' and 'na_categorical'."""
-        enc = encoders.CountEncoder(
-            min_group_size=6,
-            normalize=True
-        )
+        enc = encoders.CountEncoder(min_group_size=6, normalize=True)
 
         enc.fit(X)
         out = enc.transform(X_t)
@@ -250,17 +281,14 @@ class TestCountEncoder(TestCase):
     def test_count_normalize_dict(self):
         """Test the normalize dict on 'none' and 'na_categorical'."""
         enc = encoders.CountEncoder(
-            min_group_size=7,
-            normalize={
-                'none': True, 'na_categorical': False
-            }
+            min_group_size=7, normalize={'none': True, 'na_categorical': False}
         )
 
         enc.fit(X)
         out = enc.transform(X_t)
 
         self.assertIn('none', enc._normalize)
-        self.assertTrue(out['none'].round(5).isin([0.3 , 0.15, 0.25]).all())
+        self.assertTrue(out['none'].round(5).isin([0.3, 0.15, 0.25]).all())
         self.assertEqual(out['none'].unique().shape[0], 3)
         self.assertEqual(out['none'].isna().sum(), 0)
         self.assertTrue(pd.Series([13, 7]).isin(out['na_categorical']).all())

@@ -1,13 +1,12 @@
-"""
-Base IO code for datasets
-"""
+"""Base IO code for datasets."""
 
 try:
-    from importlib.resources import files, as_file
+    from importlib.resources import as_file, files
 except ImportError:
-    from importlib_resources import files, as_file
+    from importlib_resources import as_file, files
 
 import pandas as pd
+
 
 def load_compass():
     """Return a dataframe for target encoding with 16 rows of compass directions.
@@ -24,8 +23,8 @@ def load_compass():
     y: A pandas series containing the target variable
 
     """
-    data_filename = "data/compass.csv"
-    stream = files("category_encoders.datasets") / data_filename
+    data_filename = 'data/compass.csv'
+    stream = files('category_encoders.datasets') / data_filename
 
     with as_file(stream) as f:
         df = pd.read_csv(f, encoding='latin-1')
@@ -59,8 +58,8 @@ def load_postcodes(target_type='binary'):
     y: A pandas series containing the target variable
 
     """
-    data_filename = "data/postcode_dataset_100.csv"
-    stream = files("category_encoders.datasets") / data_filename
+    data_filename = 'data/postcode_dataset_100.csv'
+    stream = files('category_encoders.datasets') / data_filename
 
     with as_file(stream) as f:
         df = pd.read_csv(f, encoding='latin-1')

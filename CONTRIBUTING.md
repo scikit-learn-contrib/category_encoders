@@ -16,14 +16,18 @@ How to Contribute
 The preferred workflow to contribute to git-pandas is:
 
  1. Fork this repository into your own github account.
- 2. Clone the fork on your account onto your local disk:
- 
+ 2. Clone the fork and install project via poetry:
+    ```
     $ git clone git@github.com:YourLogin/category_encoders.git
     $ cd category_encoders
+    $ poetry install
+    ```
     
  3. Create a branch for your new awesome feature, do not work in the master branch:
  
+    ```
     $ git checkout -b new-awesome-feature
+    ```
     
  4. Write some code, or docs, or tests.
  5. When you are done, submit a pull request.

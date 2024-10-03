@@ -1,13 +1,16 @@
-"""Generalized linear mixed model"""
-import warnings
+"""Generalized linear mixed model."""
+
 import re
+import warnings
+
 import numpy as np
 import pandas as pd
-from sklearn.utils.random import check_random_state
-from category_encoders.ordinal import OrdinalEncoder
-import category_encoders.utils as util
 import statsmodels.formula.api as smf
-from statsmodels.genmod.bayes_mixed_glm import BinomialBayesMixedGLM as bgmm
+from sklearn.utils.random import check_random_state
+from statsmodels.genmod.bayes_mixed_glm import BinomialBayesMixedGLM
+
+import category_encoders.utils as util
+from category_encoders.ordinal import OrdinalEncoder
 
 __author__ = 'Jan Motl'
 
@@ -15,26 +18,31 @@ __author__ = 'Jan Motl'
 class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """Generalized linear mixed model.
 
-    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+    Supported targets: binomial and continuous.
+    For polynomial target support, see PolynomialWrapper.
 
-    This is a supervised encoder similar to TargetEncoder or MEstimateEncoder, but there are some advantages:
+    This is a supervised encoder similar to TargetEncoder or MEstimateEncoder,
+    but there are some advantages:
 
-        1. Solid statistical theory behind the technique. Mixed effects models are a mature branch of statistics.
-        2. No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation
-        process. In short, the less observations a category has and/or the more the outcome varies for a category
-        then the higher the regularization towards "the prior" or "grand mean".
-        3. The technique is applicable for both continuous and binomial targets. If the target is continuous,
-        the encoder returns regularized difference of the observation's category from the global mean.
+        1. Solid statistical theory behind the technique.
+           Mixed effects models are a mature branch of statistics.
+        2. No hyper-parameters to tune. The amount of shrinkage is automatically determined
+           through the estimation process. In short, the less observations a category has and/or
+           the more the outcome varies for a category. Then the higher the regularization
+           towards "the prior" or "grand mean".
+        3. The technique is applicable for both continuous and binomial targets.
+           If the target is continuous, the encoder returns regularized difference of the
+           observation's category from the global mean.
 
     If the target is binomial, the encoder returns regularized log odds per category.
 
-    In comparison to JamesSteinEstimator, this encoder utilizes generalized linear mixed models from statsmodels library.
+    In comparison to JamesSteinEstimator, this encoder utilizes generalized linear mixed models
+    from statsmodels library.
 
     Note: This is an alpha implementation. The API of the method may change in the future.
 
     Parameters
     ----------
-
     verbose: int
         integer indicating verbosity of the output. 0 for none.
     cols: list
@@ -42,13 +50,15 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     drop_invariant: bool
         boolean for whether or not to drop encoded columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+        boolean for whether to return a pandas DataFrame from transform
+        (otherwise it will be a numpy array).
     handle_missing: str
         options are 'return_nan', 'error' and 'value', defaults to 'value', which returns 0.
     handle_unknown: str
         options are 'return_nan', 'error' and 'value', defaults to 'value', which returns 0.
     randomized: bool,
-        adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
+        adds normal (Gaussian) distribution noise into training data in order to decrease
+        overfitting (testing data are untouched).
     sigma: float
         standard deviation (spread or "width") of the normal distribution.
     binomial_target: bool
@@ -61,8 +71,16 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     >>> from category_encoders import *
     >>> import pandas as pd
     >>> from sklearn.datasets import fetch_openml
-    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
-    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
+    >>> bunch = fetch_openml(name='house_prices', as_frame=True)
+    >>> display_cols = [
+    ...     'Id',
+    ...     'MSSubClass',
+    ...     'MSZoning',
+    ...     'LotFrontage',
+    ...     'YearBuilt',
+    ...     'Heating',
+    ...     'CentralAir',
+    ... ]
     >>> y = bunch.target > 200000
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
     >>> enc = GLMMEncoder(cols=['CentralAir', 'Heating']).fit(X, y)
@@ -71,11 +89,11 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 1460 entries, 0 to 1459
     Data columns (total 7 columns):
-     #   Column       Non-Null Count  Dtype  
-    ---  ------       --------------  -----  
+     #   Column       Non-Null Count  Dtype
+    ---  ------       --------------  -----
      0   Id           1460 non-null   float64
      1   MSSubClass   1460 non-null   float64
-     2   MSZoning     1460 non-null   object 
+     2   MSZoning     1460 non-null   object
      3   LotFrontage  1201 non-null   float64
      4   YearBuilt    1460 non-null   float64
      5   Heating      1460 non-null   float64
@@ -91,13 +109,31 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf
 
     """
+
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True, handle_unknown='value',
-                 handle_missing='value', random_state=None, randomized=False, sigma=0.05, binomial_target=None):
-        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
-                         handle_unknown=handle_unknown, handle_missing=handle_missing)
+    def __init__(
+        self,
+        verbose=0,
+        cols=None,
+        drop_invariant=False,
+        return_df=True,
+        handle_unknown='value',
+        handle_missing='value',
+        random_state=None,
+        randomized=False,
+        sigma=0.05,
+        binomial_target=None,
+    ):
+        super().__init__(
+            verbose=verbose,
+            cols=cols,
+            drop_invariant=drop_invariant,
+            return_df=return_df,
+            handle_unknown=handle_unknown,
+            handle_missing=handle_missing,
+        )
         self.ordinal_encoder = None
         self.mapping = None
         self.random_state = random_state
@@ -109,10 +145,7 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         y = y.astype(float)
 
         self.ordinal_encoder = OrdinalEncoder(
-            verbose=self.verbose,
-            cols=self.cols,
-            handle_unknown='value',
-            handle_missing='value'
+            verbose=self.verbose, cols=self.cols, handle_unknown='value', handle_missing='value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
@@ -131,9 +164,10 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         X = self._score(X, y)
         return X
 
-    def _more_tags(self):
+    def _more_tags(self) -> dict[str, bool]:
+        """Set scikit transformer tags."""
         tags = super()._more_tags()
-        tags["predict_depends_on_y"] = True
+        tags['predict_depends_on_y'] = True
         return tags
 
     def _train(self, X, y):
@@ -162,17 +196,25 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
                 try:
                     with warnings.catch_warnings():
-                        warnings.filterwarnings("ignore")
+                        warnings.filterwarnings('ignore')
                         if binomial_target:
-                            # Classification, returns (regularized) log odds per category as stored in vc_mean
-                            # Note: md.predict() returns: output = fe_mean + vcp_mean + vc_mean[category]
-                            md = bgmm.from_formula('target ~ 1', {'a': '0 + C(feature)'}, data).fit_vb()
-                            index_names = [int(float(re.sub(r'C\(feature\)\[(\S+)\]', r'\1', index_name))) for index_name in md.model.vc_names]
+                            # Classification, returns (regularized) log odds per category as
+                            # stored in vc_mean
+                            # Note: md.predict() returns:
+                            # output = fe_mean + vcp_mean + vc_mean[category]
+                            md = BinomialBayesMixedGLM.from_formula(
+                                'target ~ 1', {'a': '0 + C(feature)'}, data
+                            ).fit_vb()
+                            index_names = [
+                                int(float(re.sub(r'C\(feature\)\[(\S+)\]', r'\1', index_name)))
+                                for index_name in md.model.vc_names
+                            ]
                             estimate = pd.Series(md.vc_mean, index=index_names)
                         else:
-                            # Regression, returns (regularized) mean deviation of the observation's category from the global mean
+                            # Regression, returns (regularized) mean deviation of the
+                            # observation's category from the global mean
                             md = smf.mixedlm('target ~ 1', data, groups=data['feature']).fit()
-                            tmp = dict()
+                            tmp = {}
                             for key, value in md.random_effects.items():
                                 tmp[key] = value[0]
                             estimate = pd.Series(tmp)
@@ -208,13 +250,14 @@ class GLMMEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             # Randomization is meaningful only for training data -> we do it only if y is present
             if self.randomized and y is not None:
                 random_state_generator = check_random_state(self.random_state)
-                X[col] = (X[col] * random_state_generator.normal(1., self.sigma, X[col].shape[0]))
+                X[col] = X[col] * random_state_generator.normal(1.0, self.sigma, X[col].shape[0])
 
         return X
 
-    def _rename_and_merge(self, X, y, col):
-        """
-        Statsmodels requires:
+    def _rename_and_merge(self, X: pd.DataFrame, y: pd.Series, col: str) -> pd.DataFrame:
+        """Create a new DataFrame combining the column and target.
+
+         This is needed as statsmodels requires:
             1) unique column names
             2) non-numeric columns names
         Solution: internally rename the columns.
