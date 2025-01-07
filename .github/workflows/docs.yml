@@ -14,10 +14,10 @@ jobs:
           python -m pip install --upgrade pip wheel
           python -m pip install poetry
           poetry install
-      - name: Build Docs
-        uses: ammaraskar/sphinx-action@master
-        with:
-          docs-folder: "docs/"
+      - name: Directly build docs
+        run: |
+          pip install -r docs/requirements.txt
+          sphinx-build -D docs/source ./docs/build/html/
       - name: Deploy Docs
         uses: peaceiris/actions-gh-pages@v3
         with:
