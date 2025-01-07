@@ -5,9 +5,9 @@ import category_encoders as encoders
 import numpy as np
 import pandas as pd
 
-a_encoding = [1, 1, 0]
-b_encoding = [1, 0, 1]
-c_encoding = [1, -1, -1]
+a_encoding = [1, 0]
+b_encoding = [0, 1]
+c_encoding = [-1, -1]
 
 
 class TestSumEncoder(TestCase):
@@ -20,14 +20,14 @@ class TestSumEncoder(TestCase):
         encoder = encoders.SumEncoder(handle_unknown='value', handle_missing='value')
         encoder.fit(train)
         dim_1_test = ['A', 'D', 'E']
-        dim_1_expected = [a_encoding, [1, 0, 0], [1, 0, 0]]
+        dim_1_expected = [a_encoding, [0, 0], [0, 0]]
         dim_2_test = ['B', 'D', 'E']
-        dim_2_expected = [b_encoding, [1, 0, 0], [1, 0, 0]]
+        dim_2_expected = [b_encoding, [0, 0], [0, 0]]
         dim_3_test = ['A', 'B', 'C', None]
-        dim_3_expected = [a_encoding, b_encoding, c_encoding, [1, 0, 0]]
+        dim_3_expected = [a_encoding, b_encoding, c_encoding, [0, 0]]
 
         dim_4_test = ['D', 'B', 'C', None]
-        dim_4_expected = [[1, 0, 0], b_encoding, c_encoding, [1, 0, 0]]
+        dim_4_expected = [[0, 0], b_encoding, c_encoding, [0, 0]]
         cases = {"should preserve dimension 1": (dim_1_test, dim_1_expected),
                  "should preserve dimension 2": (dim_2_test, dim_2_expected),
                  "should preserve dimension 3": (dim_3_test, dim_3_expected),
@@ -47,9 +47,9 @@ class TestSumEncoder(TestCase):
         obtained = encoder.transform(train)
 
         expected = [
-            [1, a_encoding[1], a_encoding[2], a_encoding[1], a_encoding[2]],
-            [1, b_encoding[1], b_encoding[2], b_encoding[1], b_encoding[2]],
-            [1, c_encoding[1], c_encoding[2], c_encoding[1], c_encoding[2]],
+            a_encoding*2,
+            b_encoding*2,
+            c_encoding*2,
         ]
         self.assertEqual(obtained.to_numpy().tolist(), expected)
 
@@ -65,7 +65,6 @@ class TestSumEncoder(TestCase):
             columns=['col1', 'col2', 'col3', 'col4'],
         )
         expected_columns = [
-            'intercept',
             'col1',
             'col2_0',
             'col2_1',
@@ -108,9 +107,8 @@ class TestSumEncoder(TestCase):
             expected = [a_encoding, b_encoding, c_encoding]
             self.assertEqual(result.to_numpy().tolist(), expected)
 
-            # unknown value should be encoded with value strategy,
-            # i.e. indicator 1 and all other columns zeros
+            # unknown value should be encoded with value strategy, i.e. zeros for all columns
             test = ['A', 'B', 'C']
             result = encoder.transform(test)
-            expected = [a_encoding, b_encoding, [1, 0, 0]]
+            expected = [a_encoding, b_encoding, [0, 0]]
             self.assertEqual(result.to_numpy().tolist(), expected)

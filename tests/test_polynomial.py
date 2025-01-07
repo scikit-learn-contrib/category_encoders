@@ -7,9 +7,9 @@ import pandas as pd
 
 from tests.helpers import deep_round
 
-a_encoding = [1, -0.7071067811865476, 0.40824829046386313]
-b_encoding = [1, -5.551115123125783e-17, -0.8164965809277261]
-c_encoding = [1, 0.7071067811865475, 0.4082482904638631]
+a_encoding = [-0.7071067811865476, 0.40824829046386313]
+b_encoding = [-5.551115123125783e-17, -0.8164965809277261]
+c_encoding = [0.7071067811865475, 0.4082482904638631]
 
 
 class TestPolynomialEncoder(TestCase):
@@ -18,7 +18,7 @@ class TestPolynomialEncoder(TestCase):
     def test_handle_missing_and_unknown(self):
         """Test that missing and unknown values are treated as values."""
         train = ['A', 'B', 'C']
-        expected_encoding_unknown = [1, 0, 0]
+        expected_encoding_unknown = [0, 0]
         expected_1 = [a_encoding, expected_encoding_unknown, expected_encoding_unknown]
         expected_2 = [b_encoding, expected_encoding_unknown, expected_encoding_unknown]
         expected_3 = [a_encoding, b_encoding, c_encoding, expected_encoding_unknown]
@@ -44,9 +44,9 @@ class TestPolynomialEncoder(TestCase):
         obtained = encoder.transform(train)
 
         expected = [
-            [1, a_encoding[1], a_encoding[2], a_encoding[1], a_encoding[2]],
-            [1, b_encoding[1], b_encoding[2], b_encoding[1], b_encoding[2]],
-            [1, c_encoding[1], c_encoding[2], c_encoding[1], c_encoding[2]],
+            a_encoding* 2,
+            b_encoding* 2,
+            c_encoding* 2,
         ]
         self.assertEqual(deep_round(obtained.to_numpy().tolist()), deep_round(expected))
 
@@ -62,7 +62,6 @@ class TestPolynomialEncoder(TestCase):
             columns=['col1', 'col2', 'col3', 'col4'],
         )
         expected_columns = [
-            'intercept',
             'col1',
             'col2_0',
             'col2_1',
@@ -105,10 +104,10 @@ class TestPolynomialEncoder(TestCase):
             expected = [a_encoding, b_encoding, c_encoding]
             self.assertEqual(deep_round(result.to_numpy().tolist()), deep_round(expected))
 
-            # unknown value is encoded as zeros (only one at indicator)
+            # unknown value is encoded as zeros
             test = ['A', 'B', 'C']
             result = encoder.transform(test)
-            expected = [a_encoding, b_encoding, [1, 0, 0]]
+            expected = [a_encoding, b_encoding, [0, 0]]
             self.assertEqual(deep_round(result.to_numpy().tolist()), deep_round(expected))
 
 

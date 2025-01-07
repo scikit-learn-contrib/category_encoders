@@ -702,9 +702,13 @@ class TestEncoders(TestCase):
         )
         y = [0, 0, 1, 1, 1]
 
-        for encoder_name in set(encoders.__all__) - {
-            'CatBoostEncoder'
-        }:  # CatBoost does not generally deliver a constant column when the feature is constant
+        # CatBoost does not generally deliver a constant column when the feature is constant
+        # ContrastCoding schemes will always ignore invariant columns, even if set to false
+        encoders_to_ignore = {
+            'CatBoostEncoder', 'PolynomialEncoder', 'SumEncoder',
+            'BackwardDifferenceEncoder', 'HelmertEncoder'
+        }
+        for encoder_name in set(encoders.__all__) - encoders_to_ignore:
             with self.subTest(encoder_name=encoder_name):
                 enc1 = getattr(encoders, encoder_name)(drop_invariant=False)
                 enc2 = getattr(encoders, encoder_name)(drop_invariant=True)

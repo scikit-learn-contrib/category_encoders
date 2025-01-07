@@ -56,7 +56,6 @@ class BackwardDifferenceEncoder(BaseContrastEncoder):
     Data columns (total 12 columns):
      #   Column        Non-Null Count  Dtype
     ---  ------        --------------  -----
-     0   intercept     1460 non-null   int64
      1   Id            1460 non-null   float64
      2   MSSubClass    1460 non-null   float64
      3   MSZoning      1460 non-null   object
