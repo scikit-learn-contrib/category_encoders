@@ -1,11 +1,13 @@
-unreleased
+v.2.7.0
 ==========
 
 * Refactor: Use poetry as packaging tool
 * Refactor: Add more typing
+* Refactor: Add format checks
 * Change `feature_names_in_` and `feature_names_out_` to `np.ndarray` instead of lists.
-* Breaking: Do not allow scalar values as target variable (of length 1) anymore
-* Breaking: Force dataframe column names to be strings.
+* Fixed: Support python 3.11, 3.12, 3.13.
+* Breaking: Drop support for python 3.7, 3.8 and 3.9
+* Breaking: No longer add intercept in contrast coding schemes.
 
 v2.6.4
 ======

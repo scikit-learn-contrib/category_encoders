@@ -27,7 +27,7 @@ from category_encoders.sum_coding import SumEncoder
 from category_encoders.target_encoder import TargetEncoder
 from category_encoders.woe import WOEEncoder
 
-__version__ = '2.6.4'
+__version__ = '2.7.0'
 
 __author__ = 'willmcginnis', 'cmougan', 'paulwestenthanner'
 
