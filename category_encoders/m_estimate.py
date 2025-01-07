@@ -1,8 +1,10 @@
-"""M-probability estimate"""
+"""M-probability estimate."""
+
 import numpy as np
-from category_encoders.ordinal import OrdinalEncoder
-import category_encoders.utils as util
 from sklearn.utils.random import check_random_state
+
+import category_encoders.utils as util
+from category_encoders.ordinal import OrdinalEncoder
 
 __author__ = 'Jan Motl'
 
@@ -10,16 +12,16 @@ __author__ = 'Jan Motl'
 class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     """M-probability estimate of likelihood.
 
-    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.
+    Supported targets: binomial and continuous.
+    For polynomial target support, see PolynomialWrapper.
 
-    This is a simplified version of target encoder, which goes under names like m-probability estimate or
-    additive smoothing with known incidence rates. In comparison to target encoder, m-probability estimate
-    has only one tunable parameter (`m`), while target encoder has two tunable parameters (`min_samples_leaf`
-    and `smoothing`).
+    This is a simplified version of target encoder, which goes under names like m-probability
+    estimate or additive smoothing with known incidence rates. In comparison to target encoder,
+    m-probability estimate has only one tunable parameter (`m`), while target encoder has two
+    tunable parameters (`min_samples_leaf` and `smoothing`).
 
     Parameters
     ----------
-
     verbose: int
         integer indicating verbosity of the output. 0 for none.
     cols: list
@@ -27,26 +29,38 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     drop_invariant: bool
         boolean for whether or not to drop encoded columns with 0 variance.
     return_df: bool
-        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).
+        boolean for whether to return a pandas DataFrame from transform
+        (otherwise it will be a numpy array).
     handle_missing: str
-        options are 'return_nan', 'error' and 'value', defaults to 'value', which returns the prior probability.
+        options are 'return_nan', 'error' and 'value', defaults to 'value',
+        which returns the prior probability.
     handle_unknown: str
-        options are 'return_nan', 'error' and 'value', defaults to 'value', which returns the prior probability.
+        options are 'return_nan', 'error' and 'value', defaults to 'value',
+        which returns the prior probability.
     randomized: bool,
-        adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).
+        adds normal (Gaussian) distribution noise into training data in order to decrease
+        overfitting (testing data are untouched).
     sigma: float
         standard deviation (spread or "width") of the normal distribution.
     m: float
-        this is the "m" in the m-probability estimate. Higher value of m results into stronger shrinking.
-        M is non-negative.
+        this is the "m" in the m-probability estimate. Higher value of m results into stronger
+        shrinking. M is non-negative.
 
     Example
     -------
     >>> from category_encoders import *
     >>> import pandas as pd
     >>> from sklearn.datasets import fetch_openml
-    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
-    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
+    >>> bunch = fetch_openml(name='house_prices', as_frame=True)
+    >>> display_cols = [
+    ...     'Id',
+    ...     'MSSubClass',
+    ...     'MSZoning',
+    ...     'LotFrontage',
+    ...     'YearBuilt',
+    ...     'Heating',
+    ...     'CentralAir',
+    ... ]
     >>> y = bunch.target > 200000
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
     >>> enc = MEstimateEncoder(cols=['CentralAir', 'Heating']).fit(X, y)
@@ -55,11 +69,11 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 1460 entries, 0 to 1459
     Data columns (total 7 columns):
-     #   Column       Non-Null Count  Dtype  
-    ---  ------       --------------  -----  
+     #   Column       Non-Null Count  Dtype
+    ---  ------       --------------  -----
      0   Id           1460 non-null   float64
      1   MSSubClass   1460 non-null   float64
-     2   MSZoning     1460 non-null   object 
+     2   MSZoning     1460 non-null   object
      3   LotFrontage  1201 non-null   float64
      4   YearBuilt    1460 non-null   float64
      5   Heating      1460 non-null   float64
@@ -71,8 +85,8 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     References
     ----------
 
-    .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from
-    https://dl.acm.org/citation.cfm?id=507538
+    .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification
+    and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538
 
     .. [2] On estimating probabilities in tree pruning, equation 1, from
     https://link.springer.com/chapter/10.1007/BFb0017010
@@ -81,13 +95,31 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
     https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates
 
     """
+
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
 
-    def __init__(self, verbose=0, cols=None, drop_invariant=False, return_df=True,
-                 handle_unknown='value', handle_missing='value', random_state=None, randomized=False, sigma=0.05, m=1.0):
-        super().__init__(verbose=verbose, cols=cols, drop_invariant=drop_invariant, return_df=return_df,
-                         handle_unknown=handle_unknown, handle_missing=handle_missing)
+    def __init__(
+        self,
+        verbose=0,
+        cols=None,
+        drop_invariant=False,
+        return_df=True,
+        handle_unknown='value',
+        handle_missing='value',
+        random_state=None,
+        randomized=False,
+        sigma=0.05,
+        m=1.0,
+    ):
+        super().__init__(
+            verbose=verbose,
+            cols=cols,
+            drop_invariant=drop_invariant,
+            return_df=return_df,
+            handle_unknown=handle_unknown,
+            handle_missing=handle_missing,
+        )
         self.ordinal_encoder = None
         self.mapping = None
         self._sum = None
@@ -98,12 +130,8 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         self.m = m
 
     def _fit(self, X, y, **kwargs):
-
         self.ordinal_encoder = OrdinalEncoder(
-            verbose=self.verbose,
-            cols=self.cols,
-            handle_unknown='value',
-            handle_missing='value'
+            verbose=self.verbose, cols=self.cols, handle_unknown='value', handle_missing='value'
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
@@ -122,9 +150,10 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         X = self._score(X, y)
         return X
 
-    def _more_tags(self):
+    def _more_tags(self) -> dict[str, bool]:
+        """Set scikit transformer tags."""
         tags = super()._more_tags()
-        tags["predict_depends_on_y"] = True
+        tags['predict_depends_on_y'] = True
         return tags
 
     def _train(self, X, y):
@@ -134,7 +163,7 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         # Calculate global statistics
         self._sum = y.sum()
         self._count = y.count()
-        prior = self._sum/self._count
+        prior = self._sum / self._count
 
         for switch in self.ordinal_encoder.category_mapping:
             col = switch.get('col')
@@ -172,6 +201,6 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
             # Randomization is meaningful only for training data -> we do it only if y is present
             if self.randomized and y is not None:
                 random_state_generator = check_random_state(self.random_state)
-                X[col] = (X[col] * random_state_generator.normal(1., self.sigma, X[col].shape[0]))
+                X[col] = X[col] * random_state_generator.normal(1.0, self.sigma, X[col].shape[0])
 
         return X

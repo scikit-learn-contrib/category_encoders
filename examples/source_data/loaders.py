@@ -10,7 +10,6 @@ def get_cars_data():
 
     :return:
     """
-
     df = pd.read_csv('source_data/cars/car.data.txt')
     X = df.reindex(columns=[x for x in df.columns if x != 'class'])
     y = df.reindex(columns=['class'])
@@ -34,7 +33,6 @@ def get_mushroom_data():
 
     :return:
     """
-
     df = pd.read_csv('source_data/mushrooms/agaricus-lepiota.csv')
     X = df.reindex(columns=[x for x in df.columns if x != 'class'])
     y = df.reindex(columns=['class'])
@@ -52,12 +50,11 @@ def get_splice_data():
 
     :return:
     """
-
     df = pd.read_csv('source_data/splice/splice.csv')
     X = df.reindex(columns=[x for x in df.columns if x != 'class'])
     X['dna'] = X['dna'].map(lambda x: list(str(x).strip()))
     for idx in range(60):
-        X['dna_%d' % (idx, )] = X['dna'].map(lambda x: x[idx])
+        X['dna_%d' % (idx,)] = X['dna'].map(lambda x: x[idx])
     del X['dna']
 
     y = df.reindex(columns=['class'])

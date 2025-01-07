@@ -1,10 +1,15 @@
+"""Module for wrappers that add extra functionality to encoders."""
+
+from __future__ import annotations
+
 import copy
-from category_encoders import utils
+
+import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import StratifiedKFold
+
 import category_encoders as encoders
-import pandas as pd
-from typing import Dict, Optional
+from category_encoders import utils
 
 
 class PolynomialWrapper(BaseEstimator, TransformerMixin):
@@ -23,7 +28,6 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-
     feature_encoder: Object
         an instance of a supervised encoder.
 
@@ -34,10 +38,18 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
     >>> import pandas as pd
     >>> from sklearn.datasets import fetch_openml
     >>> from category_encoders.wrapper import PolynomialWrapper
-    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
-    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
+    >>> display_cols = [
+    ...     'Id',
+    ...     'MSSubClass',
+    ...     'MSZoning',
+    ...     'LotFrontage',
+    ...     'YearBuilt',
+    ...     'Heating',
+    ...     'CentralAir',
+    ... ]
+    >>> bunch = fetch_openml(name='house_prices', as_frame=True)
     >>> # need more than one column
-    >>> y = bunch.target.map(lambda x: int(min([x, 300000])/50000))
+    >>> y = bunch.target.map(lambda x: int(min([x, 300000]) / 50000))
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
     >>> enc = TargetEncoder(cols=['CentralAir', 'Heating'])
     >>> wrapper = PolynomialWrapper(enc)
@@ -46,11 +58,11 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
     <class 'pandas.core.frame.DataFrame'>
     RangeIndex: 1460 entries, 0 to 1459
     Data columns (total 17 columns):
-     #   Column        Non-Null Count  Dtype  
-    ---  ------        --------------  -----  
+     #   Column        Non-Null Count  Dtype
+    ---  ------        --------------  -----
      0   Id            1460 non-null   float64
      1   MSSubClass    1460 non-null   float64
-     2   MSZoning      1460 non-null   object 
+     2   MSZoning      1460 non-null   object
      3   LotFrontage   1201 non-null   float64
      4   YearBuilt     1460 non-null   float64
      5   CentralAir_3  1460 non-null   float64
@@ -71,21 +83,25 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, feature_encoder: utils.BaseEncoder):
+        """Init the polynomial wrapper."""
         self.feature_encoder: utils.BaseEncoder = feature_encoder
-        self.feature_encoders: Dict[str, utils.BaseEncoder] = {}
-        self.label_encoder: Optional[encoders.OneHotEncoder] = None
+        self.feature_encoders: dict[str, utils.BaseEncoder] = {}
+        self.label_encoder: encoders.OneHotEncoder | None = None
 
     def fit(self, X, y, **kwargs):
+        """Fit a multi-label encoder."""
         # unite the input into pandas types
         X, y = utils.convert_inputs(X, y)
         y = pd.DataFrame(y.rename('target'))
 
         # apply one-hot-encoder on the label
-        self.label_encoder = encoders.OneHotEncoder(handle_missing='error',
-                                                    handle_unknown='error',
-                                                    cols=['target'],
-                                                    drop_invariant=True,
-                                                    use_cat_names=True)
+        self.label_encoder = encoders.OneHotEncoder(
+            handle_missing='error',
+            handle_unknown='error',
+            cols=['target'],
+            drop_invariant=True,
+            use_cat_names=True,
+        )
         labels = self.label_encoder.fit_transform(y)
         labels.columns = [column[7:] for column in labels.columns]
         labels = labels.iloc[:, 1:]  # drop one label
@@ -96,6 +112,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
             self.feature_encoders[class_name] = copy.deepcopy(self.feature_encoder).fit(X, label)
 
     def transform(self, X, y=None):
+        """Encode new data."""
         # unite the input into pandas types
         X = utils.convert_input(X)
 
@@ -106,42 +123,50 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
 
         # transform the features
         if y is not None:
-            y = self.label_encoder.transform(pd.DataFrame({"target": y}))
+            y = self.label_encoder.transform(pd.DataFrame({'target': y}))
         for class_name, feature_encoder in self.feature_encoders.items():
             if y is not None:
-                y_transform = y[f"target_{class_name}"]
+                y_transform = y[f'target_{class_name}']
             else:
                 y_transform = None
             encoded = feature_encoder.transform(X, y_transform)
 
             # decorate the encoded features with the label class suffix
             new_features = encoded[feature_encoder.cols]
-            new_features.columns = [str(column) + '_' + class_name for column in new_features.columns]
+            new_features.columns = [
+                str(column) + '_' + class_name for column in new_features.columns
+            ]
 
             all_new_features = pd.concat((all_new_features, new_features), axis=1)
 
         # add features that were not encoded
-        result = pd.concat((encoded[encoded.columns[~encoded.columns.isin(feature_encoder.cols)]],
-                            all_new_features), axis=1)
+        result = pd.concat(
+            (
+                encoded[encoded.columns[~encoded.columns.isin(feature_encoder.cols)]],
+                all_new_features,
+            ),
+            axis=1,
+        )
 
         return result
 
     def fit_transform(self, X, y=None, **fit_params):
+        """Fit encoder and encode the training data."""
         self.fit(X, y, **fit_params)
         return self.transform(X, y)
 
 
 class NestedCVWrapper(BaseEstimator, TransformerMixin):
-    """
-    Extends supervised encoders with the nested cross validation on the training data to minimise overfitting.
+    """Cross validate supervised encoders to avoid overfitting.
 
     For a validation or a test set, supervised encoders can be used as follows:
 
         X_train_encoded = encoder.fit_transform(X_train, y_train)
         X_valid_encoded = encoder.transform(X_valid)
 
-    However, the downstream model will be overfitting to the encoded training data due to target leakage.
-    Using out-of-fold encodings is an effective way to prevent target leakage. This is equivalent to:
+    However, the downstream model will be overfitting to the encoded training data due to
+    target leakage. Using out-of-fold encodings is an effective way to prevent target leakage.
+    This is equivalent to:
 
         X_train_encoded = np.zeros(X.shape)
         for trn, val in kfold.split(X, y):
@@ -153,20 +178,22 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
 
     See README.md for a list of supervised encoders.
 
-    Discussion: Although leave-one-out encoder internally performs leave-one-out cross-validation, it is
-    actually the most overfitting supervised model in our library. To illustrate the issue, let's imagine we
-    have a totally unpredictive nominal feature and a perfectly balanced binary label. A supervised encoder
-    should encode the feature into a constant vector as the feature is unpredictive of the label. But when we
-    use leave-one-out cross-validation, the label ratio cease to be perfectly balanced and the wrong class
-    label always becomes the majority in the training fold. Leave-one-out encoder returns a seemingly
-    predictive feature. And the downstream model starts to overfit to the encoded feature. Unfortunately,
-    even 10-fold cross-validation is not immune to this effect:
+    Discussion: Although leave-one-out encoder internally performs leave-one-out cross-validation,
+    it is actually the most overfitting supervised model in our library.
+    To illustrate the issue, let's imagine we have a totally unpredictive nominal feature
+    and a perfectly balanced binary label. A supervised encoder should encode the feature into a
+    constant vector as the feature is unpredictive of the label.
+    But when we use leave-one-out cross-validation, the label ratio cease to be perfectly balanced
+    and the wrong class label always becomes the majority in the training fold.
+    Leave-one-out encoder returns a seemingly predictive feature.
+    And the downstream model starts to overfit to the encoded feature.
+    Unfortunately, even 10-fold cross-validation is not immune to this effect:
         http://www.kdd.org/exploration_files/v12-02-4-UR-Perlich.pdf
-    To decrease the effect, it is recommended to use a low count of the folds. And that is the reason why
-    this wrapper uses 5 folds by default.
+    To decrease the effect, it is recommended to use a low count of the folds.
+    And that is the reason why this wrapper uses 5 folds by default.
 
-    Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper. The remaining
-    encoders can be used without this wrapper.
+    Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper.
+    The remaining encoders can be used without this wrapper.
 
 
     Parameters
@@ -175,13 +202,16 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         an instance of a supervised encoder.
 
     cv: int or sklearn cv Object
-        if an int is given, StratifiedKFold is used by default, where the int is the number of folds.
+        if an int is given, StratifiedKFold is used by default, where the int
+        is the number of folds.
 
     shuffle: boolean, optional
-        whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided.
+        whether to shuffle each classes samples before splitting into batches.
+        Ignored if a CV method is provided.
 
     random_state: int, RandomState instance or None, optional, default=None
-        if int, random_state is the seed used by the random number generator. Ignored if a CV method is provided.
+        if int, random_state is the seed used by the random number generator.
+        Ignored if a CV method is provided.
 
 
     Example
@@ -191,8 +221,16 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
     >>> from category_encoders.wrapper import NestedCVWrapper
     >>> from sklearn.datasets import fetch_openml
     >>> from sklearn.model_selection import GroupKFold, train_test_split
-    >>> bunch = fetch_openml(name="house_prices", as_frame=True)
-    >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
+    >>> bunch = fetch_openml(name='house_prices', as_frame=True)
+    >>> display_cols = [
+    ...     'Id',
+    ...     'MSSubClass',
+    ...     'MSZoning',
+    ...     'LotFrontage',
+    ...     'YearBuilt',
+    ...     'Heating',
+    ...     'CentralAir',
+    ... ]
     >>> y = bunch.target > 200000
     >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
     >>> X_train, X_test, y_train, _ = train_test_split(X, y, random_state=42)
@@ -200,16 +238,18 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
     >>> # Define the nested CV encoder for a supervised encoder
     >>> enc_nested = NestedCVWrapper(TargetEncoder(cols=['CentralAir', 'Heating']), random_state=42)
     >>> # Encode the X data for train, valid & test
-    >>> X_train_enc, X_valid_enc, X_test_enc = enc_nested.fit_transform(X_train, y_train, X_test=(X_valid, X_test))
+    >>> X_train_enc, X_valid_enc, X_test_enc = enc_nested.fit_transform(
+    ...     X_train, y_train, X_test=(X_valid, X_test)
+    ... )
     >>> print(X_train_enc.info())
     <class 'pandas.core.frame.DataFrame'>
     Int64Index: 821 entries, 1390 to 896
     Data columns (total 7 columns):
-     #   Column       Non-Null Count  Dtype  
-    ---  ------       --------------  -----  
+     #   Column       Non-Null Count  Dtype
+    ---  ------       --------------  -----
      0   Id           821 non-null    float64
      1   MSSubClass   821 non-null    float64
-     2   MSZoning     821 non-null    object 
+     2   MSZoning     821 non-null    object
      3   LotFrontage  672 non-null    float64
      4   YearBuilt    821 non-null    float64
      5   Heating      821 non-null    float64
@@ -220,6 +260,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, feature_encoder, cv=5, shuffle=True, random_state=None):
+        """Init wrapper."""
         self.feature_encoder = feature_encoder
         self.__name__ = feature_encoder.__class__.__name__
         self.shuffle = shuffle
@@ -231,32 +272,32 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
             self.cv = cv
 
     def fit(self, X, y, **kwargs):
-        """
-        Calls fit on the base feature_encoder without nested cross validation
-        """
+        """Fit on the base feature_encoder without nested cross validation."""
         self.feature_encoder.fit(X, y, **kwargs)
 
     def transform(self, X):
-        """
-        Calls transform on the base feature_encoder without nested cross validation
-        """
+        """Transform on the base feature_encoder without nested cross validation."""
         return self.feature_encoder.transform(X)
 
     def fit_transform(self, X, y=None, X_test=None, groups=None, **fit_params):
-        """
-        Creates unbiased encodings from a supervised encoder as well as infer encodings on a test set
+        """Unbiased encodings from a supervised encoder and inference on test set.
+
         :param X: array-like, shape = [n_samples, n_features]
-                  Training vectors for the supervised encoder, where n_samples is the number of samples
+                  Training vectors for the supervised encoder,
+                  where n_samples is the number of samples
                   and n_features is the number of features.
         :param y: array-like, shape = [n_samples]
                   Target values for the supervised encoder.
-        :param X_test, optional: array-like, shape = [m_samples, n_features] or a tuple of array-likes (X_test, X_valid...)
-                       Vectors to be used for inference by an encoder (e.g. test or validation sets) trained on the
+        :param X_test, optional: array-like, shape = [m_samples, n_features]
+                       or a tuple of array-likes (X_test, X_valid...)
+                       Vectors to be used for inference by an encoder
+                       (e.g. test or validation sets) trained on the
                        full X & y sets. No nested folds are used here
         :param groups: Groups to be passed to the cv method, e.g. for GroupKFold
         :param fit_params:
         :return: array, shape = [n_samples, n_numeric + N]
-                 Transformed values with encoding applied. Returns multiple arrays if X_test is not None
+                 Transformed values with encoding applied.
+                 Returns multiple arrays if X_test is not None
         """
         X, y = utils.convert_inputs(X, y)
 
@@ -276,9 +317,9 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
             return out_of_fold
         else:
             if isinstance(X_test, tuple):
-                encoded_data = (out_of_fold, )
+                encoded_data = (out_of_fold,)
                 for dataset in X_test:
-                    encoded_data = encoded_data + (self.feature_encoder.transform(dataset), )
+                    encoded_data = encoded_data + (self.feature_encoder.transform(dataset),)
                 return encoded_data
             else:
                 return out_of_fold, self.feature_encoder.transform(X_test)

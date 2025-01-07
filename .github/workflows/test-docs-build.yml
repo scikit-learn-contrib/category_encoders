@@ -7,12 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10']
+        python-version: ['3.12']
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
           python-version: ${{ matrix.python-version }}
-    - uses: ammaraskar/sphinx-action@master
-      with:
-        docs-folder: "docs/"
+    - name: directly build sphinx (plugin only supports python 3.8)
+      run: |
+          pip install -r docs/requirements.txt
+          sphinx-build docs/source ./docs/build/html/

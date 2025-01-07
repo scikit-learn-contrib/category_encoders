@@ -3,16 +3,20 @@ import numpy as np
 import pandas as pd
 import requests
 
-
 """
 Read data in arff format from URL. 
 
 E.g.: arff_loader.load('car.arff')
 
 """
+
+
 def load(file_name):
     # Load ARFF from web
-    response = requests.get('https://raw.githubusercontent.com/renatopp/arff-datasets/master/classification/' + file_name)
+    response = requests.get(
+        'https://raw.githubusercontent.com/renatopp/arff-datasets/master/classification/'
+        + file_name
+    )
     html = response.text
     arff_f = arff.loads(html)
 
@@ -80,7 +84,7 @@ def load(file_name):
     # Justification: OneHotEncoding and TargetEncoder work only with binary numerical output.
     # Approach: Take a majority class as 1 and the rest as 0.
     majority_class = y_unique[np.argmax(y_counts)]
-    df[target] = (df[target]==majority_class).astype('uint8')
+    df[target] = (df[target] == majority_class).astype('uint8')
 
     # Determine the count of folds that is not going to cause issues.
     # We identify the least common class label and then return min(10, minority_class_count).
@@ -101,4 +105,3 @@ def load(file_name):
             pass
 
     return X, y, fold_count
-

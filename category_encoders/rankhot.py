@@ -1,17 +1,23 @@
+"""Rank Hot encoding."""
+
+from __future__ import annotations
+
 import numpy as np
 import pandas as pd
-from category_encoders import OrdinalEncoder
+
 import category_encoders.utils as util
+from category_encoders import OrdinalEncoder
 
 
 class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
-    """The rank-hot encoder is similar to a one-hot encoder,
+    """Rank Hot Encoder.
+
+    The rank-hot encoder is similar to a one-hot encoder,
     except every feature up to and including the current rank is hot.
     This is also called thermometer encoding.
 
     Parameters
     ----------
-
     verbose: int
         integer indicating verbosity of the output. 0 for none.
     cols: list
@@ -38,8 +44,16 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
      >>> from category_encoders import *
      >>> import pandas as pd
      >>> from sklearn.datasets import fetch_openml
-     >>> bunch = fetch_openml(name="house_prices", as_frame=True)
-     >>> display_cols = ["Id", "MSSubClass", "MSZoning", "LotFrontage", "YearBuilt", "Heating", "CentralAir"]
+     >>> bunch = fetch_openml(name='house_prices', as_frame=True)
+     >>> display_cols = [
+     ...     'Id',
+     ...     'MSSubClass',
+     ...     'MSZoning',
+     ...     'LotFrontage',
+     ...     'YearBuilt',
+     ...     'Heating',
+     ...     'CentralAir',
+     ... ]
      >>> y = bunch.target
      >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
      >>> enc = RankHotEncoder(cols=['CentralAir', 'Heating'], handle_unknown='indicator').fit(X, y)
@@ -48,21 +62,21 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
      <class 'pandas.core.frame.DataFrame'>
      RangeIndex: 1460 entries, 0 to 1459
      Data columns (total 13 columns):
-      #   Column        Non-Null Count  Dtype  
-     ---  ------        --------------  -----  
+      #   Column        Non-Null Count  Dtype
+     ---  ------        --------------  -----
       0   Id            1460 non-null   float64
       1   MSSubClass    1460 non-null   float64
-      2   MSZoning      1460 non-null   object 
+      2   MSZoning      1460 non-null   object
       3   LotFrontage   1201 non-null   float64
       4   YearBuilt     1460 non-null   float64
-      5   Heating_1     1460 non-null   int64  
-      6   Heating_2     1460 non-null   int64  
-      7   Heating_3     1460 non-null   int64  
-      8   Heating_4     1460 non-null   int64  
-      9   Heating_5     1460 non-null   int64  
-      10  Heating_6     1460 non-null   int64  
-      11  CentralAir_1  1460 non-null   int64  
-      12  CentralAir_2  1460 non-null   int64  
+      5   Heating_1     1460 non-null   int64
+      6   Heating_2     1460 non-null   int64
+      7   Heating_3     1460 non-null   int64
+      8   Heating_4     1460 non-null   int64
+      9   Heating_5     1460 non-null   int64
+      10  Heating_6     1460 non-null   int64
+      11  CentralAir_1  1460 non-null   int64
+      12  CentralAir_2  1460 non-null   int64
      dtypes: float64(4), int64(8), object(1)
      memory usage: 148.4+ KB
      None
@@ -73,14 +87,14 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
     def __init__(
         self,
-        verbose=0,
-        cols=None,
-        drop_invariant=False,
-        return_df=True,
-        handle_missing="value",
-        handle_unknown="value",
-        use_cat_names=None,
-    ):
+        verbose: int = 0,
+        cols: list[str] = None,
+        drop_invariant: bool = False,
+        return_df: bool = True,
+        handle_missing: str = 'value',
+        handle_unknown: str = 'value',
+        use_cat_names: bool = False,
+    ) -> None:
         super().__init__(
             verbose=verbose,
             cols=cols,
@@ -93,7 +107,7 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         self.mapping = None
         self.use_cat_names = use_cat_names
 
-    def _fit(self, X, y, **kwargs):
+    def _fit(self, X: pd.DataFrame, y: pd.Series, **kwargs) -> RankHotEncoder:
         oe_missing_strat = {
             'error': 'error',
             'return_nan': 'return_nan',
@@ -103,12 +117,21 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
         # supply custom mapping in order to assure order of ordinal variable
         ordered_mapping = []
         for col in self.cols:
-            oe_col = OrdinalEncoder(verbose=self.verbose, cols=[col], handle_unknown="value", handle_missing=oe_missing_strat)
+            oe_col = OrdinalEncoder(
+                verbose=self.verbose,
+                cols=[col],
+                handle_unknown='value',
+                handle_missing=oe_missing_strat,
+            )
             oe_col.fit(X[col].sort_values().to_frame(name=col))
             ordered_mapping += oe_col.mapping
 
         self.ordinal_encoder = OrdinalEncoder(
-            verbose=self.verbose, cols=self.cols, handle_unknown="value", handle_missing=oe_missing_strat, mapping=ordered_mapping
+            verbose=self.verbose,
+            cols=self.cols,
+            handle_unknown='value',
+            handle_missing=oe_missing_strat,
+            mapping=ordered_mapping,
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
 
@@ -116,108 +139,139 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
         return self
 
-    def _transform(self, X_in, override_return_df=False):
+    def _transform(self, X_in: pd.DataFrame, override_return_df: bool = False) -> pd.DataFrame:
         X = X_in.copy(deep=True)
         X = self.ordinal_encoder.transform(X)
         input_cols = X.columns.tolist()
 
-        if self.handle_unknown == "error":
+        if self.handle_unknown == 'error':
             if X[self.cols].isin([-1]).any().any():
-                raise ValueError("Columns to be encoded can not contain new values")
+                raise ValueError('Columns to be encoded can not contain new values')
 
-        for switch, ordinal_switch in zip(self.mapping, self.ordinal_encoder.category_mapping):
-            col = switch.get("col")
-            mod = switch.get("mapping")
+        for switch, _ordinal_switch in zip(
+            self.mapping, self.ordinal_encoder.category_mapping, strict=False
+        ):
+            col = switch.get('col')
+            mod = switch.get('mapping')
             encode_feature_series = X[col]
 
             unknow_elements = encode_feature_series[encode_feature_series == -1]
 
-            encoding_dict = {i: list(row.values()) for i, row in mod.to_dict(orient="index").items()}
-            if self.handle_unknown == "value":
+            encoding_dict = {
+                i: list(row.values()) for i, row in mod.to_dict(orient='index').items()
+            }
+            if self.handle_unknown == 'value':
                 default_value = [0] * len(encoding_dict)
-            elif self.handle_unknown == "return_nan":
+            elif self.handle_unknown == 'return_nan':
                 default_value = [np.nan] * len(encoding_dict)
-            elif self.handle_unknown == "error":
+            elif self.handle_unknown == 'error':
                 if not unknow_elements.empty:
                     unknowns_str = ', '.join([str(x) for x in unknow_elements.unique()])
-                    msg = f"Unseen values {unknowns_str} during transform in column {col}."
+                    msg = f'Unseen values {unknowns_str} during transform in column {col}.'
                     raise ValueError(msg)
                 default_value = [0] * len(encoding_dict)
             else:
-                raise ValueError(f"invalid option for 'handle_unknown' parameter: {self.handle_unknown}")
+                raise ValueError(
+                    f"invalid option for 'handle_unknown' parameter: {self.handle_unknown}"
+                )
 
             def apply_coding(row: pd.Series):
                 val = row.iloc[0]
                 if pd.isna(val):
-                    if self.handle_missing == "value":
+                    if self.handle_missing == 'value':
                         return default_value
-                    elif self.handle_missing == "return_nan":
+                    elif self.handle_missing == 'return_nan':
                         return [np.nan] * len(default_value)
                     else:
-                        raise ValueError("Unhandled nan")
+                        raise ValueError('Unhandled nan')
                 return encoding_dict.get(row.iloc[0], default_value)
 
-            encoded = encode_feature_series.to_frame().apply(apply_coding, axis=1, result_type="expand")
+            encoded = encode_feature_series.to_frame().apply(
+                apply_coding, axis=1, result_type='expand'
+            )
             encoded.columns = mod.columns
 
             X = pd.concat([encoded, X], axis=1)
 
             old_column_index = input_cols.index(col)
-            input_cols[old_column_index:old_column_index + 1] = mod.columns
+            input_cols[old_column_index : old_column_index + 1] = mod.columns
         X = X.reindex(columns=input_cols)
 
         return X
 
-    def create_dataframe(self, X, encoded, key_col):
-
+    def _create_dataframe(self, X, encoded, key_col) -> pd.DataFrame:
+        # todo find the correct types here, key col does not seem
+        #  like a list, probably this is not needed
         if not (isinstance(encoded, pd.DataFrame) or isinstance(encoded, pd.Series)):
             encoded = pd.DataFrame(encoded, columns=key_col)
 
         X_ = pd.concat([encoded, X], axis=1)
         return X_
 
-    def inverse_transform(self, X_in):
+    def inverse_transform(self, X_in: pd.DataFrame) -> pd.DataFrame:
+        """Inverse transformation.
+
+        This takes encoded data and gives back non-encoded data.
+
+        Parameters
+        ----------
+        X_in: data frame with rank-hot-encoded data.
+
+        Returns
+        -------
+        non-encoded data as a data frame.
+
+        """
         X = X_in.copy(deep=True)
         cols = X.columns.tolist()
         if self._dim is None:
-            raise ValueError("Must train encoder before it can be used to inverse_transform data")
+            raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
-        for switch, ordinal_mapping in zip(self.mapping, self.ordinal_encoder.category_mapping):
-            col = switch.get("col")
-            cats = switch.get("mapping")
-            if col != ordinal_mapping.get("col"):
-                raise ValueError("Column order of OrdinalEncoder and RankHotEncoder do not match")
-            inv_map = {v: k for k, v in ordinal_mapping.get("mapping").to_dict().items()}
+        for switch, ordinal_mapping in zip(
+            self.mapping, self.ordinal_encoder.category_mapping, strict=False
+        ):
+            col = switch.get('col')
+            cats = switch.get('mapping')
+            if col != ordinal_mapping.get('col'):
+                raise ValueError('Column order of OrdinalEncoder and RankHotEncoder do not match')
+            inv_map = {v: k for k, v in ordinal_mapping.get('mapping').to_dict().items()}
 
             arrs = X[cats.columns]
             reencode = arrs.sum(axis=1).rename(col)
 
-            orig_dtype = ordinal_mapping.get("data_type")
+            orig_dtype = ordinal_mapping.get('data_type')
             reencode2 = reencode.replace(inv_map).astype(orig_dtype)
             if np.any(reencode2[:] == 0):
                 reencode2[reencode2[:] == 0] = np.nan
 
-            X = self.create_dataframe(X, reencode2, col)
+            X = self._create_dataframe(X, reencode2, col)
 
             first_inex = cols.index(cats.columns[0])
             last_index = cols.index(cats.columns[-1]) + 1
 
             del cols[first_inex:last_index]
-            cols.insert(self.ordinal_encoder.feature_names_out_.index(col), col)
+            cols.insert(self.ordinal_encoder.feature_names_out_.tolist().index(col), col)
 
         X = X.reindex(columns=cols)
 
         return X
 
-    def generate_mapping(self):
+    def generate_mapping(self) -> list[dict[str, str | pd.DataFrame]]:
+        """Generate the mapping for rankhot encoding.
+
+        Returns
+        -------
+        List of dict containing colnames and their respective encoding.
+
+        """
         mapping = []
         found_column_counts = {}
 
         for switch in self.ordinal_encoder.mapping:
-            col: str = switch.get("col")
-            values: pd.Series = switch.get("mapping").copy(deep=True)
+            col: str = switch.get('col')
+            values: pd.Series = switch.get('mapping').copy(deep=True)
 
-            if self.handle_missing == "value":
+            if self.handle_missing == 'value':
                 values = values[values > 0]
 
             if len(values) == 0:
@@ -228,12 +282,12 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
 
             for cat_name, class_ in values.items():
                 if self.use_cat_names:
-                    n_col_name = f"{col}_{cat_name}"
+                    n_col_name = f'{col}_{cat_name}'
                     found_count = found_column_counts.get(n_col_name, 0)
                     found_column_counts[n_col_name] = found_count + 1
-                    n_col_name += "#" * found_count
+                    n_col_name += '#' * found_count
                 else:
-                    n_col_name = f"{col}_{class_}"
+                    n_col_name = f'{col}_{class_}'
 
                 index.append(class_)
                 new_columns.append(n_col_name)
@@ -241,5 +295,5 @@ class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
             base_matrix = np.tril(np.ones((len(index), len(index)), dtype=int))
             base_df = pd.DataFrame(data=base_matrix, columns=new_columns, index=index)
 
-            mapping.append({"col": col, "mapping": base_df})
+            mapping.append({'col': col, 'mapping': base_df})
         return mapping
