@@ -35,19 +35,25 @@ The preferred workflow to contribute to git-pandas is:
 Guidelines
 ==========
 
-This is still a very young project, but we do have a few guiding principles:
 
  1. Maintain semantics of the scikit-learn API
  2. Write detailed docstrings in numpy format
  3. Support pandas dataframes and numpy arrays as inputs
  4. Write tests
 
+Styleguide: 
+
+We're using ruff for linting. Rules are implemented in the `pyproject.toml` file. To run the linter, use:
+
+    $ poetry run ruff check category_encoders --fix
+
+
 Running Tests
 =============
 
 To run the tests, use:
 
-    $ pytest
+    $ poetry run pytest tests/
     
 Easy Issues / Getting Started
 =============================

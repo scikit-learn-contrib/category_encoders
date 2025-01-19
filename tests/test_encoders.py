@@ -115,7 +115,7 @@ class TestEncoders(TestCase):
         """Test that supervised encoders use a target variable."""
         for encoder_name in encoders.__all__:
             enc = getattr(encoders, encoder_name)()
-            if not enc._get_tags().get('supervised_encoder'):
+            if not enc.__sklearn_tags__().target_tags.required:
                 continue
             with self.subTest(encoder_name=encoder_name):
                 # encode a numpy array and transform with the help of the target
@@ -470,7 +470,7 @@ class TestEncoders(TestCase):
         )
         for encoder_name in encoders.__all__:
             enc = getattr(encoders, encoder_name)()
-            if not enc._get_tags().get('supervised_encoder'):
+            if not enc.__sklearn_tags__().target_tags.required:
                 continue
             with self.subTest(encoder_name=encoder_name):
                 _ = enc.fit_transform(binary_cat_example, binary_cat_example['target'])
@@ -579,7 +579,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 # Target encoders also need y
-                if enc._get_tags().get('supervised_encoder'):
+                if enc.__sklearn_tags__().target_tags.required:
                     obtained = enc.fit(X, y).get_feature_names_out()
                     expected = np.array(enc.transform(X, y).columns)
                 else:
@@ -595,7 +595,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
                 # Target encoders also need y
-                if enc._get_tags().get('supervised_encoder'):
+                if enc.__sklearn_tags__().target_tags.required:
                     obtained = enc.fit(X, y).get_feature_names_out()
                     expected = np.array(enc.transform(X, y).columns)
                 else:
@@ -686,7 +686,7 @@ class TestEncoders(TestCase):
         y_bad = pd.Series([1, 0, 1, 0])
         for encoder_name in encoders.__all__:
             enc = getattr(encoders, encoder_name)()
-            if not enc._get_tags().get('supervised_encoder'):
+            if not enc.__sklearn_tags__().target_tags.required:
                 continue
             with self.subTest(encoder_name=encoder_name):
                 self.assertRaises(ValueError, enc.fit, x, y_bad)
@@ -725,7 +725,7 @@ class TestEncoders(TestCase):
         """
         for encoder_name in encoders.__all__:
             enc = getattr(encoders, encoder_name)()
-            if not enc._get_tags().get('supervised_encoder'):
+            if not enc.__sklearn_tags__().target_tags.required:
                 continue
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(return_df=False)

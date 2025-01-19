@@ -1,5 +1,11 @@
+v.2.8.0
+=======
+
+* Fix: Support new concept of sklearn tags, now requiring sklearn >= 1.6.0
+* Fix: Docs deployment
+
 v.2.7.0
-==========
+=======
 
 * Refactor: Use poetry as packaging tool
 * Refactor: Add more typing

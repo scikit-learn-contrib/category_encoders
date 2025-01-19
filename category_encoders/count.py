@@ -11,7 +11,7 @@ from category_encoders.ordinal import OrdinalEncoder
 __author__ = 'joshua t. dunn'
 
 
-class CountEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     """Count encoding for categorical features.
 
     For a given categorical feature, replace the names of the groups with the group counts.

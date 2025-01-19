@@ -17,7 +17,7 @@ jobs:
       - name: Directly build docs
         run: |
           pip install -r docs/requirements.txt
-          sphinx-build -D docs/source ./docs/build/html/
+          sphinx-build docs/source ./docs/build/html/
       - name: Deploy Docs
         uses: peaceiris/actions-gh-pages@v3
         with:

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import warnings
 from abc import abstractmethod
+from dataclasses import dataclass, fields
 from enum import Enum, auto
 from typing import Hashable, Sequence
 
@@ -16,6 +17,7 @@ from scipy.sparse import csr_matrix
 from sklearn.base import BaseEstimator
 from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import LabelEncoder
+from sklearn.utils import Tags
 
 __author__ = 'willmcginnis'
 
@@ -345,6 +347,21 @@ def get_docstring_output_shape(in_out_relation: EncodingRelation) -> str:
         return 'M features (M can be anything)'
 
 
+@dataclass
+class EncoderTags(Tags):
+    """Custom Tags for encoders."""
+
+    predict_depends_on_y: bool = False
+
+    @classmethod
+    def from_sk_tags(cls, tags: Tags) -> EncoderTags:
+        """Initialize EncoderTags from given sklearn Tags."""
+        as_dict = {
+            field.name: getattr(tags, field.name)
+            for field in fields(tags)
+        }
+        return cls(**as_dict)
+
 class BaseEncoder(BaseEstimator):
     """BaseEstimator class for all encoders.
 
@@ -437,7 +454,7 @@ class BaseEncoder(BaseEstimator):
         self.feature_names_in_ = X.columns.tolist()
         self.n_features_in_ = len(self.feature_names_in_)
 
-        if self._get_tags().get('supervised_encoder'):
+        if self.__sklearn_tags__().target_tags.required:
             if not is_numeric_dtype(y):
                 self.lab_encoder_ = LabelEncoder()
                 y = self.lab_encoder_.fit_transform(y)
@@ -475,7 +492,7 @@ class BaseEncoder(BaseEstimator):
         return self
 
     def _check_fit_inputs(self, X: X_type, y: y_type) -> None:
-        if self._get_tags().get('supervised_encoder'):
+        if self.__sklearn_tags__().target_tags.required:
             if y is None:
                 raise ValueError(
                     'Supervised encoders need a target for the fitting. The target cannot be None'
@@ -573,9 +590,12 @@ class BaseEncoder(BaseEstimator):
 class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
     """Mixin for supervised transformers (with target)."""
 
-    def _more_tags(self) -> dict[str, bool]:
+    def __sklearn_tags__(self) -> EncoderTags:
         """Set scikit transformer tags."""
-        return {'supervised_encoder': True}
+        sk_tags = super().__sklearn_tags__()
+        tags = EncoderTags.from_sk_tags(sk_tags)
+        tags.target_tags.required = True
+        return tags
 
     def transform(self, X: X_type, y: y_type | None = None, override_return_df: bool = False):
         """Perform the transformation to new categorical data.
@@ -653,20 +673,3 @@ class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
 
     @abstractmethod
     def _transform(self, X: pd.DataFrame) -> pd.DataFrame: ...
-
-
-class TransformerWithTargetMixin:
-    """Mixin for transformers with target information."""
-
-    def _more_tags(self) -> dict[str, bool]:
-        """Set scikit transformer tags."""
-        return {'supervised_encoder': True}
-
-    def fit_transform(self, X: X_type, y: y_type | None = None, **fit_params):
-        """Fit and transform using target.
-
-        This also uses the target for transforming, not only for training.
-        """
-        if y is None:
-            raise TypeError('fit_transform() missing argument: ' 'y' '')
-        return self.fit(X, y, **fit_params).transform(X, y)

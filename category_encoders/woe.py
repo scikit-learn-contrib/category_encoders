@@ -12,7 +12,7 @@ from category_encoders.ordinal import OrdinalEncoder
 __author__ = 'Jan Motl'
 
 
-class WOEEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
+class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     """Weight of Evidence coding for categorical features.
 
     Supported targets: binomial. For polynomial target support, see PolynomialWrapper.

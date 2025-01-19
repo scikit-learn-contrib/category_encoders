@@ -34,7 +34,7 @@ def _ceillogint(n, base):
     return ret
 
 
-class BaseNEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+class BaseNEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     """Base-N encoder encodes the categories into arrays of their base-N representation.
 
     A base of 1 is equivalent to one-hot encoding (not really base-1, but useful),

@@ -12,7 +12,7 @@ from category_encoders.ordinal import OrdinalEncoder
 __author__ = 'paulwestenthanner'
 
 
-class BaseContrastEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+class BaseContrastEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
     """Base class for various contrast encoders.
 
     Parameters

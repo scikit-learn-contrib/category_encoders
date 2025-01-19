@@ -9,7 +9,7 @@ import category_encoders.utils as util
 __author__ = 'hbghhy'
 
 
-class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
+class LeaveOneOutEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     """Leave one out coding for categorical features.
 
     This is very similar to target encoding but excludes the current row's
@@ -124,10 +124,10 @@ class LeaveOneOutEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         X = self.transform_leave_one_out(X, y, mapping=self.mapping)
         return X
 
-    def _more_tags(self) -> dict[str, bool]:
+    def __sklearn_tags__(self) -> util.EncoderTags:
         """Set scikit transformer tags."""
-        tags = super()._more_tags()
-        tags['predict_depends_on_y'] = True
+        tags = super().__sklearn_tags__()
+        tags.predict_depends_on_y = True
         return tags
 
     def fit_leave_one_out(

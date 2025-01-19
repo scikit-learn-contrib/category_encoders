@@ -11,7 +11,7 @@ from category_encoders.ordinal import OrdinalEncoder
 __author__ = 'Jan Motl'
 
 
-class JamesSteinEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
+class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     """James-Stein estimator.
 
     Supported targets: binomial and continuous.
@@ -228,10 +228,10 @@ class JamesSteinEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         X = self._score(X, y)
         return X
 
-    def _more_tags(self) -> dict[str, bool]:
+    def __sklearn_tags__(self) -> util.EncoderTags:
         """Set scikit transformer tags."""
-        tags = super()._more_tags()
-        tags['predict_depends_on_y'] = True
+        tags = super().__sklearn_tags__()
+        tags.predict_depends_on_y = True
         return tags
 
     def _train_pooled(self, X, y):

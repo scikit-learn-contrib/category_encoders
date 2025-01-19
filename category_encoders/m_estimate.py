@@ -9,7 +9,7 @@ from category_encoders.ordinal import OrdinalEncoder
 __author__ = 'Jan Motl'
 
 
-class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
+class MEstimateEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     """M-probability estimate of likelihood.
 
     Supported targets: binomial and continuous.
@@ -150,10 +150,10 @@ class MEstimateEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
         X = self._score(X, y)
         return X
 
-    def _more_tags(self) -> dict[str, bool]:
+    def __sklearn_tags__(self) -> util.EncoderTags:
         """Set scikit transformer tags."""
-        tags = super()._more_tags()
-        tags['predict_depends_on_y'] = True
+        tags = super().__sklearn_tags__()
+        tags.predict_depends_on_y = True
         return tags
 
     def _train(self, X, y):
