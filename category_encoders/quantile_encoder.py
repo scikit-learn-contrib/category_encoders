@@ -18,7 +18,7 @@ import category_encoders.utils as util
 from category_encoders.ordinal import OrdinalEncoder
 
 
-class QuantileEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
+class QuantileEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
     """Quantile Encoding for categorical features.
 
     This a statistically modified version of target MEstimate encoder where selected features
@@ -204,7 +204,7 @@ class QuantileEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
 
 # todo does not fit in schema since it is an ensemble of other encoders
-class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
+class SummaryEncoder(BaseEstimator):
     """Summary Encoding for categorical features.
 
     It's an encoder designed for creating richer representations by applying quantile
@@ -417,6 +417,22 @@ class SummaryEncoder(BaseEstimator, util.TransformerWithTargetMixin):
             return transformed_df
         else:
             return transformed_df.to_numpy()
+
+    def __sklearn_tags__(self) -> util.EncoderTags:
+        """Set scikit transformer tags."""
+        sk_tags = super().__sklearn_tags__()
+        tags = util.EncoderTags.from_sk_tags(sk_tags)
+        tags.target_tags.required = True
+        return tags
+
+    def fit_transform(self, X: util.X_type, y: util.y_type | None = None):
+        """Fit and transform using target.
+
+        This also uses the target for transforming, not only for training.
+        """
+        if y is None:
+            raise TypeError('fit_transform() missing argument: ' 'y' '')
+        return self.fit(X, y).transform(X, y)
 
     def get_feature_names(self) -> np.ndarray:
         """Deprecated method to get feature names. Use `get_feature_names_out` instead."""

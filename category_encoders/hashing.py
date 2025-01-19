@@ -14,7 +14,7 @@ import category_encoders.utils as util
 __author__ = 'willmcginnis', 'LiuShulun'
 
 
-class HashingEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+class HashingEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     """A multivariate hashing implementation with configurable dimensionality/precision.
 
     The advantage of this encoder is that it does not maintain a dictionary of observed categories.

@@ -14,7 +14,7 @@ from category_encoders.ordinal import OrdinalEncoder
 __author__ = 'chappers'
 
 
-class TargetEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
+class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     """Target encoding for categorical features.
 
     Supported targets: binomial and continuous.

@@ -9,7 +9,7 @@ import category_encoders.utils as util
 from category_encoders import OrdinalEncoder
 
 
-class RankHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     """Rank Hot Encoder.
 
     The rank-hot encoder is similar to a one-hot encoder,

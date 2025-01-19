@@ -9,7 +9,7 @@ import category_encoders.utils as util
 __author__ = 'Jan Motl'
 
 
-class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
+class CatBoostEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
     """CatBoost Encoding for categorical features.
 
     Supported targets: binomial and continuous.
@@ -202,10 +202,10 @@ class CatBoostEncoder(util.BaseEncoder, util.SupervisedTransformerMixin):
 
         return X
 
-    def _more_tags(self) -> dict[str, bool]:
+    def __sklearn_tags__(self) -> util.EncoderTags:
         """Set scikit transformer tags."""
-        tags = super()._more_tags()
-        tags['predict_depends_on_y'] = True
+        tags = super().__sklearn_tags__()
+        tags.predict_depends_on_y = True
         return tags
 
     def _fit_column_map(self, series, y):

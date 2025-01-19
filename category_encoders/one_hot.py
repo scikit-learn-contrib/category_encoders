@@ -11,7 +11,7 @@ from category_encoders.ordinal import OrdinalEncoder
 __author__ = 'willmcginnis'
 
 
-class OneHotEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     """Onehot (or dummy) coding for categorical features, produces a binary feature per category.
 
     Parameters

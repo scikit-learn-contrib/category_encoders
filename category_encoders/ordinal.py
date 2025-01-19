@@ -12,7 +12,7 @@ import category_encoders.utils as util
 __author__ = 'willmcginnis'
 
 
-class OrdinalEncoder(util.BaseEncoder, util.UnsupervisedTransformerMixin):
+class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     """Encodes categorical features as ordinal, in one ordered feature.
 
     Ordinal encoding uses a single column of integers to represent the classes.
