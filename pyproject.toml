@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "category_encoders"
-version = "2.7.0"
+version = "2.8.0"
 description = "A package for encoding categorical variables for machine learning"
 authors = ["PaulWestenthanner <paul@westenthanner.dev>"]
 license = "BSD-3"
