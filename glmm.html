@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generalized Linear Mixed Model Encoder &mdash; Category Encoders 2.6.4 documentation</title>
+  <title>Generalized Linear Mixed Model Encoder &mdash; Category Encoders 2.8.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=703207cb"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -36,9 +34,6 @@
           <a href="index.html" class="icon icon-home">
             Category Encoders
           </a>
-              <div class="version">
-                2.6.4
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -57,6 +52,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.fit"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.get_metadata_routing()</span></code></a></li>
@@ -112,25 +108,31 @@
            <div itemprop="articleBody">
              
   <section id="generalized-linear-mixed-model-encoder">
-<h1>Generalized Linear Mixed Model Encoder<a class="headerlink" href="#generalized-linear-mixed-model-encoder" title="Permalink to this heading"></a></h1>
+<h1>Generalized Linear Mixed Model Encoder<a class="headerlink" href="#generalized-linear-mixed-model-encoder" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.glmm.</span></span><span class="sig-name descname"><span class="pre">GLMMEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_invariant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_unknown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binomial_target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/glmm.html#GLMMEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.glmm.</span></span><span class="sig-name descname"><span class="pre">GLMMEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_invariant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_unknown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binomial_target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/glmm.html#GLMMEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder" title="Link to this definition"></a></dt>
 <dd><p>Generalized linear mixed model.</p>
-<p>Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</p>
-<p>This is a supervised encoder similar to TargetEncoder or MEstimateEncoder, but there are some advantages:</p>
+<p>Supported targets: binomial and continuous.
+For polynomial target support, see PolynomialWrapper.</p>
+<p>This is a supervised encoder similar to TargetEncoder or MEstimateEncoder,
+but there are some advantages:</p>
 <blockquote>
 <div><ol class="arabic simple">
-<li><p>Solid statistical theory behind the technique. Mixed effects models are a mature branch of statistics.</p></li>
+<li><p>Solid statistical theory behind the technique.
+Mixed effects models are a mature branch of statistics.</p></li>
+<li><p>No hyper-parameters to tune. The amount of shrinkage is automatically determined
+through the estimation process. In short, the less observations a category has and/or
+the more the outcome varies for a category. Then the higher the regularization
+towards “the prior” or “grand mean”.</p></li>
+<li><p>The technique is applicable for both continuous and binomial targets.
+If the target is continuous, the encoder returns regularized difference of the
+observation’s category from the global mean.</p></li>
 </ol>
-<p>2. No hyper-parameters to tune. The amount of shrinkage is automatically determined through the estimation
-process. In short, the less observations a category has and/or the more the outcome varies for a category
-then the higher the regularization towards “the prior” or “grand mean”.
-3. The technique is applicable for both continuous and binomial targets. If the target is continuous,
-the encoder returns regularized difference of the observation’s category from the global mean.</p>
 </div></blockquote>
 <p>If the target is binomial, the encoder returns regularized log odds per category.</p>
-<p>In comparison to JamesSteinEstimator, this encoder utilizes generalized linear mixed models from statsmodels library.</p>
+<p>In comparison to JamesSteinEstimator, this encoder utilizes generalized linear mixed models
+from statsmodels library.</p>
 <p>Note: This is an alpha implementation. The API of the method may change in the future.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -141,13 +143,15 @@ the encoder returns regularized difference of the observation’s category from 
 </dd>
 <dt><strong>drop_invariant: bool</strong></dt><dd><p>boolean for whether or not to drop encoded columns with 0 variance.</p>
 </dd>
-<dt><strong>return_df: bool</strong></dt><dd><p>boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</p>
+<dt><strong>return_df: bool</strong></dt><dd><p>boolean for whether to return a pandas DataFrame from transform
+(otherwise it will be a numpy array).</p>
 </dd>
 <dt><strong>handle_missing: str</strong></dt><dd><p>options are ‘return_nan’, ‘error’ and ‘value’, defaults to ‘value’, which returns 0.</p>
 </dd>
 <dt><strong>handle_unknown: str</strong></dt><dd><p>options are ‘return_nan’, ‘error’ and ‘value’, defaults to ‘value’, which returns 0.</p>
 </dd>
-<dt><strong>randomized: bool,</strong></dt><dd><p>adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).</p>
+<dt><strong>randomized: bool,</strong></dt><dd><p>adds normal (Gaussian) distribution noise into training data in order to decrease
+overfitting (testing data are untouched).</p>
 </dd>
 <dt><strong>sigma: float</strong></dt><dd><p>standard deviation (spread or “width”) of the normal distribution.</p>
 </dd>
@@ -158,6 +162,44 @@ If None (the default), a heuristic is applied to estimate the target type.</p>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.fit" title="category_encoders.glmm.GLMMEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<td><p>Fits the encoder according to X and y.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.fit_transform" title="category_encoders.glmm.GLMMEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
+<td><p>Fit and transform using the target information.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names" title="category_encoders.glmm.GLMMEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>()</p></td>
+<td><p>Deprecated method to get feature names.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_in" title="category_encoders.glmm.GLMMEncoder.get_feature_names_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_in</span></code></a>()</p></td>
+<td><p>Get the names of all input columns present when fitting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_out" title="category_encoders.glmm.GLMMEncoder.get_feature_names_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_out</span></code></a>([input_features])</p></td>
+<td><p>Get the names of all transformed / added columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_metadata_routing" title="category_encoders.glmm.GLMMEncoder.get_metadata_routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code></a>()</p></td>
+<td><p>Get metadata routing of this object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_params" title="category_encoders.glmm.GLMMEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.set_output" title="category_encoders.glmm.GLMMEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
+<td><p>Set output container.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.set_params" title="category_encoders.glmm.GLMMEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.set_transform_request" title="category_encoders.glmm.GLMMEncoder.set_transform_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_transform_request</span></code></a>(*[, override_return_df])</p></td>
+<td><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.transform" title="category_encoders.glmm.GLMMEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y, override_return_df])</p></td>
+<td><p>Perform the transformation to new categorical data.</p></td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">References</p>
 <div role="list" class="citation-list">
 <div class="citation" id="rf0d54b3f0131-1" role="doc-biblioentry">
@@ -166,119 +208,9 @@ If None (the default), a heuristic is applied to estimate the target type.</p>
 </div>
 </div>
 <p><a class="reference external" href="https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf">https://faculty.psau.edu.sa/filedownload/doc-12-pdf-a1997d0d31f84d13c1cdc44ac39a8f2c-original.pdf</a></p>
-<p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.fit" title="category_encoders.glmm.GLMMEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
-<td><p>Fits the encoder according to X and y.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.fit_transform" title="category_encoders.glmm.GLMMEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
-<td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_in" title="category_encoders.glmm.GLMMEncoder.get_feature_names_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_in</span></code></a>()</p></td>
-<td><p>Returns the names of all input columns present when fitting.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_out" title="category_encoders.glmm.GLMMEncoder.get_feature_names_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_out</span></code></a>([input_features])</p></td>
-<td><p>Returns the names of all transformed / added columns.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_metadata_routing" title="category_encoders.glmm.GLMMEncoder.get_metadata_routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code></a>()</p></td>
-<td><p>Get metadata routing of this object.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_params" title="category_encoders.glmm.GLMMEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
-<td><p>Get parameters for this estimator.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.set_output" title="category_encoders.glmm.GLMMEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
-<td><p>Set output container.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.set_params" title="category_encoders.glmm.GLMMEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
-<td><p>Set the parameters of this estimator.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.set_transform_request" title="category_encoders.glmm.GLMMEncoder.set_transform_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_transform_request</span></code></a>(*[, override_return_df])</p></td>
-<td><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.transform" title="category_encoders.glmm.GLMMEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y, override_return_df])</p></td>
-<td><p>Perform the transformation to new categorical data.</p></td>
-</tr>
-</tbody>
-</table>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>get_feature_names</strong></p></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of output. 0 for none.</p>
-</dd>
-<dt><strong>cols: list</strong></dt><dd><p>a list of columns to encode, if None, all string and categorical columns
-will be encoded.</p>
-</dd>
-<dt><strong>drop_invariant: bool</strong></dt><dd><p>boolean for whether or not to drop columns with 0 variance.</p>
-</dd>
-<dt><strong>return_df: bool</strong></dt><dd><p>boolean for whether to return a pandas DataFrame from transform and inverse transform
-(otherwise it will be a numpy array).</p>
-</dd>
-<dt><strong>handle_missing: str</strong></dt><dd><p>how to handle missing values at fit time. Options are ‘error’, ‘return_nan’,
-and ‘value’. Default ‘value’, which treat nans as a countable category at
-fit time.</p>
-</dd>
-<dt><strong>handle_unknown: str, int or dict of {column</strong><span class="classifier">option, …}.</span></dt><dd><p>how to handle unknown labels at transform time. Options are ‘error’
-‘return_nan’, ‘value’ and int. Defaults to None which uses nan behaviour
-specified at fit time. Passing an int will fill with this int value.</p>
-</dd>
-<dt><strong>kwargs: dict.</strong></dt><dd><p>additional encoder specific parameters like regularisation.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.fit" title="category_encoders.glmm.GLMMEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
-<td><p>Fits the encoder according to X and y.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.fit_transform" title="category_encoders.glmm.GLMMEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
-<td><p>Encoders that utilize the target must make sure that the training data are transformed with:</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_in" title="category_encoders.glmm.GLMMEncoder.get_feature_names_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_in</span></code></a>()</p></td>
-<td><p>Returns the names of all input columns present when fitting.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_out" title="category_encoders.glmm.GLMMEncoder.get_feature_names_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_out</span></code></a>([input_features])</p></td>
-<td><p>Returns the names of all transformed / added columns.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_metadata_routing" title="category_encoders.glmm.GLMMEncoder.get_metadata_routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code></a>()</p></td>
-<td><p>Get metadata routing of this object.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.get_params" title="category_encoders.glmm.GLMMEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
-<td><p>Get parameters for this estimator.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.set_output" title="category_encoders.glmm.GLMMEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
-<td><p>Set output container.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.set_params" title="category_encoders.glmm.GLMMEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
-<td><p>Set the parameters of this estimator.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.set_transform_request" title="category_encoders.glmm.GLMMEncoder.set_transform_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_transform_request</span></code></a>(*[, override_return_df])</p></td>
-<td><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder.transform" title="category_encoders.glmm.GLMMEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y, override_return_df])</p></td>
-<td><p>Perform the transformation to new categorical data.</p></td>
-</tr>
-</tbody>
-</table>
-<table class="docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><strong>get_feature_names</strong></p></td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.fit" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">generic</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">csr_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Series</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.fit" title="Link to this definition"></a></dt>
 <dd><p>Fits the encoder according to X and y.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -301,35 +233,38 @@ and n_features is the number of features.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.fit_transform">
-<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.fit_transform" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Encoders that utilize the target must make sure that the training data are transformed with:</dt><dd><p>transform(X, y)</p>
-</dd>
-<dt>and not with:</dt><dd><p>transform(X)</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">generic</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">csr_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Series</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.fit_transform" title="Link to this definition"></a></dt>
+<dd><p>Fit and transform using the target information.</p>
+<p>This also uses the target for transforming, not only for training.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.get_feature_names">
+<span class="sig-name descname"><span class="pre">get_feature_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_feature_names" title="Link to this definition"></a></dt>
+<dd><p>Deprecated method to get feature names. Use <cite>get_feature_names_out</cite> instead.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.get_feature_names_in">
-<span class="sig-name descname"><span class="pre">get_feature_names_in</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_in" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the names of all input columns present when fitting.
-These columns are necessary for the transform step.</p>
+<span class="sig-name descname"><span class="pre">get_feature_names_in</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_in" title="Link to this definition"></a></dt>
+<dd><p>Get the names of all input columns present when fitting.</p>
+<p>These columns are necessary for the transform step.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.get_feature_names_out">
-<span class="sig-name descname"><span class="pre">get_feature_names_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_out" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the names of all transformed / added columns.</p>
-<p>Note that in sklearn the get_feature_names_out function takes the feature_names_in as an argument
-and determines the output feature names using the input. A fit is usually not necessary and if so a
-NotFittedError is raised.
+<span class="sig-name descname"><span class="pre">get_feature_names_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_feature_names_out" title="Link to this definition"></a></dt>
+<dd><p>Get the names of all transformed / added columns.</p>
+<p>Note that in sklearn the get_feature_names_out function takes the feature_names_in
+as an argument and determines the output feature names using the input.
+A fit is usually not necessary and if so a NotFittedError is raised.
 We just require a fit all the time and return the fitted output columns.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt>feature_names: np.ndarray</dt><dd><p>A numpy array with all feature names transformed or added.
-Note: potentially dropped features (because the feature is constant/invariant) are not included!</p>
+Note: potentially dropped features (because the feature is constant/invariant)
+are not included!</p>
 </dd>
 </dl>
 </dd>
@@ -338,7 +273,7 @@ Note: potentially dropped features (because the feature is constant/invariant) a
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.get_metadata_routing">
-<span class="sig-name descname"><span class="pre">get_metadata_routing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_metadata_routing" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_metadata_routing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_metadata_routing" title="Link to this definition"></a></dt>
 <dd><p>Get metadata routing of this object.</p>
 <p>Please check <span class="xref std std-ref">User Guide</span> on how the routing
 mechanism works.</p>
@@ -355,7 +290,7 @@ routing information.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.get_params">
-<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.get_params" title="Link to this definition"></a></dt>
 <dd><p>Get parameters for this estimator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -376,19 +311,23 @@ contained subobjects that are estimators.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.set_output">
-<span class="sig-name descname"><span class="pre">set_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.set_output" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.set_output" title="Link to this definition"></a></dt>
 <dd><p>Set output container.</p>
 <p>See <span class="xref std std-ref">sphx_glr_auto_examples_miscellaneous_plot_set_output.py</span>
 for an example on how to use the API.</p>
-<dl class="field-list simple">
+<dl class="field-list">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>transform</strong><span class="classifier">{“default”, “pandas”}, default=None</span></dt><dd><p>Configure output of <cite>transform</cite> and <cite>fit_transform</cite>.</p>
+<dd class="field-odd"><dl>
+<dt><strong>transform</strong><span class="classifier">{“default”, “pandas”, “polars”}, default=None</span></dt><dd><p>Configure output of <cite>transform</cite> and <cite>fit_transform</cite>.</p>
 <ul class="simple">
 <li><p><cite>“default”</cite>: Default output format of a transformer</p></li>
 <li><p><cite>“pandas”</cite>: DataFrame output</p></li>
+<li><p><cite>“polars”</cite>: Polars output</p></li>
 <li><p><cite>None</cite>: Transform configuration is unchanged</p></li>
 </ul>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.4: </span><cite>“polars”</cite> option was added.</p>
+</div>
 </dd>
 </dl>
 </dd>
@@ -403,7 +342,7 @@ for an example on how to use the API.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.set_params">
-<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.set_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.set_params" title="Link to this definition"></a></dt>
 <dd><p>Set the parameters of this estimator.</p>
 <p>The method works on simple estimators as well as on nested objects
 (such as <code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code>). The latter have
@@ -427,7 +366,7 @@ possible to update each component of a nested object.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.set_transform_request">
-<span class="sig-name descname"><span class="pre">set_transform_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_return_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder" title="category_encoders.glmm.GLMMEncoder"><span class="pre">GLMMEncoder</span></a></span></span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.set_transform_request" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_transform_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_return_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#category_encoders.glmm.GLMMEncoder" title="category_encoders.glmm.GLMMEncoder"><span class="pre">GLMMEncoder</span></a></span></span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.set_transform_request" title="Link to this definition"></a></dt>
 <dd><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method.</p>
 <p>Note that this method is only relevant if
 <code class="docutils literal notranslate"><span class="pre">enable_metadata_routing=True</span></code> (see <code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.set_config()</span></code>).
@@ -444,7 +383,7 @@ mechanism works.</p>
 existing request. This allows you to change the request for some
 parameters and not others.</p>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.3.</span></p>
+<p><span class="versionmodified added">Added in version 1.3.</span></p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -470,10 +409,10 @@ sub-estimator of a meta-estimator, e.g. used inside a
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.glmm.GLMMEncoder.transform">
-<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.transform" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">generic</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">csr_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Series</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_return_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.glmm.GLMMEncoder.transform" title="Link to this definition"></a></dt>
 <dd><p>Perform the transformation to new categorical data.</p>
-<p>Some encoders behave differently on whether y is given or not. This is mainly due to regularisation
-in order to avoid overfitting.
+<p>Some encoders behave differently on whether y is given or not.
+This is mainly due to regularisation in order to avoid overfitting.
 On training data transform should be called with y, on test data without.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -508,7 +447,7 @@ On training data transform should be called with y, on test data without.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Will McGinnis.</p>
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

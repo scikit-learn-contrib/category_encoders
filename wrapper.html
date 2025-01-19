@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wrappers &mdash; Category Encoders 2.6.4 documentation</title>
+  <title>Wrappers &mdash; Category Encoders 2.8.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=703207cb"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -35,9 +33,6 @@
           <a href="index.html" class="icon icon-home">
             Category Encoders
           </a>
-              <div class="version">
-                2.6.4
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -70,7 +65,9 @@
 <li class="toctree-l1"><a class="reference internal" href="woe.html">Weight of Evidence</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Wrappers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper"><code class="docutils literal notranslate"><span class="pre">PolynomialWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.fit"><code class="docutils literal notranslate"><span class="pre">PolynomialWrapper.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.fit_transform"><code class="docutils literal notranslate"><span class="pre">PolynomialWrapper.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.transform"><code class="docutils literal notranslate"><span class="pre">PolynomialWrapper.transform()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper"><code class="docutils literal notranslate"><span class="pre">NestedCVWrapper</span></code></a><ul>
@@ -108,10 +105,10 @@
            <div itemprop="articleBody">
              
   <section id="wrappers">
-<h1>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this heading"></a></h1>
+<h1>Wrappers<a class="headerlink" href="#wrappers" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.wrapper.PolynomialWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">PolynomialWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseEncoder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">PolynomialWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseEncoder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper" title="Link to this definition"></a></dt>
 <dd><p>Extend supervised encoders to n-class labels, where n &gt;= 2.</p>
 <p>The label can be numerical (e.g.: 0, 1, 2, 3,…,n), string or categorical (pandas.Categorical).
 The label is first encoded into n-1 binary columns. Subsequently, the inner supervised encoder
@@ -131,72 +128,88 @@ The order of the returned features may change in the future.</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.fit_transform" title="category_encoders.wrapper.PolynomialWrapper.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
-<td><p>Fit to data, then transform it.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.fit" title="category_encoders.wrapper.PolynomialWrapper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y, **kwargs)</p></td>
+<td><p>Fit a multi-label encoder.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.fit_transform" title="category_encoders.wrapper.PolynomialWrapper.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
+<td><p>Fit encoder and encode the training data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code>()</p></td>
 <td><p>Get metadata routing of this object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
 <td><p>Get parameters for this estimator.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code>(*[, transform])</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code>(*[, transform])</p></td>
 <td><p>Set output container.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
 <td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.transform" title="category_encoders.wrapper.PolynomialWrapper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y])</p></td>
+<td><p>Encode new data.</p></td>
 </tr>
 </tbody>
 </table>
-<table class="docutils align-default">
+<p>Init the polynomial wrapper.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><strong>fit</strong></p></td>
-<td></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.fit" title="category_encoders.wrapper.PolynomialWrapper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y, **kwargs)</p></td>
+<td><p>Fit a multi-label encoder.</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>transform</strong></p></td>
-<td></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.fit_transform" title="category_encoders.wrapper.PolynomialWrapper.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
+<td><p>Fit encoder and encode the training data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code>()</p></td>
+<td><p>Get metadata routing of this object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code>(*[, transform])</p></td>
+<td><p>Set output container.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.PolynomialWrapper.transform" title="category_encoders.wrapper.PolynomialWrapper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, y])</p></td>
+<td><p>Encode new data.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.wrapper.PolynomialWrapper.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper.fit" title="Link to this definition"></a></dt>
+<dd><p>Fit a multi-label encoder.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.wrapper.PolynomialWrapper.fit_transform">
-<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper.fit_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper.fit_transform" title="Permalink to this definition"></a></dt>
-<dd><p>Fit to data, then transform it.</p>
-<p>Fits transformer to <cite>X</cite> and <cite>y</cite> with optional parameters <cite>fit_params</cite>
-and returns a transformed version of <cite>X</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>X</strong><span class="classifier">array-like of shape (n_samples, n_features)</span></dt><dd><p>Input samples.</p>
-</dd>
-<dt><strong>y</strong><span class="classifier">array-like of shape (n_samples,) or (n_samples, n_outputs),                 default=None</span></dt><dd><p>Target values (None for unsupervised transformations).</p>
-</dd>
-<dt><strong>**fit_params</strong><span class="classifier">dict</span></dt><dd><p>Additional fit parameters.</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>X_new</strong><span class="classifier">ndarray array of shape (n_samples, n_features_new)</span></dt><dd><p>Transformed array.</p>
-</dd>
-</dl>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper.fit_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper.fit_transform" title="Link to this definition"></a></dt>
+<dd><p>Fit encoder and encode the training data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.wrapper.PolynomialWrapper.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper.transform" title="Link to this definition"></a></dt>
+<dd><p>Encode new data.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.wrapper.NestedCVWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">NestedCVWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper" title="Permalink to this definition"></a></dt>
-<dd><p>Extends supervised encoders with the nested cross validation on the training data to minimise overfitting.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">NestedCVWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper" title="Link to this definition"></a></dt>
+<dd><p>Cross validate supervised encoders to avoid overfitting.</p>
 <p>For a validation or a test set, supervised encoders can be used as follows:</p>
 <blockquote>
 <div><p>X_train_encoded = encoder.fit_transform(X_train, y_train)
 X_valid_encoded = encoder.transform(X_valid)</p>
 </div></blockquote>
-<p>However, the downstream model will be overfitting to the encoded training data due to target leakage.
-Using out-of-fold encodings is an effective way to prevent target leakage. This is equivalent to:</p>
+<p>However, the downstream model will be overfitting to the encoded training data due to
+target leakage. Using out-of-fold encodings is an effective way to prevent target leakage.
+This is equivalent to:</p>
 <blockquote>
 <div><p>X_train_encoded = np.zeros(X.shape)
 for trn, val in kfold.split(X, y):</p>
@@ -210,31 +223,36 @@ X_train_encoded[val] = encoder.transform(X[val])</p>
 </dd>
 </dl>
 <p>See README.md for a list of supervised encoders.</p>
-<p>Discussion: Although leave-one-out encoder internally performs leave-one-out cross-validation, it is
-actually the most overfitting supervised model in our library. To illustrate the issue, let’s imagine we
-have a totally unpredictive nominal feature and a perfectly balanced binary label. A supervised encoder
-should encode the feature into a constant vector as the feature is unpredictive of the label. But when we
-use leave-one-out cross-validation, the label ratio cease to be perfectly balanced and the wrong class
-label always becomes the majority in the training fold. Leave-one-out encoder returns a seemingly
-predictive feature. And the downstream model starts to overfit to the encoded feature. Unfortunately,
-even 10-fold cross-validation is not immune to this effect:</p>
+<p>Discussion: Although leave-one-out encoder internally performs leave-one-out cross-validation,
+it is actually the most overfitting supervised model in our library.
+To illustrate the issue, let’s imagine we have a totally unpredictive nominal feature
+and a perfectly balanced binary label. A supervised encoder should encode the feature into a
+constant vector as the feature is unpredictive of the label.
+But when we use leave-one-out cross-validation, the label ratio cease to be perfectly balanced
+and the wrong class label always becomes the majority in the training fold.
+Leave-one-out encoder returns a seemingly predictive feature.
+And the downstream model starts to overfit to the encoded feature.
+Unfortunately, even 10-fold cross-validation is not immune to this effect:</p>
 <blockquote>
 <div><p><a class="reference external" href="http://www.kdd.org/exploration_files/v12-02-4-UR-Perlich.pdf">http://www.kdd.org/exploration_files/v12-02-4-UR-Perlich.pdf</a></p>
 </div></blockquote>
-<p>To decrease the effect, it is recommended to use a low count of the folds. And that is the reason why
-this wrapper uses 5 folds by default.</p>
-<p>Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper. The remaining
-encoders can be used without this wrapper.</p>
+<p>To decrease the effect, it is recommended to use a low count of the folds.
+And that is the reason why this wrapper uses 5 folds by default.</p>
+<p>Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper.
+The remaining encoders can be used without this wrapper.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>feature_encoder: Object</strong></dt><dd><p>an instance of a supervised encoder.</p>
 </dd>
-<dt><strong>cv: int or sklearn cv Object</strong></dt><dd><p>if an int is given, StratifiedKFold is used by default, where the int is the number of folds.</p>
+<dt><strong>cv: int or sklearn cv Object</strong></dt><dd><p>if an int is given, StratifiedKFold is used by default, where the int
+is the number of folds.</p>
 </dd>
-<dt><strong>shuffle: boolean, optional</strong></dt><dd><p>whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided.</p>
+<dt><strong>shuffle: boolean, optional</strong></dt><dd><p>whether to shuffle each classes samples before splitting into batches.
+Ignored if a CV method is provided.</p>
 </dd>
-<dt><strong>random_state: int, RandomState instance or None, optional, default=None</strong></dt><dd><p>if int, random_state is the seed used by the random number generator. Ignored if a CV method is provided.</p>
+<dt><strong>random_state: int, RandomState instance or None, optional, default=None</strong></dt><dd><p>if int, random_state is the seed used by the random number generator.
+Ignored if a CV method is provided.</p>
 </dd>
 </dl>
 </dd>
@@ -243,10 +261,10 @@ encoders can be used without this wrapper.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.fit" title="category_encoders.wrapper.NestedCVWrapper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y, **kwargs)</p></td>
-<td><p>Calls fit on the base feature_encoder without nested cross validation</p></td>
+<td><p>Fit on the base feature_encoder without nested cross validation.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.fit_transform" title="category_encoders.wrapper.NestedCVWrapper.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y, X_test, groups])</p></td>
-<td><p>Creates unbiased encodings from a supervised encoder as well as infer encodings on a test set :param X: array-like, shape = [n_samples, n_features]           Training vectors for the supervised encoder, where n_samples is the number of samples           and n_features is the number of features. :param y: array-like, shape = [n_samples]           Target values for the supervised encoder. :param X_test, optional: array-like, shape = [m_samples, n_features] or a tuple of array-likes (X_test, X_valid...)                Vectors to be used for inference by an encoder (e.g. test or validation sets) trained on the                full X &amp; y sets. No nested folds are used here :param groups: Groups to be passed to the cv method, e.g. for GroupKFold :param fit_params: :return: array, shape = [n_samples, n_numeric + N]          Transformed values with encoding applied. Returns multiple arrays if X_test is not None.</p></td>
+<td><p>Unbiased encodings from a supervised encoder and inference on test set.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code>()</p></td>
 <td><p>Get metadata routing of this object.</p></td>
@@ -261,48 +279,77 @@ encoders can be used without this wrapper.</p>
 <td><p>Set the parameters of this estimator.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.transform" title="category_encoders.wrapper.NestedCVWrapper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
-<td><p>Calls transform on the base feature_encoder without nested cross validation</p></td>
+<td><p>Transform on the base feature_encoder without nested cross validation.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Init wrapper.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.fit" title="category_encoders.wrapper.NestedCVWrapper.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X, y, **kwargs)</p></td>
+<td><p>Fit on the base feature_encoder without nested cross validation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.fit_transform" title="category_encoders.wrapper.NestedCVWrapper.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y, X_test, groups])</p></td>
+<td><p>Unbiased encodings from a supervised encoder and inference on test set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code>()</p></td>
+<td><p>Get metadata routing of this object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code>([deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code>(*[, transform])</p></td>
+<td><p>Set output container.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code>(**params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.wrapper.NestedCVWrapper.transform" title="category_encoders.wrapper.NestedCVWrapper.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X)</p></td>
+<td><p>Transform on the base feature_encoder without nested cross validation.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.wrapper.NestedCVWrapper.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper.fit" title="Permalink to this definition"></a></dt>
-<dd><p>Calls fit on the base feature_encoder without nested cross validation</p>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper.fit" title="Link to this definition"></a></dt>
+<dd><p>Fit on the base feature_encoder without nested cross validation.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.wrapper.NestedCVWrapper.fit_transform">
-<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper.fit_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper.fit_transform" title="Permalink to this definition"></a></dt>
-<dd><p>Creates unbiased encodings from a supervised encoder as well as infer encodings on a test set
-:param X: array-like, shape = [n_samples, n_features]</p>
-<blockquote>
-<div><p>Training vectors for the supervised encoder, where n_samples is the number of samples
-and n_features is the number of features.</p>
-</div></blockquote>
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper.fit_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper.fit_transform" title="Link to this definition"></a></dt>
+<dd><p>Unbiased encodings from a supervised encoder and inference on test set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – array-like, shape = [n_samples, n_features]
+Training vectors for the supervised encoder,
+where n_samples is the number of samples
+and n_features is the number of features.</p></li>
 <li><p><strong>y</strong> – array-like, shape = [n_samples]
 Target values for the supervised encoder.</p></li>
-<li><p><strong>optional</strong> (<em>X_test</em><em>,</em>) – array-like, shape = [m_samples, n_features] or a tuple of array-likes (X_test, X_valid…)
-Vectors to be used for inference by an encoder (e.g. test or validation sets) trained on the
+<li><p><strong>optional</strong> (<em>X_test</em><em>,</em>) – array-like, shape = [m_samples, n_features]
+or a tuple of array-likes (X_test, X_valid…)
+Vectors to be used for inference by an encoder
+(e.g. test or validation sets) trained on the
 full X &amp; y sets. No nested folds are used here</p></li>
 <li><p><strong>groups</strong> – Groups to be passed to the cv method, e.g. for GroupKFold</p></li>
-<li><p><strong>fit_params</strong> – </p></li>
+<li><p><strong>fit_params</strong></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>array, shape = [n_samples, n_numeric + N]
-Transformed values with encoding applied. Returns multiple arrays if X_test is not None</p>
+Transformed values with encoding applied.
+Returns multiple arrays if X_test is not None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.wrapper.NestedCVWrapper.transform">
-<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper.transform" title="Permalink to this definition"></a></dt>
-<dd><p>Calls transform on the base feature_encoder without nested cross validation</p>
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper.transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper.transform" title="Link to this definition"></a></dt>
+<dd><p>Transform on the base feature_encoder without nested cross validation.</p>
 </dd></dl>
 
 </dd></dl>
@@ -319,7 +366,7 @@ Transformed values with encoding applied. Returns multiple arrays if X_test is n
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Will McGinnis.</p>
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.one_hot &mdash; Category Encoders 2.6.4 documentation</title>
+  <title>category_encoders.one_hot &mdash; Category Encoders 2.8.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=703207cb"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../index.html" class="icon icon-home">
             Category Encoders
           </a>
-              <div class="version">
-                2.6.4
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -94,32 +89,39 @@
            <div itemprop="articleBody">
              
   <h1>Source code for category_encoders.one_hot</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;One-hot or dummy coding&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;One-hot or dummy coding.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
+
 <span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
+<span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;willmcginnis&#39;</span>
 
 
-<div class="viewcode-block" id="OneHotEncoder"><a class="viewcode-back" href="../../onehot.html#category_encoders.one_hot.OneHotEncoder">[docs]</a><span class="k">class</span> <span class="nc">OneHotEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">UnsupervisedTransformerMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Onehot (or dummy) coding for categorical features, produces one feature per category, each binary.</span>
+<div class="viewcode-block" id="OneHotEncoder">
+<a class="viewcode-back" href="../../onehot.html#category_encoders.one_hot.OneHotEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">OneHotEncoder</span><span class="p">(</span> <span class="n">util</span><span class="o">.</span><span class="n">UnsupervisedTransformerMixin</span><span class="p">,</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Onehot (or dummy) coding for categorical features, produces a binary feature per category.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    verbose: int</span>
 <span class="sd">        integer indicating verbosity of the output. 0 for none.</span>
 <span class="sd">    cols: list</span>
 <span class="sd">        a list of columns to encode, if None, all string columns will be encoded.</span>
 <span class="sd">    drop_invariant: bool</span>
-<span class="sd">        boolean for whether or not to drop columns with 0 variance.</span>
+<span class="sd">        boolean for whether to drop columns with 0 variance.</span>
 <span class="sd">    return_df: bool</span>
-<span class="sd">        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform</span>
+<span class="sd">        (otherwise it will be a numpy array).</span>
 <span class="sd">    use_cat_names: bool</span>
-<span class="sd">        if True, category values will be included in the encoded column names. Since this can result in duplicate column names, duplicates are suffixed with &#39;#&#39; symbol until a unique name is generated.</span>
+<span class="sd">        if True, category values will be included in the encoded column names.</span>
+<span class="sd">        Since this can result in duplicate column names, duplicates are suffixed with &#39;#&#39;</span>
+<span class="sd">        symbol until a unique name is generated.</span>
 <span class="sd">        If False, category indices will be used instead of the category values.</span>
 <span class="sd">    handle_unknown: str</span>
 <span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;.</span>
@@ -136,16 +138,25 @@
 <span class="sd">        &#39;value&#39; will encode a missing value as 0 in every dummy column.</span>
 <span class="sd">        &#39;indicator&#39; will treat missingness as its own category, adding an additional dummy column</span>
 <span class="sd">        (whether there are missing values in the training set or not).</span>
-<span class="sd">        &#39;ignore&#39; will encode missing values as 0 in every dummy column, NOT adding an additional category.</span>
-<span class="sd">        </span>
+<span class="sd">        &#39;ignore&#39; will encode missing values as 0 in every dummy column,</span>
+<span class="sd">        NOT adding an additional category.</span>
+
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
-<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
-<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&#39;house_prices&#39;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [</span>
+<span class="sd">    ...     &#39;Id&#39;,</span>
+<span class="sd">    ...     &#39;MSSubClass&#39;,</span>
+<span class="sd">    ...     &#39;MSZoning&#39;,</span>
+<span class="sd">    ...     &#39;LotFrontage&#39;,</span>
+<span class="sd">    ...     &#39;YearBuilt&#39;,</span>
+<span class="sd">    ...     &#39;Heating&#39;,</span>
+<span class="sd">    ...     &#39;CentralAir&#39;,</span>
+<span class="sd">    ... ]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
 <span class="sd">    &gt;&gt;&gt; enc = OneHotEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;], handle_unknown=&#39;indicator&#39;).fit(X, y)</span>
@@ -154,23 +165,23 @@
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
 <span class="sd">    Data columns (total 15 columns):</span>
-<span class="sd">     #   Column         Non-Null Count  Dtype  </span>
-<span class="sd">    ---  ------         --------------  -----  </span>
+<span class="sd">     #   Column         Non-Null Count  Dtype</span>
+<span class="sd">    ---  ------         --------------  -----</span>
 <span class="sd">     0   Id             1460 non-null   float64</span>
 <span class="sd">     1   MSSubClass     1460 non-null   float64</span>
-<span class="sd">     2   MSZoning       1460 non-null   object </span>
+<span class="sd">     2   MSZoning       1460 non-null   object</span>
 <span class="sd">     3   LotFrontage    1201 non-null   float64</span>
 <span class="sd">     4   YearBuilt      1460 non-null   float64</span>
-<span class="sd">     5   Heating_1      1460 non-null   int64  </span>
-<span class="sd">     6   Heating_2      1460 non-null   int64  </span>
-<span class="sd">     7   Heating_3      1460 non-null   int64  </span>
-<span class="sd">     8   Heating_4      1460 non-null   int64  </span>
-<span class="sd">     9   Heating_5      1460 non-null   int64  </span>
-<span class="sd">     10  Heating_6      1460 non-null   int64  </span>
-<span class="sd">     11  Heating_-1     1460 non-null   int64  </span>
-<span class="sd">     12  CentralAir_1   1460 non-null   int64  </span>
-<span class="sd">     13  CentralAir_2   1460 non-null   int64  </span>
-<span class="sd">     14  CentralAir_-1  1460 non-null   int64  </span>
+<span class="sd">     5   Heating_1      1460 non-null   int64</span>
+<span class="sd">     6   Heating_2      1460 non-null   int64</span>
+<span class="sd">     7   Heating_3      1460 non-null   int64</span>
+<span class="sd">     8   Heating_4      1460 non-null   int64</span>
+<span class="sd">     9   Heating_5      1460 non-null   int64</span>
+<span class="sd">     10  Heating_6      1460 non-null   int64</span>
+<span class="sd">     11  Heating_-1     1460 non-null   int64</span>
+<span class="sd">     12  CentralAir_1   1460 non-null   int64</span>
+<span class="sd">     13  CentralAir_2   1460 non-null   int64</span>
+<span class="sd">     14  CentralAir_-1  1460 non-null   int64</span>
 <span class="sd">    dtypes: float64(4), int64(10), object(1)</span>
 <span class="sd">    memory usage: 171.2+ KB</span>
 <span class="sd">    None</span>
@@ -183,21 +194,37 @@
 
 <span class="sd">    .. [2] Gregory Carey (2003). Coding Categorical Variables, from</span>
 <span class="sd">    http://ibgwww.colorado.edu/~carey/p5741ndir/Coding_Categorical_Variables.pdf</span>
-<span class="sd">    </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">prefit_ordinal</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_N_UNIQUE</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">use_cat_names</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
-                         <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_invariant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_df</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">use_cat_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span>
+            <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span>
+            <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_cat_names</span> <span class="o">=</span> <span class="n">use_cat_names</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">category_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">category_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the mapping.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span>
 
     <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -206,7 +233,7 @@
             <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">,</span>
             <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
             <span class="s1">&#39;indicator&#39;</span><span class="p">:</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">,</span>
-            <span class="s1">&#39;ignore&#39;</span><span class="p">:</span> <span class="s1">&#39;return_nan&#39;</span>
+            <span class="s1">&#39;ignore&#39;</span><span class="p">:</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">,</span>
         <span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="p">(</span>
             <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
@@ -217,7 +244,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_mapping</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">generate_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="OneHotEncoder.generate_mapping">
+<a class="viewcode-back" href="../../onehot.html#category_encoders.one_hot.OneHotEncoder.generate_mapping">[docs]</a>
+    <span class="k">def</span> <span class="nf">generate_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate one-hot-encoding mapping.</span>
+
+<span class="sd">        The mapping is a list [</span>
+<span class="sd">        {&#39;col&#39;: &#39;&lt;column name 1&gt;&#39;, &#39;mapping&#39;: mapping_df},</span>
+<span class="sd">        ...</span>
+<span class="sd">        ]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mapping</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">found_column_counts</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -242,18 +278,18 @@
                     <span class="n">append_nan_to_index</span> <span class="o">=</span> <span class="n">class_</span>
                     <span class="k">continue</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cat_names</span><span class="p">:</span>
-                    <span class="n">n_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">cat_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">n_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">cat_name</span><span class="si">}</span><span class="s1">&#39;</span>
                     <span class="n">found_count</span> <span class="o">=</span> <span class="n">found_column_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n_col_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                     <span class="n">found_column_counts</span><span class="p">[</span><span class="n">n_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">found_count</span> <span class="o">+</span> <span class="mi">1</span>
                     <span class="n">n_col_name</span> <span class="o">+=</span> <span class="s1">&#39;#&#39;</span> <span class="o">*</span> <span class="n">found_count</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">n_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">class_</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">n_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">class_</span><span class="si">}</span><span class="s1">&#39;</span>
 
                 <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">class_</span><span class="p">)</span>
                 <span class="n">new_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_col_name</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;indicator&#39;</span><span class="p">:</span>
-                <span class="n">n_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">_-1&quot;</span>
+                <span class="n">n_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_-1&#39;</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cat_names</span><span class="p">:</span>
                     <span class="n">found_count</span> <span class="o">=</span> <span class="n">found_column_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n_col_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                     <span class="n">found_column_counts</span><span class="p">[</span><span class="n">n_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">found_count</span> <span class="o">+</span> <span class="mi">1</span>
@@ -274,12 +310,13 @@
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
                 <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">,</span><span class="s1">&#39;ignore&#39;</span><span class="p">]:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">]:</span>
                 <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">mapping</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;col&#39;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span><span class="p">:</span> <span class="n">base_df</span><span class="p">})</span>
 
-        <span class="k">return</span> <span class="n">mapping</span>
+        <span class="k">return</span> <span class="n">mapping</span></div>
+
 
     <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
@@ -291,7 +328,9 @@
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">X</span>
 
-<div class="viewcode-block" id="OneHotEncoder.inverse_transform"><a class="viewcode-back" href="../../onehot.html#category_encoders.one_hot.OneHotEncoder.inverse_transform">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">):</span>
+<div class="viewcode-block" id="OneHotEncoder.inverse_transform">
+<a class="viewcode-back" href="../../onehot.html#category_encoders.one_hot.OneHotEncoder.inverse_transform">[docs]</a>
+    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">X_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Perform the inverse transformation to encoded data.</span>
 
@@ -304,7 +343,6 @@
 <span class="sd">        p: array, the same size of X_in</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># fail fast</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must train encoder before it can be used to inverse_transform data&#39;</span><span class="p">)</span>
@@ -317,8 +355,10 @@
         <span class="c1"># then make sure that it is the right size</span>
         <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected input dimension </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">, the attribute drop_invariant should &quot;</span>
-                                 <span class="s2">&quot;be False when transforming the data&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Unexpected input dimension </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">, the attribute drop_invariant should &#39;</span>
+                    <span class="s1">&#39;be False when transforming the data&#39;</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unexpected input dimension </span><span class="si">{</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">, expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_dim</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
@@ -333,14 +373,20 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;inverse_transform is not supported because transform impute &quot;</span>
-                                      <span class="sa">f</span><span class="s2">&quot;the unknown category nan when encode </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                            <span class="s1">&#39;inverse_transform is not supported because transform impute &#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;the unknown category nan when encode </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">X</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="k">else</span> <span class="n">X</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="OneHotEncoder.get_dummies"><a class="viewcode-back" href="../../onehot.html#category_encoders.one_hot.OneHotEncoder.get_dummies">[docs]</a>    <span class="k">def</span> <span class="nf">get_dummies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">):</span>
+
+<div class="viewcode-block" id="OneHotEncoder.get_dummies">
+<a class="viewcode-back" href="../../onehot.html#category_encoders.one_hot.OneHotEncoder.get_dummies">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_dummies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert numerical variable into dummy variables</span>
+<span class="sd">        Convert numerical variable into dummy variables.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -351,7 +397,6 @@
 <span class="sd">        dummies : DataFrame</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -365,21 +410,28 @@
             <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">base_df</span><span class="p">,</span> <span class="n">X</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
             <span class="n">old_column_index</span> <span class="o">=</span> <span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
-            <span class="n">cols</span><span class="p">[</span><span class="n">old_column_index</span><span class="p">:</span> <span class="n">old_column_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">columns</span>
+            <span class="n">cols</span><span class="p">[</span><span class="n">old_column_index</span> <span class="p">:</span> <span class="n">old_column_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">columns</span>
 
         <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">X</span></div>
 
-<div class="viewcode-block" id="OneHotEncoder.reverse_dummies"><a class="viewcode-back" href="../../onehot.html#category_encoders.one_hot.OneHotEncoder.reverse_dummies">[docs]</a>    <span class="k">def</span> <span class="nf">reverse_dummies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">mapping</span><span class="p">):</span>
+
+<div class="viewcode-block" id="OneHotEncoder.reverse_dummies">
+<a class="viewcode-back" href="../../onehot.html#category_encoders.one_hot.OneHotEncoder.reverse_dummies">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">reverse_dummies</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert dummy variable into numerical variables</span>
+<span class="sd">        Convert dummy variable into numerical variables.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        X : DataFrame</span>
 <span class="sd">        mapping: list-like</span>
-<span class="sd">              Contains mappings of column to be transformed to it&#39;s new columns and value represented</span>
+<span class="sd">              Contains mappings of column to be transformed to it&#39;s new columns and</span>
+<span class="sd">              value represented.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -403,7 +455,9 @@
             <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">out_cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">X</span></div></div>
+        <span class="k">return</span> <span class="n">X</span></div>
+</div>
+
 </pre></div>
 
            </div>
@@ -413,7 +467,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Will McGinnis.</p>
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

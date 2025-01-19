@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Category Encoders &mdash; Category Encoders 2.6.4 documentation</title>
+  <title>Category Encoders &mdash; Category Encoders 2.8.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=703207cb"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
-        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -35,9 +33,6 @@
           <a href="#" class="icon icon-home">
             Category Encoders
           </a>
-              <div class="version">
-                2.6.4
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -96,7 +91,7 @@
            <div itemprop="articleBody">
              
   <section id="category-encoders">
-<h1>Category Encoders<a class="headerlink" href="#category-encoders" title="Permalink to this heading"></a></h1>
+<h1>Category Encoders<a class="headerlink" href="#category-encoders" title="Link to this heading"></a></h1>
 <p>A set of scikit-learn-style transformers for encoding categorical variables into numeric with different
 techniques. While ordinal, one-hot, and hashing encoders have similar equivalents in the existing scikit-learn version, the
 transformers in this library all share a few useful properties:</p>
@@ -115,7 +110,7 @@ transformers in this library all share a few useful properties:</p>
 </pre></div>
 </div>
 <section id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
 <p>install as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">category_encoders</span>
 </pre></div>
@@ -156,7 +151,7 @@ transformers in this library all share a few useful properties:</p>
 the cols parameter isn’t passed, every non-numeric column will be converted. See below for detailed documentation</p>
 </section>
 <section id="known-issues">
-<h2>Known issues:<a class="headerlink" href="#known-issues" title="Permalink to this heading"></a></h2>
+<h2>Known issues:<a class="headerlink" href="#known-issues" title="Link to this heading"></a></h2>
 <p><cite>CategoryEncoders</cite> internally works with <cite>pandas DataFrames</cite> as apposed to <cite>sklearn</cite> which works with <cite>numpy arrays</cite>. This can cause problems in <cite>sklearn</cite> versions prior to 1.2.0. In order to ensure full compatibility with <cite>sklearn</cite> set <cite>sklearn</cite> to also output <cite>DataFrames</cite>. This can be done by</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sklearn</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">transform_output</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
 </pre></div>
@@ -173,13 +168,16 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <p>If you experience another bug, feel free to report it on [github](<a class="reference external" href="https://github.com/scikit-learn-contrib/category_encoders/issues">https://github.com/scikit-learn-contrib/category_encoders/issues</a>)</p>
 </section>
 <section id="contents">
-<h2>Contents:<a class="headerlink" href="#contents" title="Permalink to this heading"></a></h2>
+<h2>Contents:<a class="headerlink" href="#contents" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="backward_difference.html">Backward Difference Coding</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.fit"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.fit_contrast_coding"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.fit_contrast_coding()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.get_contrast_matrix"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.get_contrast_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.get_metadata_routing()</span></code></a></li>
@@ -188,6 +186,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.set_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.transform"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="backward_difference.html#category_encoders.backward_difference.BackwardDifferenceEncoder.transform_contrast_coding"><code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder.transform_contrast_coding()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -196,14 +195,18 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.basen_encode"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.basen_encode()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.basen_to_integer"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.basen_to_integer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.calc_required_digits"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.calc_required_digits()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.col_transform"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.col_transform()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.fit"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.fit_base_n_encoding"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.fit_base_n_encoding()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.get_metadata_routing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.get_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.inverse_transform"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.inverse_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.number_to_base"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.number_to_base()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.set_inverse_transform_request"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.set_inverse_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="basen.html#category_encoders.basen.BaseNEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">BaseNEncoder.set_params()</span></code></a></li>
@@ -217,14 +220,18 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.basen_encode"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.basen_encode()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.basen_to_integer"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.basen_to_integer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.calc_required_digits"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.calc_required_digits()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.col_transform"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.col_transform()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.fit"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.fit_base_n_encoding"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.fit_base_n_encoding()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.get_metadata_routing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.get_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.inverse_transform"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.inverse_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.number_to_base"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.number_to_base()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.set_inverse_transform_request"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.set_inverse_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="binary.html#category_encoders.binary.BinaryEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">BinaryEncoder.set_params()</span></code></a></li>
@@ -238,6 +245,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="catboost.html#category_encoders.cat_boost.CatBoostEncoder"><code class="docutils literal notranslate"><span class="pre">CatBoostEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.fit"><code class="docutils literal notranslate"><span class="pre">CatBoostEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">CatBoostEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">CatBoostEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">CatBoostEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">CatBoostEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="catboost.html#category_encoders.cat_boost.CatBoostEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">CatBoostEncoder.get_metadata_routing()</span></code></a></li>
@@ -255,6 +263,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.combine_min_categories"><code class="docutils literal notranslate"><span class="pre">CountEncoder.combine_min_categories()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.fit"><code class="docutils literal notranslate"><span class="pre">CountEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">CountEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">CountEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">CountEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">CountEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">CountEncoder.get_metadata_routing()</span></code></a></li>
@@ -271,6 +280,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="glmm.html#category_encoders.glmm.GLMMEncoder"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="glmm.html#category_encoders.glmm.GLMMEncoder.fit"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="glmm.html#category_encoders.glmm.GLMMEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="glmm.html#category_encoders.glmm.GLMMEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">GLMMEncoder.get_metadata_routing()</span></code></a></li>
@@ -287,14 +297,19 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder"><code class="docutils literal notranslate"><span class="pre">GrayEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.basen_encode"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.basen_encode()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.basen_to_integer"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.basen_to_integer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.calc_required_digits"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.calc_required_digits()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.col_transform"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.col_transform()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.fit"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.fit_base_n_encoding"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.fit_base_n_encoding()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.get_metadata_routing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.gray_code"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.gray_code()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.inverse_transform"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.inverse_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.number_to_base"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.number_to_base()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.set_inverse_transform_request"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.set_inverse_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="gray.html#category_encoders.gray.GrayEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">GrayEncoder.set_params()</span></code></a></li>
@@ -308,11 +323,15 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder"><code class="docutils literal notranslate"><span class="pre">HashingEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.fit"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.get_metadata_routing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.hash_chunk"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.hash_chunk()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.hashing_trick"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.hashing_trick()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.hashing_trick_with_np_no_parallel"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.hashing_trick_with_np_no_parallel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.hashing_trick_with_np_parallel"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.hashing_trick_with_np_parallel()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="hashing.html#category_encoders.hashing.HashingEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">HashingEncoder.set_transform_request()</span></code></a></li>
@@ -324,7 +343,10 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l1"><a class="reference internal" href="helmert.html">Helmert Coding</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.fit"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.fit_contrast_coding"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.fit_contrast_coding()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.get_contrast_matrix"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.get_contrast_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.get_metadata_routing()</span></code></a></li>
@@ -333,6 +355,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.set_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.transform"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="helmert.html#category_encoders.helmert.HelmertEncoder.transform_contrast_coding"><code class="docutils literal notranslate"><span class="pre">HelmertEncoder.transform_contrast_coding()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -341,6 +364,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.fit"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="jamesstein.html#category_encoders.james_stein.JamesSteinEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder.get_metadata_routing()</span></code></a></li>
@@ -356,7 +380,9 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l1"><a class="reference internal" href="leaveoneout.html">Leave One Out</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder"><code class="docutils literal notranslate"><span class="pre">LeaveOneOutEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.fit"><code class="docutils literal notranslate"><span class="pre">LeaveOneOutEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.fit_leave_one_out"><code class="docutils literal notranslate"><span class="pre">LeaveOneOutEncoder.fit_leave_one_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">LeaveOneOutEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">LeaveOneOutEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">LeaveOneOutEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">LeaveOneOutEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">LeaveOneOutEncoder.get_metadata_routing()</span></code></a></li>
@@ -374,6 +400,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.fit"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder.get_metadata_routing()</span></code></a></li>
@@ -388,9 +415,12 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 </li>
 <li class="toctree-l1"><a class="reference internal" href="onehot.html">One Hot</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder.category_mapping"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder.category_mapping</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder.fit"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder.generate_mapping"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder.generate_mapping()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_dummies"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder.get_dummies()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">OneHotEncoder.get_metadata_routing()</span></code></a></li>
@@ -408,8 +438,10 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ordinal.html">Ordinal</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ordinal.html#category_encoders.ordinal.OrdinalEncoder"><code class="docutils literal notranslate"><span class="pre">OrdinalEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.category_mapping"><code class="docutils literal notranslate"><span class="pre">OrdinalEncoder.category_mapping</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.fit"><code class="docutils literal notranslate"><span class="pre">OrdinalEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">OrdinalEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">OrdinalEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">OrdinalEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">OrdinalEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ordinal.html#category_encoders.ordinal.OrdinalEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">OrdinalEncoder.get_metadata_routing()</span></code></a></li>
@@ -428,7 +460,10 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l1"><a class="reference internal" href="polynomial.html">Polynomial Coding</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.fit"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.fit_contrast_coding"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.fit_contrast_coding()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.get_contrast_matrix"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.get_contrast_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.get_metadata_routing()</span></code></a></li>
@@ -437,6 +472,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.set_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.transform"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="polynomial.html#category_encoders.polynomial.PolynomialEncoder.transform_contrast_coding"><code class="docutils literal notranslate"><span class="pre">PolynomialEncoder.transform_contrast_coding()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -444,11 +480,14 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l1"><a class="reference internal" href="quantile.html">Quantile Encoder</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.fit"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.fit_quantile_encoding"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.fit_quantile_encoding()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.get_metadata_routing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.quantile_encode"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.quantile_encode()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="quantile.html#category_encoders.quantile_encoder.QuantileEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">QuantileEncoder.set_transform_request()</span></code></a></li>
@@ -461,10 +500,13 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.fit"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.generate_mapping"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.generate_mapping()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.get_metadata_routing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.inverse_transform"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.inverse_transform()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.set_inverse_transform_request"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.set_inverse_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="rankhot.html#category_encoders.rankhot.RankHotEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">RankHotEncoder.set_params()</span></code></a></li>
@@ -477,7 +519,10 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l1"><a class="reference internal" href="sum.html">Sum Coding</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder"><code class="docutils literal notranslate"><span class="pre">SumEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.fit"><code class="docutils literal notranslate"><span class="pre">SumEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.fit_contrast_coding"><code class="docutils literal notranslate"><span class="pre">SumEncoder.fit_contrast_coding()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">SumEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.get_contrast_matrix"><code class="docutils literal notranslate"><span class="pre">SumEncoder.get_contrast_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">SumEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">SumEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">SumEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">SumEncoder.get_metadata_routing()</span></code></a></li>
@@ -486,6 +531,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">SumEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">SumEncoder.set_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.transform"><code class="docutils literal notranslate"><span class="pre">SumEncoder.transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="sum.html#category_encoders.sum_coding.SumEncoder.transform_contrast_coding"><code class="docutils literal notranslate"><span class="pre">SumEncoder.transform_contrast_coding()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -494,12 +540,14 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.fit"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.get_metadata_routing()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.get_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.set_transform_request()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="summary.html#category_encoders.quantile_encoder.SummaryEncoder.transform"><code class="docutils literal notranslate"><span class="pre">SummaryEncoder.transform()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -507,7 +555,9 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l1"><a class="reference internal" href="targetencoder.html">Target Encoder</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder"><code class="docutils literal notranslate"><span class="pre">TargetEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.fit"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.fit_target_encoding"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.fit_target_encoding()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.get_metadata_routing()</span></code></a></li>
@@ -515,6 +565,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.set_output()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.set_transform_request()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.target_encode"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.target_encode()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="targetencoder.html#category_encoders.target_encoder.TargetEncoder.transform"><code class="docutils literal notranslate"><span class="pre">TargetEncoder.transform()</span></code></a></li>
 </ul>
 </li>
@@ -524,6 +575,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l2"><a class="reference internal" href="woe.html#category_encoders.woe.WOEEncoder"><code class="docutils literal notranslate"><span class="pre">WOEEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="woe.html#category_encoders.woe.WOEEncoder.fit"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="woe.html#category_encoders.woe.WOEEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="woe.html#category_encoders.woe.WOEEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.get_feature_names()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="woe.html#category_encoders.woe.WOEEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.get_feature_names_in()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="woe.html#category_encoders.woe.WOEEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.get_feature_names_out()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="woe.html#category_encoders.woe.WOEEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">WOEEncoder.get_metadata_routing()</span></code></a></li>
@@ -538,7 +590,9 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 </li>
 <li class="toctree-l1"><a class="reference internal" href="wrapper.html">Wrappers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="wrapper.html#category_encoders.wrapper.PolynomialWrapper"><code class="docutils literal notranslate"><span class="pre">PolynomialWrapper</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="wrapper.html#category_encoders.wrapper.PolynomialWrapper.fit"><code class="docutils literal notranslate"><span class="pre">PolynomialWrapper.fit()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="wrapper.html#category_encoders.wrapper.PolynomialWrapper.fit_transform"><code class="docutils literal notranslate"><span class="pre">PolynomialWrapper.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="wrapper.html#category_encoders.wrapper.PolynomialWrapper.transform"><code class="docutils literal notranslate"><span class="pre">PolynomialWrapper.transform()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="wrapper.html#category_encoders.wrapper.NestedCVWrapper"><code class="docutils literal notranslate"><span class="pre">NestedCVWrapper</span></code></a><ul>
@@ -554,7 +608,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 </section>
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
@@ -572,7 +626,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Will McGinnis.</p>
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

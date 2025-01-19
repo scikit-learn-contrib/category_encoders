@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.wrapper &mdash; Category Encoders 2.6.4 documentation</title>
+  <title>category_encoders.wrapper &mdash; Category Encoders 2.8.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=703207cb"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../index.html" class="icon icon-home">
             Category Encoders
           </a>
-              <div class="version">
-                2.6.4
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -94,16 +89,23 @@
            <div itemprop="articleBody">
              
   <h1>Source code for category_encoders.wrapper</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">category_encoders</span> <span class="kn">import</span> <span class="n">utils</span>
+<span></span><span class="sd">&quot;&quot;&quot;Module for wrappers that add extra functionality to encoders.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">StratifiedKFold</span>
+
 <span class="kn">import</span> <span class="nn">category_encoders</span> <span class="k">as</span> <span class="nn">encoders</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">category_encoders</span> <span class="kn">import</span> <span class="n">utils</span>
 
 
-<div class="viewcode-block" id="PolynomialWrapper"><a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.PolynomialWrapper">[docs]</a><span class="k">class</span> <span class="nc">PolynomialWrapper</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="PolynomialWrapper">
+<a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.PolynomialWrapper">[docs]</a>
+<span class="k">class</span> <span class="nc">PolynomialWrapper</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extend supervised encoders to n-class labels, where n &gt;= 2.</span>
 
 <span class="sd">    The label can be numerical (e.g.: 0, 1, 2, 3,...,n), string or categorical (pandas.Categorical).</span>
@@ -119,7 +121,6 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    feature_encoder: Object</span>
 <span class="sd">        an instance of a supervised encoder.</span>
 
@@ -130,10 +131,18 @@
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders.wrapper import PolynomialWrapper</span>
-<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
-<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [</span>
+<span class="sd">    ...     &#39;Id&#39;,</span>
+<span class="sd">    ...     &#39;MSSubClass&#39;,</span>
+<span class="sd">    ...     &#39;MSZoning&#39;,</span>
+<span class="sd">    ...     &#39;LotFrontage&#39;,</span>
+<span class="sd">    ...     &#39;YearBuilt&#39;,</span>
+<span class="sd">    ...     &#39;Heating&#39;,</span>
+<span class="sd">    ...     &#39;CentralAir&#39;,</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&#39;house_prices&#39;, as_frame=True)</span>
 <span class="sd">    &gt;&gt;&gt; # need more than one column</span>
-<span class="sd">    &gt;&gt;&gt; y = bunch.target.map(lambda x: int(min([x, 300000])/50000))</span>
+<span class="sd">    &gt;&gt;&gt; y = bunch.target.map(lambda x: int(min([x, 300000]) / 50000))</span>
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
 <span class="sd">    &gt;&gt;&gt; enc = TargetEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;])</span>
 <span class="sd">    &gt;&gt;&gt; wrapper = PolynomialWrapper(enc)</span>
@@ -142,11 +151,11 @@
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
 <span class="sd">    Data columns (total 17 columns):</span>
-<span class="sd">     #   Column        Non-Null Count  Dtype  </span>
-<span class="sd">    ---  ------        --------------  -----  </span>
+<span class="sd">     #   Column        Non-Null Count  Dtype</span>
+<span class="sd">    ---  ------        --------------  -----</span>
 <span class="sd">     0   Id            1460 non-null   float64</span>
 <span class="sd">     1   MSSubClass    1460 non-null   float64</span>
-<span class="sd">     2   MSZoning      1460 non-null   object </span>
+<span class="sd">     2   MSZoning      1460 non-null   object</span>
 <span class="sd">     3   LotFrontage   1201 non-null   float64</span>
 <span class="sd">     4   YearBuilt     1460 non-null   float64</span>
 <span class="sd">     5   CentralAir_3  1460 non-null   float64</span>
@@ -167,21 +176,27 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_encoder</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init the polynomial wrapper.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">BaseEncoder</span> <span class="o">=</span> <span class="n">feature_encoder</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoders</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_encoder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">encoders</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoders</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_encoder</span><span class="p">:</span> <span class="n">encoders</span><span class="o">.</span><span class="n">OneHotEncoder</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
+<div class="viewcode-block" id="PolynomialWrapper.fit">
+<a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.PolynomialWrapper.fit">[docs]</a>
     <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit a multi-label encoder.&quot;&quot;&quot;</span>
         <span class="c1"># unite the input into pandas types</span>
         <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">convert_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">))</span>
 
         <span class="c1"># apply one-hot-encoder on the label</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">label_encoder</span> <span class="o">=</span> <span class="n">encoders</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span>
-                                                    <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span>
-                                                    <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span>
-                                                    <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                                    <span class="n">use_cat_names</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_encoder</span> <span class="o">=</span> <span class="n">encoders</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">(</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;error&#39;</span><span class="p">,</span>
+            <span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span>
+            <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">use_cat_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="n">labels</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">column</span><span class="p">[</span><span class="mi">7</span><span class="p">:]</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>  <span class="c1"># drop one label</span>
@@ -189,9 +204,13 @@
         <span class="c1"># train the feature encoders, it is important to reset feature encoders first</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoders</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoders</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoders</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="PolynomialWrapper.transform">
+<a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.PolynomialWrapper.transform">[docs]</a>
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Encode new data.&quot;&quot;&quot;</span>
         <span class="c1"># unite the input into pandas types</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">convert_input</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
@@ -202,42 +221,57 @@
 
         <span class="c1"># transform the features</span>
         <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">}))</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">}))</span>
         <span class="k">for</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">feature_encoder</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoders</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">y_transform</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;target_</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+                <span class="n">y_transform</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;target_</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">y_transform</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">encoded</span> <span class="o">=</span> <span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_transform</span><span class="p">)</span>
 
             <span class="c1"># decorate the encoded features with the label class suffix</span>
             <span class="n">new_features</span> <span class="o">=</span> <span class="n">encoded</span><span class="p">[</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span>
-            <span class="n">new_features</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">class_name</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">new_features</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="n">new_features</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">class_name</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">new_features</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">]</span>
 
             <span class="n">all_new_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">all_new_features</span><span class="p">,</span> <span class="n">new_features</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># add features that were not encoded</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">encoded</span><span class="p">[</span><span class="n">encoded</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">~</span><span class="n">encoded</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">cols</span><span class="p">)]],</span>
-                            <span class="n">all_new_features</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">encoded</span><span class="p">[</span><span class="n">encoded</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">~</span><span class="n">encoded</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">cols</span><span class="p">)]],</span>
+                <span class="n">all_new_features</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="PolynomialWrapper.fit_transform"><a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.PolynomialWrapper.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PolynomialWrapper.fit_transform">
+<a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.PolynomialWrapper.fit_transform">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit encoder and encode the training data.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="NestedCVWrapper"><a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.NestedCVWrapper">[docs]</a><span class="k">class</span> <span class="nc">NestedCVWrapper</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Extends supervised encoders with the nested cross validation on the training data to minimise overfitting.</span>
+
+<div class="viewcode-block" id="NestedCVWrapper">
+<a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.NestedCVWrapper">[docs]</a>
+<span class="k">class</span> <span class="nc">NestedCVWrapper</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cross validate supervised encoders to avoid overfitting.</span>
 
 <span class="sd">    For a validation or a test set, supervised encoders can be used as follows:</span>
 
 <span class="sd">        X_train_encoded = encoder.fit_transform(X_train, y_train)</span>
 <span class="sd">        X_valid_encoded = encoder.transform(X_valid)</span>
 
-<span class="sd">    However, the downstream model will be overfitting to the encoded training data due to target leakage.</span>
-<span class="sd">    Using out-of-fold encodings is an effective way to prevent target leakage. This is equivalent to:</span>
+<span class="sd">    However, the downstream model will be overfitting to the encoded training data due to</span>
+<span class="sd">    target leakage. Using out-of-fold encodings is an effective way to prevent target leakage.</span>
+<span class="sd">    This is equivalent to:</span>
 
 <span class="sd">        X_train_encoded = np.zeros(X.shape)</span>
 <span class="sd">        for trn, val in kfold.split(X, y):</span>
@@ -249,20 +283,22 @@
 
 <span class="sd">    See README.md for a list of supervised encoders.</span>
 
-<span class="sd">    Discussion: Although leave-one-out encoder internally performs leave-one-out cross-validation, it is</span>
-<span class="sd">    actually the most overfitting supervised model in our library. To illustrate the issue, let&#39;s imagine we</span>
-<span class="sd">    have a totally unpredictive nominal feature and a perfectly balanced binary label. A supervised encoder</span>
-<span class="sd">    should encode the feature into a constant vector as the feature is unpredictive of the label. But when we</span>
-<span class="sd">    use leave-one-out cross-validation, the label ratio cease to be perfectly balanced and the wrong class</span>
-<span class="sd">    label always becomes the majority in the training fold. Leave-one-out encoder returns a seemingly</span>
-<span class="sd">    predictive feature. And the downstream model starts to overfit to the encoded feature. Unfortunately,</span>
-<span class="sd">    even 10-fold cross-validation is not immune to this effect:</span>
+<span class="sd">    Discussion: Although leave-one-out encoder internally performs leave-one-out cross-validation,</span>
+<span class="sd">    it is actually the most overfitting supervised model in our library.</span>
+<span class="sd">    To illustrate the issue, let&#39;s imagine we have a totally unpredictive nominal feature</span>
+<span class="sd">    and a perfectly balanced binary label. A supervised encoder should encode the feature into a</span>
+<span class="sd">    constant vector as the feature is unpredictive of the label.</span>
+<span class="sd">    But when we use leave-one-out cross-validation, the label ratio cease to be perfectly balanced</span>
+<span class="sd">    and the wrong class label always becomes the majority in the training fold.</span>
+<span class="sd">    Leave-one-out encoder returns a seemingly predictive feature.</span>
+<span class="sd">    And the downstream model starts to overfit to the encoded feature.</span>
+<span class="sd">    Unfortunately, even 10-fold cross-validation is not immune to this effect:</span>
 <span class="sd">        http://www.kdd.org/exploration_files/v12-02-4-UR-Perlich.pdf</span>
-<span class="sd">    To decrease the effect, it is recommended to use a low count of the folds. And that is the reason why</span>
-<span class="sd">    this wrapper uses 5 folds by default.</span>
+<span class="sd">    To decrease the effect, it is recommended to use a low count of the folds.</span>
+<span class="sd">    And that is the reason why this wrapper uses 5 folds by default.</span>
 
-<span class="sd">    Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper. The remaining</span>
-<span class="sd">    encoders can be used without this wrapper.</span>
+<span class="sd">    Based on the empirical results, only LeaveOneOutEncoder benefits greatly from this wrapper.</span>
+<span class="sd">    The remaining encoders can be used without this wrapper.</span>
 
 
 <span class="sd">    Parameters</span>
@@ -271,13 +307,16 @@
 <span class="sd">        an instance of a supervised encoder.</span>
 
 <span class="sd">    cv: int or sklearn cv Object</span>
-<span class="sd">        if an int is given, StratifiedKFold is used by default, where the int is the number of folds.</span>
+<span class="sd">        if an int is given, StratifiedKFold is used by default, where the int</span>
+<span class="sd">        is the number of folds.</span>
 
 <span class="sd">    shuffle: boolean, optional</span>
-<span class="sd">        whether to shuffle each classes samples before splitting into batches. Ignored if a CV method is provided.</span>
+<span class="sd">        whether to shuffle each classes samples before splitting into batches.</span>
+<span class="sd">        Ignored if a CV method is provided.</span>
 
 <span class="sd">    random_state: int, RandomState instance or None, optional, default=None</span>
-<span class="sd">        if int, random_state is the seed used by the random number generator. Ignored if a CV method is provided.</span>
+<span class="sd">        if int, random_state is the seed used by the random number generator.</span>
+<span class="sd">        Ignored if a CV method is provided.</span>
 
 
 <span class="sd">    Example</span>
@@ -287,8 +326,16 @@
 <span class="sd">    &gt;&gt;&gt; from category_encoders.wrapper import NestedCVWrapper</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.model_selection import GroupKFold, train_test_split</span>
-<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
-<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&#39;house_prices&#39;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [</span>
+<span class="sd">    ...     &#39;Id&#39;,</span>
+<span class="sd">    ...     &#39;MSSubClass&#39;,</span>
+<span class="sd">    ...     &#39;MSZoning&#39;,</span>
+<span class="sd">    ...     &#39;LotFrontage&#39;,</span>
+<span class="sd">    ...     &#39;YearBuilt&#39;,</span>
+<span class="sd">    ...     &#39;Heating&#39;,</span>
+<span class="sd">    ...     &#39;CentralAir&#39;,</span>
+<span class="sd">    ... ]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target &gt; 200000</span>
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
 <span class="sd">    &gt;&gt;&gt; X_train, X_test, y_train, _ = train_test_split(X, y, random_state=42)</span>
@@ -296,16 +343,18 @@
 <span class="sd">    &gt;&gt;&gt; # Define the nested CV encoder for a supervised encoder</span>
 <span class="sd">    &gt;&gt;&gt; enc_nested = NestedCVWrapper(TargetEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;]), random_state=42)</span>
 <span class="sd">    &gt;&gt;&gt; # Encode the X data for train, valid &amp; test</span>
-<span class="sd">    &gt;&gt;&gt; X_train_enc, X_valid_enc, X_test_enc = enc_nested.fit_transform(X_train, y_train, X_test=(X_valid, X_test))</span>
+<span class="sd">    &gt;&gt;&gt; X_train_enc, X_valid_enc, X_test_enc = enc_nested.fit_transform(</span>
+<span class="sd">    ...     X_train, y_train, X_test=(X_valid, X_test)</span>
+<span class="sd">    ... )</span>
 <span class="sd">    &gt;&gt;&gt; print(X_train_enc.info())</span>
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    Int64Index: 821 entries, 1390 to 896</span>
 <span class="sd">    Data columns (total 7 columns):</span>
-<span class="sd">     #   Column       Non-Null Count  Dtype  </span>
-<span class="sd">    ---  ------       --------------  -----  </span>
+<span class="sd">     #   Column       Non-Null Count  Dtype</span>
+<span class="sd">    ---  ------       --------------  -----</span>
 <span class="sd">     0   Id           821 non-null    float64</span>
 <span class="sd">     1   MSSubClass   821 non-null    float64</span>
-<span class="sd">     2   MSZoning     821 non-null    object </span>
+<span class="sd">     2   MSZoning     821 non-null    object</span>
 <span class="sd">     3   LotFrontage  672 non-null    float64</span>
 <span class="sd">     4   YearBuilt    821 non-null    float64</span>
 <span class="sd">     5   Heating      821 non-null    float64</span>
@@ -316,6 +365,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_encoder</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init wrapper.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span> <span class="o">=</span> <span class="n">feature_encoder</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">feature_encoder</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span>
@@ -326,33 +376,41 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cv</span> <span class="o">=</span> <span class="n">cv</span>
 
-<div class="viewcode-block" id="NestedCVWrapper.fit"><a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.NestedCVWrapper.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls fit on the base feature_encoder without nested cross validation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="NestedCVWrapper.fit">
+<a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.NestedCVWrapper.fit">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit on the base feature_encoder without nested cross validation.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="NestedCVWrapper.transform"><a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.NestedCVWrapper.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calls transform on the base feature_encoder without nested cross validation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NestedCVWrapper.transform">
+<a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.NestedCVWrapper.transform">[docs]</a>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform on the base feature_encoder without nested cross validation.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="NestedCVWrapper.fit_transform"><a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.NestedCVWrapper.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">X_test</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates unbiased encodings from a supervised encoder as well as infer encodings on a test set</span>
+
+<div class="viewcode-block" id="NestedCVWrapper.fit_transform">
+<a class="viewcode-back" href="../../wrapper.html#category_encoders.wrapper.NestedCVWrapper.fit_transform">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">X_test</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">fit_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unbiased encodings from a supervised encoder and inference on test set.</span>
+
 <span class="sd">        :param X: array-like, shape = [n_samples, n_features]</span>
-<span class="sd">                  Training vectors for the supervised encoder, where n_samples is the number of samples</span>
+<span class="sd">                  Training vectors for the supervised encoder,</span>
+<span class="sd">                  where n_samples is the number of samples</span>
 <span class="sd">                  and n_features is the number of features.</span>
 <span class="sd">        :param y: array-like, shape = [n_samples]</span>
 <span class="sd">                  Target values for the supervised encoder.</span>
-<span class="sd">        :param X_test, optional: array-like, shape = [m_samples, n_features] or a tuple of array-likes (X_test, X_valid...)</span>
-<span class="sd">                       Vectors to be used for inference by an encoder (e.g. test or validation sets) trained on the</span>
+<span class="sd">        :param X_test, optional: array-like, shape = [m_samples, n_features]</span>
+<span class="sd">                       or a tuple of array-likes (X_test, X_valid...)</span>
+<span class="sd">                       Vectors to be used for inference by an encoder</span>
+<span class="sd">                       (e.g. test or validation sets) trained on the</span>
 <span class="sd">                       full X &amp; y sets. No nested folds are used here</span>
 <span class="sd">        :param groups: Groups to be passed to the cv method, e.g. for GroupKFold</span>
 <span class="sd">        :param fit_params:</span>
 <span class="sd">        :return: array, shape = [n_samples, n_numeric + N]</span>
-<span class="sd">                 Transformed values with encoding applied. Returns multiple arrays if X_test is not None</span>
+<span class="sd">                 Transformed values with encoding applied.</span>
+<span class="sd">                 Returns multiple arrays if X_test is not None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">convert_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
@@ -372,12 +430,14 @@
             <span class="k">return</span> <span class="n">out_of_fold</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-                <span class="n">encoded_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">out_of_fold</span><span class="p">,</span> <span class="p">)</span>
+                <span class="n">encoded_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">out_of_fold</span><span class="p">,)</span>
                 <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">X_test</span><span class="p">:</span>
-                    <span class="n">encoded_data</span> <span class="o">=</span> <span class="n">encoded_data</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="p">)</span>
+                    <span class="n">encoded_data</span> <span class="o">=</span> <span class="n">encoded_data</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">),)</span>
                 <span class="k">return</span> <span class="n">encoded_data</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">out_of_fold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span></div></div>
+                <span class="k">return</span> <span class="n">out_of_fold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>
@@ -387,7 +447,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Will McGinnis.</p>
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

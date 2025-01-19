@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.quantile_encoder &mdash; Category Encoders 2.6.4 documentation</title>
+  <title>category_encoders.quantile_encoder &mdash; Category Encoders 2.8.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=703207cb"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../index.html" class="icon icon-home">
             Category Encoders
           </a>
-              <div class="version">
-                2.6.4
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -94,13 +89,16 @@
            <div itemprop="articleBody">
              
   <h1>Source code for category_encoders.quantile_encoder</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Quantile Encoder&quot;&quot;&quot;</span>
-<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;david26694&quot;</span><span class="p">,</span> <span class="s2">&quot;cmougan&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Quantile Encoder.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;david26694&#39;</span><span class="p">,</span> <span class="s1">&#39;cmougan&#39;</span>
+
 <span class="kn">import</span> <span class="nn">operator</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -111,7 +109,9 @@
 <span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
 
 
-<div class="viewcode-block" id="QuantileEncoder"><a class="viewcode-back" href="../../quantile.html#category_encoders.quantile_encoder.QuantileEncoder">[docs]</a><span class="k">class</span> <span class="nc">QuantileEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="QuantileEncoder">
+<a class="viewcode-back" href="../../quantile.html#category_encoders.quantile_encoder.QuantileEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">QuantileEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Quantile Encoding for categorical features.</span>
 
 <span class="sd">    This a statistically modified version of target MEstimate encoder where selected features</span>
@@ -121,44 +121,55 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    verbose: int</span>
 <span class="sd">        integer indicating verbosity of the output. 0 for none.</span>
 <span class="sd">    quantile: float</span>
 <span class="sd">        float indicating statistical quantile. ´0.5´ for median.</span>
 <span class="sd">    m: float</span>
-<span class="sd">        this is the “m” in the m-probability estimate. Higher value of m results into stronger shrinking. M is non-negative. 0 for no smoothing.</span>
+<span class="sd">        this is the “m” in the m-probability estimate. Higher value of m results into</span>
+<span class="sd">        stronger shrinking. M is non-negative. 0 for no smoothing.</span>
 <span class="sd">    cols: list</span>
 <span class="sd">        a list of columns to encode, if None, all string columns will be encoded.</span>
 <span class="sd">    drop_invariant: bool</span>
 <span class="sd">        boolean for whether or not to drop columns with 0 variance.</span>
 <span class="sd">    return_df: bool</span>
-<span class="sd">        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform</span>
+<span class="sd">        (otherwise it will be a numpy array).</span>
 <span class="sd">    handle_missing: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;  and &#39;value&#39;, defaults to &#39;value&#39;, which returns the target quantile.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;  and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the target quantile.</span>
 <span class="sd">    handle_unknown: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;, which returns the target quantile.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the target quantile.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
-<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
-<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&#39;house_prices&#39;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [</span>
+<span class="sd">    ...     &#39;Id&#39;,</span>
+<span class="sd">    ...     &#39;MSSubClass&#39;,</span>
+<span class="sd">    ...     &#39;MSZoning&#39;,</span>
+<span class="sd">    ...     &#39;LotFrontage&#39;,</span>
+<span class="sd">    ...     &#39;YearBuilt&#39;,</span>
+<span class="sd">    ...     &#39;Heating&#39;,</span>
+<span class="sd">    ...     &#39;CentralAir&#39;,</span>
+<span class="sd">    ... ]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
-<span class="sd">    &gt;&gt;&gt; enc = QuantileEncoder(cols=[&quot;CentralAir&quot;, &quot;Heating&quot;], quantile=0.5, m=1.0).fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; enc = QuantileEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;], quantile=0.5, m=1.0).fit(X, y)</span>
 <span class="sd">    &gt;&gt;&gt; numeric_dataset = enc.transform(X)</span>
 <span class="sd">    &gt;&gt;&gt; print(numeric_dataset.info())</span>
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
 <span class="sd">    Data columns (total 7 columns):</span>
-<span class="sd">     #   Column       Non-Null Count  Dtype  </span>
-<span class="sd">    ---  ------       --------------  -----  </span>
+<span class="sd">     #   Column       Non-Null Count  Dtype</span>
+<span class="sd">    ---  ------       --------------  -----</span>
 <span class="sd">     0   Id           1460 non-null   float64</span>
 <span class="sd">     1   MSSubClass   1460 non-null   float64</span>
-<span class="sd">     2   MSZoning     1460 non-null   object </span>
+<span class="sd">     2   MSZoning     1460 non-null   object</span>
 <span class="sd">     3   LotFrontage  1201 non-null   float64</span>
 <span class="sd">     4   YearBuilt    1460 non-null   float64</span>
 <span class="sd">     5   Heating      1460 non-null   float64</span>
@@ -170,101 +181,136 @@
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 
-<span class="sd">    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14</span>
-<span class="sd">    .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538</span>
-<span class="sd">    .. [3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010</span>
+<span class="sd">    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems,</span>
+<span class="sd">        https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14</span>
+<span class="sd">    .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification</span>
+<span class="sd">        and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538</span>
+<span class="sd">    .. [3] On estimating probabilities in tree pruning, equation 1,</span>
+<span class="sd">        from https://link.springer.com/chapter/10.1007/BFb0017010</span>
 <span class="sd">    .. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates</span>
 <span class="sd">    .. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">prefit_ordinal</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_ONE</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-        <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">handle_missing</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
-        <span class="n">handle_unknown</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
-        <span class="n">quantile</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">m</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_invariant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_df</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">quantile</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
-                         <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span>
+            <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span>
+            <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quantile</span> <span class="o">=</span> <span class="n">quantile</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>
 
-    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="p">(</span>
             <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
             <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
-            <span class="n">handle_unknown</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
-            <span class="n">handle_missing</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="n">X_ordinal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_quantile_encoding</span><span class="p">(</span><span class="n">X_ordinal</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">fit_quantile_encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="QuantileEncoder.fit_quantile_encoding">
+<a class="viewcode-back" href="../../quantile.html#category_encoders.quantile_encoder.QuantileEncoder.fit_quantile_encoding">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit_quantile_encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the quantile encoding mapping.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: training data.</span>
+<span class="sd">        y: target data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mapping col-name -&gt; series with category-label -&gt; quantile mapping.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mapping</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># Calculate global statistics</span>
         <span class="n">prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantile</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">category_mapping</span><span class="p">:</span>
-            <span class="n">col</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;col&quot;</span><span class="p">)</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mapping&quot;</span><span class="p">)</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mapping&#39;</span><span class="p">)</span>
 
-            <span class="c1"># Calculate sum, count and quantile of the target for each unique value in the feature col</span>
-            <span class="n">stats</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantile</span><span class="p">),</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">])</span>
-            <span class="n">stats</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;quantile&quot;</span><span class="p">,</span> <span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">]</span>
+            <span class="c1"># Calculate sum, count and quantile of the target for each unique value</span>
+            <span class="c1"># in the feature col</span>
+            <span class="n">stats</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantile</span><span class="p">),</span> <span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">])</span>
+            <span class="n">stats</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;quantile&#39;</span><span class="p">,</span> <span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">]</span>
 
             <span class="c1"># Calculate the m-probability estimate of the quantile</span>
-            <span class="n">estimate</span> <span class="o">=</span> <span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;quantile&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">prior</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+            <span class="n">estimate</span> <span class="o">=</span> <span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;quantile&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">prior</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span>
+            <span class="p">)</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s2">&quot;return_nan&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
                 <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
                 <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">prior</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s2">&quot;return_nan&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
                 <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
                 <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">prior</span>
 
             <span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimate</span>
 
-        <span class="k">return</span> <span class="n">mapping</span>
+        <span class="k">return</span> <span class="n">mapping</span></div>
 
-    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unexpected categories found in dataframe&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unexpected categories found in dataframe&#39;</span><span class="p">)</span>
 
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantile_encode</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">X</span>
 
-    <span class="k">def</span> <span class="nf">quantile_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">):</span>
+<div class="viewcode-block" id="QuantileEncoder.quantile_encode">
+<a class="viewcode-back" href="../../quantile.html#category_encoders.quantile_encoder.QuantileEncoder.quantile_encode">[docs]</a>
+    <span class="k">def</span> <span class="nf">quantile_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply quantile encoding.&quot;&quot;&quot;</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
             <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">X</span></div>
+</div>
+
 
 
 <span class="c1"># todo does not fit in schema since it is an ensemble of other encoders</span>
-<div class="viewcode-block" id="SummaryEncoder"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder">[docs]</a><span class="k">class</span> <span class="nc">SummaryEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">TransformerWithTargetMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="SummaryEncoder">
+<a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">SummaryEncoder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Summary Encoding for categorical features.</span>
 
-<span class="sd">    It&#39;s an encoder designed for creating richer representations by applying quantile encoding for a set of quantiles.</span>
+<span class="sd">    It&#39;s an encoder designed for creating richer representations by applying quantile</span>
+<span class="sd">    encoding for a set of quantiles.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -273,38 +319,50 @@
 <span class="sd">    quantiles: list</span>
 <span class="sd">        list of floats indicating the statistical quantiles. Each element represent a column</span>
 <span class="sd">    m: float</span>
-<span class="sd">        this is the “m” in the m-probability estimate. Higher value of m results into stronger shrinking. M is non-negative. 0 for no smoothing.</span>
+<span class="sd">        this is the “m” in the m-probability estimate. Higher value of m results into stronger</span>
+<span class="sd">        shrinking. M is non-negative. 0 for no smoothing.</span>
 <span class="sd">    cols: list</span>
 <span class="sd">        a list of columns to encode, if None, all string columns will be encoded.</span>
 <span class="sd">    drop_invariant: bool</span>
 <span class="sd">        boolean for whether or not to drop columns with 0 variance.</span>
 <span class="sd">    return_df: bool</span>
-<span class="sd">        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform</span>
+<span class="sd">        (otherwise it will be a numpy array).</span>
 <span class="sd">    handle_missing: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;  and &#39;value&#39;, defaults to &#39;value&#39;, which returns the target quantile.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;  and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the target quantile.</span>
 <span class="sd">    handle_unknown: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;, which returns the target quantile.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the target quantile.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
-<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
-<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&#39;house_prices&#39;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [</span>
+<span class="sd">    ...     &#39;Id&#39;,</span>
+<span class="sd">    ...     &#39;MSSubClass&#39;,</span>
+<span class="sd">    ...     &#39;MSZoning&#39;,</span>
+<span class="sd">    ...     &#39;LotFrontage&#39;,</span>
+<span class="sd">    ...     &#39;YearBuilt&#39;,</span>
+<span class="sd">    ...     &#39;Heating&#39;,</span>
+<span class="sd">    ...     &#39;CentralAir&#39;,</span>
+<span class="sd">    ... ]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
-<span class="sd">    &gt;&gt;&gt; enc = SummaryEncoder(cols=[&quot;CentralAir&quot;, &quot;Heating&quot;], quantiles=[0.25, 0.5, 0.75]).fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; enc = SummaryEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;], quantiles=[0.25, 0.5, 0.75]).fit(X, y)</span>
 <span class="sd">    &gt;&gt;&gt; numeric_dataset = enc.transform(X)</span>
 <span class="sd">    &gt;&gt;&gt; print(numeric_dataset.info())</span>
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
 <span class="sd">    Data columns (total 11 columns):</span>
-<span class="sd">     #   Column         Non-Null Count  Dtype  </span>
-<span class="sd">    ---  ------         --------------  -----  </span>
+<span class="sd">     #   Column         Non-Null Count  Dtype</span>
+<span class="sd">    ---  ------         --------------  -----</span>
 <span class="sd">     0   Id             1460 non-null   float64</span>
 <span class="sd">     1   MSSubClass     1460 non-null   float64</span>
-<span class="sd">     2   MSZoning       1460 non-null   object </span>
+<span class="sd">     2   MSZoning       1460 non-null   object</span>
 <span class="sd">     3   LotFrontage    1201 non-null   float64</span>
 <span class="sd">     4   YearBuilt      1460 non-null   float64</span>
 <span class="sd">     5   Heating_25     1460 non-null   float64</span>
@@ -319,31 +377,37 @@
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
-<span class="sd">    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems, https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14</span>
-<span class="sd">    .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538</span>
-<span class="sd">    .. [3] On estimating probabilities in tree pruning, equation 1, from https://link.springer.com/chapter/10.1007/BFb0017010</span>
+<span class="sd">    .. [1] Quantile Encoder: Tackling High Cardinality Categorical Features in Regression Problems,</span>
+<span class="sd">    https://link.springer.com/chapter/10.1007%2F978-3-030-85529-1_14</span>
+<span class="sd">    .. [2] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification</span>
+<span class="sd">    and Prediction Problems, equation 7, from https://dl.acm.org/citation.cfm?id=507538</span>
+<span class="sd">    .. [3] On estimating probabilities in tree pruning, equation 1,</span>
+<span class="sd">    from https://link.springer.com/chapter/10.1007/BFb0017010</span>
 <span class="sd">    .. [4] Additive smoothing, from https://en.wikipedia.org/wiki/Additive_smoothing#Generalized_to_the_case_of_known_incidence_rates</span>
 <span class="sd">    .. [5] Target encoding done the right way https://maxhalford.github.io/blog/target-encoding/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_M</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-        <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">handle_missing</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
-        <span class="n">handle_unknown</span><span class="o">=</span><span class="s2">&quot;value&quot;</span><span class="p">,</span>
-        <span class="n">quantiles</span><span class="o">=</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">),</span>
-        <span class="n">m</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_invariant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_df</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">quantiles</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">),</span>
+        <span class="n">m</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="o">=</span> <span class="n">return_df</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span> <span class="o">=</span> <span class="n">drop_invariant</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">drop_cols</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="n">cols</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">use_default_cols</span> <span class="o">=</span> <span class="n">cols</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># if True, even a repeated call of fit() will select string columns from X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_default_cols</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">cols</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">)</span>  <span class="c1"># if True, even a repeated call of fit() will select string columns from X</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
@@ -353,12 +417,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder_list</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="SummaryEncoder.fit"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="SummaryEncoder.fit">
+<a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.fit">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">X_type</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">y_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SummaryEncoder</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Fits the encoder according to X and y by fitting the individual encoders.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-
 <span class="sd">        X : array-like, shape = [n_samples, n_features]</span>
 <span class="sd">            Training vectors, where n_samples is the number of samples</span>
 <span class="sd">            and n_features is the number of features.</span>
@@ -367,7 +432,6 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-
 <span class="sd">        self : encoder</span>
 <span class="sd">            Returns self.</span>
 
@@ -383,7 +447,7 @@
 
         <span class="n">rounded_percentiles</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">quantile</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">quantile</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rounded_percentiles</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">rounded_percentiles</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There are two quantiles that belong to the same rounded percentile&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;There are two quantiles that belong to the same rounded percentile&#39;</span><span class="p">)</span>
 
         <span class="n">encoder_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">quantile</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span><span class="p">:</span>
@@ -391,7 +455,8 @@
                 <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
                 <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
                 <span class="n">drop_invariant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">drop_invariant</span><span class="p">,</span>
-                <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># always return df for individual encoders. If not desired this is handled below.</span>
+                <span class="c1"># always return df for individual encoders. If not desired this is handled below.</span>
+                <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">handle_missing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">,</span>
                 <span class="n">handle_unknown</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span><span class="p">,</span>
                 <span class="n">quantile</span><span class="o">=</span><span class="n">quantile</span><span class="p">,</span>
@@ -403,18 +468,43 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_names_out_</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span>
             <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_col_name</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">enc</span><span class="o">.</span><span class="n">quantile</span><span class="p">)</span> <span class="k">for</span> <span class="n">enc</span> <span class="ow">in</span> <span class="n">encoder_list</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">enc</span><span class="o">.</span><span class="n">invariant_cols</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span>
-                <span class="k">else</span> <span class="p">[</span><span class="n">c</span><span class="p">]</span>
+                <span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_get_col_name</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">enc</span><span class="o">.</span><span class="n">quantile</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">enc</span> <span class="ow">in</span> <span class="n">encoder_list</span>
+                        <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">enc</span><span class="o">.</span><span class="n">invariant_cols</span>
+                    <span class="p">]</span>
+                    <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span>
+                    <span class="k">else</span> <span class="p">[</span><span class="n">c</span><span class="p">]</span>
+                <span class="p">)</span>
                 <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
             <span class="p">],</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder_list</span> <span class="o">=</span> <span class="n">encoder_list</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">override_return_df</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="SummaryEncoder.transform">
+<a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.transform">[docs]</a>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">X_type</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">y_type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">override_return_df</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Summary encode new data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: data to encode.</span>
+<span class="sd">        y: optional target information.</span>
+<span class="sd">        override_return_df: if true return a numpy array instead of a</span>
+<span class="sd">            dataframe regardless of the return_df parameter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        encoded data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must train encoder before it can be used to transform data.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must train encoder before it can be used to transform data.&#39;</span><span class="p">)</span>
         <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">convert_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
         <span class="n">orig_cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
@@ -433,50 +523,86 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_df</span> <span class="ow">or</span> <span class="n">override_return_df</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">transformed_df</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">transformed_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">transformed_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;`get_feature_names` is deprecated in all of sklearn. Use `get_feature_names_out` instead.&quot;</span><span class="p">,</span>
-                      <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SummaryEncoder.get_feature_names_out"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_features</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the names of all transformed / added columns.</span>
+    <span class="k">def</span> <span class="nf">__sklearn_tags__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">util</span><span class="o">.</span><span class="n">EncoderTags</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set scikit transformer tags.&quot;&quot;&quot;</span>
+        <span class="n">sk_tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__sklearn_tags__</span><span class="p">()</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncoderTags</span><span class="o">.</span><span class="n">from_sk_tags</span><span class="p">(</span><span class="n">sk_tags</span><span class="p">)</span>
+        <span class="n">tags</span><span class="o">.</span><span class="n">target_tags</span><span class="o">.</span><span class="n">required</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">tags</span>
 
-<span class="sd">        Note that in sklearn the get_feature_names_out function takes the feature_names_in as an argument</span>
-<span class="sd">        and determines the output feature names using the input. A fit is usually not necessary and if so a</span>
-<span class="sd">        NotFittedError is raised.</span>
+<div class="viewcode-block" id="SummaryEncoder.fit_transform">
+<a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.fit_transform">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">X_type</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">y_type</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit and transform using target.</span>
+
+<span class="sd">        This also uses the target for transforming, not only for training.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;fit_transform() missing argument: &#39;</span> <span class="s1">&#39;y&#39;</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SummaryEncoder.get_feature_names">
+<a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_feature_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deprecated method to get feature names. Use `get_feature_names_out` instead.&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;`get_feature_names` is deprecated in all of sklearn. &#39;</span>
+            <span class="s1">&#39;Use `get_feature_names_out` instead.&#39;</span>
+        <span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">FutureWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_feature_names_out</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SummaryEncoder.get_feature_names_out">
+<a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_out">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_feature_names_out</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_features</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the names of all transformed / added columns.</span>
+
+<span class="sd">        Note that in sklearn the get_feature_names_out function takes the feature_names_in</span>
+<span class="sd">        as an argument and determines the output feature names using the input.</span>
+<span class="sd">        A fit is usually not necessary and if so a NotFittedError is raised.</span>
 <span class="sd">        We just require a fit all the time and return the fitted output columns.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        feature_names: np.ndarray</span>
 <span class="sd">            A list with all feature names transformed or added.</span>
-<span class="sd">            Note: potentially dropped features (because the feature is constant/invariant) are not included!</span>
+<span class="sd">            Note: potentially dropped features (because the feature is constant/invariant)</span>
+<span class="sd">            are not included!</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">out_feats</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;feature_names_out_&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">out_feats</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;feature_names_out_&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out_feats</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span><span class="s2">&quot;Estimator has to be fitted to return feature names.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span><span class="s1">&#39;Estimator has to be fitted to return feature names.&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out_feats</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="SummaryEncoder.get_feature_names_in"><a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in">[docs]</a>    <span class="k">def</span> <span class="nf">get_feature_names_in</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the names of all input columns present when fitting.</span>
+
+<div class="viewcode-block" id="SummaryEncoder.get_feature_names_in">
+<a class="viewcode-back" href="../../summary.html#category_encoders.quantile_encoder.SummaryEncoder.get_feature_names_in">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_feature_names_in</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the names of all input columns present when fitting.</span>
+
 <span class="sd">        These columns are necessary for the transform step.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">in_feats</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;feature_names_in_&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_feats</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span><span class="s2">&quot;Estimator has to be fitted to return feature names.&quot;</span><span class="p">)</span>
+        <span class="n">in_feats</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;feature_names_in_&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_feats</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">in_feats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">in_feats</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">in_feats</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span><span class="s1">&#39;Estimator has to be fitted to return feature names.&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">in_feats</span></div>
+
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_col_name</span><span class="p">(</span><span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">quantile</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">percentile</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">quantile</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">percentile</span><span class="si">}</span><span class="s2">&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">percentile</span><span class="si">}</span><span class="s1">&#39;</span></div>
+
 </pre></div>
 
            </div>
@@ -486,7 +612,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Will McGinnis.</p>
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

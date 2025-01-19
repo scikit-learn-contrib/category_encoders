@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.target_encoder &mdash; Category Encoders 2.6.4 documentation</title>
+  <title>category_encoders.target_encoder &mdash; Category Encoders 2.8.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=703207cb"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../index.html" class="icon icon-home">
             Category Encoders
           </a>
-              <div class="version">
-                2.6.4
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -94,30 +89,40 @@
            <div itemprop="articleBody">
              
   <h1>Source code for category_encoders.target_encoder</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Target Encoder&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Target Encoder.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">expit</span>
-<span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
+
 <span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
+<span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;chappers&#39;</span>
 
 
-<div class="viewcode-block" id="TargetEncoder"><a class="viewcode-back" href="../../targetencoder.html#category_encoders.target_encoder.TargetEncoder">[docs]</a><span class="k">class</span> <span class="nc">TargetEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="TargetEncoder">
+<a class="viewcode-back" href="../../targetencoder.html#category_encoders.target_encoder.TargetEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">TargetEncoder</span><span class="p">(</span> <span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">,</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Target encoding for categorical features.</span>
 
-<span class="sd">    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</span>
+<span class="sd">    Supported targets: binomial and continuous.</span>
+<span class="sd">    For polynomial target support, see PolynomialWrapper.</span>
 
-<span class="sd">    For the case of categorical target: features are replaced with a blend of posterior probability of the target</span>
-<span class="sd">    given particular categorical value and the prior probability of the target over all the training data.</span>
+<span class="sd">    For the case of categorical target: features are replaced with a blend of posterior</span>
+<span class="sd">    probability of the target given particular categorical value and the prior probability</span>
+<span class="sd">    of the target over all the training data.</span>
 
-<span class="sd">    For the case of continuous target: features are replaced with a blend of the expected value of the target</span>
-<span class="sd">    given particular categorical value and the expected value of the target over all the training data.</span>
+<span class="sd">    For the case of continuous target: features are replaced with a blend of the expected value</span>
+<span class="sd">    of the target given particular categorical value and the expected value of the</span>
+<span class="sd">    target over all the training data.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    verbose: int</span>
 <span class="sd">        integer indicating verbosity of the output. 0 for none.</span>
 <span class="sd">    cols: list</span>
@@ -125,50 +130,67 @@
 <span class="sd">    drop_invariant: bool</span>
 <span class="sd">        boolean for whether or not to drop columns with 0 variance.</span>
 <span class="sd">    return_df: bool</span>
-<span class="sd">        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform</span>
+<span class="sd">        (otherwise it will be a numpy array).</span>
 <span class="sd">    handle_missing: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;  and &#39;value&#39;, defaults to &#39;value&#39;, which returns the target mean.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;  and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the target mean.</span>
 <span class="sd">    handle_unknown: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;, which returns the target mean.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the target mean.</span>
 <span class="sd">    min_samples_leaf: int</span>
-<span class="sd">        For regularization the weighted average between category mean and global mean is taken. The weight is</span>
-<span class="sd">        an S-shaped curve between 0 and 1 with the number of samples for a category on the x-axis.</span>
-<span class="sd">        The curve reaches 0.5 at min_samples_leaf. (parameter k in the original paper)</span>
+<span class="sd">        For regularization the weighted average between category mean and global mean is taken.</span>
+<span class="sd">        The weight is an S-shaped curve between 0 and 1 with the number of samples for a category</span>
+<span class="sd">        on the x-axis. The curve reaches 0.5 at min_samples_leaf.</span>
+<span class="sd">        (parameter k in the original paper)</span>
 <span class="sd">    smoothing: float</span>
-<span class="sd">        smoothing effect to balance categorical average vs prior. Higher value means stronger regularization.</span>
-<span class="sd">        The value must be strictly bigger than 0. Higher values mean a flatter S-curve (see min_samples_leaf).</span>
+<span class="sd">        smoothing effect to balance categorical average vs prior. Higher value means stronger</span>
+<span class="sd">        regularization. The value must be strictly bigger than 0.</span>
+<span class="sd">        Higher values mean a flatter S-curve (see min_samples_leaf).</span>
 <span class="sd">    hierarchy: dict or dataframe</span>
 <span class="sd">        A dictionary or a dataframe to define the hierarchy for mapping.</span>
 
-<span class="sd">        If a dictionary, this contains a dict of columns to map into hierarchies.  Dictionary key(s) should be the column name from X</span>
-<span class="sd">        which requires mapping.  For multiple hierarchical maps, this should be a dictionary of dictionaries.</span>
+<span class="sd">        If a dictionary, this contains a dict of columns to map into hierarchies.</span>
+<span class="sd">        Dictionary key(s) should be the column name from X which requires mapping.</span>
+<span class="sd">        For multiple hierarchical maps, this should be a dictionary of dictionaries.</span>
 
-<span class="sd">        If dataframe: a dataframe defining columns to be used for the hierarchies.  Column names must take the form:</span>
+<span class="sd">        If dataframe: a dataframe defining columns to be used for the hierarchies.</span>
+<span class="sd">        Column names must take the form:</span>
 <span class="sd">            HIER_colA_1, ... HIER_colA_N, HIER_colB_1, ... HIER_colB_M, ...</span>
-<span class="sd">        where [colA, colB, ...] are given columns in cols list.  </span>
-<span class="sd">        1:N and 1:M define the hierarchy for each column where 1 is the highest hierarchy (top of the tree).  A single column or multiple </span>
-<span class="sd">        can be used, as relevant.</span>
+<span class="sd">        where [colA, colB, ...] are given columns in cols list.</span>
+<span class="sd">        1:N and 1:M define the hierarchy for each column where 1 is the highest hierarchy</span>
+<span class="sd">        (top of the tree).  A single column or multiple can be used, as relevant.</span>
 
 <span class="sd">    Examples</span>
-<span class="sd">    -------</span>
+<span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
-<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
-<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [</span>
+<span class="sd">    ...     &#39;Id&#39;,</span>
+<span class="sd">    ...     &#39;MSSubClass&#39;,</span>
+<span class="sd">    ...     &#39;MSZoning&#39;,</span>
+<span class="sd">    ...     &#39;LotFrontage&#39;,</span>
+<span class="sd">    ...     &#39;YearBuilt&#39;,</span>
+<span class="sd">    ...     &#39;Heating&#39;,</span>
+<span class="sd">    ...     &#39;CentralAir&#39;,</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&#39;house_prices&#39;, as_frame=True)</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target &gt; 200000</span>
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
-<span class="sd">    &gt;&gt;&gt; enc = TargetEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;], min_samples_leaf=20, smoothing=10).fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; enc = TargetEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;], min_samples_leaf=20, smoothing=10).fit(</span>
+<span class="sd">    ...     X, y</span>
+<span class="sd">    ... )</span>
 <span class="sd">    &gt;&gt;&gt; numeric_dataset = enc.transform(X)</span>
 <span class="sd">    &gt;&gt;&gt; print(numeric_dataset.info())</span>
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
 <span class="sd">    Data columns (total 7 columns):</span>
-<span class="sd">     #   Column       Non-Null Count  Dtype  </span>
-<span class="sd">    ---  ------       --------------  -----  </span>
+<span class="sd">     #   Column       Non-Null Count  Dtype</span>
+<span class="sd">    ---  ------       --------------  -----</span>
 <span class="sd">     0   Id           1460 non-null   float64</span>
 <span class="sd">     1   MSSubClass   1460 non-null   float64</span>
-<span class="sd">     2   MSZoning     1460 non-null   object </span>
+<span class="sd">     2   MSZoning     1460 non-null   object</span>
 <span class="sd">     3   LotFrontage  1201 non-null   float64</span>
 <span class="sd">     4   YearBuilt    1460 non-null   float64</span>
 <span class="sd">     5   Heating      1460 non-null   float64</span>
@@ -176,20 +198,24 @@
 <span class="sd">    dtypes: float64(6), object(1)</span>
 <span class="sd">    memory usage: 80.0+ KB</span>
 <span class="sd">    None</span>
-<span class="sd">   </span>
+
 <span class="sd">    &gt;&gt;&gt; from category_encoders.datasets import load_compass</span>
 <span class="sd">    &gt;&gt;&gt; X, y = load_compass()</span>
 <span class="sd">    &gt;&gt;&gt; hierarchical_map = {&#39;compass&#39;: {&#39;N&#39;: (&#39;N&#39;, &#39;NE&#39;), &#39;S&#39;: (&#39;S&#39;, &#39;SE&#39;), &#39;W&#39;: &#39;W&#39;}}</span>
-<span class="sd">    &gt;&gt;&gt; enc = TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map, cols=[&#39;compass&#39;]).fit(X.loc[:,[&#39;compass&#39;]], y)</span>
-<span class="sd">    &gt;&gt;&gt; hierarchy_dataset = enc.transform(X.loc[:,[&#39;compass&#39;]])</span>
+<span class="sd">    &gt;&gt;&gt; enc = TargetEncoder(</span>
+<span class="sd">    ...     verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map, cols=[&#39;compass&#39;]</span>
+<span class="sd">    ... ).fit(X.loc[:, [&#39;compass&#39;]], y)</span>
+<span class="sd">    &gt;&gt;&gt; hierarchy_dataset = enc.transform(X.loc[:, [&#39;compass&#39;]])</span>
 <span class="sd">    &gt;&gt;&gt; print(hierarchy_dataset[&#39;compass&#39;].values)</span>
 <span class="sd">    [0.62263617 0.62263617 0.90382995 0.90382995 0.90382995 0.17660024</span>
 <span class="sd">     0.17660024 0.46051953 0.46051953 0.46051953 0.46051953 0.40332791</span>
 <span class="sd">     0.40332791 0.40332791 0.40332791 0.40332791]</span>
 <span class="sd">    &gt;&gt;&gt; X, y = load_postcodes(&#39;binary&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; cols = [&#39;postcode&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; HIER_cols = [&#39;HIER_postcode_1&#39;,&#39;HIER_postcode_2&#39;,&#39;HIER_postcode_3&#39;,&#39;HIER_postcode_4&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; enc = TargetEncoder(verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=X[HIER_cols], cols=[&#39;postcode&#39;]).fit(X[&#39;postcode&#39;], y)</span>
+<span class="sd">    &gt;&gt;&gt; HIER_cols = [&#39;HIER_postcode_1&#39;, &#39;HIER_postcode_2&#39;, &#39;HIER_postcode_3&#39;, &#39;HIER_postcode_4&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; enc = TargetEncoder(</span>
+<span class="sd">    ...     verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=X[HIER_cols], cols=[&#39;postcode&#39;]</span>
+<span class="sd">    ... ).fit(X[&#39;postcode&#39;], y)</span>
 <span class="sd">    &gt;&gt;&gt; hierarchy_dataset = enc.transform(X[&#39;postcode&#39;])</span>
 <span class="sd">    &gt;&gt;&gt; print(hierarchy_dataset.loc[0:10, &#39;postcode&#39;].values)</span>
 <span class="sd">    [0.75063473 0.90208756 0.88328833 0.77041254 0.68891504 0.85012847</span>
@@ -198,22 +224,40 @@
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 
-<span class="sd">    .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems, from</span>
-<span class="sd">    https://dl.acm.org/citation.cfm?id=507538</span>
+<span class="sd">    .. [1] A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification</span>
+<span class="sd">    and Prediction Problems, from https://dl.acm.org/citation.cfm?id=507538</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">prefit_ordinal</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_ONE</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
-                 <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">min_samples_leaf</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">smoothing</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">hierarchy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
-                         <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_invariant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_df</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">min_samples_leaf</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="n">smoothing</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="n">hierarchy</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span>
+            <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span>
+            <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min_samples_leaf</span> <span class="o">=</span> <span class="n">min_samples_leaf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="o">=</span> <span class="n">smoothing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># @ToDo create a function to check the hierarchy</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hierarchy</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">))</span> <span class="ow">and</span> <span class="n">cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Hierarchy is defined but no columns are named for encoding&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hierarchy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -224,15 +268,23 @@
                 <span class="n">hierarchy_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_dict_key_tuples</span><span class="p">(</span><span class="n">flattened_hierarchy</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy_depth</span><span class="p">[</span><span class="n">switch</span><span class="p">]</span> <span class="o">=</span> <span class="n">hierarchy_check</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">hierarchy_check</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Hierarchy mapping contains different levels for key &quot;&#39;</span> <span class="o">+</span> <span class="n">switch</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">[</span><span class="n">switch</span><span class="p">]</span> <span class="o">=</span> <span class="p">{(</span><span class="n">k</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">t</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">flattened_hierarchy</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">t</span><span class="p">}</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;Hierarchy mapping contains different levels for key &quot;&#39;</span> <span class="o">+</span> <span class="n">switch</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+                    <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">[</span><span class="n">switch</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="p">(</span><span class="n">k</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="n">t</span><span class="p">):</span> <span class="n">v</span>
+                    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">flattened_hierarchy</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">t</span>
+                <span class="p">}</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hierarchy</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span> <span class="o">=</span> <span class="n">hierarchy</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy_depth</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
-                <span class="n">HIER_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;HIER_</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">HIER_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;HIER_</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
                 <span class="n">HIER_levels</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;HIER_</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">HIER_cols</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">HIER_levels</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">HIER_levels</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">HIER_levels</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">HIER_levels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy_depth</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">HIER_levels</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Hierarchy columns are not complete for column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -243,18 +295,36 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cols_hier</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">_check_dict_key_tuples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-        <span class="n">min_tuple_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="n">max_tuple_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_dict_key_tuples</span><span class="p">(</span><span class="n">dict_to_check</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if all tuples in the dict values have the same length.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dict_to_check: dictionary to check</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple: first entry if all sizes are equal, second minimum size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_tuple_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dict_to_check</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">max_tuple_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dict_to_check</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">min_tuple_size</span> <span class="o">==</span> <span class="n">max_tuple_size</span><span class="p">,</span> <span class="n">min_tuple_size</span>
 
-    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">X_type</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">y_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">X_hier</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">switch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
-                    <span class="n">colnames</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;HIER_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">switch</span><span class="p">)</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy_depth</span><span class="p">[</span><span class="n">switch</span><span class="p">])]</span>
-                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">switch</span><span class="p">)]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">switch</span><span class="p">)])</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">colnames</span><span class="p">)</span>
+                    <span class="n">colnames</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="sa">f</span><span class="s1">&#39;HIER_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">switch</span><span class="p">)</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy_depth</span><span class="p">[</span><span class="n">switch</span><span class="p">])</span>
+                    <span class="p">]</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                        <span class="n">X</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">switch</span><span class="p">)]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">switch</span><span class="p">)])</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                        <span class="n">index</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                        <span class="n">columns</span><span class="o">=</span><span class="n">colnames</span><span class="p">,</span>
+                    <span class="p">)</span>
                     <span class="n">X_hier</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_hier</span><span class="p">,</span> <span class="n">df</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="n">X_hier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span>
@@ -264,25 +334,38 @@
                 <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
                 <span class="n">cols</span><span class="o">=</span><span class="n">X_hier</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
                 <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
-                <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span>
+                <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">enc_hier</span> <span class="o">=</span> <span class="n">enc_hier</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_hier</span><span class="p">)</span>
             <span class="n">X_hier_ordinal</span> <span class="o">=</span> <span class="n">enc_hier</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_hier</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="p">(</span>
-            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
-            <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
-            <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
-            <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="n">X_ordinal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_target_encoding</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_ordinal</span><span class="p">,</span> <span class="n">X_hier_ordinal</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_target_encoding</span><span class="p">(</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_ordinal</span><span class="p">,</span> <span class="n">X_hier_ordinal</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">y</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_target_encoding</span><span class="p">(</span><span class="n">X_ordinal</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">fit_target_encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="TargetEncoder.fit_target_encoding">
+<a class="viewcode-back" href="../../targetencoder.html#category_encoders.target_encoder.TargetEncoder.fit_target_encoding">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit_target_encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">X_type</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">y_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the target encoding mapping.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X: training data to fit on.</span>
+<span class="sd">        y: training target.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dictionary: column -&gt; encoding values for column</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mapping</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
@@ -292,17 +375,24 @@
                 <span class="n">values</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mapping&#39;</span><span class="p">)</span>
 
                 <span class="n">scalar</span> <span class="o">=</span> <span class="n">prior</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">)</span> <span class="ow">or</span> \
-                                    <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+                <span class="p">):</span>
                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hierarchy_depth</span><span class="p">[</span><span class="n">col</span><span class="p">]):</span>
-                        <span class="n">col_hier</span> <span class="o">=</span> <span class="s1">&#39;HIER_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-                        <span class="n">col_hier_m1</span> <span class="o">=</span> <span class="n">col</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy_depth</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;HIER_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col_hier</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col_hier</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">col_hier</span> <span class="o">=</span> <span class="s1">&#39;HIER_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">col_hier_m1</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">col</span>
+                            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">hierarchy_depth</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+                            <span class="k">else</span> <span class="s1">&#39;HIER_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col_hier</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col_hier</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                             <span class="n">stats_hier</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col_hier</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">])</span>
                             <span class="n">smoove_hier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_weighting</span><span class="p">(</span><span class="n">stats_hier</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
-                            <span class="n">scalar_hier</span> <span class="o">=</span> <span class="n">scalar</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">smoove_hier</span><span class="p">)</span> <span class="o">+</span> <span class="n">stats_hier</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">smoove_hier</span>
+                            <span class="n">scalar_hier</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="n">scalar</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">smoove_hier</span><span class="p">)</span> <span class="o">+</span> <span class="n">stats_hier</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">smoove_hier</span>
+                            <span class="p">)</span>
                             <span class="n">scalar_hier_long</span> <span class="o">=</span> <span class="n">X</span><span class="p">[[</span><span class="n">col_hier_m1</span><span class="p">,</span> <span class="n">col_hier</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
-                            <span class="n">scalar_hier_long</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">scalar_hier_long</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                            <span class="n">scalar_hier_long</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">scalar_hier_long</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                             <span class="n">scalar</span> <span class="o">=</span> <span class="n">scalar_hier_long</span><span class="p">[</span><span class="n">col_hier</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">scalar_hier</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
 
                 <span class="n">stats</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">])</span>
@@ -322,9 +412,10 @@
 
                 <span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">smoothing</span>
 
-        <span class="k">return</span> <span class="n">mapping</span>
+        <span class="k">return</span> <span class="n">mapping</span></div>
 
-    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="c1"># Now X is the correct dimensions it works with pre fitted ordinal encoder</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
@@ -335,19 +426,24 @@
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_encode</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">X</span>
 
-    <span class="k">def</span> <span class="nf">target_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">):</span>
+<div class="viewcode-block" id="TargetEncoder.target_encode">
+<a class="viewcode-back" href="../../targetencoder.html#category_encoders.target_encoder.TargetEncoder.target_encode">[docs]</a>
+    <span class="k">def</span> <span class="nf">target_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_in</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply target encoding via encoder mapping.&quot;&quot;&quot;</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Was not mapping extra columns as self.featuer_names_in did not include new column</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
             <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="n">X</span>
+        <span class="k">return</span> <span class="n">X</span></div>
 
-    <span class="k">def</span> <span class="nf">_weighting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_weighting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="c1"># monotonically increasing function of n bounded between 0 and 1</span>
         <span class="c1"># sigmoid in this case, using scipy.expit for numerical stability</span>
         <span class="k">return</span> <span class="n">expit</span><span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples_leaf</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
@@ -357,7 +453,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Will McGinnis.</p>
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

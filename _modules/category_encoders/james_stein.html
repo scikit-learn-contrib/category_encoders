@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.james_stein &mdash; Category Encoders 2.6.4 documentation</title>
+  <title>category_encoders.james_stein &mdash; Category Encoders 2.8.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=703207cb"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../index.html" class="icon icon-home">
             Category Encoders
           </a>
-              <div class="version">
-                2.6.4
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -94,22 +89,26 @@
            <div itemprop="articleBody">
              
   <h1>Source code for category_encoders.james_stein</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;James-Stein&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;James-Stein.&quot;&quot;&quot;</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">scipy</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
-<span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
-<span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
 <span class="kn">from</span> <span class="nn">sklearn.utils.random</span> <span class="kn">import</span> <span class="n">check_random_state</span>
+
+<span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
+<span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jan Motl&#39;</span>
 
 
-<div class="viewcode-block" id="JamesSteinEncoder"><a class="viewcode-back" href="../../jamesstein.html#category_encoders.james_stein.JamesSteinEncoder">[docs]</a><span class="k">class</span> <span class="nc">JamesSteinEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="JamesSteinEncoder">
+<a class="viewcode-back" href="../../jamesstein.html#category_encoders.james_stein.JamesSteinEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">JamesSteinEncoder</span><span class="p">(</span> <span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">,</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;James-Stein estimator.</span>
 
-<span class="sd">    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</span>
+<span class="sd">    Supported targets: binomial and continuous.</span>
+<span class="sd">    For polynomial target support, see PolynomialWrapper.</span>
 
 <span class="sd">    For feature value `i`, James-Stein estimator returns a weighted average of:</span>
 
@@ -118,7 +117,7 @@
 
 <span class="sd">    This can be written as::</span>
 
-<span class="sd">        JS_i = (1-B)*mean(y_i) + B*mean(y)</span>
+<span class="sd">        JS_i = (1 - B) * mean(y_i) + B * mean(y)</span>
 
 <span class="sd">    The question is, what should be the weight `B`?</span>
 <span class="sd">    If we put too much weight on the conditional mean value, we will overfit.</span>
@@ -128,7 +127,7 @@
 <span class="sd">    The intuition is: If the estimate of `mean(y_i)` is unreliable (`y_i` has high variance),</span>
 <span class="sd">    we should put more weight on `mean(y)`. Stein put it into an equation as::</span>
 
-<span class="sd">        B = var(y_i) / (var(y_i)+var(y))</span>
+<span class="sd">        B = var(y_i) / (var(y_i) + var(y))</span>
 
 <span class="sd">    The only remaining issue is that we do not know `var(y)`, let alone `var(y_i)`.</span>
 <span class="sd">    Hence, we have to estimate the variances. But how can we reliably estimate the</span>
@@ -160,7 +159,6 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    verbose: int</span>
 <span class="sd">        integer indicating verbosity of the output. 0 for none.</span>
 <span class="sd">    cols: list</span>
@@ -168,15 +166,19 @@
 <span class="sd">    drop_invariant: bool</span>
 <span class="sd">        boolean for whether or not to drop encoded columns with 0 variance.</span>
 <span class="sd">    return_df: bool</span>
-<span class="sd">        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform</span>
+<span class="sd">        (otherwise it will be a numpy array).</span>
 <span class="sd">    handle_missing: str</span>
-<span class="sd">        options are &#39;return_nan&#39;, &#39;error&#39; and &#39;value&#39;, defaults to &#39;value&#39;, which returns the prior probability.</span>
+<span class="sd">        options are &#39;return_nan&#39;, &#39;error&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the prior probability.</span>
 <span class="sd">    handle_unknown: str</span>
-<span class="sd">        options are &#39;return_nan&#39;, &#39;error&#39; and &#39;value&#39;, defaults to &#39;value&#39;, which returns the prior probability.</span>
+<span class="sd">        options are &#39;return_nan&#39;, &#39;error&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the prior probability.</span>
 <span class="sd">    model: str</span>
 <span class="sd">        options are &#39;pooled&#39;, &#39;beta&#39;, &#39;binary&#39; and &#39;independent&#39;, defaults to &#39;independent&#39;.</span>
 <span class="sd">    randomized: bool,</span>
-<span class="sd">        adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).</span>
+<span class="sd">        adds normal (Gaussian) distribution noise into training data in order to decrease</span>
+<span class="sd">        overfitting (testing data are untouched).</span>
 <span class="sd">    sigma: float</span>
 <span class="sd">        standard deviation (spread or &quot;width&quot;) of the normal distribution.</span>
 
@@ -186,8 +188,16 @@
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
-<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
-<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&#39;house_prices&#39;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [</span>
+<span class="sd">    ...     &#39;Id&#39;,</span>
+<span class="sd">    ...     &#39;MSSubClass&#39;,</span>
+<span class="sd">    ...     &#39;MSZoning&#39;,</span>
+<span class="sd">    ...     &#39;LotFrontage&#39;,</span>
+<span class="sd">    ...     &#39;YearBuilt&#39;,</span>
+<span class="sd">    ...     &#39;Heating&#39;,</span>
+<span class="sd">    ...     &#39;CentralAir&#39;,</span>
+<span class="sd">    ... ]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
 <span class="sd">    &gt;&gt;&gt; enc = JamesSteinEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;]).fit(X, y)</span>
@@ -196,11 +206,11 @@
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
 <span class="sd">    Data columns (total 7 columns):</span>
-<span class="sd">     #   Column       Non-Null Count  Dtype  </span>
-<span class="sd">    ---  ------       --------------  -----  </span>
+<span class="sd">     #   Column       Non-Null Count  Dtype</span>
+<span class="sd">    ---  ------       --------------  -----</span>
 <span class="sd">     0   Id           1460 non-null   float64</span>
 <span class="sd">     1   MSSubClass   1460 non-null   float64</span>
-<span class="sd">     2   MSZoning     1460 non-null   object </span>
+<span class="sd">     2   MSZoning     1460 non-null   object</span>
 <span class="sd">     3   LotFrontage  1201 non-null   float64</span>
 <span class="sd">     4   YearBuilt    1460 non-null   float64</span>
 <span class="sd">     5   Heating      1460 non-null   float64</span>
@@ -212,8 +222,8 @@
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
 
-<span class="sd">    .. [1] Parametric empirical Bayes inference: Theory and applications, equations 1.19 &amp; 1.20, from</span>
-<span class="sd">    https://www.jstor.org/stable/2287098</span>
+<span class="sd">    .. [1] Parametric empirical Bayes inference: Theory and applications, equations 1.19 &amp; 1.20,</span>
+<span class="sd">    from https://www.jstor.org/stable/2287098</span>
 
 <span class="sd">    .. [2] Empirical Bayes for multiple sample sizes, from</span>
 <span class="sd">    http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/</span>
@@ -228,13 +238,31 @@
 <span class="sd">    http://statweb.stanford.edu/~ckirby/brad/other/Article1977.pdf</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">prefit_ordinal</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_ONE</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
-                 <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s1">&#39;independent&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">randomized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
-                         <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="s1">&#39;independent&#39;</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">randomized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">sigma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span>
+            <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span>
+            <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
@@ -243,12 +271,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
 
     <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="p">(</span>
-            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
-            <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
-            <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
-            <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="n">X_ordinal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
@@ -264,13 +288,23 @@
             <span class="c1"># The label must be binary with values {0,1}</span>
             <span class="n">unique</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The target column y must be binary. But the target contains &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; unique value(s).&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;The target column y must be binary. But the target contains &#39;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">))</span>
+                    <span class="o">+</span> <span class="s1">&#39; unique value(s).&#39;</span>
+                <span class="p">)</span>
             <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The target column y must not contain missing values.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The target column y must not contain missing values.&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The target column y must be binary with values {0, 1}. Value 1 was not found in the target.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;The target column y must be binary with values {0, 1}. &#39;</span>
+                    <span class="s1">&#39;Value 1 was not found in the target.&#39;</span>
+                <span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The target column y must be binary with values {0, 1}. Value 0 was not found in the target.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;The target column y must be binary with values {0, 1}. &#39;</span>
+                    <span class="s1">&#39;Value 0 was not found in the target.&#39;</span>
+                <span class="p">)</span>
             <span class="c1"># Perform the training</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_train_log_odds_ratio</span><span class="p">(</span><span class="n">X_ordinal</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -287,9 +321,10 @@
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">X</span>
 
-    <span class="k">def</span> <span class="nf">_more_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_more_tags</span><span class="p">()</span>
-        <span class="n">tags</span><span class="p">[</span><span class="s2">&quot;predict_depends_on_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">def</span> <span class="nf">__sklearn_tags__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">util</span><span class="o">.</span><span class="n">EncoderTags</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set scikit transformer tags.&quot;&quot;&quot;</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__sklearn_tags__</span><span class="p">()</span>
+        <span class="n">tags</span><span class="o">.</span><span class="n">predict_depends_on_y</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">tags</span>
 
     <span class="k">def</span> <span class="nf">_train_pooled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -310,29 +345,32 @@
             <span class="c1"># Calculate sum and count of the target for each unique value in the feature col</span>
             <span class="n">stats</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">])</span>
 
-            <span class="c1"># See: Computer Age Statistical Inference: Algorithms, Evidence, and Data Science (Bradley Efron &amp; Trevor Hastie, 2016)</span>
-            <span class="c1">#   Equations 7.19 and 7.20.</span>
+            <span class="c1"># See: Computer Age Statistical Inference: Algorithms, Evidence, and Data Science</span>
+            <span class="c1"># (Bradley Efron &amp; Trevor Hastie, 2016) Equations 7.19 and 7.20.</span>
             <span class="c1"># Note: The equations assume normal distribution of the label. But our label is p(y|x),</span>
-            <span class="c1"># which is definitely not normally distributed as probabilities are bound to lie on interval 0..1.</span>
+            <span class="c1"># which is definitely not normally distributed as probabilities are bound to lie on</span>
+            <span class="c1"># interval 0..1.</span>
             <span class="c1"># We make this approximation because Efron does it as well.</span>
 
             <span class="c1"># Equation 7.19</span>
             <span class="c1"># Explanation of the equation:</span>
             <span class="c1">#   https://stats.stackexchange.com/questions/191444/variance-in-estimating-p-for-a-binomial-distribution</span>
             <span class="c1"># if stats[&#39;count&#39;].var() &gt; 0:</span>
-            <span class="c1">#     warnings.warn(&#39;The pooled model assumes that each category is observed exactly N times. This was violated in &quot;&#39; + str(col) +&#39;&quot; column. Consider comparing the accuracy of this model to &quot;independent&quot; model.&#39;)</span>
+            <span class="c1">#     warnings.warn(&#39;The pooled model assumes that each category is observed</span>
+            <span class="c1">#     exactly N times. This was violated in &quot;&#39; + str(col) +&#39;&quot; column.</span>
+            <span class="c1">#     Consider comparing the accuracy of this model to &quot;independent&quot; model.&#39;)</span>
             <span class="c1"># This is a parametric estimate of var(p) in the binomial distribution.</span>
             <span class="c1"># We do not use it because we also want to support non-binary targets.</span>
             <span class="c1"># The difference in the estimates is small.</span>
             <span class="c1">#   variance = prior * (1 - prior) / stats[&#39;count&#39;].mean()</span>
             <span class="c1"># This is a squared estimate of standard error of the mean:</span>
             <span class="c1">#   https://en.wikipedia.org/wiki/Standard_error</span>
-            <span class="n">variance</span> <span class="o">=</span> <span class="n">target_var</span><span class="o">/</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+            <span class="n">variance</span> <span class="o">=</span> <span class="n">target_var</span> <span class="o">/</span> <span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
 
             <span class="c1"># Equation 7.20</span>
-            <span class="n">SSE</span> <span class="o">=</span> <span class="p">((</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">prior</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>  <span class="c1"># Sum of Squared Errors</span>
+            <span class="n">SSE</span> <span class="o">=</span> <span class="p">((</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">prior</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>  <span class="c1"># Sum of Squared Errors</span>
             <span class="k">if</span> <span class="n">SSE</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># We have to avoid division by zero</span>
-                <span class="n">B</span> <span class="o">=</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">variance</span><span class="p">)</span> <span class="o">/</span> <span class="n">SSE</span>
+                <span class="n">B</span> <span class="o">=</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">variance</span><span class="p">)</span> <span class="o">/</span> <span class="n">SSE</span>
                 <span class="n">B</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">estimate</span> <span class="o">=</span> <span class="n">prior</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">B</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">prior</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -376,28 +414,34 @@
             <span class="c1"># Calculate sum and count of the target for each unique value in the feature col</span>
             <span class="n">stats</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;var&#39;</span><span class="p">])</span>
 
-            <span class="n">i_var</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;var&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>   <span class="c1"># When we do not have more than 1 sample, assume 0 variance</span>
+            <span class="n">i_var</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;var&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span>
+                <span class="mi">0</span>
+            <span class="p">)</span>  <span class="c1"># When we do not have more than 1 sample, assume 0 variance</span>
             <span class="n">unique_cnt</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
 
             <span class="c1"># See: Parametric Empirical Bayes Inference: Theory and Applications (Morris, 1983)</span>
             <span class="c1">#   Equations 1.19 and 1.20.</span>
             <span class="c1"># Note: The equations assume normal distribution of the label. But our label is p(y|x),</span>
-            <span class="c1"># which is definitely not normally distributed as probabilities are bound to lie on interval 0..1.</span>
+            <span class="c1"># which is definitely not normally distributed as probabilities are bound to lie</span>
+            <span class="c1"># on interval 0..1.</span>
             <span class="c1"># Nevertheless, it seems to perform surprisingly well. This is in agreement with:</span>
             <span class="c1">#   Data Analysis with Stein&#39;s Estimator and Its Generalizations (Efron &amp; Morris, 1975)</span>
             <span class="c1"># The equations are similar to James-Stein estimator, as listed in:</span>
             <span class="c1">#   Stein&#39;s Paradox in Statistics (Efron &amp; Morris, 1977)</span>
             <span class="c1"># Or:</span>
-            <span class="c1">#   Computer Age Statistical Inference: Algorithms, Evidence, and Data Science (Efron &amp; Hastie, 2016)</span>
-            <span class="c1">#   Equations 7.19 and 7.20.</span>
-            <span class="c1"># The difference is that they have equal count of observations per estimated variable, while we generally</span>
-            <span class="c1"># do not have that. Nice discussion about that is given at:</span>
+            <span class="c1">#   Computer Age Statistical Inference: Algorithms, Evidence, and Data Science</span>
+            <span class="c1">#   (Efron &amp; Hastie, 2016) Equations 7.19 and 7.20.</span>
+            <span class="c1"># The difference is that they have equal count of observations per estimated variable,</span>
+            <span class="c1"># while we generally # do not have that.</span>
+            <span class="c1"># Nice discussion about that is given at:</span>
             <span class="c1">#   http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/</span>
-            <span class="n">smoothing</span> <span class="o">=</span> <span class="n">i_var</span> <span class="o">/</span> <span class="p">(</span><span class="n">global_var</span> <span class="o">+</span> <span class="n">i_var</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">unique_cnt</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">unique_cnt</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">smoothing</span> <span class="o">=</span> <span class="n">i_var</span> <span class="o">/</span> <span class="p">(</span><span class="n">global_var</span> <span class="o">+</span> <span class="n">i_var</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">unique_cnt</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">unique_cnt</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">smoothing</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">smoothing</span>
-            <span class="n">smoothing</span> <span class="o">=</span> <span class="n">smoothing</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># Smoothing should be in the interval &lt;0,1&gt;</span>
+            <span class="n">smoothing</span> <span class="o">=</span> <span class="n">smoothing</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+                <span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">)</span>  <span class="c1"># Smoothing should be in the interval &lt;0,1&gt;</span>
 
-            <span class="n">estimate</span> <span class="o">=</span> <span class="n">smoothing</span><span class="o">*</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">smoothing</span><span class="p">)</span><span class="o">*</span><span class="n">prior</span>
+            <span class="n">estimate</span> <span class="o">=</span> <span class="n">smoothing</span> <span class="o">*</span> <span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">smoothing</span><span class="p">)</span> <span class="o">*</span> <span class="n">prior</span>
 
             <span class="c1"># Ignore unique values. This helps to prevent overfitting on id-like columns</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="n">global_count</span><span class="p">:</span>
@@ -433,10 +477,10 @@
         <span class="c1">#   https://en.wikipedia.org/wiki/Newton%27s_method</span>
         <span class="c1"># But we just use sklearn minimizer.</span>
         <span class="k">def</span> <span class="nf">get_best_sigma</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">mu_k</span><span class="p">,</span> <span class="n">sigma_k</span><span class="p">,</span> <span class="n">K</span><span class="p">):</span>
-            <span class="k">global</span> <span class="n">mu</span>                               <span class="c1"># Ugly. But I want to be able to read it once the optimization ends.</span>
-            <span class="n">w_k</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">sigma_k</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Weights depends on sigma</span>
-            <span class="n">mu</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w_k</span> <span class="o">*</span> <span class="n">mu_k</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w_k</span><span class="p">)</span>         <span class="c1"># Mu transitively depends on sigma</span>
-            <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w_k</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu_k</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>     <span class="c1"># We want this to be close to K-1</span>
+            <span class="k">global</span> <span class="n">mu</span>  <span class="c1"># Ugly. But I want to be able to read it once the optimization ends.</span>
+            <span class="n">w_k</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">sigma_k</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Weights depends on sigma</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w_k</span> <span class="o">*</span> <span class="n">mu_k</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w_k</span><span class="p">)</span>  <span class="c1"># Mu transitively depends on sigma</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w_k</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu_k</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># We want this to be close to K-1</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">total</span> <span class="o">-</span> <span class="p">(</span><span class="n">K</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">loss</span>
 
@@ -454,7 +498,9 @@
             <span class="n">crosstable</span><span class="p">[</span><span class="s1">&#39;E+A-&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">global_sum</span> <span class="o">-</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span>
             <span class="n">crosstable</span><span class="p">[</span><span class="s1">&#39;E+A+&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">crosstable</span><span class="o">.</span><span class="n">index</span>
-            <span class="n">crosstable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">crosstable</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>  <span class="c1"># The argument unites the types into float</span>
+            <span class="n">crosstable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="n">crosstable</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+            <span class="p">)</span>  <span class="c1"># The argument unites the types into float</span>
 
             <span class="c1"># Count of contingency tables.</span>
             <span class="n">K</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">crosstable</span><span class="p">)</span>
@@ -465,23 +511,36 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">K</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># We want to avoid division by zero in y_k calculation</span>
                     <span class="c1"># Estimate log-odds ratios with Yates correction as listed on page 5.</span>
-                    <span class="n">mu_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">crosstable</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">crosstable</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">crosstable</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">crosstable</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)))</span>
+                    <span class="n">mu_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">crosstable</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="n">crosstable</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
+                        <span class="o">/</span> <span class="p">((</span><span class="n">crosstable</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">crosstable</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))</span>
+                    <span class="p">)</span>
 
                     <span class="c1"># Standard deviation estimate for 2x2 contingency table as given in equation 2.</span>
                     <span class="c1"># The explanation of the equation is given in:</span>
                     <span class="c1">#   https://stats.stackexchange.com/questions/266098/how-do-i-calculate-the-standard-deviation-of-the-log-odds</span>
-                    <span class="n">sigma_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">crosstable</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+                    <span class="n">sigma_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">crosstable</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 
                     <span class="c1"># Estimate the sigma and mu. Sigma is non-negative.</span>
-                    <span class="n">result</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">get_best_sigma</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">mu_k</span><span class="p">,</span> <span class="n">sigma_k</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span> <span class="n">bounds</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)],</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;TNC&#39;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gtol&#39;</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="s1">&#39;ftol&#39;</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="s1">&#39;eps&#39;</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">})</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span>
+                        <span class="n">get_best_sigma</span><span class="p">,</span>
+                        <span class="n">x0</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+                        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">mu_k</span><span class="p">,</span> <span class="n">sigma_k</span><span class="p">,</span> <span class="n">K</span><span class="p">),</span>
+                        <span class="n">bounds</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)],</span>
+                        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;TNC&#39;</span><span class="p">,</span>
+                        <span class="n">tol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span>
+                        <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gtol&#39;</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="s1">&#39;ftol&#39;</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="s1">&#39;eps&#39;</span><span class="p">:</span> <span class="mf">1e-12</span><span class="p">},</span>
+                    <span class="p">)</span>
                     <span class="n">sigma</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
                     <span class="c1"># Empirical Bayes follows equation 7.</span>
-                    <span class="c1"># However, James-Stein estimator behaves perversely when K &lt; 3. Hence, we clip the B into interval &lt;0,1&gt;.</span>
+                    <span class="c1"># However, James-Stein estimator behaves perversely when K &lt; 3.</span>
+                    <span class="c1"># Hence, we clip the B into interval &lt;0,1&gt;.</span>
                     <span class="c1"># Literature reference for the clipping:</span>
-                    <span class="c1">#   Estimates of Income for Small Places: An Application of James-Stein Procedures to Census Data (Fay &amp; Harriout, 1979),</span>
-                    <span class="c1"># page 270.</span>
-                    <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma_k</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">((</span><span class="n">K</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">sigma_k</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+                    <span class="c1">#   Estimates of Income for Small Places: An Application of James-Stein</span>
+                    <span class="c1">#   Procedures to Census Data (Fay &amp; Harriout, 1979), page 270.</span>
+                    <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma_k</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">((</span><span class="n">K</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">sigma_k</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
                     <span class="n">B</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
                     <span class="n">y_k</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">B</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">mu_k</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span>
 
@@ -525,7 +584,7 @@
             <span class="c1"># See: Stein&#39;s paradox and group rationality (Romeijn, 2017), page 14</span>
             <span class="n">smoothing</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">global_count</span><span class="p">)</span>
 
-            <span class="n">estimate</span> <span class="o">=</span> <span class="n">smoothing</span><span class="o">*</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">smoothing</span><span class="p">)</span><span class="o">*</span><span class="n">prior</span>
+            <span class="n">estimate</span> <span class="o">=</span> <span class="n">smoothing</span> <span class="o">*</span> <span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">smoothing</span><span class="p">)</span> <span class="o">*</span> <span class="n">prior</span>
 
             <span class="c1"># Ignore unique values. This helps to prevent overfitting on id-like columns</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="n">global_count</span><span class="p">:</span>
@@ -555,9 +614,10 @@
             <span class="c1"># Randomization is meaningful only for training data -&gt; we do it only if y is present</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">randomized</span> <span class="ow">and</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">random_state_generator</span> <span class="o">=</span> <span class="n">check_random_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">random_state</span><span class="p">)</span>
-                <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">random_state_generator</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">random_state_generator</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">X</span></div>
+
 </pre></div>
 
            </div>
@@ -567,7 +627,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Will McGinnis.</p>
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

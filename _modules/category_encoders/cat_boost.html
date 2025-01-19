@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.cat_boost &mdash; Category Encoders 2.6.4 documentation</title>
+  <title>category_encoders.cat_boost &mdash; Category Encoders 2.8.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=703207cb"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
-        <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../index.html" class="icon icon-home">
             Category Encoders
           </a>
-              <div class="version">
-                2.6.4
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -94,40 +89,43 @@
            <div itemprop="articleBody">
              
   <h1>Source code for category_encoders.cat_boost</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;CatBoost coding&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;CatBoost coding.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
 <span class="kn">from</span> <span class="nn">sklearn.utils.random</span> <span class="kn">import</span> <span class="n">check_random_state</span>
+
+<span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Jan Motl&#39;</span>
 
 
-<div class="viewcode-block" id="CatBoostEncoder"><a class="viewcode-back" href="../../catboost.html#category_encoders.cat_boost.CatBoostEncoder">[docs]</a><span class="k">class</span> <span class="nc">CatBoostEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">):</span>
+<div class="viewcode-block" id="CatBoostEncoder">
+<a class="viewcode-back" href="../../catboost.html#category_encoders.cat_boost.CatBoostEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">CatBoostEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;CatBoost Encoding for categorical features.</span>
 
-<span class="sd">    Supported targets: binomial and continuous. For polynomial target support, see PolynomialWrapper.</span>
+<span class="sd">    Supported targets: binomial and continuous.</span>
+<span class="sd">    For polynomial target support, see PolynomialWrapper.</span>
 
-<span class="sd">    CatBoostEncoder is the variation of target encoding. It supports</span>
-<span class="sd">    time-aware encoding, regularization, and online learning.</span>
+<span class="sd">    CatBoostEncoder is the variation of target encoding. It supports</span>
+<span class="sd">    time-aware encoding, regularization, and online learning.</span>
 
-<span class="sd">    This implementation is time-aware (similar to CatBoost&#39;s parameter &#39;has_time=True&#39;),</span>
-<span class="sd">    so no random permutations are used. It makes this encoder sensitive to</span>
-<span class="sd">    ordering of the data and suitable for time series problems. If your data</span>
-<span class="sd">    does not have time dependency, it should still work just fine, assuming</span>
-<span class="sd">    sorting of the data won&#39;t leak any information outside the training scope</span>
-<span class="sd">    (i.e., no data leakage). When data leakage is a possibility, it is wise to</span>
-<span class="sd">    eliminate it first (for example, shuffle or resample the data).</span>
+<span class="sd">    This implementation is time-aware (similar to CatBoost&#39;s parameter &#39;has_time=True&#39;),</span>
+<span class="sd">    so no random permutations are used. It makes this encoder sensitive to</span>
+<span class="sd">    ordering of the data and suitable for time series problems. If your data</span>
+<span class="sd">    does not have time dependency, it should still work just fine, assuming</span>
+<span class="sd">    sorting of the data won&#39;t leak any information outside the training scope</span>
+<span class="sd">    (i.e., no data leakage). When data leakage is a possibility, it is wise to</span>
+<span class="sd">    eliminate it first (for example, shuffle or resample the data).</span>
 
-<span class="sd">    NOTE: behavior of the transformer would differ in transform and fit_transform</span>
-<span class="sd">    methods depending if y values are passed. If no target is passed, then</span>
-<span class="sd">    encoder will map the last value of the running mean to each category. If y is passed</span>
-<span class="sd">    then it will map all values of the running mean to each category&#39;s occurrences.</span>
+<span class="sd">    NOTE: behavior of the transformer would differ in transform and fit_transform</span>
+<span class="sd">    methods depending if y values are passed. If no target is passed, then</span>
+<span class="sd">    encoder will map the last value of the running mean to each category. If y is passed</span>
+<span class="sd">    then it will map all values of the running mean to each category&#39;s occurrences.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-
 <span class="sd">    verbose: int</span>
 <span class="sd">        integer indicating verbosity of the output. 0 for none.</span>
 <span class="sd">    cols: list</span>
@@ -135,24 +133,37 @@
 <span class="sd">    drop_invariant: bool</span>
 <span class="sd">        boolean for whether or not to drop columns with 0 variance.</span>
 <span class="sd">    return_df: bool</span>
-<span class="sd">        boolean for whether to return a pandas DataFrame from transform (otherwise it will be a numpy array).</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform</span>
+<span class="sd">        (otherwise it will be a numpy array).</span>
 <span class="sd">    handle_missing: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;  and &#39;value&#39;, defaults to &#39;value&#39;, which returns the target mean.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;  and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the target mean.</span>
 <span class="sd">    handle_unknown: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;, which returns the target mean.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which returns the target mean.</span>
 <span class="sd">    sigma: float</span>
-<span class="sd">        adds normal (Gaussian) distribution noise into training data in order to decrease overfitting (testing data are untouched).</span>
+<span class="sd">        adds normal (Gaussian) distribution noise into training data in order to decrease</span>
+<span class="sd">        overfitting (testing data are untouched).</span>
 <span class="sd">        sigma gives the standard deviation (spread or &quot;width&quot;) of the normal distribution.</span>
 <span class="sd">    a: float</span>
-<span class="sd">        additive smoothing (it is the same variable as &quot;m&quot; in m-probability estimate). By default set to 1.</span>
+<span class="sd">        additive smoothing (it is the same variable as &quot;m&quot; in m-probability estimate).</span>
+<span class="sd">        By default, set to 1.</span>
 
 <span class="sd">    Example</span>
 <span class="sd">    -------</span>
 <span class="sd">    &gt;&gt;&gt; from category_encoders import *</span>
 <span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.datasets import fetch_openml</span>
-<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&quot;house_prices&quot;, as_frame=True)</span>
-<span class="sd">    &gt;&gt;&gt; display_cols = [&quot;Id&quot;, &quot;MSSubClass&quot;, &quot;MSZoning&quot;, &quot;LotFrontage&quot;, &quot;YearBuilt&quot;, &quot;Heating&quot;, &quot;CentralAir&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; bunch = fetch_openml(name=&#39;house_prices&#39;, as_frame=True)</span>
+<span class="sd">    &gt;&gt;&gt; display_cols = [</span>
+<span class="sd">    ...     &#39;Id&#39;,</span>
+<span class="sd">    ...     &#39;MSSubClass&#39;,</span>
+<span class="sd">    ...     &#39;MSZoning&#39;,</span>
+<span class="sd">    ...     &#39;LotFrontage&#39;,</span>
+<span class="sd">    ...     &#39;YearBuilt&#39;,</span>
+<span class="sd">    ...     &#39;Heating&#39;,</span>
+<span class="sd">    ...     &#39;CentralAir&#39;,</span>
+<span class="sd">    ... ]</span>
 <span class="sd">    &gt;&gt;&gt; y = bunch.target</span>
 <span class="sd">    &gt;&gt;&gt; X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]</span>
 <span class="sd">    &gt;&gt;&gt; enc = CatBoostEncoder(cols=[&#39;CentralAir&#39;, &#39;Heating&#39;]).fit(X, y)</span>
@@ -161,11 +172,11 @@
 <span class="sd">    &lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;</span>
 <span class="sd">    RangeIndex: 1460 entries, 0 to 1459</span>
 <span class="sd">    Data columns (total 7 columns):</span>
-<span class="sd">     #   Column       Non-Null Count  Dtype  </span>
-<span class="sd">    ---  ------       --------------  -----  </span>
+<span class="sd">     #   Column       Non-Null Count  Dtype</span>
+<span class="sd">    ---  ------       --------------  -----</span>
 <span class="sd">     0   Id           1460 non-null   float64</span>
 <span class="sd">     1   MSSubClass   1460 non-null   float64</span>
-<span class="sd">     2   MSZoning     1460 non-null   object </span>
+<span class="sd">     2   MSZoning     1460 non-null   object</span>
 <span class="sd">     3   LotFrontage  1201 non-null   float64</span>
 <span class="sd">     4   YearBuilt    1460 non-null   float64</span>
 <span class="sd">     5   Heating      1460 non-null   float64</span>
@@ -184,13 +195,30 @@
 <span class="sd">    https://arxiv.org/abs/1706.09516</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">prefit_ordinal</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_ONE</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                 <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
-                         <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_invariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span>
+            <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span>
+            <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">random_state</span> <span class="o">=</span> <span class="n">random_state</span>
@@ -214,7 +242,9 @@
             <span class="n">level_notunique</span> <span class="o">=</span> <span class="n">colmap</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span>
 
             <span class="n">unique_train</span> <span class="o">=</span> <span class="n">colmap</span><span class="o">.</span><span class="n">index</span>
-            <span class="n">unseen_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_train</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">unique_train</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">unseen_values</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">unique_train</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">unique_train</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="p">)</span>
 
             <span class="n">is_nan</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
             <span class="n">is_unknown_value</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">unseen_values</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">))</span>
@@ -222,13 +252,18 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span> <span class="ow">and</span> <span class="n">is_unknown_value</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns to be encoded can not contain new values&#39;</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>    <span class="c1"># Replace level with its mean target; if level occurs only once, use global mean</span>
-                <span class="n">level_means</span> <span class="o">=</span> <span class="p">((</span><span class="n">colmap</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">colmap</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">))</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">level_notunique</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="p">):</span>  <span class="c1"># Replace level with its mean target; if level occurs only once, use global mean</span>
+                <span class="n">level_means</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">colmap</span><span class="p">[</span><span class="s1">&#39;sum&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">colmap</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">level_notunique</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span><span class="p">)</span>
                 <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">level_means</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Simulation of CatBoost implementation, which calculates leave-one-out on the fly.</span>
                 <span class="c1"># The nice thing about this is that it helps to prevent overfitting. The bad thing</span>
-                <span class="c1"># is that CatBoost uses many iterations over the data. But we run just one iteration.</span>
+                <span class="c1"># is that CatBoost uses many iterations over the data.</span>
+                <span class="c1"># But we run just one iteration.</span>
                 <span class="c1"># Still, it works better than leave-one-out without any noise.</span>
                 <span class="c1"># See:</span>
                 <span class="c1">#   https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/</span>
@@ -247,7 +282,8 @@
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
                 <span class="c1"># only set value if there are actually missing values.</span>
-                <span class="c1"># In case of pd.Categorical columns setting values that are not seen in pd.Categorical gives an error.</span>
+                <span class="c1"># In case of pd.Categorical columns setting values that are not seen in</span>
+                <span class="c1"># pd.Categorical gives an error.</span>
                 <span class="n">nan_cond</span> <span class="o">=</span> <span class="n">is_nan</span> <span class="o">&amp;</span> <span class="n">unseen_values</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">nan_cond</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                     <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nan_cond</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mean</span>
@@ -255,13 +291,14 @@
                 <span class="n">X</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">is_nan</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">random_state_</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">random_state_</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">X</span>
 
-    <span class="k">def</span> <span class="nf">_more_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_more_tags</span><span class="p">()</span>
-        <span class="n">tags</span><span class="p">[</span><span class="s2">&quot;predict_depends_on_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">def</span> <span class="nf">__sklearn_tags__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">util</span><span class="o">.</span><span class="n">EncoderTags</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set scikit transformer tags.&quot;&quot;&quot;</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__sklearn_tags__</span><span class="p">()</span>
+        <span class="n">tags</span><span class="o">.</span><span class="n">predict_depends_on_y</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="n">tags</span>
 
     <span class="k">def</span> <span class="nf">_fit_column_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
@@ -277,6 +314,7 @@
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">codes</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;sum&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">return_map</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
@@ -286,7 +324,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Will McGinnis.</p>
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
