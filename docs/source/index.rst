@@ -77,7 +77,7 @@ the cols parameter isn't passed, every non-numeric column will be converted. See
 Known issues:
 -------------
 
-`CategoryEncoders` internally works with `pandas DataFrames` as apposed to `sklearn` which works with `numpy arrays`. This can cause problems in `sklearn` versions prior to 1.2.0. In order to ensure full compatibility with `sklearn` set `sklearn` to also output `DataFrames`. This can be done by
+`CategoryEncoders` internally works with `pandas DataFrames` as opposed to `sklearn` which works with `numpy arrays`. This can cause problems in `sklearn` versions prior to 1.2.0. In order to ensure full compatibility with `sklearn` set `sklearn` to also output `DataFrames`. This can be done by
 
 .. code-block:: python
 
