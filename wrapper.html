@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wrappers &mdash; Category Encoders 2.8.0 documentation</title>
+  <title>Wrappers &mdash; Category Encoders 2.8.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="_static/documentation_options.js?v=cd87aae0"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -108,7 +108,7 @@
 <h1>Wrappers<a class="headerlink" href="#wrappers" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.wrapper.PolynomialWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">PolynomialWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseEncoder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">PolynomialWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">BaseEncoder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#PolynomialWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.PolynomialWrapper" title="Link to this definition"></a></dt>
 <dd><p>Extend supervised encoders to n-class labels, where n &gt;= 2.</p>
 <p>The label can be numerical (e.g.: 0, 1, 2, 3,…,n), string or categorical (pandas.Categorical).
 The label is first encoded into n-1 binary columns. Subsequently, the inner supervised encoder
@@ -200,7 +200,7 @@ The order of the returned features may change in the future.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.wrapper.NestedCVWrapper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">NestedCVWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">category_encoders.wrapper.</span></span><span class="sig-name descname"><span class="pre">NestedCVWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_encoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shuffle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/wrapper.html#NestedCVWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.wrapper.NestedCVWrapper" title="Link to this definition"></a></dt>
 <dd><p>Cross validate supervised encoders to avoid overfitting.</p>
 <p>For a validation or a test set, supervised encoders can be used as follows:</p>
 <blockquote>

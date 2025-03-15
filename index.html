@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Category Encoders &mdash; Category Encoders 2.8.0 documentation</title>
+  <title>Category Encoders &mdash; Category Encoders 2.8.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=69ff2ef9"></script>
+      <script src="_static/documentation_options.js?v=cd87aae0"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -152,7 +152,7 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 </section>
 <section id="known-issues">
 <h2>Known issues:<a class="headerlink" href="#known-issues" title="Link to this heading"></a></h2>
-<p><cite>CategoryEncoders</cite> internally works with <cite>pandas DataFrames</cite> as apposed to <cite>sklearn</cite> which works with <cite>numpy arrays</cite>. This can cause problems in <cite>sklearn</cite> versions prior to 1.2.0. In order to ensure full compatibility with <cite>sklearn</cite> set <cite>sklearn</cite> to also output <cite>DataFrames</cite>. This can be done by</p>
+<p><cite>CategoryEncoders</cite> internally works with <cite>pandas DataFrames</cite> as opposed to <cite>sklearn</cite> which works with <cite>numpy arrays</cite>. This can cause problems in <cite>sklearn</cite> versions prior to 1.2.0. In order to ensure full compatibility with <cite>sklearn</cite> set <cite>sklearn</cite> to also output <cite>DataFrames</cite>. This can be done by</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sklearn</span><span class="o">.</span><span class="n">set_config</span><span class="p">(</span><span class="n">transform_output</span><span class="o">=</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
