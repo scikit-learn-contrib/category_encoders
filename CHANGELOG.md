@@ -1,3 +1,9 @@
+v.2.8.1
+=======
+
+* Fix: Support and test string targets and `pd.Categorical` targets.
+* Fix: Docs typo.
+ 
 v.2.8.0
 =======
 

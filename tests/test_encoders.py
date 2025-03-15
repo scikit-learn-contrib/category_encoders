@@ -436,6 +436,36 @@ class TestEncoders(TestCase):
             encoder = getattr(encoders, encoder_name)()
             encoder.fit_transform(X, y)
 
+    def test_string_targets(self):
+        """Test encoders with targets of type pd.Categorical or string."""
+        X = pd.DataFrame({'feature': ['A', 'B', 'A', 'C']})
+        y_string = pd.Series(['yes', 'no', 'yes', 'no'])
+
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+
+                # Test with string target
+                enc.fit(X, y_string)
+                transformed = enc.transform(X)
+                th.verify_numeric(transformed)
+                self.assertEqual(len(transformed), 4)
+    def test_categorical_targets(self):
+        """Test encoders with targets of type pd.Categorical or string."""
+        X = pd.DataFrame({'feature': ['A', 'B', 'A', 'C']})
+        y_categorical = pd.Categorical([1, 0, 1, 0])
+
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+
+                # Test with pd.Categorical target
+                enc.fit(X, y_categorical)
+                transformed = enc.transform(X)
+                th.verify_numeric(transformed)
+                self.assertEqual(len(transformed), 4)
+
+
     def test_preserve_column_order(self):
         """Test that the encoder preserves the column order."""
         binary_cat_example = pd.DataFrame(
