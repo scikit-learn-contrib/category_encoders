@@ -457,7 +457,7 @@ class BaseEncoder(BaseEstimator):
         if self.__sklearn_tags__().target_tags.required:
             if not is_numeric_dtype(y):
                 self.lab_encoder_ = LabelEncoder()
-                y = self.lab_encoder_.fit_transform(y)
+                y = pd.Series(self.lab_encoder_.fit_transform(y), index=y.index)
             else:
                 self.lab_encoder_ = None
 
@@ -621,7 +621,7 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
         X, y = convert_inputs(X, y, deep=True)
         self._check_transform_inputs(X)
         if y is not None and self.lab_encoder_ is not None:
-            y = self.lab_encoder_.transform(y)
+            y = pd.Series(self.lab_encoder_.transform(y), index=y.index)
 
         if not list(self.cols):
             return X
