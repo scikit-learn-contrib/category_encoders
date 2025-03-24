@@ -140,8 +140,8 @@ References
  2. Contrast Coding Systems for categorical variables.  UCLA: Statistical Consulting Group. From https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/.
  3. Gregory Carey (2003). Coding Categorical Variables. From http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf
  4. Owen Zhang - Leave One Out Encoding. From https://datascience.stackexchange.com/questions/10839/what-is-difference-between-one-hot-encoding-and-leave-one-out-encoding
- 5. Beyond One-Hot: an exploration of categorical variables. From http://www.willmcginnis.com/2015/11/29/beyond-one-hot-an-exploration-of-categorical-variables/
- 6. BaseN Encoding and Grid Search in categorical variables. From http://www.willmcginnis.com/2016/12/18/basen-encoding-grid-search-category_encoders/
+ 5. Beyond One-Hot: an exploration of categorical variables. From https://mcginniscommawill.com/posts/2015-11-29-beyond-one-hot-an-exploration-of-categorical-variables/
+ 6. BaseN Encoding and Grid Search in categorical variables. From https://mcginniscommawill.com/posts/2016-12-18-basen-encoding-grid-search-category-encoders/
  7. Daniele Miccii-Barreca (2001). A Preprocessing Scheme for High-Cardinality Categorical Attributes in Classification and Prediction Problems. SIGKDD Explor. Newsl. 3, 1. From http://dx.doi.org/10.1145/507533.507538
  8. Weight of Evidence (WOE) and Information Value Explained. From https://www.listendata.com/2015/03/weight-of-evidence-woe-and-information.html
  9. Empirical Bayes for multiple sample sizes. From http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/
