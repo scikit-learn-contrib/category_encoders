@@ -7,7 +7,7 @@ license = "BSD-3"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10"
+python = ">=3.11"
 numpy = ">=1.14.0"
 scikit-learn = ">=1.6.0"
 scipy = ">=1.0.0"
@@ -18,11 +18,11 @@ patsy = ">=0.5.1"
 
 [tool.poetry.dev-dependencies]
 numpydoc = "^1.8.0"
-ruff = "^0.6.8"
-sphinx = "^7.4.7"
-sphinx_rtd_theme = "^2.0.0"
+ruff = "^0.14.3"
+sphinx = "^8.2.3"
+sphinx_rtd_theme = "^3.0.2"
 pytest = "^8.3.3"
-pytest-subtests = "^0.14.1"
+pytest-subtests = "^0.15.0"
 
 [tool.ruff]
 line-length = 100

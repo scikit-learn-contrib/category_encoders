@@ -303,7 +303,7 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         self, supplied_mapping: list[dict[str, str | dict | pd.Series]]
     ) -> list[dict[str, str | pd.Series]]:
         """
-        validate the supplied mapping and convert the actual mapping per column to a pandas series.
+        Validate the supplied mapping and convert the actual mapping per column to a pandas series.
 
         :param supplied_mapping: mapping as list of dicts.
              They actual mapping can be either a dict or pd.Series
