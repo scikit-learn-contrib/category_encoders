@@ -1,3 +1,9 @@
+v.2.9.0 - Unreleased
+====================
+
+* Breaking: Dropped support for python 3.10
+* Change: Updated some dependencies to latest versions.
+
 v.2.8.1
 =======
 

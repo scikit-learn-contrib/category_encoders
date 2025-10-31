@@ -242,9 +242,9 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
                         ]
                     )
 
-                self._min_group_categories[col] = {
-                    cat: min_group_mapper_name for cat in mapper.loc[min_groups_idx].index.tolist()
-                }
+                self._min_group_categories[col] = dict.fromkeys(
+                    mapper.loc[min_groups_idx].index.tolist(), min_group_mapper_name
+                )
 
                 if not min_groups_idx.all():
                     mapper = mapper.loc[~min_groups_idx]
