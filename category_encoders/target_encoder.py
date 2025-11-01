@@ -159,48 +159,14 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             handle_unknown=handle_unknown,
             handle_missing=handle_missing,
         )
-        self.ordinal_encoder = None
         self.min_samples_leaf = min_samples_leaf
         self.smoothing = smoothing
+        self.hierarchy = hierarchy
+        self.ordinal_encoder = None
         self.mapping = None
         self._mean = None
-        # @ToDo create a function to check the hierarchy
-        if isinstance(hierarchy, (dict, pd.DataFrame)) and cols is None:
-            raise ValueError('Hierarchy is defined but no columns are named for encoding')
-        if isinstance(hierarchy, dict):
-            self.hierarchy = {}
-            self.hierarchy_depth = {}
-            for switch in hierarchy:
-                flattened_hierarchy = util.flatten_reverse_dict(hierarchy[switch])
-                hierarchy_check = self._check_dict_key_tuples(flattened_hierarchy)
-                self.hierarchy_depth[switch] = hierarchy_check[1]
-                if not hierarchy_check[0]:
-                    raise ValueError(
-                        'Hierarchy mapping contains different levels for key "' + switch + '"'
-                    )
-                self.hierarchy[switch] = {
-                    (k if isinstance(t, tuple) else t): v
-                    for t, v in flattened_hierarchy.items()
-                    for k in t
-                }
-        elif isinstance(hierarchy, pd.DataFrame):
-            self.hierarchy = hierarchy
-            self.hierarchy_depth = {}
-            for col in self.cols:
-                HIER_cols = self.hierarchy.columns[
-                    self.hierarchy.columns.str.startswith(f'HIER_{col}')
-                ].tolist()
-                HIER_levels = [int(i.replace(f'HIER_{col}_', '')) for i in HIER_cols]
-                if np.array_equal(sorted(HIER_levels), np.arange(1, max(HIER_levels) + 1)):
-                    self.hierarchy_depth[col] = max(HIER_levels)
-                else:
-                    raise ValueError(f'Hierarchy columns are not complete for column {col}')
-        elif hierarchy is None:
-            self.hierarchy = hierarchy
-        else:
-            raise ValueError('Given hierarchy mapping is neither a dictionary nor a dataframe')
-
-        self.cols_hier = []
+        # Call this in the constructor only for the possible side effect of raising an exception.
+        self._generate_inverted_hierarchy()
 
     @staticmethod
     def _check_dict_key_tuples(dict_to_check: dict[Any, tuple]) -> tuple[bool, int]:
@@ -219,24 +185,25 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         return min_tuple_size == max_tuple_size, min_tuple_size
 
     def _fit(self, X: util.X_type, y: util.y_type, **kwargs) -> None:
-        if isinstance(self.hierarchy, dict):
+        inverted_hierarchy, self.hierarchy_depth = self._generate_inverted_hierarchy()
+        if isinstance(inverted_hierarchy, dict):
             X_hier = pd.DataFrame()
-            for switch in self.hierarchy:
+            for switch in inverted_hierarchy:
                 if switch in self.cols:
                     colnames = [
                         f'HIER_{str(switch)}_{str(i + 1)}'
                         for i in range(self.hierarchy_depth[switch])
                     ]
                     df = pd.DataFrame(
-                        X[str(switch)].map(self.hierarchy[str(switch)]).tolist(),
+                        X[str(switch)].map(inverted_hierarchy[str(switch)]).tolist(),
                         index=X.index,
                         columns=colnames,
                     )
                     X_hier = pd.concat([X_hier, df], axis=1)
-        elif isinstance(self.hierarchy, pd.DataFrame):
-            X_hier = self.hierarchy
+        elif isinstance(inverted_hierarchy, pd.DataFrame):
+            X_hier = inverted_hierarchy
 
-        if isinstance(self.hierarchy, (dict, pd.DataFrame)):
+        if isinstance(inverted_hierarchy, (dict, pd.DataFrame)):
             enc_hier = OrdinalEncoder(
                 verbose=self.verbose,
                 cols=X_hier.columns,
@@ -251,7 +218,7 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         )
         self.ordinal_encoder = self.ordinal_encoder.fit(X)
         X_ordinal = self.ordinal_encoder.transform(X)
-        if self.hierarchy is not None:
+        if inverted_hierarchy is not None:
             self.mapping = self.fit_target_encoding(
                 pd.concat([X_ordinal, X_hier_ordinal], axis=1), y
             )
@@ -344,3 +311,43 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         # monotonically increasing function of n bounded between 0 and 1
         # sigmoid in this case, using scipy.expit for numerical stability
         return expit((n - self.min_samples_leaf) / self.smoothing)
+
+    def _generate_inverted_hierarchy(self) -> tuple[dict | pd.DataFrame, dict]:
+        # @ToDo create a function to check the hierarchy
+        if isinstance(self.hierarchy, (dict, pd.DataFrame)) and self.cols is None:
+            raise ValueError('Hierarchy is defined but no columns are named for encoding')
+        if isinstance(self.hierarchy, dict):
+            inverted_hierarchy = {}
+            hierarchy_depth = {}
+            for switch in self.hierarchy:
+                flattened_hierarchy = util.flatten_reverse_dict(self.hierarchy[switch])
+                hierarchy_check = self._check_dict_key_tuples(flattened_hierarchy)
+                hierarchy_depth[switch] = hierarchy_check[1]
+                if not hierarchy_check[0]:
+                    raise ValueError(
+                        'Hierarchy mapping contains different levels for key "' + switch + '"'
+                    )
+                inverted_hierarchy[switch] = {
+                    (k if isinstance(t, tuple) else t): v
+                    for t, v in flattened_hierarchy.items()
+                    for k in t
+                }
+        elif isinstance(self.hierarchy, pd.DataFrame):
+            inverted_hierarchy = self.hierarchy
+            hierarchy_depth = {}
+            for col in self.cols:
+                HIER_cols = inverted_hierarchy.columns[
+                    inverted_hierarchy.columns.str.startswith(f'HIER_{col}')
+                ].tolist()
+                HIER_levels = [int(i.replace(f'HIER_{col}_', '')) for i in HIER_cols]
+                if np.array_equal(sorted(HIER_levels), np.arange(1, max(HIER_levels) + 1)):
+                    hierarchy_depth[col] = max(HIER_levels)
+                else:
+                    raise ValueError(f'Hierarchy columns are not complete for column {col}')
+        elif self.hierarchy is None:
+            inverted_hierarchy = None
+            hierarchy_depth = {}
+        else:
+            raise ValueError('Given hierarchy mapping is neither a dictionary nor a dataframe')
+        return inverted_hierarchy, hierarchy_depth
+

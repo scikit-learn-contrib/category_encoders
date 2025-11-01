@@ -5,6 +5,7 @@ import category_encoders as encoders
 import numpy as np
 import pandas as pd
 from category_encoders.datasets import load_compass, load_postcodes
+from sklearn.compose import ColumnTransformer
 
 import tests.helpers as th
 
@@ -505,3 +506,37 @@ class TestTargetEncoder(TestCase):
         )
         with self.assertRaises(ValueError):
             enc.fit_transform(X, y)
+
+    def test_hierarchy_with_scikit_learn_column_transformer(self):
+        """Test that the encoder works with a scikit-learn ColumnTransformer."""
+        features: list[str] = ["cat_feature", "int_feature"]
+        target: str = "target"
+
+        df: pd.DataFrame = pd.DataFrame({
+            "cat_feature": ["aa", "ab", "ac", "ba", "bb", "bc"],
+            "int_feature": [10, 11, 9, 8, 12, 10],
+            "target": [1, 2, 1, 2, 1, 2]
+        })
+        hierarchical_map: dict = {
+            "cat_feature": {
+                "a": ("aa", "ab", "ac"),
+                "b": ("ba", "bb", "bc"),
+            },
+        }
+
+        # Get the encoder values from a simple TargetEncoder
+        target_encoder = encoders.TargetEncoder(cols=["cat_feature"], min_samples_leaf=2, smoothing=2, hierarchy=hierarchical_map)
+        encoder_values = target_encoder.fit_transform(df[features], df[target])["cat_feature"].values
+
+        # Get the encoder values from a ColumnTransformer
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ("categorical", encoders.TargetEncoder(cols=["cat_feature"], min_samples_leaf=2, smoothing=2, hierarchy=hierarchical_map), ["cat_feature"]),
+            ],
+            remainder='passthrough',
+            verbose_feature_names_out=False,
+        ).set_output(transform="pandas")
+        columntransformer_encoder_values = preprocessor.fit_transform(df[features], df[target])["cat_feature"].values
+
+        # Compare the results
+        np.testing.assert_array_almost_equal(encoder_values, columntransformer_encoder_values, decimal=4)
