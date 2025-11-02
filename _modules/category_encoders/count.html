@@ -337,9 +337,9 @@
                         <span class="p">]</span>
                     <span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_categories</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">cat</span><span class="p">:</span> <span class="n">min_group_mapper_name</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">mapper</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_groups_idx</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-                <span class="p">}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_categories</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span>
+                    <span class="n">mapper</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_groups_idx</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">min_group_mapper_name</span>
+                <span class="p">)</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">min_groups_idx</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                     <span class="n">mapper</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">min_groups_idx</span><span class="p">]</span>
