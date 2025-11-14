@@ -232,7 +232,7 @@ class HashingEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
                     # "big" as the code use to read:
                     # column_index = int(hasher.hexdigest(), 16) % N
                     # which is implicitly considering the hexdigest to be big-endian,
-                    # even if the system is little endian.
+                    # even if the system is little-endian.
                     # Building the index that way is about 30% faster than using the
                     # hexdigest.
                     hasher.update(bytes(str(val), 'utf-8'))
