@@ -469,7 +469,7 @@ class BaseEncoder(BaseEstimator):
 
         if self.handle_missing == 'error':
             if X[self.cols].isna().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
+                raise ValueError('Columns to be encoded cannot contain null')
 
         self._fit(X, y, **kwargs)
 
@@ -504,7 +504,7 @@ class BaseEncoder(BaseEstimator):
     def _check_transform_inputs(self, df: pd.DataFrame) -> None:
         if self.handle_missing == 'error':
             if df[self.cols].isna().any().any():
-                raise ValueError('Columns to be encoded can not contain null')
+                raise ValueError('Columns to be encoded cannot contain null')
 
         if self._dim is None:
             raise NotFittedError('Must train encoder before it can be used to transform data.')

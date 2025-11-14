@@ -157,7 +157,7 @@ class CatBoostEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
             is_unknown_value = X[col].isin(unseen_values.dropna().astype(object))
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
-                raise ValueError('Columns to be encoded can not contain new values')
+                raise ValueError('Columns to be encoded cannot contain new values')
 
             if (
                 y is None

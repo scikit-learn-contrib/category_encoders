@@ -184,7 +184,7 @@ class LeaveOneOutEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
                 X[col] = X[col].astype(index_dtype)
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
-                raise ValueError('Columns to be encoded can not contain new values')
+                raise ValueError('Columns to be encoded cannot contain new values')
 
             if (
                 y is None
