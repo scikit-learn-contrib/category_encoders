@@ -39,7 +39,7 @@ class TestRankHotEncoder(TestCase):
         self.assertEqual(t_f.shape[1] - (X.shape[1] - 1), len(X.categorical.unique()))
         self.assertTupleEqual(inv_tf.shape, X.shape)
 
-    def test_na_catagorical(self):
+    def test_na_categorical(self):
         """Test also NAs on pandas categorical are handled correctly."""
         enc = encoders.RankHotEncoder(handle_unknown='value', cols=['na_categorical'])
         enc.fit(X)
