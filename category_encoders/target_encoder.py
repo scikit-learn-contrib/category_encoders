@@ -301,7 +301,7 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         """Apply target encoding via encoder mapping."""
         X = X_in.copy(deep=True)
 
-        # Was not mapping extra columns as self.featuer_names_in did not include new column
+        # Was not mapping extra columns as self.feature_names_in did not include new column
         for col in self.cols:
             X[col] = X[col].map(self.mapping[col])
 
