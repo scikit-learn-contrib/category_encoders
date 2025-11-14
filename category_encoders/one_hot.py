@@ -40,7 +40,7 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     handle_missing: str
         options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
 
-        'error' will raise a `ValueError` if missings are encountered.
+        'error' will raise a `ValueError` if a missing value is encountered.
         'return_nan' will encode a missing value as `np.nan` in every dummy column.
         'value' will encode a missing value as 0 in every dummy column.
         'indicator' will treat missingness as its own category, adding an additional dummy column
