@@ -28,7 +28,7 @@ class GLMMEncoder( util.SupervisedTransformerMixin ,util.BaseEncoder):
            Mixed effects models are a mature branch of statistics.
         2. No hyper-parameters to tune. The amount of shrinkage is automatically determined
            through the estimation process. In short, the less observations a category has and/or
-           the more the outcome varies for a category. Then the higher the regularization
+           the more that outcome varies for a category. Then the higher the regularization
            towards "the prior" or "grand mean".
         3. The technique is applicable for both continuous and binomial targets.
            If the target is continuous, the encoder returns regularized difference of the
