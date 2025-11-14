@@ -161,7 +161,7 @@ class TestBaseEncoder(TestCase):
 
         self.encoder = DummyEncoder()
 
-    @pytest.mark.skipif(Version(skl_version) < Version('1.2'), reason='requires sklean > 1.2')
+    @pytest.mark.skipif(Version(skl_version) < Version('1.2'), reason='requires sklearn > 1.2')
     def test_sklearn_pandas_out_refit(self):
         """Test that the encoder can be refit with sklearn and pandas."""
         # Thanks to Issue#437
