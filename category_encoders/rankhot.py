@@ -32,9 +32,9 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     handle_unknown: str
         options are 'error', 'value', 'return_nan'.
         The default is 'value'.
-        'value': If an unknown label occurrs, it is represented as 0 array.
-        'error': If an unknown label occurrs, error message is displayed.
-        'return_nan': If an unknown label occurrs, np.nan is returned in all columns.
+        'value': If an unknown label occurs, it is represented as 0 array.
+        'error': If an unknown label occurs, error message is displayed.
+        'return_nan': If an unknown label occurs, np.nan is returned in all columns.
     handle_missing: str
         options are 'error', 'value' and 'return_nan'. The default is 'value'.
         Missing value also considered as unknown value in the final data set.
