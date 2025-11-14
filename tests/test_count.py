@@ -136,7 +136,7 @@ class TestCountEncoder(TestCase):
         """Test the handle_unknown string  on 'none' and 'na_categorical'.
 
         The 'handle_missing' must be set to 'return_nan' in order to test
-        'handle_unkown' correctly.
+        'handle_unknown' correctly.
         """
         enc = encoders.CountEncoder(
             handle_missing='return_nan',
@@ -155,7 +155,7 @@ class TestCountEncoder(TestCase):
         self.assertTrue(out['na_categorical'].isna().sum() == 3)
 
     def test_count_handle_unknown_dict(self):
-        """Test the 'handle_unkown' dict with all non-default options."""
+        """Test the 'handle_unknown' dict with all non-default options."""
         enc = encoders.CountEncoder(
             handle_missing='return_nan',
             handle_unknown={'none': -1, 'na_categorical': 'return_nan'},

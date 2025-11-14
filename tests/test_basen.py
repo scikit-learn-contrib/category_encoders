@@ -111,7 +111,7 @@ class TestBaseNEncoder(TestCase):
     def test_inverse_transform_not_supported_with_unknown_values(self):
         """Test that inverse_transform is not supported if a nan could be either missing or unknown.
 
-        This happens if both handle_missing and handle_unkown are set to 'return_nan'.
+        This happens if both handle_missing and handle_unknown are set to 'return_nan'.
         """
         train = pd.DataFrame({'city': ['chicago', np.nan]})
         test = pd.DataFrame({'city': ['chicago', 'los angeles']})

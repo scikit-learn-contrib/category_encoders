@@ -124,7 +124,7 @@ class BaseContrastEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
         handle_missing: str
             How to handle missing values.
         handle_unknown: str
-            How to handle unkown values.
+            How to handle unknown values.
 
         Returns
         -------
