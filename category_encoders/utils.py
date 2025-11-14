@@ -600,7 +600,7 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
     def transform(self, X: X_type, y: y_type | None = None, override_return_df: bool = False):
         """Perform the transformation to new categorical data.
 
-        Some encoders behave differently on whether y is given or not.
+        Some encoders behave differently on whether or not y is given.
         This is mainly due to regularisation in order to avoid overfitting.
         On training data transform should be called with y, on test data without.
 
