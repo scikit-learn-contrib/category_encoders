@@ -3,7 +3,7 @@ title: 'Category Encoders: a scikit-learn-contrib package of transformers for en
 tags:
   - machine learning
   - python
-  - sckit-learn
+  - scikit-learn
 authors:
  - name: William D McGinnis
    orcid: 0000-0002-3009-9465
