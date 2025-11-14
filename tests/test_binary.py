@@ -16,7 +16,7 @@ class TestBinaryEncoder(TestCase):
         self.assertTrue(pd.DataFrame([[0, 1], [1, 0], [1, 0]], columns=['0_0', '0_1']).equals(out))
 
     def test_binary_dist(self):
-        """Test the BinaryEncoder with a all distinct values."""
+        """Test the BinaryEncoder with all distinct values."""
         data = np.array(['apple', 'orange', 'peach', 'lemon'])
         encoder = encoders.BinaryEncoder()
         encoder.fit(data)
