@@ -371,6 +371,7 @@ class BaseEncoder(BaseEstimator):
     _dim: int | None
     cols: list[str]
     use_default_cols: bool
+    use_all_cols: bool
     handle_missing: str
     handle_unknown: str
     verbose: int
@@ -402,9 +403,9 @@ class BaseEncoder(BaseEstimator):
         ----------
         verbose: int
             integer indicating verbosity of output. 0 for none.
-        cols: list
+        cols: list or "all"
             a list of columns to encode, if None, all string and categorical columns
-            will be encoded.
+            will be encoded. If "all", all columns will be encoded regardless of dtype.
         drop_invariant: bool
             boolean for whether to drop columns with 0 variance.
         return_df: bool
@@ -427,6 +428,8 @@ class BaseEncoder(BaseEstimator):
         self.verbose = verbose
         # if True, even a repeated call of fit() will select string columns from X
         self.use_default_cols = cols is None
+        # if True, even a repeated call of fit() will select all columns from X
+        self.use_all_cols = isinstance(cols, str) and cols.lower() == 'all'
         # note that cols are only the columns to be encoded, feature_names_in_ are all columns
         self.cols = cols
         self.mapping = None
@@ -536,7 +539,9 @@ class BaseEncoder(BaseEstimator):
         :return: none, sets self.cols as a side effect
         """
         # if columns aren't passed, just use every string column
-        if self.use_default_cols:
+        if self.use_all_cols:
+            self.cols = X.columns.tolist()
+        elif self.use_default_cols:
             self.cols = get_categorical_cols(X)
         else:
             self.cols = convert_cols_to_list(self.cols)
