@@ -381,7 +381,9 @@ class BaseEncoder(BaseEstimator):
     encoding_relation: EncodingRelation
 
     INVARIANCE_THRESHOLD = (
-        10e-5  # columns with variance less than this will be considered constant / invariant
+        10e-5  # Deprecated: previously used as a variance threshold for invariant detection.
+        # Now invariant columns are detected by checking nunique() <= 1, which is
+        # scale-independent and handles normalized/proportion values correctly.
     )
 
     def __init__(
@@ -482,7 +484,7 @@ class BaseEncoder(BaseEstimator):
         if self.drop_invariant:
             generated_cols = get_generated_cols(X, X_transformed, self.cols)
             self.invariant_cols = [
-                x for x in generated_cols if X_transformed[x].var() <= self.INVARIANCE_THRESHOLD
+                x for x in generated_cols if X_transformed[x].nunique() <= 1
             ]
             self.feature_names_out_ = np.fromiter(
                 (x for x in self.feature_names_out_ if x not in self.invariant_cols),
