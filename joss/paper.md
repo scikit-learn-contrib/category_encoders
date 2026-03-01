@@ -17,10 +17,19 @@ authors:
  - name: Hanyu Huang
    orcid:  0000-0001-8503-1014
    affiliation: 5
+ - name: Jan Motl
+   orcid: 0000-0002-0388-3190
+   affiliation: 6
+ - name: Kaspar Paul Westenthanner
+   orcid: 0009-0007-4284-3953
+   affiliation: 7
+ - name: Jonathan Castaldo
+   orcid: 0009-0001-2553-5920
+   affiliation: 8
 affiliations:
- - name: Predikto, Inc.
+ - name: Scale Venture Partners
    index: 1
- - name: Helton Tech, LLC
+ - name: Helton Labs, LLC
    index: 2
  - name: Suncorp Group Ltd.
    index: 3
@@ -28,6 +37,12 @@ affiliations:
    index: 4
  - name: Tencent, Inc.
    index: 5
+ - name: Czech Technical University in Prague
+   index: 6
+ - name: Atruvia
+   index: 7
+ - name: Meta, Inc.
+   index: 8
 date: 5 December 2017
 bibliography: paper.bib
 ---
@@ -45,9 +60,17 @@ Categorical: Georgia, Alabama, South Carolina, … , New York
 
 The machine learning algorithms we will later use tend to want numbers, and not strings, as their inputs so we need some method of coding to convert them.
 
-Category_encoders includes a number of preexisting encoders that are commonly used, notably Ordinal, Hashing and OneHot encoders [@idre][@carey][@hashing]. There are also some
-less frequently used encoders including Backward Difference, Helmert, Polynomial and Sum encoding [@idre][@carey]. Finally there are
-experimental encoders: LeaveOneOut, Binary and BaseN [@zhang][@onehot][@basen].
+The original release of category_encoders included a number of commonly used encoders, notably Ordinal, Hashing and OneHot
+encoders [@idre][@carey][@hashing], as well as some less frequently used encoders including Backward Difference, Helmert,
+Polynomial and Sum encoding [@idre][@carey]. It also included several experimental encoders: LeaveOneOut, Binary and
+BaseN [@zhang][@onehot][@basen].
+
+Since then, the library has grown substantially through community contributions.  It now includes over twenty encoding
+strategies.  Notable additions include Target Encoder [@quantile], which uses the target variable to derive encodings;
+CatBoost Encoder [@catboost], which applies an ordered variant of target encoding to reduce overfitting; Weight of Evidence
+(WOE) Encoder [@woe], widely used in credit scoring and risk modeling; James-Stein Encoder [@jamesstein], which shrinks
+estimates toward the overall mean; M-Estimate Encoder [@mestimate]; Generalized Linear Mixed Model (GLMM) Encoder [@glmm];
+Count Encoder; Quantile Encoder [@quantile]; Summary Encoder; Gray Encoder; and RankHot Encoder.
 
 The goal of these sorts of transforms is to represent categorical data, which has no true order, as numeric values while
 balancing desires to keep the representation in as few dimensions as possible.  Category_encoders seeks to provide access
