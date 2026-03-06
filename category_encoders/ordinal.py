@@ -108,6 +108,28 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         handle_unknown: str = 'value',
         handle_missing: str = 'value',
     ):
+        
+
+        """Encode categorical features as ordinal integers using custom mappings.
+    
+    Parameters
+    ----------
+    verbose : int, default=0
+        Verbosity level of output.
+    mapping : list of dicts or None
+        Custom mapping dictionary for categories to integers.
+    cols : list of str, default=None
+        Columns to encode.
+    drop_invariant : bool, default=False
+        Drop columns with zero variance.
+    return_df : bool, default=True
+        Return pandas DataFrame from transform.
+    handle_unknown : str, default='value'
+        Strategy for unknown categories: 'error', 'return_nan', 'value'.
+    handle_missing : str, default='value'
+        Strategy for missing values: 'error', 'return_nan', 'value'.
+    """
+        
         super().__init__(
             verbose=verbose,
             cols=cols,
