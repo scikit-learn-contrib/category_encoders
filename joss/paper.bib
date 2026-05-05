@@ -11,20 +11,25 @@
   title={API design for machine learning software: experiences from the scikit-learn project},
   author={Buitinck, Lars and Louppe, Gilles and Blondel, Mathieu and Pedregosa, Fabian and Mueller, Andreas and Grisel, Olivier and Niculae, Vlad and Prettenhofer, Peter and Gramfort, Alexandre and Grobler, Jaques and others},
   journal={arXiv preprint arXiv:1309.0238},
-  year={2013}
+  year={2013},
+  DOI={10.48550/arXiv.1309.0238}
 }
-@Misc{scipy,
-  author =    {Eric Jones and Travis Oliphant and Pearu Peterson and others},
-  title =     {{SciPy}: Open source scientific tools for {Python}},
-  year =      {2001--},
-  url = "http://www.scipy.org/",
-  note = {[Online; accessed 2016-05-04]}
+@article{scipy,
+  title={SciPy 1.0: fundamental algorithms for scientific computing in Python},
+  author={Virtanen, Pauli and Gommers, Ralf and Oliphant, Travis E and Haberland, Matt and Reddy, Tyler and Cournapeau, David and Burovski, Evgeni and Peterson, Pearu and Weckesser, Warren and Bright, Jonathan and others},
+  journal={Nature Methods},
+  volume={17},
+  number={3},
+  pages={261--272},
+  year={2020},
+  DOI={10.1038/s41592-019-0686-2}
 }
 @article{hashing,
- title={Feature hashing for large scale multitask learning}, DOI={10.1145/1553374.1553516},
- journal={Proceedings of the 26th Annual International Conference on Machine Learning - ICML 09},
+ title={Feature hashing for large scale multitask learning},
  author={Weinberger, Kilian and Dasgupta, Anirban and Langford, John and Smola, Alex and Attenberg, Josh},
- year={2009}
+ journal={Proceedings of the 26th Annual International Conference on Machine Learning - ICML 09},
+ year={2009},
+ DOI={10.1145/1553374.1553516}
 }
 @misc{idre,
  title={R Library Contrast Coding Systems for categorical variables},
@@ -32,16 +37,17 @@
  journal={IDRE Stats}
 }
 @misc{carey,
- title={Coding Categorical Variables (http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding%20Categorical%20Variables%202006-03-03.pdf)},
+ title={Coding Categorical Variables},
  author={Carey, Gregory},
  year={2003},
- month={Mar}
+ month={Mar},
+ url={https://web.archive.org/web/20220508025941/http://psych.colorado.edu/~carey/Courses/PSYC5741/handouts/Coding\%20Categorical\%20Variables\%202006-03-03.pdf}
 }
 @misc{zhang,
  title={Strategies to encode categorical variables with many categories},
- url={https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748#143154},
- journal={Caterpillar Tube Pricing | Kaggle},
- author={Zhang, Owen}
+ url={https://web.archive.org/web/20150926060957/https://www.kaggle.com/c/caterpillar-tube-pricing/discussion/15748},
+ author={Zhang, Owen},
+ year={2015}
 }
 @misc{onehot,
  title={Beyond One-Hot: an exploration of categorical variables},
@@ -52,7 +58,7 @@
  month={Nov}
 }
 @misc{basen,
- title={BaseN Encoding and Grid Search in category_encoders},
+ title={BaseN Encoding and Grid Search in category\_encoders},
  url={https://mcginniscommawill.com/posts/2016-12-18-basen-encoding-grid-search-category-encoders/},
  journal={Will's Noise},
  author={McGinnis, William D},
@@ -64,6 +70,7 @@
   author={Seabold, Skipper and Perktold, Josef},
   booktitle={9th Python in Science Conference},
   year={2010},
+  DOI={10.25080/majora-92bf1922-011}
 }
 @InProceedings{pandas,
   author    = { Wes McKinney },
@@ -71,7 +78,8 @@
   booktitle = { Proceedings of the 9th Python in Science Conference },
   pages     = { 51 - 56 },
   year      = { 2010 },
-  editor    = { St\'efan van der Walt and Jarrod Millman }
+  editor    = { St\'efan van der Walt and Jarrod Millman },
+  DOI       = {10.25080/majora-92bf1922-00a}
 }
 @article{jamesstein,
   title={Estimation with quadratic loss},
@@ -86,16 +94,19 @@
   author={Prokhorenkova, Liudmila and Gusev, Gleb and Vorobev, Aleksandr and Dorogush, Anna Veronika and Gulin, Andrey},
   booktitle={Advances in Neural Information Processing Systems},
   volume={31},
-  year={2018}
+  pages={6638--6648},
+  year={2018},
+  url={https://proceedings.neurips.cc/paper/2018/hash/14491b756b3a51daac41c24863285549-Abstract.html}
 }
 @article{woe,
-  title={The evidential foundations of probabilistic reasoning},
-  author={Good, Irving John},
-  journal={Statistical Science},
-  volume={6},
-  number={1},
-  pages={44--57},
-  year={1991}
+  title={Weight of Evidence, Corroboration, Explanatory Power, Information and the Utility of Experiments},
+  author={Good, I. J.},
+  journal={Journal of the Royal Statistical Society: Series B (Methodological)},
+  volume={22},
+  number={2},
+  pages={319--331},
+  year={1960},
+  DOI={10.1111/j.2517-6161.1960.tb00378.x}
 }
 @article{mestimate,
   title={Transforming classifier scores into accurate multiclass probability estimates},
@@ -125,4 +136,52 @@
   year={2001},
   DOI={10.1145/507533.507538}
 }
-
+@misc{poslavskaya2023encoding,
+  title={Encoding categorical data: Is there yet anything ``hotter'' than one-hot encoding?},
+  author={Poslavskaya, Ekaterina and Korolev, Alexey},
+  year={2023},
+  eprint={2312.16930},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG},
+  DOI={10.48550/arXiv.2312.16930}
+}
+@article{wang2023biochar,
+  title={Enhancing Biochar-Based Nonradical Persulfate Activation Using Data-Driven Techniques},
+  author={Wang, Rupeng and Zhang, Shiyu and Chen, Honglin and He, Zixiang and Cao, Guoliang and Wang, Ke and Li, Fanghua and Ren, Nanqi and Xing, Defeng and Ho, Shih-Hsin},
+  journal={Environmental Science \& Technology},
+  volume={57},
+  number={9},
+  pages={4050--4059},
+  year={2023},
+  DOI={10.1021/acs.est.2c07073}
+}
+@article{stojanovic2021fraud,
+  title={Follow the Trail: Machine Learning for Fraud Detection in Fintech Applications},
+  author={Stojanovi{\'c}, Branka and Bo{\v{z}}i{\'c}, Josip and Hofer-Schmitz, Katharina and Nahrgang, Kai and Weber, Andreas and Badii, Atta and Sundaram, Maheshkumar and Jordan, Elliot and Runevic, Joel},
+  journal={Sensors},
+  volume={21},
+  number={5},
+  pages={1594},
+  year={2021},
+  DOI={10.3390/s21051594}
+}
+@article{badumarfo2022composite,
+  title={Composite Travel Generative Adversarial Networks for Tabular and Sequential Population Synthesis},
+  author={Badu-Marfo, Godwin and Farooq, Bilal and Patterson, Zachary},
+  journal={IEEE Transactions on Intelligent Transportation Systems},
+  volume={23},
+  number={10},
+  pages={17976--17985},
+  year={2022},
+  DOI={10.1109/tits.2022.3168232}
+}
+@article{schmitt2022predicting,
+  title={Predicting Spray Dried Dispersion Particle Size Via Machine Learning Regression Methods},
+  author={Schmitt, John M. and Baumann, John M. and Morgen, Michael M.},
+  journal={Pharmaceutical Research},
+  volume={39},
+  number={12},
+  pages={3223--3239},
+  year={2022},
+  DOI={10.1007/s11095-022-03370-3}
+}
