@@ -70,10 +70,17 @@ algorithms typically require numeric inputs, so categorical data must be convert
 modeling. While simple approaches like one-hot encoding are widely available, many real-world datasets contain
 high-cardinality categorical features where naive encodings produce excessively wide or uninformative representations.
 
-Practitioners need access to a broad range of encoding strategies, from simple contrast coding to supervised methods that
-leverage target information, in a consistent and interoperable interface. Category_encoders addresses this need by
-providing over twenty encoding methods in a single package, all conforming to the scikit-learn transformer API, so they
-can be used directly in scikit-learn pipelines without custom wrapper code.
+The original release of category_encoders included a number of commonly used encoders, notably Ordinal, Hashing and OneHot
+encoders [@idre][@carey][@hashing], as well as some less frequently used encoders including Backward Difference, Helmert,
+Polynomial and Sum encoding [@idre][@carey]. It also included several experimental encoders: LeaveOneOut, Binary and
+BaseN [@zhang][@onehot][@basen].
+
+Since then, the library has grown substantially through community contributions.  It now includes over twenty encoding
+strategies.  Notable additions include Target Encoder [@quantile], which uses the target variable to derive encodings;
+CatBoost Encoder [@catboost], which applies an ordered variant of target encoding to reduce overfitting; Weight of Evidence
+(WOE) Encoder [@woe], widely used in credit scoring and risk modeling; James-Stein Encoder [@jamesstein], which shrinks
+estimates toward the overall mean; M-Estimate Encoder [@mestimate]; Generalized Linear Mixed Model (GLMM) Encoder [@glmm];
+Count Encoder; Quantile Encoder [@quantile]; Summary Encoder; Gray Encoder; and RankHot Encoder.
 
 # State of the field
 

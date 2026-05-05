@@ -215,7 +215,7 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         for col, mapper in self.mapping.items():
             if self._normalize[col] and isinstance(self._min_group_size[col], int):
                 self._min_group_size[col] = self._min_group_size[col] / X.shape[0]
-            elif not self._normalize and isinstance(self._min_group_size[col], float):
+            elif not self._normalize[col] and isinstance(self._min_group_size[col], float):
                 self._min_group_size[col] = self._min_group_size[col] * X.shape[0]
 
             if self._combine_min_nan_groups[col] is True:

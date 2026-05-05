@@ -294,3 +294,90 @@ class TestCountEncoder(TestCase):
         self.assertTrue(pd.Series([13, 7]).isin(out['na_categorical']).all())
         self.assertEqual(out['na_categorical'].unique().shape[0], 2)
         self.assertTrue(enc.mapping is not None)
+
+    def test_normalize_with_drop_invariant(self):
+        """Test that normalize=True with drop_invariant=True does not incorrectly drop columns.
+
+        Regression test for https://github.com/scikit-learn-contrib/category_encoders/issues/457.
+        When normalize=True, encoded values are proportions with inherently small variance.
+        The invariance check should not falsely flag these columns as invariant.
+        """
+        np.random.seed(42)
+        n = 1000
+        categories = [f"cat_{i}" for i in range(40)]
+        data = np.random.choice(categories, size=n)
+        df = pd.DataFrame({"col": data})
+
+        enc = encoders.CountEncoder(
+            drop_invariant=True,
+            normalize=True,
+            min_group_size=3,
+            combine_min_nan_groups=True,
+        )
+        result = enc.fit_transform(df[['col']])
+
+        # Column must not be dropped — it has many distinct proportions
+        self.assertIn('col', result.columns)
+        self.assertEqual(result.shape[0], n)
+        self.assertGreater(result['col'].nunique(), 1)
+
+    def test_normalize_with_float_min_group_size_and_drop_invariant(self):
+        """Test normalize=True with float min_group_size and drop_invariant=True.
+
+        Regression test for https://github.com/scikit-learn-contrib/category_encoders/issues/457.
+        This is the exact combination reported in the issue.
+        """
+        np.random.seed(42)
+        n = 1000
+        categories = [f"cat_{i}" for i in range(40)]
+        data = np.random.choice(categories, size=n)
+        df = pd.DataFrame({"col": data})
+
+        enc = encoders.CountEncoder(
+            drop_invariant=True,
+            normalize=True,
+            min_group_size=0.03,
+            combine_min_nan_groups=True,
+        )
+        result = enc.fit_transform(df[['col']])
+
+        self.assertIn('col', result.columns)
+        self.assertEqual(result.shape[0], n)
+        self.assertGreater(result['col'].nunique(), 1)
+
+    def test_min_group_size_float_with_normalize_false(self):
+        """Test that float min_group_size is properly converted to int when normalize=False.
+
+        Regression test for the dict truthiness bug on line 218 of count.py:
+        'not self._normalize' (always False for non-empty dict) should be
+        'not self._normalize[col]'.
+        """
+        # 20 rows, 4 categories: A=6, B=5, C=5, nan=4
+        # min_group_size=0.30 means 30% of 20 = 6 rows threshold
+        # With normalize=False, categories with count < 6 should be combined
+        enc = encoders.CountEncoder(
+            normalize=False,
+            min_group_size=0.30,
+            combine_min_nan_groups=True,
+        )
+        enc.fit(X[['none']])
+
+        # The float 0.30 should have been converted to int (0.30 * 20 = 6)
+        self.assertEqual(enc._min_group_size['none'], 0.30 * X.shape[0])
+
+        # Categories below threshold (count < 6) should be combined
+        self.assertTrue(len(enc._min_group_categories) > 0)
+
+    def test_min_group_size_float_with_normalize_false_per_column(self):
+        """Test float min_group_size conversion works per-column with mixed normalize dict."""
+        enc = encoders.CountEncoder(
+            normalize={'none': False, 'na_categorical': True},
+            min_group_size=0.30,
+        )
+        enc.fit(X)
+
+        # For 'none' (normalize=False): float should be converted to int count
+        self.assertEqual(enc._min_group_size['none'], 0.30 * X.shape[0])
+
+        # For 'na_categorical' (normalize=True): float should stay as-is (already a proportion)
+        self.assertEqual(enc._min_group_size['na_categorical'], 0.30)

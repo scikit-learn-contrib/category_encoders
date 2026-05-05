@@ -161,6 +161,29 @@ class TestBaseEncoder(TestCase):
 
         self.encoder = DummyEncoder()
 
+    def test_determine_fit_columns_use_all_cols(self):
+        """Test that _determine_fit_columns with use_all_cols=True returns all columns."""
+        df = pd.DataFrame({'str_col': ['a', 'b'], 'int_col': [1, 2], 'float_col': [1.0, 2.0]})
+
+        class DummyEncoder(BaseEncoder, BaseEstimator, TransformerMixin):
+            def _fit(self, X, y=None):
+                return self
+
+            def transform(self, X, y=None, override_return_df=False):
+                return X
+
+        enc = DummyEncoder(cols='all')
+        self.assertTrue(enc.use_all_cols)
+        self.assertFalse(enc.use_default_cols)
+
+        enc.fit(df)
+        self.assertEqual(sorted(enc.cols), sorted(df.columns.tolist()))
+
+        # Refit with different columns should re-detect all
+        df2 = pd.DataFrame({'a': ['x', 'y'], 'b': [10, 20]})
+        enc.fit(df2)
+        self.assertEqual(sorted(enc.cols), sorted(df2.columns.tolist()))
+
     @pytest.mark.skipif(Version(skl_version) < Version('1.2'), reason='requires sklearn > 1.2')
     def test_sklearn_pandas_out_refit(self):
         """Test that the encoder can be refit with sklearn and pandas."""

@@ -951,6 +951,44 @@ class TestEncoders(TestCase):
         self.assertTrue(result['float_edge'].min() < 1, 'should still be a number and untouched')
         self.assertTrue(result['unique_int'].min() < 1, 'should still be a number and untouched')
 
+    def test_cols_all(self):
+        """Test that cols='all' encodes every column regardless of dtype."""
+        for encoder_name in encoders.__all__:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(cols='all')
+                enc.fit(X, np_y)
+                self.assertEqual(sorted(enc.cols), sorted(X.columns.tolist()))
+
+    def test_cols_all_case_insensitive(self):
+        """Test that cols='all' is case-insensitive."""
+        for variant in ['all', 'All', 'ALL']:
+            with self.subTest(variant=variant):
+                enc = encoders.OrdinalEncoder(cols=variant)
+                enc.fit(X, np_y)
+                self.assertEqual(sorted(enc.cols), sorted(X.columns.tolist()))
+
+    def test_column_transformer_with_all_cols(self):
+        """Test that cols='all' works inside ColumnTransformer with integer columns.
+
+        See issue #456.
+        """
+        df = pd.DataFrame({'int_col': [1, 2, 3, 4, 5], 'str_col': ['a', 'b', 'c', 'a', 'b']})
+        y_small = pd.Series([1, 0, 1, 0, 1])
+
+        for encoder_name in set(encoders.__all__) - {'HashingEncoder'}:
+            with self.subTest(encoder_name=encoder_name):
+                ct = ColumnTransformer(
+                    [
+                        (
+                            'enc',
+                            getattr(encoders, encoder_name)(cols='all', handle_missing='return_nan'),
+                            ['int_col', 'str_col'],
+                        )
+                    ]
+                )
+                result = ct.fit_transform(df, y_small)
+                self.assertGreater(result.shape[1], 0)
+
     def test_ignored_columns_are_untouched(self):
         """Should not change None values of ignored columns.
 

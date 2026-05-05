@@ -306,6 +306,7 @@ class SummaryEncoder(BaseEstimator):
         self.use_default_cols = (
             cols is None
         )  # if True, even a repeated call of fit() will select string columns from X
+        self.use_all_cols = isinstance(cols, str) and cols.lower() == 'all'
         self.ordinal_encoder = None
         self._dim = None
         self.mapping = None
@@ -336,7 +337,9 @@ class SummaryEncoder(BaseEstimator):
         self.feature_names_in_ = X.columns.tolist()
         self.n_features_in_ = len(self.feature_names_in_)
 
-        if self.use_default_cols:
+        if self.use_all_cols:
+            self.cols = X.columns.tolist()
+        elif self.use_default_cols:
             self.cols = util.get_categorical_cols(X)
         else:
             self.cols = util.convert_cols_to_list(self.cols)
