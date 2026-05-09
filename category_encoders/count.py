@@ -19,6 +19,12 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
+    # CountEncoder accepts ints and dicts (per-column options) for
+    # handle_unknown / handle_missing, so a flat string-set check is too
+    # restrictive — opt out and rely on the encoder's own normalisation
+    # logic. See issue #168.
+    _VALID_HANDLE_MISSING = None
+    _VALID_HANDLE_UNKNOWN = None
 
     def __init__(
         self,

@@ -48,6 +48,13 @@ class BaseContrastEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
 
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.ONE_TO_N_UNIQUE
+    # Contrast-coding encoders (Polynomial, Sum, Helmert, BackwardDifference)
+    # accept 'indicator' for both handle_missing and handle_unknown — see
+    # tests/test_polynomial.py::test_handle_missing_is_indicator. Without the
+    # extra entry the new validation in BaseEncoder.fit (issue #168) would
+    # reject these documented strategies.
+    _VALID_HANDLE_MISSING = ('error', 'return_nan', 'value', 'indicator')
+    _VALID_HANDLE_UNKNOWN = ('error', 'return_nan', 'value', 'indicator')
 
     def __init__(
         self,

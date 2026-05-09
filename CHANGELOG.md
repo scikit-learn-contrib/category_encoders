@@ -1,3 +1,10 @@
+unreleased
+==========
+
+* Fix: Fixed issue#168 - encoders now raise ValueError on unrecognised
+  handle_missing/handle_unknown string values instead of silently treating
+  them as the default.
+
 v.2.9.0
 =======
 

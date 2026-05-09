@@ -1002,3 +1002,53 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(cols=['col1'])
                 out = enc.fit_transform(X, y)
                 self.assertTrue(out.col2[2] is None)
+
+    def test_invalid_handle_missing_raises(self):
+        """Encoders should raise ValueError on unrecognised handle_missing strings.
+
+        Before issue #168 was fixed, an unsupported value (e.g. 'indicator' on
+        TargetEncoder, which only understands 'error'/'return_nan'/'value')
+        was silently accepted and the encoder behaved as if the default were
+        passed, which made typos very easy to miss. The base encoder now
+        validates against the encoder-specific allow-list at fit time.
+        """
+        # Encoders that opt out of validation by setting _VALID_HANDLE_* = None
+        # (CountEncoder accepts dicts/ints; HashingEncoder uses sentinel
+        # 'does not apply'). They are exercised separately by other tests.
+        opted_out = {'CountEncoder', 'HashingEncoder'}
+        bad_value = 'definitely_not_a_handle_missing_value'
+
+        for encoder_name in set(encoders.__all__) - opted_out:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(handle_missing=bad_value)
+                with self.assertRaisesRegex(ValueError, r'handle_missing'):
+                    enc.fit(X, np_y)
+
+    def test_invalid_handle_unknown_raises(self):
+        """Encoders should raise ValueError on unrecognised handle_unknown strings.
+
+        See issue #168.
+        """
+        opted_out = {'CountEncoder', 'HashingEncoder'}
+        bad_value = 'definitely_not_a_handle_unknown_value'
+
+        for encoder_name in set(encoders.__all__) - opted_out:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(handle_unknown=bad_value)
+                with self.assertRaisesRegex(ValueError, r'handle_unknown'):
+                    enc.fit(X, np_y)
+
+    def test_one_hot_extra_handle_strategies_still_accepted(self):
+        """OneHotEncoder accepts 'ignore' and 'indicator' on top of the base set.
+
+        Regression guard: the per-encoder _VALID_HANDLE_* override on
+        OneHotEncoder must not regress to the base set. See issue #168.
+        """
+        for missing_strat in ('ignore', 'indicator'):
+            with self.subTest(handle_missing=missing_strat):
+                enc = encoders.OneHotEncoder(handle_missing=missing_strat)
+                enc.fit(X)  # must not raise
+        for unknown_strat in ('indicator',):
+            with self.subTest(handle_unknown=unknown_strat):
+                enc = encoders.OneHotEncoder(handle_unknown=unknown_strat)
+                enc.fit(X)  # must not raise

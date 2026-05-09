@@ -119,6 +119,12 @@ class HashingEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     prefit_ordinal = False
     encoding_relation = util.EncodingRelation.ONE_TO_M
+    # HashingEncoder uses a sentinel 'does not apply' value because the hash
+    # makes handle_missing/handle_unknown semantically irrelevant. Opt out of
+    # the BaseEncoder string-set validation to keep that sentinel valid. See
+    # issue #168.
+    _VALID_HANDLE_MISSING = None
+    _VALID_HANDLE_UNKNOWN = None
 
     def __init__(
         self,
