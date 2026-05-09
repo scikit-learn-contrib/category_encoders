@@ -1,3 +1,10 @@
+unreleased
+==========
+
+* Fix: Fixed issue#190 - inverse_transform with drop_invariant=True now
+  raises a clear ValueError instead of an opaque IndexError /
+  "X is not in list" error.
+
 v.2.9.0
 =======
 

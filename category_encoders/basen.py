@@ -213,17 +213,24 @@ class BaseNEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         # and make a deep copy
         X = util.convert_input(X_in, columns=self.feature_names_out_, deep=True)
 
+        # Validate the input dimension *before* basen_to_integer, which
+        # otherwise would raise an opaque IndexError when drop_invariant
+        # has stripped some encoded columns: basen_to_integer iterates the
+        # full set of encoded digits per column, but the input no longer
+        # provides them. Refuse with a clear ValueError pointing at
+        # drop_invariant. See issue #190.
+        if self.drop_invariant and self.invariant_cols:
+            raise ValueError(
+                f'Unexpected input dimension {X.shape[1]}, the attribute drop_invariant '
+                'should be False when calling inverse_transform'
+            )
+
         X = self.basen_to_integer(X, self.cols, self.base)
 
-        # make sure that it is the right size
+        # Catch any remaining dim mismatch (e.g. caller passed an unrelated
+        # frame with the right column names but extra columns).
         if X.shape[1] != self._dim:
-            if self.drop_invariant:
-                raise ValueError(
-                    f'Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should '
-                    'be False when transforming the data'
-                )
-            else:
-                raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
+            raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
             return X if self.return_df else X.to_numpy()

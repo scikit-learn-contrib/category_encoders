@@ -252,17 +252,22 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         # first check the type and make deep copy
         X = util.convert_input(X_in, columns=self.feature_names_out_, deep=True)
 
+        # Refuse early when drop_invariant stripped encoded columns:
+        # reverse_dummies iterates ``self.mapping`` which still references
+        # the dropped columns, so the user would otherwise see an opaque
+        # ``ValueError: '<col>_<level>' is not in list``. See issue #190.
+        if self.drop_invariant and self.invariant_cols:
+            raise ValueError(
+                f'Unexpected input dimension {X.shape[1]}, the attribute drop_invariant '
+                'should be False when calling inverse_transform'
+            )
+
         X = self.reverse_dummies(X, self.mapping)
 
-        # then make sure that it is the right size
+        # Catch any remaining dim mismatch (e.g. caller passed an unrelated
+        # frame with the right column names but extra columns).
         if X.shape[1] != self._dim:
-            if self.drop_invariant:
-                raise ValueError(
-                    f'Unexpected input dimension {X.shape[1]}, the attribute drop_invariant should '
-                    'be False when transforming the data'
-                )
-            else:
-                raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
+            raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
 
         if not list(self.cols):
             return X if self.return_df else X.to_numpy()
