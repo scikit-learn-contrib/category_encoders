@@ -34,8 +34,10 @@ class LeaveOneOutEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         options are 'error', 'return_nan' and 'value', defaults to 'value',
          which returns the target mean.
     sigma: float
-        adds normal (Gaussian) distribution noise into training data in order to decrease
-        overfitting (testing data are untouched). Sigma gives the standard deviation
+        adds Gaussian regularization noise to the encoded values during fit
+        to decrease overfitting. The noise is multiplicative — encoded values
+        are scaled by ``N(1, sigma)`` — so it is centered on 1, not 0
+        (testing data are untouched). Sigma gives the standard deviation
         (spread or "width") of the normal distribution. The optimal value is commonly
         between 0.05 and 0.6.
         The default is to not add noise, but that leads to significantly suboptimal results.
