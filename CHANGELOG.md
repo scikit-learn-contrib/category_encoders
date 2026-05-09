@@ -1,3 +1,9 @@
+unreleased
+==========
+
+* Fix: Fixed issue#442 - encoders now honor return_df=False even when
+  the resolved column list is empty (e.g. on a numeric-only DataFrame).
+
 v.2.9.0
 =======
 

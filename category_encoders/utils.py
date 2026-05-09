@@ -631,7 +631,11 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
             y = pd.Series(self.lab_encoder_.transform(y), index=y.index)
 
         if not list(self.cols):
-            return X
+            # No columns to encode: still honor return_df so callers that
+            # pass return_df=False to a frame containing only numeric inputs
+            # get back a numpy array consistently with the non-empty-cols
+            # path. See issue #442.
+            return X if (self.return_df or override_return_df) else X.to_numpy()
 
         X = self._transform(X, y)
 
@@ -673,7 +677,9 @@ class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
         self._check_transform_inputs(X)
 
         if not list(self.cols):
-            return X
+            # See SupervisedTransformerMixin.transform — same return_df fix
+            # for the unsupervised path. Issue #442.
+            return X if (self.return_df or override_return_df) else X.to_numpy()
 
         X = self._transform(X)
         return self._drop_invariants(X, override_return_df)
