@@ -1,3 +1,9 @@
+unreleased
+==========
+
+* Fix: Fixed issue#402 - clarified HashingEncoder ``n_components``
+  docstring (it is the number of output hash buckets, not bits).
+
 v.2.9.0
 =======
 
