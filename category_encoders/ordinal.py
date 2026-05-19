@@ -48,6 +48,11 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         options are 'error', 'return_nan', and 'value, default to 'value',
         which treat nan as a category at fit time,
         or -2 at transform time if nan is not a category during fit.
+    index_start: int
+        integer at which to start labelling the categories. Defaults to 1.
+        Set to 0 for zero-indexed labels, which can be convenient when feeding
+        the encoded values into models that expect zero-indexed inputs such as
+        embedding layers.
 
     Example
     -------
@@ -107,6 +112,7 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         return_df: bool = True,
         handle_unknown: str = 'value',
         handle_missing: str = 'value',
+        index_start: int = 1,
     ):
         super().__init__(
             verbose=verbose,
@@ -120,6 +126,7 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         if self.mapping_supplied:
             mapping = self._validate_supplied_mapping(mapping)
         self.mapping = mapping
+        self.index_start = index_start
 
     @property
     def category_mapping(self) -> list[dict[str, str | dict | pd.Series]] | None:
@@ -136,6 +143,7 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             cols=self.cols,
             handle_unknown=self.handle_unknown,
             handle_missing=self.handle_missing,
+            index_start=self.index_start,
         )
         self.mapping = categories
 
@@ -146,6 +154,7 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             cols=self.cols,
             handle_unknown=self.handle_unknown,
             handle_missing=self.handle_missing,
+            index_start=self.index_start,
         )
         return X
 
@@ -217,6 +226,7 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         cols: list[str] = None,
         handle_unknown: str = 'value',
         handle_missing: str = 'value',
+        index_start: int = 1,
     ) -> tuple[pd.DataFrame, list[dict]]:
         """Ordinal encoding uses a single column of integers to represent the classes.
 
@@ -286,7 +296,10 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
                 index = pd.Series(categories).fillna(nan_identity).unique()
 
-                data = pd.Series(index=index, data=range(1, len(index) + 1))
+                data = pd.Series(
+                    index=index,
+                    data=range(index_start, len(index) + index_start),
+                )
 
                 if handle_missing == 'value' and ~data.index.isna().any():
                     data.loc[nan_identity] = -2
