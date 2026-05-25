@@ -84,8 +84,10 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     model: str
         options are 'pooled', 'beta', 'binary' and 'independent', defaults to 'independent'.
     randomized: bool,
-        adds normal (Gaussian) distribution noise into training data in order to decrease
-        overfitting (testing data are untouched).
+        adds Gaussian regularization noise to the encoded values during fit
+        to decrease overfitting. The noise is multiplicative — encoded values
+        are scaled by ``N(1, sigma)`` — so it is centered on 1, not 0
+        (testing data are untouched).
     sigma: float
         standard deviation (spread or "width") of the normal distribution.
 

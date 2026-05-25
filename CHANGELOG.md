@@ -1,3 +1,11 @@
+unreleased
+==========
+
+* Fix: Fixed issue#333 - clarified that the Gaussian regularization
+  noise (``sigma`` parameter on TargetEncoder/LOO/CatBoost/WOE/GLMM/
+  JamesStein/MEstimate) is *multiplicative* (``X * N(1, sigma)``), not
+  additive.
+
 v.2.9.0
 =======
 
