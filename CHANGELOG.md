@@ -23,6 +23,10 @@ unreleased
   Previously it inherited the positional base-N decoder from ``BaseNEncoder``,
   which cannot invert a Gray code (consecutive code words differ by a single
   bit and are not positional), so it returned the wrong categories.
+* Change: Removed direct dependency on ``patsy``. The four contrast-coding
+  encoders (Polynomial, Helmert, BackwardDifference, Sum) now build their
+  contrast matrices in-tree. ``patsy`` may still be installed as a
+  transitive dependency of ``statsmodels`` (used by GLMMEncoder).
 
 v.2.10.0
 ========

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
-from patsy.contrasts import ContrastMatrix, Sum
+from category_encoders._contrasts import ContrastMatrix, Sum
 
 from category_encoders.base_contrast_encoder import BaseContrastEncoder
 
