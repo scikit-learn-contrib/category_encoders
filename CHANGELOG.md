@@ -1,10 +1,15 @@
 unreleased
 ==========
 
+* Fix: Fixed issue#190 - inverse_transform with drop_invariant=True now
+  raises a clear ValueError instead of an opaque IndexError /
+  "X is not in list" error.
 * Fix: Fixed issue#333 - clarified that the Gaussian regularization
   noise (``sigma`` parameter on TargetEncoder/LOO/CatBoost/WOE/GLMM/
   JamesStein/MEstimate) is *multiplicative* (``X * N(1, sigma)``), not
   additive.
+* Fix: Fixed issue#402 - clarified HashingEncoder ``n_components``
+  docstring (it is the number of output hash buckets, not bits).
 * Fix: Fixed issue#442 - encoders now honor return_df=False even when
   the resolved column list is empty (e.g. on a numeric-only DataFrame).
 
