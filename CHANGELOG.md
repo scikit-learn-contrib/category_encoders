@@ -1,6 +1,10 @@
 unreleased
 ==========
 
+* Change: Removed direct dependency on ``patsy``. The four contrast-coding
+  encoders (Polynomial, Helmert, BackwardDifference, Sum) now build their
+  contrast matrices in-tree. ``patsy`` may still be installed as a
+  transitive dependency of ``statsmodels`` (used by GLMMEncoder).
 * Feat: Added issue#291 - ``index_start`` parameter on OrdinalEncoder for
   zero-indexed labels.
 * Feat: Added issue#456 - ``cols="all"`` encodes every column regardless of

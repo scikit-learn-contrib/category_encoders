@@ -1,7 +1,7 @@
 """Backward difference contrast encoding."""
 
 import numpy as np
-from patsy.contrasts import ContrastMatrix, Diff
+from category_encoders._contrasts import ContrastMatrix, Diff
 
 from category_encoders.base_contrast_encoder import BaseContrastEncoder
 
