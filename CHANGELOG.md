@@ -25,8 +25,11 @@ unreleased
   bit and are not positional), so it returned the wrong categories.
 * Change: Removed direct dependency on ``patsy``. The four contrast-coding
   encoders (Polynomial, Helmert, BackwardDifference, Sum) now build their
-  contrast matrices in-tree. ``patsy`` may still be installed as a
-  transitive dependency of ``statsmodels`` (used by GLMMEncoder).
+  contrast matrices in-tree.
+* Change: ``statsmodels`` is now an optional extra. ``GLMMEncoder`` is
+  loaded lazily and raises a clear ``ImportError`` if statsmodels is not
+  installed. Install with ``pip install category_encoders[glmm]`` to use
+  it. Removes both ``statsmodels`` and ``patsy`` from the default install.
 
 v.2.10.0
 ========
