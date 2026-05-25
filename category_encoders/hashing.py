@@ -57,8 +57,12 @@ class HashingEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         6C12T CPU with 100,000 samples makes max_sample=16,666.
         It is not recommended to set it larger than the default value.
     n_components: int
-        how many bits to use to represent the feature. By default, we use 8 bits.
-        For high-cardinality features, consider using up-to 32 bits.
+        the number of output features (hash buckets) per encoded column.
+        Defaults to 8. This is the *dimension*, not a bit count —
+        ``n_components=32`` produces 32 buckets, not 2**32. The collision
+        rate is roughly ``1 / n_components``; prefer larger values for
+        high-cardinality features. See `Feature hashing on Wikipedia
+        <https://en.wikipedia.org/wiki/Feature_hashing>`_.
     process_creation_method: string
         either "fork", "spawn" or "forkserver" (availability depends on your
         platform). See https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods

@@ -655,7 +655,7 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
             y = pd.Series(self.lab_encoder_.transform(y), index=y.index)
 
         if not list(self.cols):
-            return X
+            return X if (self.return_df or override_return_df) else X.to_numpy()
 
         X = self._transform(X, y)
 
@@ -697,7 +697,7 @@ class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
         self._check_transform_inputs(X)
 
         if not list(self.cols):
-            return X
+            return X if (self.return_df or override_return_df) else X.to_numpy()
 
         X = self._transform(X)
         return self._drop_invariants(X, override_return_df)

@@ -244,6 +244,25 @@ class TestOrdinalEncoder(TestCase):
             expected_mapping_return_nan, enc_return_nan.mapping[0]['mapping']
         )
 
+    def test_default_index_start_is_one(self):
+        """Test that the default ordinal labels start at 1 (issue #291)."""
+        train = pd.DataFrame({'city': ['chicago', 'st louis', 'detroit']})
+        enc = encoders.OrdinalEncoder(cols=['city'])
+        result = enc.fit_transform(train)['city'].tolist()
+        self.assertEqual([1, 2, 3], result)
+
+    def test_index_start_zero(self):
+        """Test that index_start=0 produces zero-indexed ordinal labels (issue #291)."""
+        train = pd.DataFrame({'city': ['chicago', 'st louis', 'detroit']})
+        enc = encoders.OrdinalEncoder(cols=['city'], index_start=0)
+        result = enc.fit_transform(train)['city'].tolist()
+        self.assertEqual([0, 1, 2], result)
+
+        expected_mapping = pd.Series(
+            [0, 1, 2, -2], index=['chicago', 'st louis', 'detroit', np.nan]
+        )
+        pd.testing.assert_series_equal(expected_mapping, enc.mapping[0]['mapping'])
+
     def test_nan_and_none_is_encoded_the_same(self):
         """Test that NaN and None are encoded the same."""
         train = pd.DataFrame({'city': [np.nan, None]})

@@ -1025,3 +1025,25 @@ class TestEncoders(TestCase):
                 encoders.OneHotEncoder(handle_missing=strat).fit(X)
         with self.subTest(handle_unknown='indicator'):
             encoders.OneHotEncoder(handle_unknown='indicator').fit(X)
+
+    def test_inverse_transform_with_drop_invariant_raises_clean_error(self):
+        x = [['A', 'B', 'C'], ['D', 'E', 'C'], ['F', 'G', 'C']]
+        for encoder_name in ('BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'):
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(drop_invariant=True)
+                transformed = enc.fit_transform(x)
+                with self.assertRaisesRegex(ValueError, r'^Unexpected input dimension'):
+                    enc.inverse_transform(transformed)
+
+    def test_return_df_false_honored_when_no_categorical_cols(self):
+        rng = np.random.RandomState(42)
+        df = pd.DataFrame(rng.normal(size=(50, 3)), columns=['a', 'b', 'c'])
+        empty_cols = df.select_dtypes(include=['object', 'bool']).columns
+        skip = {'HashingEncoder', 'CountEncoder'}
+        for encoder_name in set(encoders.__all__) - skip:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(
+                    cols=empty_cols, return_df=False, handle_missing='return_nan'
+                )
+                out = enc.fit_transform(df, np_y[:50])
+                self.assertIsInstance(out, np.ndarray)
