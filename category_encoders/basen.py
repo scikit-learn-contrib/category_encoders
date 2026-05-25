@@ -107,6 +107,8 @@ class BaseNEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.N_TO_M
+    _VALID_HANDLE_MISSING = ('error', 'return_nan', 'value', 'indicator')
+    _VALID_HANDLE_UNKNOWN = ('error', 'return_nan', 'value', 'indicator')
 
     def __init__(
         self,

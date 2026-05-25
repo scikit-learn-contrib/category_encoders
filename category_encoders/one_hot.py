@@ -106,6 +106,8 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.ONE_TO_N_UNIQUE
+    _VALID_HANDLE_MISSING = ('error', 'return_nan', 'value', 'ignore', 'indicator')
+    _VALID_HANDLE_UNKNOWN = ('error', 'return_nan', 'value', 'indicator')
 
     def __init__(
         self,

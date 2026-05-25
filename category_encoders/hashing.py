@@ -123,6 +123,8 @@ class HashingEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     prefit_ordinal = False
     encoding_relation = util.EncodingRelation.ONE_TO_M
+    _VALID_HANDLE_MISSING = None
+    _VALID_HANDLE_UNKNOWN = None
 
     def __init__(
         self,

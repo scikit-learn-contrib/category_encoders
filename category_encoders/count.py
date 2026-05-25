@@ -19,6 +19,8 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.ONE_TO_ONE
+    _VALID_HANDLE_MISSING = None
+    _VALID_HANDLE_UNKNOWN = None
 
     def __init__(
         self,

@@ -1003,6 +1003,29 @@ class TestEncoders(TestCase):
                 out = enc.fit_transform(X, y)
                 self.assertTrue(out.col2[2] is None)
 
+    def test_invalid_handle_missing_raises(self):
+        opted_out = {'CountEncoder', 'HashingEncoder'}
+        for encoder_name in set(encoders.__all__) - opted_out:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(handle_missing='not_a_real_value')
+                with self.assertRaisesRegex(ValueError, r'handle_missing'):
+                    enc.fit(X, np_y)
+
+    def test_invalid_handle_unknown_raises(self):
+        opted_out = {'CountEncoder', 'HashingEncoder'}
+        for encoder_name in set(encoders.__all__) - opted_out:
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(handle_unknown='not_a_real_value')
+                with self.assertRaisesRegex(ValueError, r'handle_unknown'):
+                    enc.fit(X, np_y)
+
+    def test_one_hot_extra_handle_strategies_still_accepted(self):
+        for strat in ('ignore', 'indicator'):
+            with self.subTest(handle_missing=strat):
+                encoders.OneHotEncoder(handle_missing=strat).fit(X)
+        with self.subTest(handle_unknown='indicator'):
+            encoders.OneHotEncoder(handle_unknown='indicator').fit(X)
+
     def test_inverse_transform_with_drop_invariant_raises_clean_error(self):
         x = [['A', 'B', 'C'], ['D', 'E', 'C'], ['F', 'G', 'C']]
         for encoder_name in ('BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'):

@@ -409,7 +409,7 @@ class TestOrdinalEncoder(TestCase):
                 df = X.copy(deep=True)
                 enc = encoders.OrdinalEncoder(
                     cols=categoricals,
-                    handle_unknown='ignore',
+                    handle_unknown='value',
                     mapping=mapping,
                     return_df=True,
                 )

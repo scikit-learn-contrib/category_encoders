@@ -387,6 +387,12 @@ class BaseEncoder(BaseEstimator):
         # scale-independent and handles normalized/proportion values correctly.
     )
 
+    # Subclasses may override with a wider tuple, or set to None to opt out of
+    # string validation (CountEncoder accepts dicts/ints; HashingEncoder uses a
+    # sentinel string).
+    _VALID_HANDLE_MISSING: tuple[str, ...] | None = ('error', 'return_nan', 'value')
+    _VALID_HANDLE_UNKNOWN: tuple[str, ...] | None = ('error', 'return_nan', 'value')
+
     def __init__(
         self,
         verbose: int = 0,
@@ -456,6 +462,7 @@ class BaseEncoder(BaseEstimator):
         """
         X, y = convert_inputs(X, y)
         self._check_fit_inputs(X, y)
+        self._validate_handle_strategies()
         self.feature_names_in_ = X.columns.tolist()
         self.n_features_in_ = len(self.feature_names_in_)
 
@@ -505,6 +512,23 @@ class BaseEncoder(BaseEstimator):
             else:
                 if y.isna().any():  # Target column should never have missing values
                     raise ValueError('The target column y must not contain missing values.')
+
+    def _validate_handle_strategies(self) -> None:
+        """Raise ValueError if handle_missing/handle_unknown are unrecognised strings."""
+        valid_missing = type(self)._VALID_HANDLE_MISSING
+        if valid_missing is not None and isinstance(self.handle_missing, str):
+            if self.handle_missing not in valid_missing:
+                raise ValueError(
+                    f'Unexpected handle_missing value {self.handle_missing!r} for '
+                    f'{type(self).__name__}. Supported values: {sorted(valid_missing)}.'
+                )
+        valid_unknown = type(self)._VALID_HANDLE_UNKNOWN
+        if valid_unknown is not None and isinstance(self.handle_unknown, str):
+            if self.handle_unknown not in valid_unknown:
+                raise ValueError(
+                    f'Unexpected handle_unknown value {self.handle_unknown!r} for '
+                    f'{type(self).__name__}. Supported values: {sorted(valid_unknown)}.'
+                )
 
     def _check_transform_inputs(self, df: pd.DataFrame) -> None:
         if self.handle_missing == 'error':

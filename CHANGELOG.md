@@ -1,6 +1,9 @@
 unreleased
 ==========
 
+* Fix: Fixed issue#168 - encoders now raise ValueError on unrecognised
+  handle_missing/handle_unknown string values instead of silently treating
+  them as the default.
 * Fix: Fixed issue#190 - inverse_transform with drop_invariant=True now
   raises a clear ValueError instead of an opaque IndexError /
   "X is not in list" error.
