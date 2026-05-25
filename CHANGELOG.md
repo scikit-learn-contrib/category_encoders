@@ -1,6 +1,10 @@
 unreleased
 ==========
 
+* Feat: Added issue#291 - ``index_start`` parameter on OrdinalEncoder for
+  zero-indexed labels.
+* Feat: Added issue#456 - ``cols="all"`` encodes every column regardless of
+  dtype (useful inside sklearn ``ColumnTransformer``).
 * Fix: Fixed issue#168 - encoders now raise ValueError on unrecognised
   handle_missing/handle_unknown string values instead of silently treating
   them as the default.
@@ -15,6 +19,9 @@ unreleased
   docstring (it is the number of output hash buckets, not bits).
 * Fix: Fixed issue#442 - encoders now honor return_df=False even when
   the resolved column list is empty (e.g. on a numeric-only DataFrame).
+* Fix: Fixed issue#457 - CountEncoder with ``normalize=True`` and
+  ``drop_invariant=True`` no longer drops all output columns.
+* Docs: Spelling fixes throughout the codebase (#464).
 
 v.2.9.0
 =======
