@@ -10,6 +10,8 @@ unreleased
   additive.
 * Fix: Fixed issue#402 - clarified HashingEncoder ``n_components``
   docstring (it is the number of output hash buckets, not bits).
+* Fix: Fixed issue#442 - encoders now honor return_df=False even when
+  the resolved column list is empty (e.g. on a numeric-only DataFrame).
 
 v.2.9.0
 =======
