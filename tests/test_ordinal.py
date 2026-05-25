@@ -388,10 +388,6 @@ class TestOrdinalEncoder(TestCase):
         for msg, mapping in mappings.items():
             with self.subTest(msg):
                 df = X.copy(deep=True)
-                # OrdinalEncoder accepts {'error', 'return_nan', 'value'};
-                # 'ignore' was previously silently treated as 'value' but is
-                # not a documented option. Pass the supported value
-                # explicitly. See issue #168.
                 enc = encoders.OrdinalEncoder(
                     cols=categoricals,
                     handle_unknown='value',

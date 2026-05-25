@@ -107,10 +107,6 @@ class BaseNEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.N_TO_M
-    # BaseN/Binary/Gray accept 'indicator' for both handle_missing and
-    # handle_unknown (extra column flagging missing/unseen categories) — see
-    # tests/test_basen.py::test_handle_missing_indicator_with_nan and
-    # tests/test_one_hot.py::test_handle_unknown_indicator. Issue #168.
     _VALID_HANDLE_MISSING = ('error', 'return_nan', 'value', 'indicator')
     _VALID_HANDLE_UNKNOWN = ('error', 'return_nan', 'value', 'indicator')
 

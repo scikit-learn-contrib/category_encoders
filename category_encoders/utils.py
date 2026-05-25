@@ -387,13 +387,9 @@ class BaseEncoder(BaseEstimator):
         # scale-independent and handles normalized/proportion values correctly.
     )
 
-    # Allowed string values for the ``handle_missing`` and ``handle_unknown``
-    # arguments. Subclasses that accept additional values (e.g. OneHotEncoder
-    # also supports 'ignore' and 'indicator' for ``handle_missing``) override
-    # these tuples. A value of ``None`` disables validation, which is used by
-    # encoders like CountEncoder/HashingEncoder that accept richer types
-    # (dicts, ints, sentinel strings) where a flat string-set check is wrong.
-    # See issue #168.
+    # Subclasses may override with a wider tuple, or set to None to opt out of
+    # string validation (CountEncoder accepts dicts/ints; HashingEncoder uses a
+    # sentinel string).
     _VALID_HANDLE_MISSING: tuple[str, ...] | None = ('error', 'return_nan', 'value')
     _VALID_HANDLE_UNKNOWN: tuple[str, ...] | None = ('error', 'return_nan', 'value')
 
@@ -466,10 +462,6 @@ class BaseEncoder(BaseEstimator):
         """
         X, y = convert_inputs(X, y)
         self._check_fit_inputs(X, y)
-        # Validate that handle_missing/handle_unknown are values this encoder
-        # actually understands. Done here (rather than __init__) to follow the
-        # sklearn convention of deferring parameter validation to fit, so that
-        # ``clone()`` and ``set_params`` keep working. See issue #168.
         self._validate_handle_strategies()
         self.feature_names_in_ = X.columns.tolist()
         self.n_features_in_ = len(self.feature_names_in_)
@@ -522,18 +514,7 @@ class BaseEncoder(BaseEstimator):
                     raise ValueError('The target column y must not contain missing values.')
 
     def _validate_handle_strategies(self) -> None:
-        """Validate that handle_missing/handle_unknown are recognised string values.
-
-        Encoders silently ignored unrecognised string options before this check
-        existed, so a typo like ``handle_missing='retunr_nan'`` would be treated
-        the same as the default ``'value'`` with no warning. This now raises a
-        clear ``ValueError`` listing the supported values for the encoder. See
-        issue #168.
-
-        Subclasses that legitimately accept richer types (CountEncoder and
-        HashingEncoder accept dicts/ints/sentinel strings) set the matching
-        class attribute to ``None`` to opt out of validation.
-        """
+        """Raise ValueError if handle_missing/handle_unknown are unrecognised strings."""
         valid_missing = type(self)._VALID_HANDLE_MISSING
         if valid_missing is not None and isinstance(self.handle_missing, str):
             if self.handle_missing not in valid_missing:
