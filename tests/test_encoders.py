@@ -1002,3 +1002,12 @@ class TestEncoders(TestCase):
                 enc = getattr(encoders, encoder_name)(cols=['col1'])
                 out = enc.fit_transform(X, y)
                 self.assertTrue(out.col2[2] is None)
+
+    def test_inverse_transform_with_drop_invariant_raises_clean_error(self):
+        x = [['A', 'B', 'C'], ['D', 'E', 'C'], ['F', 'G', 'C']]
+        for encoder_name in ('BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'):
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)(drop_invariant=True)
+                transformed = enc.fit_transform(x)
+                with self.assertRaisesRegex(ValueError, r'^Unexpected input dimension'):
+                    enc.inverse_transform(transformed)
