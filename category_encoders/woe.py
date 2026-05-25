@@ -33,8 +33,10 @@ class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     handle_unknown: str
         options are 'return_nan', 'error' and 'value', defaults to 'value', which will assume WOE=0.
     randomized: bool,
-        adds normal (Gaussian) distribution noise into training data in order to decrease
-        overfitting (testing data are untouched).
+        adds Gaussian regularization noise to the encoded values during fit
+        to decrease overfitting. The noise is multiplicative — encoded values
+        are scaled by ``N(1, sigma)`` — so it is centered on 1, not 0
+        (testing data are untouched).
     sigma: float
         standard deviation (spread or "width") of the normal distribution.
     regularization: float
