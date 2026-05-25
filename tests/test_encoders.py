@@ -1004,24 +1004,10 @@ class TestEncoders(TestCase):
                 self.assertTrue(out.col2[2] is None)
 
     def test_inverse_transform_with_drop_invariant_raises_clean_error(self):
-        """inverse_transform with drop_invariant=True must raise a clear
-        ValueError, not an opaque IndexError or KeyError.
-
-        The encoders cannot reconstruct the input when invariant columns
-        have been dropped — that information is no longer available — so
-        refusing the call is correct. Issue #190 sets the bar that the
-        message starts with 'Unexpected input dimension' for every
-        encoder that supports drop_invariant.
-        """
-        x = [['A', 'B', 'C'], ['D', 'E', 'C'], ['F', 'G', 'C']]  # last col invariant
+        x = [['A', 'B', 'C'], ['D', 'E', 'C'], ['F', 'G', 'C']]
         for encoder_name in ('BaseNEncoder', 'BinaryEncoder', 'OrdinalEncoder', 'OneHotEncoder'):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(drop_invariant=True)
                 transformed = enc.fit_transform(x)
-                with self.assertRaises(ValueError) as cm:
+                with self.assertRaisesRegex(ValueError, r'^Unexpected input dimension'):
                     enc.inverse_transform(transformed)
-                self.assertTrue(
-                    str(cm.exception).startswith('Unexpected input dimension'),
-                    f'{encoder_name}: expected message starting with '
-                    f"'Unexpected input dimension', got: {cm.exception!r}",
-                )
