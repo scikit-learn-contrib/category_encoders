@@ -1,6 +1,13 @@
 unreleased
 ==========
 
+* Change: Removed direct dependency on ``patsy``. The four contrast-coding
+  encoders (Polynomial, Helmert, BackwardDifference, Sum) now build their
+  contrast matrices in-tree.
+* Change: ``statsmodels`` is now an optional extra. ``GLMMEncoder`` is
+  loaded lazily and raises a clear ``ImportError`` if statsmodels is not
+  installed. Install with ``pip install category_encoders[glmm]`` to use
+  it. Removes both ``statsmodels`` and ``patsy`` from the default install.
 * Feat: Added issue#291 - ``index_start`` parameter on OrdinalEncoder for
   zero-indexed labels.
 * Feat: Added issue#456 - ``cols="all"`` encodes every column regardless of
