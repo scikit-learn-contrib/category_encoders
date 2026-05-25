@@ -1004,30 +1004,14 @@ class TestEncoders(TestCase):
                 self.assertTrue(out.col2[2] is None)
 
     def test_return_df_false_honored_when_no_categorical_cols(self):
-        """``return_df=False`` produces ndarray even when there are no
-        categorical columns to encode.
-
-        Regression for issue #442. The encoder previously returned the
-        original DataFrame on the no-op path, ignoring ``return_df``.
-        """
         rng = np.random.RandomState(42)
         df = pd.DataFrame(rng.normal(size=(50, 3)), columns=['a', 'b', 'c'])
         empty_cols = df.select_dtypes(include=['object', 'bool']).columns
-
-        # HashingEncoder ignores ``cols`` entirely (it hashes everything),
-        # CountEncoder fails on numeric-only inputs under its default
-        # missing strategy. Both are exercised by their own suites.
         skip = {'HashingEncoder', 'CountEncoder'}
-
         for encoder_name in set(encoders.__all__) - skip:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(
                     cols=empty_cols, return_df=False, handle_missing='return_nan'
                 )
                 out = enc.fit_transform(df, np_y[:50])
-                self.assertIsInstance(
-                    out,
-                    np.ndarray,
-                    f'{encoder_name}: expected ndarray when return_df=False '
-                    f'and cols is empty, got {type(out).__name__}',
-                )
+                self.assertIsInstance(out, np.ndarray)
