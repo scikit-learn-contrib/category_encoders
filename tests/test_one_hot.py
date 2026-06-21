@@ -216,6 +216,40 @@ class TestOneHotEncoder(TestCase):
         pd.testing.assert_frame_equal(expected_result, result)
         pd.testing.assert_frame_equal(expected_mapping, encoder.category_mapping[0]['mapping'])
 
+    def test_handle_missing_value(self):
+        """Test that a missing value is encoded as 0 in every dummy column.
+
+        Regression test for issue #400: with ``handle_missing='value'`` a
+        missing value present in the training data must be encoded as zeros in
+        every dummy column, the same as ``handle_missing='ignore'``. It must not
+        get its own dummy column, which would contradict the documented
+        behaviour ("'value' will encode a missing value as 0 in every dummy
+        column").
+        """
+        train = pd.DataFrame({'city': ['chicago', 'geneva', np.nan]})
+        expected_result = pd.DataFrame({'city_1': [1, 0, 0], 'city_2': [0, 1, 0]})
+
+        encoder = encoders.OneHotEncoder(handle_missing='value')
+        result = encoder.fit_transform(train)
+
+        pd.testing.assert_frame_equal(expected_result, result)
+
+        # the missing row (-2) and the unknown row (-1) are both all zeros;
+        # no extra column is created for the missing category
+        expected_mapping = pd.DataFrame(
+            [
+                [1, 0],
+                [0, 1],
+                [0, 0],
+                [0, 0],
+            ],
+            columns=['city_1', 'city_2'],
+            index=[1, 2, -1, -2],
+        )
+        pd.testing.assert_frame_equal(
+            expected_mapping, encoder.category_mapping[0]['mapping']
+        )
+
     def test_handle_missing_indicator(self):
         """Test that missing values are encoded with an indicator column."""
         with self.subTest("Should create a column if NaN in training set"):
