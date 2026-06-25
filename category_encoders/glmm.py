@@ -218,7 +218,7 @@ class GLMMEncoder( util.SupervisedTransformerMixin ,util.BaseEncoder):
                             md = smf.mixedlm('target ~ 1', data, groups=data['feature']).fit()
                             tmp = {}
                             for key, value in md.random_effects.items():
-                                tmp[key] = value[0]
+                                tmp[key] = value.iloc[0]
                             estimate = pd.Series(tmp)
                 except np.linalg.LinAlgError:
                     # Singular matrix -> just return all zeros
