@@ -49,7 +49,7 @@ bibliography: paper.bib
 
 # Summary
 
-Category_encoders is a scikit-learn-contrib module of transformers for encoding categorical data. As a scikit-learn-contrib
+category_encoders is a scikit-learn-contrib module of transformers for encoding categorical data. As a scikit-learn-contrib
 module, category_encoders is fully compatible with the scikit-learn API [@scikit-learn-api]. It also uses heavily the tools
 provided by scikit-learn [@scikit-learn] itself, SciPy [@scipy], pandas [@pandas], and statsmodels [@statsmodels].
 
@@ -91,7 +91,7 @@ train/test handling. In the R ecosystem, the `recipes` and `embed` packages prov
 with a different API paradigm. The Python libraries Patsy and formulaic support contrast coding schemes but are oriented
 toward formula-based model specification rather than general-purpose feature engineering.
 
-Category_encoders fills a gap by consolidating over twenty encoding strategies into a single scikit-learn-compatible
+category_encoders fills a gap by consolidating over twenty encoding strategies into a single scikit-learn-compatible
 package. It is the only Python library that provides supervised encoding methods such as Target, CatBoost, Weight of
 Evidence, James-Stein, and GLMM encoders alongside classical contrast coding and hashing approaches, all with a uniform
 interface that handles edge cases like unseen categories and missing values consistently across methods.
@@ -113,6 +113,33 @@ All encoders accept and return pandas DataFrames, automatically detect categoric
 support inverse transforms where applicable. The library is designed for production use, with careful handling of edge
 cases including previously unseen categories, missing values, and invariant columns.
 
+# Representative encoding methods
+
+To illustrate the range of techniques the library provides, we give mathematical definitions for a few representative
+encoders. Consider a single categorical feature that takes values in a set of $K$ categories $\{c_1, \dots, c_K\}$. Let
+$n_k$ be the number of training observations in category $c_k$ and $n = \sum_{k=1}^{K} n_k$ the total number of
+observations.
+
+*One-Hot Encoding* is the canonical unsupervised scheme: it maps each category $c_k$ to the indicator vector
+$e_k \in \{0, 1\}^K$, the $k$-th standard basis vector, so that the encoded feature is orthogonal across categories at
+the cost of a width that grows linearly with cardinality $K$.
+
+*Hashing Encoding* keeps the output width fixed regardless of cardinality. Given a hash function $h$ and a chosen number
+of output dimensions $d$, category $c_k$ is mapped to bucket $h(c_k) \bmod d$. This bounds the encoded width by $d$ but
+allows distinct categories to collide into the same bucket.
+
+*Target (mean) Encoding* is a representative supervised scheme. With a target $y$, global mean $\bar{y}$, and
+within-category mean $\bar{y}_k$, category $c_k$ is replaced by a shrinkage estimate that blends the category mean toward
+the global mean,
+$$\hat{x}_k = \lambda(n_k)\, \bar{y}_k + \big(1 - \lambda(n_k)\big)\, \bar{y}, \qquad \lambda(n_k) = \frac{n_k}{n_k + m},$$
+where the smoothing parameter $m \ge 0$ controls how strongly low-frequency categories are regularized toward $\bar{y}$.
+The M-Estimate and James-Stein encoders are variants that differ in how the shrinkage weight $\lambda$ is chosen.
+
+*Weight of Evidence (WOE) Encoding* targets binary classification. It encodes category $c_k$ by the log-ratio of the
+conditional probabilities of the category given each class,
+$$\mathrm{WOE}_k = \ln \frac{P(c_k \mid y = 1)}{P(c_k \mid y = 0)},$$
+which is positive when the category is over-represented among positive observations and negative otherwise.
+
 # Research impact statement
 
 Since its original publication [@onehot], category_encoders has been widely adopted across both academic research and
@@ -133,7 +160,7 @@ for working with categorical data in Python.
 
 # AI usage disclosure
 
-AI tools (Claude, Anthropic) were used to assist in drafting and editing the text of this paper. No AI tools were used in
-the development of the category_encoders software.
+Anthropic's Claude Opus 4.8 [@anthropic2026claude] was used to assist in drafting and editing the text of this paper. No
+AI tools were used in the development of the category_encoders software.
 
 # References
