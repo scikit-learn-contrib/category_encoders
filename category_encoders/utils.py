@@ -487,7 +487,16 @@ class BaseEncoder(BaseEstimator):
 
         # for finding invariant columns transform without y (as is done on the test set)
         self.feature_names_out_ = None  # Issue#437
-        X_transformed = self.transform(X, override_return_df=True)
+        # bypass set_output wrapping here; feature_names_out_ is not ready yet
+        prev_output_config = getattr(self, '_sklearn_output_config', None)
+        self._sklearn_output_config = {'transform': 'default'}
+        try:
+            X_transformed = self.transform(X, override_return_df=True)
+        finally:
+            if prev_output_config is None:
+                del self._sklearn_output_config
+            else:
+                self._sklearn_output_config = prev_output_config
         self.feature_names_out_ = X_transformed.columns.to_numpy()
 
         # drop all output columns with 0 variance.
