@@ -21,6 +21,9 @@ unreleased
   the resolved column list is empty (e.g. on a numeric-only DataFrame).
 * Fix: Fixed issue#457 - CountEncoder with ``normalize=True`` and
   ``drop_invariant=True`` no longer drops all output columns.
+* Fix: Fixed issue#400 - OneHotEncoder with ``handle_missing='value'`` now
+  encodes a missing value seen during fit as 0 in every dummy column (as the
+  documentation states), instead of adding an extra dummy column for it.
 * Docs: Spelling fixes throughout the codebase (#464).
 
 v.2.9.0

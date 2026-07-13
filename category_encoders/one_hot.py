@@ -140,7 +140,7 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         oe_missing_strat = {
             'error': 'error',
             'return_nan': 'return_nan',
-            'value': 'value',
+            'value': 'return_nan',
             'indicator': 'return_nan',
             'ignore': 'return_nan',
         }[self.handle_missing]
