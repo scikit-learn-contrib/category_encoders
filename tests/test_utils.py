@@ -193,3 +193,24 @@ class TestBaseEncoder(TestCase):
         self.encoder.fit_transform(df.iloc[:1])
         out = self.encoder.fit_transform(df.rename(columns={'C1': 'X1', 'C2': 'X2'}))
         self.assertTrue(list(out.columns) == ['X1', 'X2'])
+
+    @pytest.mark.skipif(Version(skl_version) < Version('1.2'), reason='requires sklearn > 1.2')
+    def test_global_transform_output_pandas(self):
+        """Encoders must fit under a global transform_output='pandas' config (Issue#488)."""
+        import category_encoders as encoders
+        from sklearn import config_context
+        from sklearn.compose import ColumnTransformer
+
+        X = pd.DataFrame({'color': ['red', 'blue', 'green', 'red']})
+        y = [1, 0, 1, 0]
+        with config_context(transform_output='pandas'):
+            out = encoders.OrdinalEncoder().fit_transform(X, y)
+            self.assertIsInstance(out, pd.DataFrame)
+
+            ct = ColumnTransformer(
+                [('enc', encoders.TargetEncoder(cols=['color']), ['color'])],
+                remainder='passthrough',
+            )
+            ct.set_output(transform='pandas')
+            ct_out = ct.fit_transform(X, y)
+            self.assertIsInstance(ct_out, pd.DataFrame)
