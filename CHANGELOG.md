@@ -21,6 +21,11 @@ unreleased
   the resolved column list is empty (e.g. on a numeric-only DataFrame).
 * Fix: Fixed issue#457 - CountEncoder with ``normalize=True`` and
   ``drop_invariant=True`` no longer drops all output columns.
+* Fix: Fixed issue#486 - GLMMEncoder regression path used positional
+  ``Series[0]`` access that raised ``KeyError`` on recent pandas; use
+  ``.iloc[0]`` instead. Also fixed the bundled ``examples`` script
+  (removed the ``LogisticRegression(multi_class=...)`` argument removed in
+  scikit-learn 1.9).
 * Fix: Fixed issue#488 - encoders no longer raise ``NotFittedError`` during
   ``fit``/``fit_transform`` when scikit-learn's ``transform_output='pandas'``
   is configured globally or via a ``ColumnTransformer``.

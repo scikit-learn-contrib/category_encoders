@@ -1,5 +1,5 @@
 """
-Tested to work with scikit-learn 0.20.2
+Tested to work with scikit-learn >= 1.6.0
 """
 
 import gc
@@ -60,7 +60,7 @@ def main(loader, name):
     X, y, mapping = loader()
 
     clf = linear_model.LogisticRegression(
-        solver='lbfgs', multi_class='auto', max_iter=200, random_state=0
+        solver='lbfgs', max_iter=200, random_state=0
     )
 
     # try each encoding method available, which works on multiclass problems
