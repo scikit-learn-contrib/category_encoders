@@ -84,15 +84,16 @@ There are two types of encoders: unsupervised and supervised. An unsupervised ex
 ```python
 from category_encoders import *
 import pandas as pd
-from sklearn.datasets import load_boston
 
-# prepare some data
-bunch = load_boston()
-y = bunch.target
-X = pd.DataFrame(bunch.data, columns=bunch.feature_names)
+# prepare some data with categorical features
+X = pd.DataFrame({
+    'gender': ['male', 'female', 'female', 'male', 'female'],
+    'country': ['US', 'UK', 'US', 'CA', 'UK'],
+    'age': [25, 32, 47, 51, 38],
+})
 
 # use binary encoding to encode two categorical features
-enc = BinaryEncoder(cols=['CHAS', 'RAD']).fit(X)
+enc = BinaryEncoder(cols=['gender', 'country']).fit(X)
 
 # transform the dataset
 numeric_dataset = enc.transform(X)
@@ -102,17 +103,20 @@ And a supervised example:
 ```python
 from category_encoders import *
 import pandas as pd
-from sklearn.datasets import load_boston
 
-# prepare some data
-bunch = load_boston()
-y_train = bunch.target[0:250]
-y_test = bunch.target[250:506]
-X_train = pd.DataFrame(bunch.data[0:250], columns=bunch.feature_names)
-X_test = pd.DataFrame(bunch.data[250:506], columns=bunch.feature_names)
+# prepare some training and test data with categorical features and a target
+X_train = pd.DataFrame({
+    'gender': ['male', 'female', 'female', 'male'],
+    'country': ['US', 'UK', 'US', 'CA'],
+})
+y_train = pd.Series([1, 0, 1, 0])
+X_test = pd.DataFrame({
+    'gender': ['female', 'male'],
+    'country': ['UK', 'US'],
+})
 
 # use target encoding to encode two categorical features
-enc = TargetEncoder(cols=['CHAS', 'RAD'])
+enc = TargetEncoder(cols=['gender', 'country'])
 
 # transform the datasets
 training_numeric_dataset = enc.fit_transform(X_train, y_train)
