@@ -26,6 +26,9 @@ unreleased
   ``.iloc[0]`` instead. Also fixed the bundled ``examples`` script
   (removed the ``LogisticRegression(multi_class=...)`` argument removed in
   scikit-learn 1.9).
+* Fix: Fixed issue#488 - encoders no longer raise ``NotFittedError`` during
+  ``fit``/``fit_transform`` when scikit-learn's ``transform_output='pandas'``
+  is configured globally or via a ``ColumnTransformer``.
 * Docs: Spelling fixes throughout the codebase (#464).
 
 v.2.9.0
