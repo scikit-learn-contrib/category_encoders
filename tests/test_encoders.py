@@ -1001,7 +1001,7 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(cols=['col1'])
                 out = enc.fit_transform(X, y)
-                self.assertTrue(out.col2[2] is None)
+                self.assertTrue(pd.isna(out.col2[2]))
 
     def test_invalid_handle_missing_raises(self):
         opted_out = {'CountEncoder', 'HashingEncoder'}
