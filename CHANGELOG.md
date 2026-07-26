@@ -1,6 +1,10 @@
-unreleased
-==========
+v.2.10.0
+========
 
+* Release: JOSS review release. Consolidated citation metadata with the JOSS
+  paper via new ``.zenodo.json`` and ``CITATION.cff`` files, and pointed the
+  README DOI badge at the Zenodo concept DOI (always resolves to the latest
+  version).
 * Feat: Added issue#291 - ``index_start`` parameter on OrdinalEncoder for
   zero-indexed labels.
 * Feat: Added issue#456 - ``cols="all"`` encodes every column regardless of
