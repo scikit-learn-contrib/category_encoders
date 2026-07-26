@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using these metadata."
+title: "category_encoders: a scikit-learn-contrib package of transformers for encoding categorical data"
+abstract: "A set of scikit-learn-style transformers for encoding categorical variables into numeric with different techniques."
+type: software
+authors:
+  - family-names: McGinnis
+    given-names: "William D"
+    orcid: "https://orcid.org/0000-0002-3009-9465"
+    affiliation: "Scale Venture Partners"
+  - family-names: Siu
+    given-names: Chapman
+    orcid: "https://orcid.org/0000-0002-2089-3796"
+    affiliation: "Suncorp Group Ltd."
+  - family-names: S
+    given-names: Andre
+    orcid: "https://orcid.org/0000-0001-5104-0465"
+    affiliation: "Jungle AI"
+  - family-names: Huang
+    given-names: Hanyu
+    orcid: "https://orcid.org/0000-0001-8503-1014"
+    affiliation: "Tencent, Inc."
+  - family-names: Motl
+    given-names: Jan
+    orcid: "https://orcid.org/0000-0002-0388-3190"
+    affiliation: "Czech Technical University in Prague"
+  - family-names: Westenthanner
+    given-names: "Kaspar Paul"
+    orcid: "https://orcid.org/0009-0007-4284-3953"
+    affiliation: "Atruvia"
+  - family-names: Castaldo
+    given-names: Jonathan
+    orcid: "https://orcid.org/0009-0001-2553-5920"
+    affiliation: "Meta, Inc."
+version: 2.10.0
+doi: 10.5281/zenodo.1157109
+license: BSD-3-Clause
+repository-code: "https://github.com/scikit-learn-contrib/category_encoders"
+url: "http://contrib.scikit-learn.org/category_encoders/"
+keywords:
+  - machine learning
+  - python
+  - scikit-learn
+  - categorical encoding
+  - feature engineering

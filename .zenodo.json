@@ -1,0 +1,50 @@
+{
+  "title": "category_encoders: a scikit-learn-contrib package of transformers for encoding categorical data",
+  "description": "A set of scikit-learn-style transformers for encoding categorical variables into numeric with different techniques.",
+  "upload_type": "software",
+  "license": "BSD-3-Clause",
+  "creators": [
+    {
+      "name": "McGinnis, William D",
+      "orcid": "0000-0002-3009-9465",
+      "affiliation": "Scale Venture Partners"
+    },
+    {
+      "name": "Siu, Chapman",
+      "orcid": "0000-0002-2089-3796",
+      "affiliation": "Suncorp Group Ltd."
+    },
+    {
+      "name": "S, Andre",
+      "orcid": "0000-0001-5104-0465",
+      "affiliation": "Jungle AI"
+    },
+    {
+      "name": "Huang, Hanyu",
+      "orcid": "0000-0001-8503-1014",
+      "affiliation": "Tencent, Inc."
+    },
+    {
+      "name": "Motl, Jan",
+      "orcid": "0000-0002-0388-3190",
+      "affiliation": "Czech Technical University in Prague"
+    },
+    {
+      "name": "Westenthanner, Kaspar Paul",
+      "orcid": "0009-0007-4284-3953",
+      "affiliation": "Atruvia"
+    },
+    {
+      "name": "Castaldo, Jonathan",
+      "orcid": "0009-0001-2553-5920",
+      "affiliation": "Meta, Inc."
+    }
+  ],
+  "keywords": [
+    "machine learning",
+    "python",
+    "scikit-learn",
+    "categorical encoding",
+    "feature engineering"
+  ]
+}

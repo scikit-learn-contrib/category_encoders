@@ -4,7 +4,7 @@ Categorical Encoding Methods
 [![Downloads](https://pepy.tech/badge/category-encoders)](https://pepy.tech/project/category-encoders)
 [![Downloads](https://pepy.tech/badge/category-encoders/month)](https://pepy.tech/project/category-encoders)
 ![Test Suite and Linting](https://github.com/scikit-learn-contrib/category_encoders/workflows/Test%20Suite%20and%20Linting/badge.svg)
-[![DOI](https://zenodo.org/badge/47077067.svg)](https://zenodo.org/badge/latestdoi/47077067)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1157109.svg)](https://doi.org/10.5281/zenodo.1157109)
 
 A set of scikit-learn-style transformers for encoding categorical 
 variables into numeric by means of different techniques.
