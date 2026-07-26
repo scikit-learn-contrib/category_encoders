@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.rankhot &mdash; Category Encoders 2.8.1 documentation</title>
+  <title>category_encoders.rankhot &mdash; Category Encoders 2.10.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=cd87aae0"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -125,9 +125,9 @@
 <span class="sd">    handle_unknown: str</span>
 <span class="sd">        options are &#39;error&#39;, &#39;value&#39;, &#39;return_nan&#39;.</span>
 <span class="sd">        The default is &#39;value&#39;.</span>
-<span class="sd">        &#39;value&#39;: If an unknown label occurrs, it is represented as 0 array.</span>
-<span class="sd">        &#39;error&#39;: If an unknown label occurrs, error message is displayed.</span>
-<span class="sd">        &#39;return_nan&#39;: If an unknown label occurrs, np.nan is returned in all columns.</span>
+<span class="sd">        &#39;value&#39;: If an unknown label occurs, it is represented as 0 array.</span>
+<span class="sd">        &#39;error&#39;: If an unknown label occurs, error message is displayed.</span>
+<span class="sd">        &#39;return_nan&#39;: If an unknown label occurs, np.nan is returned in all columns.</span>
 <span class="sd">    handle_missing: str</span>
 <span class="sd">        options are &#39;error&#39;, &#39;value&#39; and &#39;return_nan&#39;. The default is &#39;value&#39;.</span>
 <span class="sd">        Missing value also considered as unknown value in the final data set.</span>
@@ -239,7 +239,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns to be encoded can not contain new values&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns to be encoded cannot contain new values&#39;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">switch</span><span class="p">,</span> <span class="n">_ordinal_switch</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">category_mapping</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span>

@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.hashing &mdash; Category Encoders 2.8.1 documentation</title>
+  <title>category_encoders.hashing &mdash; Category Encoders 2.10.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=cd87aae0"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -150,8 +150,12 @@
 <span class="sd">        6C12T CPU with 100,000 samples makes max_sample=16,666.</span>
 <span class="sd">        It is not recommended to set it larger than the default value.</span>
 <span class="sd">    n_components: int</span>
-<span class="sd">        how many bits to use to represent the feature. By default, we use 8 bits.</span>
-<span class="sd">        For high-cardinality features, consider using up-to 32 bits.</span>
+<span class="sd">        the number of output features (hash buckets) per encoded column.</span>
+<span class="sd">        Defaults to 8. This is the *dimension*, not a bit count —</span>
+<span class="sd">        ``n_components=32`` produces 32 buckets, not 2**32. The collision</span>
+<span class="sd">        rate is roughly ``1 / n_components``; prefer larger values for</span>
+<span class="sd">        high-cardinality features. See `Feature hashing on Wikipedia</span>
+<span class="sd">        &lt;https://en.wikipedia.org/wiki/Feature_hashing&gt;`_.</span>
 <span class="sd">    process_creation_method: string</span>
 <span class="sd">        either &quot;fork&quot;, &quot;spawn&quot; or &quot;forkserver&quot; (availability depends on your</span>
 <span class="sd">        platform). See https://docs.python.org/3/library/multiprocessing.html#contexts-and-start-methods</span>
@@ -212,6 +216,8 @@
 
     <span class="n">prefit_ordinal</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_M</span>
+    <span class="n">_VALID_HANDLE_MISSING</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_VALID_HANDLE_UNKNOWN</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -323,11 +329,11 @@
             <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">hasher</span> <span class="o">=</span> <span class="n">hasher_constructor</span><span class="p">()</span>
-                    <span class="c1"># Computes an integer index from the hasher digest. The endian is</span>
-                    <span class="c1"># &quot;big&quot; as the code use to read:</span>
+                    <span class="c1"># Computes an integer index from the hasher digest. The endianness is</span>
+                    <span class="c1"># &quot;big&quot; as the code used to read:</span>
                     <span class="c1"># column_index = int(hasher.hexdigest(), 16) % N</span>
-                    <span class="c1"># which is implicitly considering the hexdigest to be big endian,</span>
-                    <span class="c1"># even if the system is little endian.</span>
+                    <span class="c1"># which is implicitly considering the hexdigest to be big-endian,</span>
+                    <span class="c1"># even if the system is little-endian.</span>
                     <span class="c1"># Building the index that way is about 30% faster than using the</span>
                     <span class="c1"># hexdigest.</span>
                     <span class="n">hasher</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
