@@ -329,7 +329,13 @@ class TestEncoders(TestCase):
         X_t = th.create_dataset(n_rows=50, has_missing=False)
         cols = ['underscore', 'none', 'categorical', 'categorical_int']
 
-        for encoder_name in ['BaseNEncoder', 'BinaryEncoder', 'OneHotEncoder', 'OrdinalEncoder']:
+        for encoder_name in [
+            'BaseNEncoder',
+            'BinaryEncoder',
+            'GrayEncoder',
+            'OneHotEncoder',
+            'OrdinalEncoder',
+        ]:
             with self.subTest(encoder_name=encoder_name):
                 # simple run
                 enc = getattr(encoders, encoder_name)(verbose=1, cols=cols)

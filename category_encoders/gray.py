@@ -1,8 +1,10 @@
 """Gray encoding."""
 
+import re
 from functools import partialmethod
 from typing import List
 
+import numpy as np
 import pandas as pd
 
 from category_encoders import utils
@@ -136,3 +138,51 @@ class GrayEncoder(BaseNEncoder):
             gray_encoding = pd.concat([gray_encoding, map_null])
             gray_mapping.append({'col': col, 'mapping': gray_encoding})
         self.mapping = gray_mapping
+
+    def basen_to_integer(self, X, cols, base):
+        """Convert Gray-encoded columns back to their ordinal integers.
+
+        The positional base-N decoding used by :class:`BaseNEncoder` cannot invert
+        a Gray code: consecutive code words differ only by a single bit and do not
+        represent a positional value, so the inherited decoder recovers the wrong
+        category. Instead, every Gray code word is looked up in the fitted mapping
+        to recover the original ordinal value, mirroring the table lookup used in
+        the forward transform.
+
+        Parameters
+        ----------
+        X : DataFrame
+            encoded data
+        cols : list-like
+            Column names in the DataFrame that were encoded
+        base : int
+            The base of the transform. Unused, kept for signature compatibility
+            with :meth:`BaseNEncoder.basen_to_integer`.
+
+        Returns
+        -------
+        numerical: DataFrame
+        """
+        out_cols = X.columns.tolist()
+
+        for col in cols:
+            col_list = [
+                col0 for col0 in out_cols if re.match(re.escape(str(col)) + '_\\d+', str(col0))
+            ]
+            insert_at = out_cols.index(col_list[0])
+
+            col_mapping = next(m['mapping'] for m in self.mapping if m['col'] == col)
+            # forward encoding is a table lookup, so invert it the same way:
+            # map each Gray code word back to its ordinal value.
+            code_word_to_value = {}
+            for ordinal_value, code_word in zip(
+                col_mapping.index, col_mapping.to_numpy(), strict=False
+            ):
+                code_word_to_value.setdefault(tuple(code_word), ordinal_value)
+            decoded = [code_word_to_value.get(tuple(row), np.nan) for row in X[col_list].to_numpy()]
+
+            X.insert(insert_at, col, decoded)
+            X = X.drop(col_list, axis=1)
+            out_cols = X.columns.tolist()
+
+        return X
