@@ -1,3 +1,11 @@
+unreleased
+==========
+
+* Fix: ``GrayEncoder.inverse_transform`` now recovers the original categories.
+  Previously it inherited the positional base-N decoder from ``BaseNEncoder``,
+  which cannot invert a Gray code (consecutive code words differ by a single
+  bit and are not positional), so it returned the wrong categories.
+
 v.2.10.0
 ========
 

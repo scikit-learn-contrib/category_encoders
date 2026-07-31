@@ -16,6 +16,34 @@ class TestGrayEncoder(TestCase):
         expected = pd.DataFrame([[1, 1], [1, 1], [0, 1]], columns=['0_0', '0_1'])
         pd.testing.assert_frame_equal(out, expected)
 
+    def test_inverse_transform_round_trip(self):
+        """inverse_transform should recover the original categories.
+
+        Regression test: the decoder inherited from BaseNEncoder treated the Gray
+        code words as positional binary numbers, so it recovered the wrong
+        categories (e.g. ['a', 'c', 'b', ...] instead of ['a', 'b', 'c', ...]).
+        """
+        X = pd.DataFrame({'cat': list('abcdefg'), 'other': range(7)})
+        enc = encoders.GrayEncoder(cols=['cat'])
+        transformed = enc.fit_transform(X)
+        inverse = enc.inverse_transform(transformed)
+        pd.testing.assert_frame_equal(inverse, X, check_dtype=False)
+
+    def test_inverse_transform_multiple_columns(self):
+        """inverse_transform should recover all encoded columns independently."""
+        X = pd.DataFrame({'a': list('abcabc'), 'b': list('wxyzwx')})
+        enc = encoders.GrayEncoder(cols=['a', 'b'])
+        inverse = enc.inverse_transform(enc.fit_transform(X))
+        pd.testing.assert_frame_equal(inverse, X, check_dtype=False)
+
+    def test_inverse_transform_numpy(self):
+        """inverse_transform should round-trip numpy input with return_df=False."""
+        arr = np.array([['A'], ['B'], ['B'], ['C'], ['D']])
+        enc = encoders.GrayEncoder(return_df=False)
+        enc.fit(arr)
+        decoded = enc.inverse_transform(enc.transform(arr))
+        self.assertTrue(np.array_equal(arr, decoded))
+
     def test_gray_mapping(self):
         """Test the GrayEncoder mapping."""
         train_data = pd.DataFrame()
