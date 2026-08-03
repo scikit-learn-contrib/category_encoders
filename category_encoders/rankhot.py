@@ -240,9 +240,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             reencode = arrs.sum(axis=1).rename(col)
 
             orig_dtype = ordinal_mapping.get('data_type')
-            reencode2 = reencode.replace(inv_map).astype(orig_dtype)
-            if np.any(reencode2[:] == 0):
-                reencode2[reencode2[:] == 0] = np.nan
+            reencode2 = reencode.replace(0, np.nan).replace(inv_map).astype(orig_dtype)
 
             X = self._create_dataframe(X, reencode2, col)
 
