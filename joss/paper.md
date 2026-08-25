@@ -11,7 +11,7 @@ authors:
  - name: Chapman Siu
    orcid: 0000-0002-2089-3796
    affiliation: 3
- - name: Andre S
+ - name: Andre Silva
    orcid: 0000-0001-5104-0465
    affiliation: 4
  - name: Hanyu Huang
@@ -50,8 +50,8 @@ bibliography: paper.bib
 # Summary
 
 category_encoders is a scikit-learn-contrib module of transformers for encoding categorical data. As a scikit-learn-contrib
-module, category_encoders is fully compatible with the scikit-learn API [@scikit-learn-api]. It also uses heavily the tools
-provided by scikit-learn [@scikit-learn] itself, SciPy [@scipy], pandas [@pandas], and statsmodels [@statsmodels].
+module, category_encoders is fully compatible with the scikit-learn API [@scikit-learn-api]. It also makes extensive use of
+tools provided by scikit-learn [@scikit-learn] itself, SciPy [@scipy], pandas [@pandas], and statsmodels [@statsmodels].
 
 The library provides over twenty encoding strategies. These include commonly used encoders such as Ordinal, Hashing, and
 OneHot [@idre; @carey; @hashing], as well as contrast-based encoders including Backward Difference, Helmert, Polynomial,
@@ -71,9 +71,9 @@ modeling. While simple approaches like one-hot encoding are widely available, ma
 high-cardinality categorical features where naive encodings produce excessively wide or uninformative representations.
 
 The original release of category_encoders included a number of commonly used encoders, notably Ordinal, Hashing and OneHot
-encoders [@idre][@carey][@hashing], as well as some less frequently used encoders including Backward Difference, Helmert,
-Polynomial and Sum encoding [@idre][@carey]. It also included several experimental encoders: LeaveOneOut, Binary and
-BaseN [@zhang][@onehot][@basen].
+encoders [@idre; @carey; @hashing], as well as some less frequently used encoders including Backward Difference, Helmert,
+Polynomial and Sum encoding [@idre; @carey]. It also included several experimental encoders: LeaveOneOut, Binary and
+BaseN [@zhang; @onehot; @basen].
 
 Since then, the library has grown substantially through community contributions.  It now includes over twenty encoding
 strategies.  Notable additions include Target Encoder [@quantile], which uses the target variable to derive encodings;
@@ -85,11 +85,12 @@ Count Encoder; Quantile Encoder [@quantile]; Summary Encoder; Gray Encoder; and 
 # State of the field
 
 Several tools exist for encoding categorical variables, but each covers only a subset of available methods. Scikit-learn
-provides `OrdinalEncoder` and `OneHotEncoder`, but does not include target-based or statistical encoding methods. The
-pandas library offers `get_dummies` for one-hot encoding, but without the fit/transform pattern needed for consistent
-train/test handling. In the R ecosystem, the `recipes` and `embed` packages provide some categorical encoding steps, but
-with a different API paradigm. The Python libraries Patsy and formulaic support contrast coding schemes but are oriented
-toward formula-based model specification rather than general-purpose feature engineering.
+[@scikit-learn] provides `OrdinalEncoder` and `OneHotEncoder`, but does not include target-based or statistical encoding
+methods. The pandas [@pandas] library offers `get_dummies` for one-hot encoding, but without the fit/transform pattern
+needed for consistent train/test handling. In the R ecosystem, the `recipes` [@recipes] and `embed` [@embed] packages
+provide some categorical encoding steps, but with a different API paradigm. The Python libraries Patsy [@patsy] and
+formulaic [@formulaic] support contrast coding schemes but are oriented toward formula-based model specification rather
+than general-purpose feature engineering.
 
 category_encoders fills a gap by consolidating over twenty encoding strategies into a single scikit-learn-compatible
 package. It is the only Python library that provides supervised encoding methods such as Target, CatBoost, Weight of
@@ -142,16 +143,16 @@ which is positive when the category is over-represented among positive observati
 
 # Research impact statement
 
-Since its original publication [@onehot], category_encoders has been widely adopted across both academic research and
+Since its original release [@onehot], category_encoders has been widely adopted across both academic research and
 applied machine learning. The package has been cited in studies spanning diverse domains, demonstrating its utility as
 a general-purpose tool for categorical feature engineering.
 
 In machine learning methodology, Poslavskaya and Korolev [-@poslavskaya2023encoding] used category_encoders to conduct a
 systematic comparison of encoding methods across OpenML classification benchmarks. In environmental science, Wang et al.
-[-@wang2023biochar] applied the library's encoders in data-driven models for biochar-based water treatment. Stojanovic et
-al. [-@stojanovic2021fraud] used the package for fraud detection in fintech applications. Badu-Marfo et al.
-[-@badumarfo2022composite] employed category_encoders in generative adversarial network models for transportation demand
-modeling. Schmitt et al. [-@schmitt2022predicting] used the library to encode categorical process parameters in
+[-@wang2023biochar] used category_encoders in data-driven models for biochar-based water treatment. Stojanovic et al.
+[-@stojanovic2021fraud] used category_encoders for fraud detection in fintech applications. Badu-Marfo et al.
+[-@badumarfo2022composite] used category_encoders in generative adversarial network models for transportation demand
+modeling. Schmitt et al. [-@schmitt2022predicting] used category_encoders to encode categorical process parameters in
 pharmaceutical manufacturing prediction models.
 
 The breadth of these applications — from ML benchmarking to environmental science, financial fraud detection,
