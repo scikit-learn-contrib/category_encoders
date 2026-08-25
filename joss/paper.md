@@ -148,16 +148,12 @@ applied machine learning. The package has been cited in studies spanning diverse
 a general-purpose tool for categorical feature engineering.
 
 In machine learning methodology, Poslavskaya and Korolev [-@poslavskaya2023encoding] used category_encoders to conduct a
-systematic comparison of encoding methods across OpenML classification benchmarks. In environmental science, Wang et al.
-[-@wang2023biochar] used category_encoders in data-driven models for biochar-based water treatment. Stojanovic et al.
-[-@stojanovic2021fraud] used category_encoders for fraud detection in fintech applications. Badu-Marfo et al.
-[-@badumarfo2022composite] used category_encoders in generative adversarial network models for transportation demand
-modeling. Schmitt et al. [-@schmitt2022predicting] used category_encoders to encode categorical process parameters in
-pharmaceutical manufacturing prediction models.
+systematic comparison of encoding methods across OpenML classification benchmarks. In pharmaceutical manufacturing,
+Schmitt et al. [-@schmitt2022predicting] used the TargetEncoder from category_encoders to encode categorical process
+parameters when predicting spray-dried dispersion particle size.
 
-The breadth of these applications — from ML benchmarking to environmental science, financial fraud detection,
-transportation modeling, and pharmaceutical research — reflects the library's value as a practical, domain-agnostic tool
-for working with categorical data in Python.
+These applications — from ML benchmarking to pharmaceutical process modeling — reflect the library's value as a
+practical, domain-agnostic tool for working with categorical data in Python.
 
 # AI usage disclosure
 
