@@ -139,6 +139,18 @@ class TestWeightOfEvidenceEncoder(TestCase):
         self.assertEqual(len(list(X_t)), len(list(X2)), 'The count of attributes must not change')
         self.assertEqual(len(X_t), len(X2), 'The count of rows must not change')
 
+    def test_ordinal_encoding_does_not_copy_twice(self):
+        """WOE's ordinal encoding reuses the private copy made by the transformer API."""
+        data = pd.DataFrame({'feature': ['a', 'b', 'a']})
+        original = data.copy()
+        encoder = encoders.WOEEncoder().fit(data, [0, 1, 0])
+
+        working_copy = data.copy()
+        result = encoder.ordinal_encoder._transform(working_copy)
+
+        self.assertIs(result, working_copy)
+        pd.testing.assert_frame_equal(data, original)
+
     def test_expect_calculated_properly(self):
         """Test that the expected value for the following tests is calculated properly."""
         X = ['a', 'a', 'b', 'b']
