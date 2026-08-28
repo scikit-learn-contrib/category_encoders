@@ -111,7 +111,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         oe_missing_strat = {
             'error': 'error',
             'return_nan': 'return_nan',
-            'value': 'value',
+            'value': 'return_nan',
             'indicator': 'return_nan',
         }[self.handle_missing]
         # supply custom mapping in order to assure order of ordinal variable

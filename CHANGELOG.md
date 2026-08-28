@@ -1,6 +1,9 @@
 unreleased
 ==========
 
+* Fix: Fixed issue#400 - RankHotEncoder with ``handle_missing='value'`` now
+  encodes a missing value seen during fit as an all-zero row (as the
+  documentation states), instead of adding an extra thermometer column for it.
 * Fix: ``GrayEncoder.inverse_transform`` now recovers the original categories.
   Previously it inherited the positional base-N decoder from ``BaseNEncoder``,
   which cannot invert a Gray code (consecutive code words differ by a single
