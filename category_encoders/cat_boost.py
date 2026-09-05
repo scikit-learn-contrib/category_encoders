@@ -179,7 +179,7 @@ class CatBoostEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
                 # Cumsum does not work nicely with None (while cumcount does).
                 # As a workaround, we cast the grouping column as string.
                 # See: issue #209
-                temp = y.groupby(X[col].astype(str)).agg(['cumsum', 'cumcount'])
+                temp = y.groupby(X[col].astype(str).fillna('nan')).agg(['cumsum', 'cumcount'])
                 X[col] = (temp['cumsum'] - y + self._mean * self.a) / (temp['cumcount'] + self.a)
 
             if self.handle_unknown == 'value':

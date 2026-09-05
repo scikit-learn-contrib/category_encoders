@@ -237,7 +237,7 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         """
         return_nan_series = pd.Series(data=[np.nan], index=[-2])
 
-        X = X_in.copy(deep=True)
+        X = X_in.copy(deep=False)
 
         if cols is None:
             cols = X.columns
