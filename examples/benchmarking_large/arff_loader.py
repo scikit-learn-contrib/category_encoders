@@ -1,7 +1,10 @@
 import arff
 import numpy as np
 import pandas as pd
+from packaging.version import Version
 import requests
+
+PANDAS_VERSION = Version(pd.__version__)
 
 """
 Read data in arff format from URL. 
@@ -100,7 +103,10 @@ def load(file_name):
     # Data type estimation
     for col in X:
         try:
-            X[col] = X[col].astype('float', copy=False)
+            if PANDAS_VERSION < Version("3.0"):
+                X[col] = X[col].astype('float', copy=False)
+            else:
+                X[col] = X[col].astype('float')
         except ValueError:
             pass
 
