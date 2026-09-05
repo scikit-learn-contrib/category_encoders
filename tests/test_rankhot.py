@@ -22,13 +22,30 @@ class TestRankHotEncoder(TestCase):
 
     def test_handle_nan_value(self):
         """Test that the NaN values are handled correctly."""
-        # @ToDo this test rather checks the behaviour of handle_unknown than handle_missing.
+        # With handle_missing='value' a missing value is encoded as an all-zero
+        # row (like an unknown category), so it does not get its own column: the
+        # number of columns matches the count of non-missing categories.
         enc = encoders.RankHotEncoder(handle_unknown='value', cols=['none'])
         enc.fit(X)
         t_f = enc.transform(X)
         inv_tf = enc.inverse_transform(t_f)
-        self.assertEqual(t_f.shape[1] - (X.shape[1] - 1), len(X.none.unique()))
+        self.assertEqual(t_f.shape[1] - (X.shape[1] - 1), len(X.none.dropna().unique()))
         self.assertTupleEqual(inv_tf.shape, X.shape)
+
+    def test_handle_missing_value(self):
+        """A missing value seen during fit is encoded as an all-zero row.
+
+        Regression test for issue #400: with ``handle_missing='value'`` a
+        missing value present in the training data must be encoded as zeros in
+        every column, the same as an unknown category, matching the documented
+        behaviour ("Missing value also considered as unknown value"). It must
+        not get its own thermometer column.
+        """
+        train = pd.DataFrame({'city': ['chicago', 'geneva', np.nan]})
+        expected = pd.DataFrame({'city_1': [1, 1, 0], 'city_2': [0, 1, 0]})
+        enc = encoders.RankHotEncoder(handle_missing='value')
+        result = enc.fit_transform(train)
+        pd.testing.assert_frame_equal(result, expected, check_dtype=False)
 
     def test_handle_pandas_categorical(self):
         """Test that the RankHotEncoder works with pandas Categorical data."""
