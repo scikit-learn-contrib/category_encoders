@@ -135,11 +135,11 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     def _fit(self, X: pd.DataFrame, y: pd.Series | None = None, **kwargs) -> None:
         # reset mapping in case of refit
-        if not self.mapping_supplied:
-            self.mapping = None
+        if self.mapping_supplied:
+            return
+        self.mapping = None
         _, categories = self.ordinal_encoding(
             X,
-            mapping=self.mapping,
             cols=self.cols,
             handle_unknown=self.handle_unknown,
             handle_missing=self.handle_missing,
@@ -237,7 +237,7 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         """
         return_nan_series = pd.Series(data=[np.nan], index=[-2])
 
-        X = X_in.copy(deep=True)
+        X = X_in
 
         if cols is None:
             cols = X.columns
