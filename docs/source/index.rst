@@ -59,6 +59,7 @@ To use:
     encoder = ce.JamesSteinEncoder(cols=[...])
     encoder = ce.LeaveOneOutEncoder(cols=[...])
     encoder = ce.MEstimateEncoder(cols=[...])
+    encoder = ce.MultiHotEncoder(cols=[...])
     encoder = ce.OneHotEncoder(cols=[...])
     encoder = ce.OrdinalEncoder(cols=[...])
     encoder = ce.PolynomialEncoder(cols=[...])
@@ -114,6 +115,7 @@ Contents:
    jamesstein
    leaveoneout
    mestimate
+   multihot
    onehot
    ordinal
    polynomial
