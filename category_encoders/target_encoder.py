@@ -39,12 +39,17 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform
         (otherwise it will be a numpy array).
-    handle_missing: str
+    handle_missing: str, int, float or callable
         options are 'error', 'return_nan'  and 'value', defaults to 'value',
-        which returns the target mean.
-    handle_unknown: str
+        which returns the target mean. A number is used as the encoded value
+        for missing values that were not seen at fit time, and a callable
+        fn(value, mapping) is evaluated once per column when the mapping is
+        finalized during fit.
+    handle_unknown: str, int, float or callable
         options are 'error', 'return_nan' and 'value', defaults to 'value',
-        which returns the target mean.
+        which returns the target mean. A number is used as the encoded value
+        for unseen categories, and a callable fn(value, mapping) is evaluated
+        once per column when the mapping is finalized during fit.
     min_samples_leaf: int
         For regularization the weighted average between category mean and global mean is taken.
         The weight is an S-shaped curve between 0 and 1 with the number of samples for a category

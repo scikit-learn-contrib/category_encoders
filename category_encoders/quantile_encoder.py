@@ -42,12 +42,17 @@ class QuantileEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform
         (otherwise it will be a numpy array).
-    handle_missing: str
+    handle_missing: str, int, float or callable
         options are 'error', 'return_nan'  and 'value', defaults to 'value',
-        which returns the target quantile.
-    handle_unknown: str
+        which returns the target quantile. A number is used as the encoded value
+        for missing values that were not seen at fit time, and a callable
+        fn(value, mapping) is evaluated once per column when the mapping is
+        finalized during fit.
+    handle_unknown: str, int, float or callable
         options are 'error', 'return_nan' and 'value', defaults to 'value',
-        which returns the target quantile.
+        which returns the target quantile. A number is used as the encoded value
+        for unseen categories, and a callable fn(value, mapping) is evaluated
+        once per column when the mapping is finalized during fit.
 
     Notes
     -----
@@ -231,12 +236,17 @@ class SummaryEncoder(BaseEstimator):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform
         (otherwise it will be a numpy array).
-    handle_missing: str
+    handle_missing: str, int, float or callable
         options are 'error', 'return_nan'  and 'value', defaults to 'value',
-        which returns the target quantile.
-    handle_unknown: str
+        which returns the target quantile. A number is used as the encoded value
+        for missing values that were not seen at fit time, and a callable
+        fn(value, mapping) is evaluated once per column when the mapping is
+        finalized during fit.
+    handle_unknown: str, int, float or callable
         options are 'error', 'return_nan' and 'value', defaults to 'value',
-        which returns the target quantile.
+        which returns the target quantile. A number is used as the encoded value
+        for unseen categories, and a callable fn(value, mapping) is evaluated
+        once per column when the mapping is finalized during fit.
 
     Notes
     -----
