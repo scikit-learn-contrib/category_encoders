@@ -155,6 +155,9 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         min_samples_leaf: int = 20,
         smoothing: float = 10,
         hierarchy: dict = None,
+        min_group_size: int | float | None = None,
+        min_group_name: str | None = None,
+        combine_min_nan_groups: bool | str | None = None,
     ) -> None:
         super().__init__(
             verbose=verbose,
@@ -163,6 +166,9 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             return_df=return_df,
             handle_unknown=handle_unknown,
             handle_missing=handle_missing,
+            min_group_size=min_group_size,
+            min_group_name=min_group_name,
+            combine_min_nan_groups=combine_min_nan_groups,
         )
         self.min_samples_leaf = min_samples_leaf
         self.smoothing = smoothing

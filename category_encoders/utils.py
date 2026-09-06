@@ -356,6 +356,75 @@ def get_docstring_output_shape(in_out_relation: EncodingRelation) -> str:
         return 'M features (M can be anything)'
 
 
+def build_min_group_map(
+    group_sizes: pd.Series,
+    min_group_size: int | float,
+    min_group_name: str | None,
+    combine_min_nan_groups: bool | str | None,
+) -> tuple[pd.Series, dict]:
+    """Lump groups whose size is below `min_group_size` into one leftovers group.
+
+    Pure helper behind CountEncoder's min_group_size lumping and the optional
+    BaseEncoder-level min_group_size / min_group_name lumping.
+
+    Parameters
+    ----------
+    group_sizes: pd.Series
+        Size of each group, indexed by label. The index may contain NaN, which
+        represents the group of missing values.
+    min_group_size: int or float
+        Resolved threshold a group must reach to be kept as its own group.
+        Callers resolve int (absolute size) vs float (fraction of rows) semantics
+        before calling.
+    min_group_name: str or None
+        Name of the leftovers group. When None, the names of the lumped labels are
+        joined alphabetically with a `_` delimiter.
+    combine_min_nan_groups: bool or 'force' or None
+        Whether the missing-values group is folded into the leftovers group.
+        True folds it in when it is itself below the threshold, 'force' always
+        folds it in, False and None never do.
+
+    Returns
+    -------
+    tuple[pd.Series, dict]
+        The reduced group sizes, with the lumped groups replaced by the leftovers
+        group, and the lumping map {label: lumped name}. The map is empty when no
+        group was lumped. The input Series is not modified.
+    """
+    if combine_min_nan_groups is True:
+        min_groups_idx = group_sizes < min_group_size
+    elif combine_min_nan_groups == 'force':
+        min_groups_idx = (group_sizes < min_group_size) | (group_sizes.index.isna())
+    else:
+        min_groups_idx = (group_sizes < min_group_size) & (~group_sizes.index.isna())
+
+    min_groups_sum = group_sizes.loc[min_groups_idx].sum()
+
+    if (
+        min_groups_sum > 0
+        and min_groups_idx.sum() > 1
+        and not min_groups_idx.loc[~min_groups_idx.index.isna()].all()
+    ):
+        if isinstance(min_group_name, str):
+            lumped_name = min_group_name
+        else:
+            lumped_name = '_'.join(
+                [
+                    str(idx)
+                    for idx in group_sizes.loc[min_groups_idx].index.astype(str).sort_values()
+                ]
+            )
+        lumping_map = dict.fromkeys(group_sizes.loc[min_groups_idx].index.tolist(), lumped_name)
+
+        if not min_groups_idx.all():
+            group_sizes = group_sizes.loc[~min_groups_idx]
+            group_sizes[lumped_name] = min_groups_sum
+
+        return group_sizes, lumping_map
+
+    return group_sizes, {}
+
+
 @dataclass
 class EncoderTags(Tags):
     """Custom Tags for encoders."""
@@ -497,6 +566,10 @@ class BaseEncoder(BaseEstimator):
     return_df: bool
     supervised: bool
     encoding_relation: EncodingRelation
+    min_group_size: int | float | None
+    min_group_name: str | None
+    combine_min_nan_groups: bool | str | None
+    min_group_lumping_: dict[str, dict]
 
     INVARIANCE_THRESHOLD = (
         10e-5  # Deprecated: previously used as a variance threshold for invariant detection.
@@ -510,6 +583,10 @@ class BaseEncoder(BaseEstimator):
     _VALID_HANDLE_MISSING: tuple[str, ...] | None = ('error', 'return_nan', 'value')
     _VALID_HANDLE_UNKNOWN: tuple[str, ...] | None = ('error', 'return_nan', 'value')
 
+    # Subclasses that implement their own min_group_size handling (CountEncoder)
+    # set this to False to opt out of the base-level lumping hooks.
+    _min_group_hooks_enabled: bool = True
+
     def __init__(
         self,
         verbose: int = 0,
@@ -518,6 +595,9 @@ class BaseEncoder(BaseEstimator):
         return_df: bool = True,
         handle_unknown: str = 'value',
         handle_missing: str = 'value',
+        min_group_size: int | float | None = None,
+        min_group_name: str | None = None,
+        combine_min_nan_groups: bool | str | None = None,
         **kwargs,
     ):
         """Initialize the encoder.
@@ -550,6 +630,20 @@ class BaseEncoder(BaseEstimator):
             unseen labels once per column when the mapping is finalized during fit
             (with `value` = np.nan). CountEncoder additionally accepts a dict of
             {column: option}.
+        min_group_size: int or float, optional
+            minimum group size needed for a category to be encoded as its own
+            group; smaller categories are lumped into a single "leftovers" group
+            before fitting. An int is an absolute group size, a float is a
+            fraction of the number of rows. Default None, which disables lumping.
+        min_group_name: str, optional
+            name of the leftovers group created by `min_group_size`. Default
+            None, in which case the names of the lumped categories are joined
+            alphabetically with a `_` delimiter.
+        combine_min_nan_groups: bool or 'force', optional
+            whether the missing-values group is folded into the leftovers group
+            created by `min_group_size`. True folds it in when it is itself below
+            the threshold (the default), 'force' always folds it in, and False
+            never does. 'force' requires `handle_missing` != 'return_nan'.
         kwargs: dict.
             additional encoder specific parameters like regularisation.
         """
@@ -566,6 +660,9 @@ class BaseEncoder(BaseEstimator):
         self.mapping = None
         self.handle_unknown = handle_unknown
         self.handle_missing = handle_missing
+        self.min_group_size = min_group_size
+        self.min_group_name = min_group_name
+        self.combine_min_nan_groups = combine_min_nan_groups
         self._dim = None
 
     def fit(self, X: X_type, y: y_type | None = None, **kwargs):
@@ -623,6 +720,13 @@ class BaseEncoder(BaseEstimator):
         if self.handle_missing == 'error':
             if X[self.cols].isna().any().any():
                 raise ValueError('Columns to be encoded cannot contain null')
+
+        self.min_group_lumping_ = self._fit_min_group_lumping(X)
+        if self.min_group_lumping_:
+            # lump the training data itself so `_fit` sees the merged labels;
+            # copy first because `X` may still be the caller's frame
+            X = X.copy(deep=True)
+            self._apply_min_group_lumping(X)
 
         self._fit(X, y, **kwargs)
 
@@ -776,6 +880,63 @@ class BaseEncoder(BaseEstimator):
         else:
             self.cols = convert_cols_to_list(self.cols)
 
+    def _validate_min_group_params(self) -> None:
+        """Raise ValueError when the min_group_size lumping parameters conflict."""
+        if self.min_group_name is not None and self.min_group_size is None:
+            raise ValueError('`min_group_name` only works when `min_group_size` is set.')
+        if self.combine_min_nan_groups is not None and self.combine_min_nan_groups not in [
+            True,
+            False,
+            'force',
+        ]:
+            raise ValueError(
+                "'combine_min_nan_groups' should be one of: ['force', True, False, None]."
+            )
+        if self.combine_min_nan_groups == 'force' and self.handle_missing == 'return_nan':
+            raise ValueError(
+                "Cannot have `handle_missing` == 'return_nan' and "
+                "'combine_min_nan_groups' == 'force'."
+            )
+
+    def _fit_min_group_lumping(self, X: pd.DataFrame) -> dict[str, dict]:
+        """Learn per-column lumping maps from min_group_size / min_group_name.
+
+        Returns a mapping of column name to {original label: lumped name}; empty
+        when lumping is disabled or no group falls below the threshold.
+        """
+        if not self._min_group_hooks_enabled:
+            return {}
+        self._validate_min_group_params()
+        if self.min_group_size is None:
+            return {}
+
+        # None resolves to the library default: fold the missing group in when it
+        # is itself below the threshold (matching CountEncoder's resolution).
+        combine_nan = (
+            self.combine_min_nan_groups if self.combine_min_nan_groups is not None else True
+        )
+        # int is an absolute group size, a float a fraction of the number of rows
+        threshold = self.min_group_size
+        if isinstance(threshold, float):
+            threshold = threshold * len(X)
+
+        lumping = {}
+        for col in self.cols:
+            # normalize None to NaN so both spellings of missing share one group
+            group_sizes = X[col].fillna(np.nan).value_counts(dropna=False)
+            _, lumping_map = build_min_group_map(
+                group_sizes, threshold, self.min_group_name, combine_nan
+            )
+            if lumping_map:
+                lumping[col] = lumping_map
+        return lumping
+
+    def _apply_min_group_lumping(self, X: pd.DataFrame) -> None:
+        """Fold the labels of `X` into their lumped groups, in place."""
+        for col, lumping_map in self.min_group_lumping_.items():
+            # normalize None to NaN so both spellings of missing share one group
+            X[col] = X[col].fillna(np.nan).map(lumping_map).fillna(X[col])
+
     def get_feature_names(self) -> np.ndarray:
         """Deprecated method to get feature names. Use `get_feature_names_out` instead."""
         msg = (
@@ -874,6 +1035,7 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
         if not list(self.cols):
             return X if (self.return_df or override_return_df) else X.to_numpy()
 
+        self._apply_min_group_lumping(X)
         X = self._transform(X, y)
 
         return self._drop_invariants(X, override_return_df)
@@ -927,6 +1089,7 @@ class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
         if not list(self.cols):
             return X if (self.return_df or override_return_df) else X.to_numpy()
 
+        self._apply_min_group_lumping(X)
         X = self._transform(X)
         return self._drop_invariants(X, override_return_df)
 

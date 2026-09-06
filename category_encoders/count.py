@@ -22,6 +22,10 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     _VALID_HANDLE_MISSING = None
     _VALID_HANDLE_UNKNOWN = None
 
+    # CountEncoder implements min_group_size itself (per-column dicts, with the
+    # threshold tied to `normalize`); it opts out of the base-level lumping hooks.
+    _min_group_hooks_enabled = False
+
     def __init__(
         self,
         verbose=0,
@@ -220,39 +224,14 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             elif not self._normalize[col] and isinstance(self._min_group_size[col], float):
                 self._min_group_size[col] = self._min_group_size[col] * X.shape[0]
 
-            if self._combine_min_nan_groups[col] is True:
-                min_groups_idx = mapper < self._min_group_size[col]
-            elif self._combine_min_nan_groups[col] == 'force':
-                min_groups_idx = (mapper < self._min_group_size[col]) | (mapper.index.isna())
-            else:
-                min_groups_idx = (mapper < self._min_group_size[col]) & (~mapper.index.isna())
-
-            min_groups_sum = mapper.loc[min_groups_idx].sum()
-
-            if (
-                min_groups_sum > 0
-                and min_groups_idx.sum() > 1
-                and not min_groups_idx.loc[~min_groups_idx.index.isna()].all()
-            ):
-                if isinstance(self._min_group_name[col], str):
-                    min_group_mapper_name = self._min_group_name[col]
-                else:
-                    min_group_mapper_name = '_'.join(
-                        [
-                            str(idx)
-                            for idx in mapper.loc[min_groups_idx].index.astype(str).sort_values()
-                        ]
-                    )
-
-                self._min_group_categories[col] = dict.fromkeys(
-                    mapper.loc[min_groups_idx].index.tolist(), min_group_mapper_name
-                )
-
-                if not min_groups_idx.all():
-                    mapper = mapper.loc[~min_groups_idx]
-                    mapper[min_group_mapper_name] = min_groups_sum
-
-                self.mapping[col] = mapper
+            self.mapping[col], lumping_map = util.build_min_group_map(
+                mapper,
+                self._min_group_size[col],
+                self._min_group_name[col],
+                self._combine_min_nan_groups[col],
+            )
+            if lumping_map:
+                self._min_group_categories[col] = lumping_map
 
     def _check_set_create_attrs(self):
         """Check attributes setting that don't play nicely `self.cols`."""

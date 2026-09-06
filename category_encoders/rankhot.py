@@ -94,6 +94,9 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         handle_missing: str = 'value',
         handle_unknown: str = 'value',
         use_cat_names: bool = False,
+        min_group_size: int | float | None = None,
+        min_group_name: str | None = None,
+        combine_min_nan_groups: bool | str | None = None,
     ) -> None:
         super().__init__(
             verbose=verbose,
@@ -102,6 +105,9 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             return_df=return_df,
             handle_unknown=handle_unknown,
             handle_missing=handle_missing,
+            min_group_size=min_group_size,
+            min_group_name=min_group_name,
+            combine_min_nan_groups=combine_min_nan_groups,
         )
         self._dim = None
         self.mapping = None
