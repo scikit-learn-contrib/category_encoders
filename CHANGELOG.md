@@ -7,6 +7,14 @@ unreleased
   emit one WOE-style column, multiclass targets one column per class).
   Classification-only for now; a binning-based regression variant is planned
   as a follow-up.
+* Fix: encoders fitted on a DataFrame now accept arraylike input at ``transform``
+  (e.g. the numpy array emitted by the previous step of a scikit-learn pipeline):
+  the fitted column names are re-attached positionally and object/category dtypes
+  are restored, so the output matches transforming the equivalent DataFrame
+  (GH #406). ``OrdinalEncoder.inverse_transform`` re-attaches the fitted output
+  names for arraylike input, matching the BaseN/OneHot precedent.
+* Fix: fitting on a non-DataFrame input with named ``cols`` now explains in the
+  error that the names cannot be recovered positionally and how to proceed.
 * Fix: ``GrayEncoder.inverse_transform`` now recovers the original categories.
   Previously it inherited the positional base-N decoder from ``BaseNEncoder``,
   which cannot invert a Gray code (consecutive code words differ by a single

@@ -460,11 +460,15 @@ class BaseEncoder(BaseEstimator):
             Returns self.
 
         """
+        is_frame_input = isinstance(X, pd.DataFrame)
         X, y = convert_inputs(X, y)
         self._check_fit_inputs(X, y)
         self._validate_handle_strategies()
         self.feature_names_in_ = X.columns.tolist()
         self.n_features_in_ = len(self.feature_names_in_)
+        # dtypes of the fitted columns; re-attachment of arraylike input at transform
+        # (GH #406) restores the object/category dtypes a plain array does not carry
+        self.feature_dtypes_in_ = list(X.dtypes)
 
         if self.__sklearn_tags__().target_tags.required:
             if not is_numeric_dtype(y):
@@ -477,7 +481,19 @@ class BaseEncoder(BaseEstimator):
         self._determine_fit_columns(X)
 
         if not set(self.cols).issubset(X.columns):
-            raise ValueError('X does not contain the columns listed in cols')
+            missing = [col for col in self.cols if col not in X.columns]
+            msg = f'X does not contain the columns listed in cols: {missing}'
+            if not is_frame_input:
+                # A non-DataFrame fit input has no recoverable names, so the mismatch
+                # cannot be fixed positionally (GH #406); point the user at the remedies.
+                msg += (
+                    ' The encoder received a non-DataFrame input at fit, where named columns'
+                    ' cannot be recovered positionally. Either fit on a DataFrame containing'
+                    ' these columns, make the upstream step emit a DataFrame (e.g. with'
+                    " set_output(transform='pandas')), or pass the positional column indices"
+                    ' (as integers) in cols.'
+                )
+            raise ValueError(msg)
 
         if self.handle_missing == 'error':
             if X[self.cols].isna().any().any():
@@ -561,6 +577,42 @@ class BaseEncoder(BaseEstimator):
         # then make sure that it is the right size
         if df.shape[1] != self._dim:
             raise ValueError(f'Unexpected input dimension {df.shape[1]}, expected {self._dim}')
+
+    def _transform_input_columns(self, X: X_type) -> list | None:
+        """Resolve the column names to re-attach for a non-DataFrame transform input.
+
+        Arraylike input carries no column names, so the names observed at fit are
+        re-attached positionally (GH #406). Returns None when there is nothing to
+        re-attach: DataFrame and Series input keep their own names, and an unfitted
+        encoder fails downstream with the regular NotFittedError.
+        """
+        if isinstance(X, (pd.DataFrame, pd.Series)):
+            return None
+        if not hasattr(self, 'feature_names_in_'):
+            return None
+        # ndarray and scipy sparse input expose .shape; flat lists and 1-d arrays
+        # become a single column and keep their historical (nameless) behavior
+        shape = getattr(X, 'shape', None)
+        if shape is None or len(shape) != 2:
+            return None
+        if shape[1] != self.n_features_in_:
+            # Arraylike input is positional, so its width check stays strict (GH #367).
+            raise ValueError(
+                f'Unexpected input dimension {shape[1]}, expected {self.n_features_in_}'
+            )
+        return self.feature_names_in_
+
+    def _restore_fitted_dtypes(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Restore the fitted dtypes on a positionally re-attached frame (GH #406).
+
+        Only object and category columns carry encoding semantics that an ndarray
+        loses when rebuilt into a DataFrame; numeric dtypes survive unchanged.
+        """
+        for position, dtype in enumerate(self.feature_dtypes_in_):
+            column = df.columns[position]
+            if is_object_dtype(dtype) or isinstance(dtype, CategoricalDtype):
+                df[column] = df[column].astype(dtype)
+        return df
 
     def _drop_invariants(
         self, df: pd.DataFrame, override_return_df: bool
@@ -667,9 +719,20 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
         p : array or DataFrame, shape = [n_samples, n_features_out]
             Transformed values with encoding applied.
 
+        Notes
+        -----
+        If the encoder was fitted on a DataFrame, arraylike input (e.g. the numpy
+        array emitted by the previous step of a scikit-learn pipeline) is accepted:
+        the fitted column names are re-attached positionally, so the result matches
+        transforming the equivalent DataFrame (GH #406). A DataFrame may additionally
+        carry extra pass-through columns beyond the encoded ones (GH #367).
+
         """
         # first check the type
-        X, y = convert_inputs(X, y, deep=True)
+        columns = self._transform_input_columns(X)
+        X, y = convert_inputs(X, y, columns=columns, deep=True)
+        if columns is not None:
+            X = self._restore_fitted_dtypes(X)
         self._check_transform_inputs(X)
         if y is not None and self.lab_encoder_ is not None:
             y = pd.Series(self.lab_encoder_.transform(y), index=y.index)
@@ -711,9 +774,20 @@ class UnsupervisedTransformerMixin(sklearn.base.TransformerMixin):
         p : array or DataFrame, shape = [n_samples, n_features_out]
             Transformed values with encoding applied.
 
+        Notes
+        -----
+        If the encoder was fitted on a DataFrame, arraylike input (e.g. the numpy
+        array emitted by the previous step of a scikit-learn pipeline) is accepted:
+        the fitted column names are re-attached positionally, so the result matches
+        transforming the equivalent DataFrame (GH #406). A DataFrame may additionally
+        carry extra pass-through columns beyond the encoded ones (GH #367).
+
         """
         # first check the type
-        X = convert_input(X, deep=True)
+        columns = self._transform_input_columns(X)
+        X = convert_input(X, columns=columns, deep=True)
+        if columns is not None:
+            X = self._restore_fitted_dtypes(X)
         self._check_transform_inputs(X)
 
         if not list(self.cols):
