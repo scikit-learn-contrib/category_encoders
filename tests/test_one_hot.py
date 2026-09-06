@@ -64,6 +64,36 @@ class TestOneHotEncoder(TestCase):
         obtained = enc.inverse_transform(enc.transform(X_i_t))
         th.verify_inverse_transform(X_i_t, obtained)
 
+    def test_fit_does_not_mutate_input(self):
+        """OneHot fit leaves the caller's frame untouched."""
+        data = pd.DataFrame({'feature': ['a', 'b', 'a', 'b']})
+        original = data.copy()
+
+        encoders.OneHotEncoder().fit(data)
+
+        pd.testing.assert_frame_equal(data, original)
+
+    def test_ordinal_pass_reuses_the_transformer_api_copy(self):
+        """The nested ordinal pass encodes the transformer-API copy in place (#503 contract)."""
+        data = pd.DataFrame({'feature': ['a', 'b', 'a', 'b']})
+        original = data.copy()
+        seen = {}
+
+        class SpyOneHotEncoder(encoders.OneHotEncoder):
+            def _transform(self, X):
+                seen['mixin_frame'] = X
+                return super()._transform(X)
+
+            def get_dummies(self, X_in):
+                seen['dummies_frame'] = X_in
+                return super().get_dummies(X_in)
+
+        result = SpyOneHotEncoder().fit(data).transform(data)
+
+        self.assertIs(seen['mixin_frame'], seen['dummies_frame'])
+        self.assertEqual(result.shape, (4, 2))
+        pd.testing.assert_frame_equal(data, original)
+
     def test_fit_transform_use_cat_names(self):
         """Test that use_cat_names works as expected.
 

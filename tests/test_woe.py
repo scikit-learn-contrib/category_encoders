@@ -151,6 +151,42 @@ class TestWeightOfEvidenceEncoder(TestCase):
         self.assertIs(result, working_copy)
         pd.testing.assert_frame_equal(data, original)
 
+    def test_fit_does_not_mutate_input(self):
+        """WOE fit leaves the caller's frame untouched."""
+        data = pd.DataFrame({'feature': ['a', 'b', 'a', 'b'], 'numeric': [1.0, 2.0, 3.0, 4.0]})
+        original = data.copy()
+
+        encoders.WOEEncoder().fit(data, [0, 1, 0, 1])
+
+        pd.testing.assert_frame_equal(data, original)
+
+    def test_ordinal_helper_encoder_remains_fitted(self):
+        """The internal ordinal encoder stays a fully fitted transformer."""
+        data = pd.DataFrame({'feature': ['a', 'b', 'a', 'b']})
+        encoder = encoders.WOEEncoder().fit(data, [0, 1, 0, 1])
+        helper = encoder.ordinal_encoder
+
+        self.assertEqual(helper.n_features_in_, data.shape[1])
+        self.assertIsNotNone(helper.get_feature_names_out())
+        expected = pd.DataFrame({'feature': [1, 2, 1, 2]})
+        pd.testing.assert_frame_equal(helper.transform(data), expected)
+
+    def test_transform_reuses_the_transformer_api_copy(self):
+        """WOE's ordinal pass encodes the transformer-API copy in place (#503 contract)."""
+        data = pd.DataFrame({'feature': ['a', 'b', 'a', 'b']})
+        original = data.copy()
+        seen = {}
+
+        class SpyWOEEncoder(encoders.WOEEncoder):
+            def _transform(self, X, y=None):
+                seen['frame'] = X
+                return super()._transform(X, y)
+
+        result = SpyWOEEncoder().fit(data, [0, 1, 0, 1]).transform(data)
+
+        self.assertIs(result, seen['frame'])
+        pd.testing.assert_frame_equal(data, original)
+
     def test_expect_calculated_properly(self):
         """Test that the expected value for the following tests is calculated properly."""
         X = ['a', 'a', 'b', 'b']
