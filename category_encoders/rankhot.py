@@ -56,7 +56,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
      ... ]
      >>> y = bunch.target
      >>> X = pd.DataFrame(bunch.data, columns=bunch.feature_names)[display_cols]
-     >>> enc = RankHotEncoder(cols=['CentralAir', 'Heating'], handle_unknown='indicator').fit(X, y)
+     >>> enc = RankHotEncoder(cols=['CentralAir', 'Heating']).fit(X, y)
      >>> numeric_dataset = enc.transform(X)
      >>> print(numeric_dataset.info())
      <class 'pandas.core.frame.DataFrame'>
