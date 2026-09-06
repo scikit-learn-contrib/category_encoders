@@ -59,6 +59,55 @@ class TestQuantileEncoder(unittest.TestCase):
 
         pd.testing.assert_frame_equal(transformer_median.transform(new_df), new_medians)
 
+    def test_unique_column_collapses_to_prior(self):
+        """Test that a fully unique (id-like) column encodes every category to the prior.
+
+        With the default m=1.0, singleton levels used to blend their own target
+        quantile 50/50 with the prior, which made id-like columns predictive of
+        the label. See issue #327.
+        """
+        df = pd.DataFrame({'id': [f'row{i}' for i in range(6)]})
+        target = np.array([1, 0, 1, 0, 1, 0])
+
+        for quantile in [0.25, 0.5, 0.75]:
+            enc = encoders.QuantileEncoder(quantile=quantile)
+            result = enc.fit_transform(df, target)
+            np.testing.assert_allclose(
+                result['id'],
+                np.quantile(target, quantile),
+                err_msg=f'quantile={quantile}: a unique column must encode to the prior',
+            )
+            self.assertTrue(all(result.var() < 0.001))
+
+    def test_column_with_repeated_categories_is_not_collapsed(self):
+        """Test that the collapse changes outputs only for fully unique columns.
+
+        The fixture mixes repeated levels with a singleton ('d', target 7).
+        The column as a whole is not unique, so no level collapses to the
+        prior 3.0: 'a', 'b' and 'c' keep their smoothed statistics and the
+        singleton 'd' keeps its own smoothed value 5.0. See issue #327.
+        """
+        df = pd.DataFrame({'categories': ['a', 'b', 'c', 'a', 'b', 'c', 'a', 'd']})
+        target = np.array([1, 2, 0, 4, 5, 0, 6, 7])
+        expected_output = pd.DataFrame(
+            {'categories': [3.75, 10 / 3, 1.0, 3.75, 10 / 3, 1.0, 3.75, 5.0]}
+        )
+
+        pd.testing.assert_frame_equal(
+            encoders.QuantileEncoder(quantile=0.5).fit_transform(df, target),
+            expected_output,
+        )
+
+    def test_m_still_controls_shrinkage_after_collapse(self):
+        """Test that m keeps controlling shrinkage for non-unique columns.
+
+        A large m pulls every level of a repeated-category column close to
+        the prior (3.0 for this fixture).
+        """
+        result = encoders.QuantileEncoder(quantile=0.5, m=1000).fit_transform(self.df, self.target)
+
+        np.testing.assert_allclose(result['categories'], 3.0, atol=0.01)
+
 
 class TestSummaryEncoder(unittest.TestCase):
     """Tests for summary encoder."""
