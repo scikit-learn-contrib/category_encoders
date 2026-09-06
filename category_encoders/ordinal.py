@@ -178,8 +178,9 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         if self._dim is None:
             raise ValueError('Must train encoder before it can be used to inverse_transform data')
 
-        # first check the type and make deep copy
-        X = util.convert_input(X_in, deep=True)
+        # first check the type and make deep copy; re-attach the fitted output names
+        # for arraylike input, matching the BaseN/OneHot inverse_transform precedent
+        X = util.convert_input(X_in, columns=self.feature_names_out_, deep=True)
 
         # then make sure that it is the right size
         if X.shape[1] != self._dim:

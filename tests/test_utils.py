@@ -1,6 +1,7 @@
 """Tests for the utils module."""
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 
+import category_encoders as encoders
 import numpy as np
 import pandas as pd
 import pytest
@@ -13,6 +14,7 @@ from category_encoders.utils import (
 from packaging.version import Version
 from sklearn import __version__ as skl_version
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.exceptions import NotFittedError
 
 
 class TestUtils(TestCase):
@@ -214,3 +216,56 @@ class TestBaseEncoder(TestCase):
             ct.set_output(transform='pandas')
             ct_out = ct.fit_transform(X, y)
             self.assertIsInstance(ct_out, pd.DataFrame)
+
+
+class TestNdarrayTransform(TestCase):
+    """Arraylike input at transform: positional name re-attachment and strictness."""
+
+    def test_transform_ndarray_before_fit_raises_not_fitted(self):
+        """An unfitted encoder raises NotFittedError for arraylike input."""
+        with self.assertRaises(NotFittedError):
+            encoders.OrdinalEncoder().transform(np.array([['a'], ['b']]))
+
+    def test_transform_ndarray_wrong_width_raises(self):
+        """Arraylike width stays strict: a mismatched ndarray raises the dimension error."""
+        df = pd.DataFrame({'str_col': ['a', 'b', 'c']})
+        enc = encoders.OrdinalEncoder().fit(df)
+        with self.assertRaisesRegex(ValueError, 'Unexpected input dimension'):
+            enc.transform(np.array([['a', 'b'], ['b', 'c']]))
+
+    def test_transform_ndarray_name_stable_when_fitted_on_ndarray(self):
+        """An encoder fitted on an ndarray re-attaches its positional integer names."""
+        X = np.array([['a', 1.0], ['b', 2.0], ['c', 3.0], ['a', 4.0]])
+        enc = encoders.OrdinalEncoder()
+        enc.fit(X)
+        self.assertEqual(enc.feature_names_in_, [0, 1])
+        out_first = enc.transform(X)
+        out_second = enc.transform(X.copy())
+        np.testing.assert_array_equal(out_first.to_numpy(), out_second.to_numpy())
+
+    def test_transform_superset_dataframe_passes_extra_columns_through(self):
+        """Extra DataFrame columns pass through next to the encoded ones (GH #355, GH #367)."""
+        df = pd.DataFrame({'str_col': ['a', 'b', 'c', 'a'], 'num_col': [1.0, 2.0, 3.0, 4.0]})
+        wide = df.copy()
+        wide['extra'] = ['p', 'q', 'r', 's']
+        enc = encoders.OrdinalEncoder()
+        expected = enc.fit(df).transform(df)
+        out = enc.transform(wide)
+        self.assertIn('extra', out.columns)
+        np.testing.assert_array_equal(out['str_col'].to_numpy(), expected['str_col'].to_numpy())
+        np.testing.assert_array_equal(out['num_col'].to_numpy(), wide['num_col'].to_numpy())
+
+    def test_transform_missing_encoded_column_raises_clear_error(self):
+        """A frame without the encoded columns raises an error naming them."""
+        df = pd.DataFrame({'str_col': ['a', 'b', 'c', 'a'], 'num_col': [1.0, 2.0, 3.0, 4.0]})
+        enc = encoders.OrdinalEncoder(cols=['str_col']).fit(df)
+        renamed = df.rename(columns={'str_col': 'other'})
+        with self.assertRaisesRegex(ValueError, 'str_col'):
+            enc.transform(renamed)
+
+    def test_fit_ndarray_with_named_cols_error_lists_remediation(self):
+        """Fitting an ndarray with named cols explains that names cannot be recovered."""
+        X = np.array([['a', 1.0], ['b', 2.0], ['c', 3.0]])
+        enc = encoders.OrdinalEncoder(cols=['str_col'])
+        with self.assertRaisesRegex(ValueError, 'set_output'):
+            enc.fit(X)

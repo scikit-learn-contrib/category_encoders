@@ -191,9 +191,8 @@ class HashingEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         # first check the type
         X = util.convert_input(X)
 
-        # then make sure that it is the right size
-        if X.shape[1] != self._dim:
-            raise ValueError(f'Unexpected input dimension {X.shape[1]}, expected {self._dim}')
+        # the shared validation in _check_transform_inputs (including the DataFrame
+        # superset rule, GH #367) has already run in transform()
 
         if not list(self.cols):
             return X

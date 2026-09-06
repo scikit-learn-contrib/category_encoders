@@ -9,6 +9,8 @@ import numpy as np
 import pandas as pd
 from numpy.testing import assert_array_equal
 from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
 from sklearn.utils.estimator_checks import (
     check_n_features_in,
     check_transformer_general,
@@ -706,17 +708,20 @@ class TestEncoders(TestCase):
     def test_error_messages(self):
         """Test if the error messages are meaningful.
 
-        Case 1: The count of features changes must be the same in training and scoring.
+        Case 1: scoring data must contain the encoded columns; extra columns are
+        passed through (GH #367).
         Case 2: supervised encoders must obtain 'y' of the same length as 'x' during training.
         """
         # Case 1
         data = pd.DataFrame(data={'x': ['A', 'B', 'C', 'A', 'B'], 'y': [1, 0, 1, 0, 1]})
-        data2 = pd.DataFrame(data={'x': ['C', 'A', 'B'], 'x2': ['C', 'A', 'B']})
+        data_extra = pd.DataFrame(data={'x': ['C', 'A', 'B'], 'x2': ['C', 'A', 'B']})
+        data_missing = pd.DataFrame(data={'z': ['C', 'A', 'B']})
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(data.x, data.y)
-                self.assertRaises(ValueError, enc.transform, data2)
+                enc.transform(data_extra)
+                self.assertRaises(ValueError, enc.transform, data_missing)
 
         # Case 2
         x = ['A', 'B', 'C']
@@ -732,6 +737,50 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc.fit(x, y_good)
                 self.assertRaises(ValueError, enc.transform, x, y_bad)
+
+    def test_transform_ndarray_matches_dataframe_after_dataframe_fit(self):
+        """Fit on a DataFrame, then transform(ndarray) equals transform(DataFrame) (GH #406)."""
+        df = pd.DataFrame(
+            {
+                'str_col': ['a', 'b', 'c', 'a', 'b', 'c'],
+                'cat_col': pd.Categorical(['x', 'y', 'x', 'z', 'y', 'z']),
+                'num_col': [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+            }
+        )
+        y_local = pd.Series([1, 0, 1, 0, 1, 0])
+        for encoder_name in ('OneHotEncoder', 'OrdinalEncoder', 'BinaryEncoder', 'TargetEncoder'):
+            with self.subTest(encoder_name=encoder_name):
+                enc = getattr(encoders, encoder_name)()
+                enc.fit(df, y_local)
+                out_df = enc.transform(df)
+                out_arr = enc.transform(df.to_numpy())
+                self.assertEqual(list(out_df.columns), list(out_arr.columns))
+                np.testing.assert_array_equal(out_df.to_numpy(), out_arr.to_numpy())
+                for col in out_df.columns:
+                    if col != 'num_col':  # numeric pass-through keeps the array's own dtype
+                        self.assertEqual(out_df[col].dtype, out_arr[col].dtype)
+
+    def test_pipeline_without_pandas_output_completes(self):
+        """A preprocessor -> encoder pipeline without set_output('pandas') completes (GH #406)."""
+        df = pd.DataFrame(
+            {
+                'str_col': ['a', 'b', 'c', 'a', 'b', 'c'],
+                'cat_col': pd.Categorical(['x', 'y', 'x', 'z', 'y', 'z']),
+                'num_col': [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+            }
+        )
+        df.loc[0, 'str_col'] = np.nan  # the imputer then emits a plain ndarray downstream
+        y_local = pd.Series([1, 0, 1, 0, 1, 0])
+        for encoder_name in ('OneHotEncoder', 'OrdinalEncoder', 'BinaryEncoder', 'TargetEncoder'):
+            with self.subTest(encoder_name=encoder_name):
+                pipe = Pipeline(
+                    [
+                        ('impute', SimpleImputer(strategy='most_frequent')),
+                        ('encode', getattr(encoders, encoder_name)()),
+                    ]
+                )
+                out = pipe.fit_transform(df, y_local)
+                self.assertEqual(out.shape[0], df.shape[0])
 
     def test_drop_invariant(self):
         """Should drop invariant columns when drop_invariant=True."""
