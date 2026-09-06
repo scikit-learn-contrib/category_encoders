@@ -296,7 +296,9 @@ def get_generated_cols(
 
     current_cols = list(X_transformed.columns)
     if len(original_cols) > 0:
-        [current_cols.remove(c) for c in original_cols]
+        # composite member columns can be dropped from the output, so only remove
+        # columns the transformed frame actually carries
+        [current_cols.remove(c) for c in original_cols if c in current_cols]
 
     return current_cols
 
@@ -570,6 +572,10 @@ class BaseEncoder(BaseEstimator):
     min_group_name: str | None
     combine_min_nan_groups: bool | str | None
     min_group_lumping_: dict[str, dict]
+    composite_cols: list[tuple[str, ...]] | None
+    keep_components: bool
+    # fitted state: synthetic composite column name -> tuple of member columns
+    composite_members_: dict[str, tuple[str, ...]] = {}
 
     INVARIANCE_THRESHOLD = (
         10e-5  # Deprecated: previously used as a variance threshold for invariant detection.
@@ -598,6 +604,8 @@ class BaseEncoder(BaseEstimator):
         min_group_size: int | float | None = None,
         min_group_name: str | None = None,
         combine_min_nan_groups: bool | str | None = None,
+        composite_cols: list[tuple[str, ...]] | None = None,
+        keep_components: bool = False,
         **kwargs,
     ):
         """Initialize the encoder.
@@ -644,6 +652,17 @@ class BaseEncoder(BaseEstimator):
             created by `min_group_size`. True folds it in when it is itself below
             the threshold (the default), 'force' always folds it in, and False
             never does. 'force' requires `handle_missing` != 'return_nan'.
+        composite_cols: list of tuples of str
+            groups of columns to encode jointly, e.g. [('product', 'color')]. Each group
+            becomes one synthetic column, named by joining the member names with '|',
+            which is encoded like any other column (supervised encoders only). Rows
+            where any member is missing get a missing composite value, so handle_missing
+            applies as usual. The member columns themselves are dropped from the output
+            unless keep_components is True. Default None (no composite columns).
+        keep_components: bool
+            if True, the member columns of every composite group are also encoded
+            individually and kept in the output next to the composite columns.
+            Default False.
         kwargs: dict.
             additional encoder specific parameters like regularisation.
         """
@@ -663,6 +682,8 @@ class BaseEncoder(BaseEstimator):
         self.min_group_size = min_group_size
         self.min_group_name = min_group_name
         self.combine_min_nan_groups = combine_min_nan_groups
+        self.composite_cols = composite_cols
+        self.keep_components = keep_components
         self._dim = None
 
     def fit(self, X: X_type, y: y_type | None = None, **kwargs):
@@ -701,6 +722,7 @@ class BaseEncoder(BaseEstimator):
 
         self._dim = X.shape[1]
         self._determine_fit_columns(X)
+        X = self._apply_composite_cols(X)
 
         if not set(self.cols).issubset(X.columns):
             missing = [col for col in self.cols if col not in X.columns]
@@ -808,13 +830,18 @@ class BaseEncoder(BaseEstimator):
                 raise ValueError('Columns to be encoded cannot contain null')
 
         # then make sure that it is the right size
-        if df.shape[1] != self._dim:
+        # synthetic composite columns are appended before this check, so they widen
+        # the frame beyond the fitted input width
+        expected_dim = self._dim + len(self.composite_members_)
+        if df.shape[1] != expected_dim:
             # DataFrames may carry extra pass-through columns beyond the fitted width:
             # encoders only touch self.cols and pass the rest through (GH #367). Narrower
             # frames keep the strict check, and arraylike input is already validated
             # positionally while the fitted names are re-attached.
-            if df.shape[1] < self._dim:
-                raise ValueError(f'Unexpected input dimension {df.shape[1]}, expected {self._dim}')
+            if df.shape[1] < expected_dim:
+                raise ValueError(
+                    f'Unexpected input dimension {df.shape[1]}, expected {expected_dim}'
+                )
 
     def _transform_input_columns(self, X: X_type) -> list | None:
         """Resolve the column names to re-attach for a non-DataFrame transform input.
@@ -936,6 +963,122 @@ class BaseEncoder(BaseEstimator):
         for col, lumping_map in self.min_group_lumping_.items():
             # normalize None to NaN so both spellings of missing share one group
             X[col] = X[col].fillna(np.nan).map(lumping_map).fillna(X[col])
+    def _apply_composite_cols(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Validate composite_cols and append one synthetic '|'-joined column per group.
+
+        The synthetic column enters self.cols and X, so the ordinary _fit machinery
+        (inner ordinal encoding, per-column statistics) treats it like any other
+        column, the way TargetEncoder.hierarchy already does for its HIER_ columns.
+        Returns a new frame; the caller's X is never mutated.
+        """
+        self.composite_members_ = {}
+        if not self.composite_cols:
+            return X
+
+        if not self.__sklearn_tags__().target_tags.required:
+            raise ValueError(
+                'composite_cols is only supported for supervised encoders, '
+                f'not {type(self).__name__}.'
+            )
+
+        composites: dict[str, pd.Series] = {}
+        for group in self._validate_composite_cols(X):
+            name = '|'.join(group)
+            composites[name] = self._join_composite(X, group, name)
+            self.composite_members_[name] = tuple(group)
+
+        X = pd.concat([X, pd.DataFrame(composites, index=X.index)], axis=1)
+        for name in composites:
+            if name not in self.cols:
+                self.cols.append(name)
+        if self.keep_components:
+            for group in self.composite_members_.values():
+                for member in group:
+                    if member not in self.cols:
+                        self.cols.append(member)
+        return X
+
+    def _validate_composite_cols(self, X: pd.DataFrame) -> list[tuple[str, ...]]:
+        """Check the composite_cols parameter and return the groups as tuples."""
+        if not isinstance(self.composite_cols, (list, tuple)):
+            raise TypeError(
+                'composite_cols must be a list of tuples of column names, '
+                f"e.g. [('product', 'color')], got {self.composite_cols!r}."
+            )
+        groups: list[tuple[str, ...]] = []
+        taken = set(X.columns)
+        for group in self.composite_cols:
+            if (
+                not isinstance(group, tuple)
+                or len(group) < 2
+                or not all(isinstance(member, str) for member in group)
+            ):
+                raise ValueError(
+                    'Each composite group must be a tuple of at least two column names, '
+                    f"e.g. ('product', 'color'), got {group!r}."
+                )
+            name = '|'.join(group)
+            missing = [member for member in group if member not in X.columns]
+            if missing:
+                raise ValueError(f'composite_cols references missing columns: {missing}')
+            if name in taken:
+                raise ValueError(
+                    f'Composite column name {name!r} already exists in the input data.'
+                )
+            groups.append(group)
+            taken.add(name)
+        return groups
+
+    @staticmethod
+    def _join_composite(X: pd.DataFrame, members: tuple[str, ...], name: str) -> pd.Series:
+        """Join the member columns of one composite group into a single column.
+
+        Distinct member combinations must stay distinct after joining. Rows where any
+        member is missing become missing so the regular handle_missing machinery
+        applies to composites unchanged.
+        """
+        parts = X[list(members)].astype(str)
+        joined = parts[members[0]]
+        for member in members[1:]:
+            joined = joined + '|' + parts[member]
+        if len(set(joined)) < len(set(map(tuple, parts.to_numpy()))):
+            raise ValueError(
+                f'Composite column {name!r} is ambiguous: the "|" separator occurs in '
+                'the data, so distinct value combinations collide after joining.'
+            )
+        joined[X[list(members)].isna().any(axis=1)] = np.nan
+        return joined
+
+    def _add_composite_columns(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Rebuild the synthetic composite columns on the transform input.
+
+        Synthetic columns are always derived from the member columns, so transform
+        cannot drift from fit; a frame that already carries them (the fit-time frame)
+        gets them rebuilt in place at the end of the column list.
+        """
+        if not self.composite_members_:
+            return X
+        members = [m for group in self.composite_members_.values() for m in group]
+        missing_inputs = [m for m in members if m not in X.columns]
+        if missing_inputs:
+            raise ValueError(
+                'composite_cols member columns are missing from the transform input: '
+                f'{missing_inputs}'
+            )
+        composites = {
+            name: self._join_composite(X, group, name)
+            for name, group in self.composite_members_.items()
+        }
+        X = X.drop(columns=[name for name in composites if name in X.columns])
+        return pd.concat([X, pd.DataFrame(composites, index=X.index)], axis=1)
+
+    def _drop_composite_members(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Drop composite member columns from the output unless keep_components."""
+        if self.keep_components or not self.composite_members_:
+            return df
+        members = [m for group in self.composite_members_.values() for m in group]
+        drop = [member for member in members if member in df.columns]
+        return df.drop(columns=drop) if drop else df
 
     def get_feature_names(self) -> np.ndarray:
         """Deprecated method to get feature names. Use `get_feature_names_out` instead."""
@@ -1028,6 +1171,7 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
         X, y = convert_inputs(X, y, columns=columns, deep=True)
         if columns is not None:
             X = self._restore_fitted_dtypes(X)
+        X = self._add_composite_columns(X)
         self._check_transform_inputs(X)
         if y is not None and self.lab_encoder_ is not None:
             y = pd.Series(self.lab_encoder_.transform(y), index=y.index)
@@ -1037,6 +1181,7 @@ class SupervisedTransformerMixin(sklearn.base.TransformerMixin):
 
         self._apply_min_group_lumping(X)
         X = self._transform(X, y)
+        X = self._drop_composite_members(X)
 
         return self._drop_invariants(X, override_return_df)
 

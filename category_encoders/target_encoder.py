@@ -158,6 +158,8 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         min_group_size: int | float | None = None,
         min_group_name: str | None = None,
         combine_min_nan_groups: bool | str | None = None,
+        composite_cols: list[tuple[str, ...]] | None = None,
+        keep_components: bool = False,
     ) -> None:
         super().__init__(
             verbose=verbose,
@@ -169,6 +171,8 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             min_group_size=min_group_size,
             min_group_name=min_group_name,
             combine_min_nan_groups=combine_min_nan_groups,
+            composite_cols=composite_cols,
+            keep_components=keep_components,
         )
         self.min_samples_leaf = min_samples_leaf
         self.smoothing = smoothing
