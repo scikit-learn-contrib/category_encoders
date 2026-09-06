@@ -6,7 +6,7 @@ import warnings
 from abc import abstractmethod
 from dataclasses import dataclass, fields
 from enum import Enum, auto
-from typing import Hashable, Sequence
+from typing import Callable, Hashable, Sequence
 
 import numpy as np
 import pandas as pd
@@ -23,6 +23,15 @@ __author__ = 'willmcginnis'
 
 X_type = np.ndarray | pd.DataFrame | list | np.generic | csr_matrix
 y_type = list | pd.Series | np.ndarray | tuple | pd.DataFrame
+
+# Ordinal codes reserved for rows that cannot be mapped to a fitted category:
+# UNKNOWN for labels never seen at fit time, MISSING for missing values when
+# no missing category was seen at fit time.
+UNKNOWN_SENTINEL = -1
+MISSING_SENTINEL = -2
+
+# Numeric types accepted for the handle_unknown/handle_missing strategies.
+NUMERIC_SCALARS = (int, float, np.integer, np.floating)
 
 
 def convert_cols_to_list(
@@ -362,6 +371,114 @@ class EncoderTags(Tags):
         }
         return cls(**as_dict)
 
+def evaluate_handle_callable(
+    fn: Callable,
+    value: float,
+    mapping: pd.Series | pd.DataFrame,
+    param_name: str,
+) -> float:
+    """Invoke a callable handle_unknown/handle_missing strategy and validate its result.
+
+    The callable receives the row value (nan for the reserved sentinel rows) and
+    the fitted mapping, and must return a numeric scalar so the finalized
+    mapping stays numeric.
+    """
+    result = fn(value, mapping)
+    if not isinstance(result, NUMERIC_SCALARS):
+        raise ValueError(
+            f'The callable passed for {param_name} must return a numeric scalar, '
+            f'got {result!r} of type {type(result).__name__}.'
+        )
+    return result
+
+
+def validate_scalar_handle_value(
+    value: float,
+    mapping: pd.Series | pd.DataFrame,
+    param_name: str,
+    col: str | None = None,
+) -> float:
+    """Reject a numeric handle_unknown/handle_missing value that collides with generated labels.
+
+    A value equal to an already generated encoded value would make unknown or
+    missing rows indistinguishable from that category at transform time.
+    """
+    if value in mapping.values:
+        location = f' for column {col!r}' if col is not None else ''
+        raise ValueError(
+            f'{param_name}={value!r}{location} collides with an encoded category value; '
+            'unknown or missing rows would become indistinguishable from that category. '
+            'Choose a value outside the generated labels.'
+        )
+    return value
+
+
+def finalize_encoding_mapping(
+    estimate: pd.Series | pd.DataFrame,
+    values: pd.Series,
+    handle_unknown: str | float | Callable,
+    handle_missing: str | float | Callable,
+    prior: float,
+) -> pd.Series | pd.DataFrame:
+    """Finalize the unknown/missing rows of a per-column encoding mapping.
+
+    Encoders that map ordinal codes to encoded values all share the same final
+    step: the row for the unknown code (``UNKNOWN_SENTINEL``) and the row for
+    the missing code (``MISSING_SENTINEL``) are filled according to the
+    ``handle_unknown`` / ``handle_missing`` strategies. This helper implements
+    that step once; ``estimate`` is modified in place and returned.
+
+    Parameters
+    ----------
+    estimate: pd.Series or pd.DataFrame
+        Per-code statistics computed by the encoder, indexed by ordinal code.
+    values: pd.Series
+        The fitted ordinal mapping (category -> ordinal code).
+    handle_unknown: str, numeric scalar or callable
+        Strategy for unseen categories: 'value' fills with ``prior``,
+        'return_nan' fills with nan, a numeric scalar fills with that value,
+        and a callable ``fn(value, mapping)`` fills with its result, evaluated
+        once with ``value`` = nan and ``mapping`` = the fitted ordinal mapping.
+    handle_missing: str, numeric scalar or callable
+        Strategy for missing values: 'value' fills with ``prior``,
+        'return_nan' fills with nan, a numeric scalar fills with that value,
+        and a callable ``fn(value, mapping)`` fills with its result, evaluated
+        once with ``value`` = nan and ``mapping`` = the fitted ordinal mapping.
+    prior: float
+        Encoder default (mean, quantile, zero, ...) used by the 'value' strategy.
+
+    Returns
+    -------
+    The finalized mapping (same object as ``estimate``).
+
+    """
+    if handle_unknown == 'return_nan':
+        estimate.loc[UNKNOWN_SENTINEL] = np.nan
+    elif handle_unknown == 'value':
+        estimate.loc[UNKNOWN_SENTINEL] = prior
+    elif callable(handle_unknown):
+        estimate.loc[UNKNOWN_SENTINEL] = evaluate_handle_callable(
+            handle_unknown, np.nan, values, 'handle_unknown'
+        )
+    elif isinstance(handle_unknown, NUMERIC_SCALARS):
+        validate_scalar_handle_value(handle_unknown, estimate, 'handle_unknown')
+        estimate.loc[UNKNOWN_SENTINEL] = handle_unknown
+
+    if handle_missing == 'return_nan':
+        estimate.loc[values.loc[np.nan]] = np.nan
+    elif handle_missing == 'value':
+        estimate.loc[MISSING_SENTINEL] = prior
+    elif callable(handle_missing):
+        estimate.loc[MISSING_SENTINEL] = evaluate_handle_callable(
+            handle_missing, np.nan, values, 'handle_missing'
+        )
+    elif isinstance(handle_missing, NUMERIC_SCALARS):
+        validate_scalar_handle_value(handle_missing, estimate, 'handle_missing')
+        estimate.loc[MISSING_SENTINEL] = handle_missing
+
+    return estimate
+
+
 class BaseEncoder(BaseEstimator):
     """BaseEstimator class for all encoders.
 
@@ -417,14 +534,22 @@ class BaseEncoder(BaseEstimator):
         return_df: bool
             boolean for whether to return a pandas DataFrame from transform and inverse transform
             (otherwise it will be a numpy array).
-        handle_missing: str
+        handle_missing: str, int, float or callable
             how to handle missing values at fit time. Options are 'error', 'return_nan',
             and 'value'. Default 'value', which treat nans as a countable category at
-            fit time.
-        handle_unknown: str, int or dict of {column : option, ...}.
-            how to handle unknown labels at transform time. Options are 'error'
+            fit time. Passing a number uses it as the encoded value for missing values
+            that were not seen at fit time. Passing a callable fn(value, mapping)
+            computes the encoded value once per column when the mapping is finalized
+            during fit, with `value` = np.nan and `mapping` the fitted
+            category-to-ordinal-code mapping.
+        handle_unknown: str, int, float, callable or dict of {column : option, ...}.
+            how to handle unknown labels at transform time. Options are 'error',
             'return_nan', 'value' and int. Defaults to None which uses nan behaviour
             specified at fit time. Passing an int will fill with this int value.
+            Passing a callable fn(value, mapping) computes the encoded value for
+            unseen labels once per column when the mapping is finalized during fit
+            (with `value` = np.nan). CountEncoder additionally accepts a dict of
+            {column: option}.
         kwargs: dict.
             additional encoder specific parameters like regularisation.
         """

@@ -161,7 +161,7 @@ class BaseNEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
                 values = values[values > 0]
 
             if self.handle_unknown == 'indicator':
-                values = np.append(values, -1)
+                values = np.append(values, util.UNKNOWN_SENTINEL)
 
             digits = self.calc_required_digits(values)
             X_unique = pd.DataFrame(
@@ -170,15 +170,9 @@ class BaseNEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
                 data=np.array([self.col_transform(x, digits) for x in range(1, len(values) + 1)]),
             )
 
-            if self.handle_unknown == 'return_nan':
-                X_unique.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                X_unique.loc[-1] = 0
-
-            if self.handle_missing == 'return_nan':
-                X_unique.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                X_unique.loc[-2] = 0
+            X_unique = util.finalize_encoding_mapping(
+                X_unique, values, self.handle_unknown, self.handle_missing, 0
+            )
 
             mappings_out.append({'col': col, 'mapping': X_unique})
 
@@ -188,7 +182,7 @@ class BaseNEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         X_out = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
-            if X_out[self.cols].isin([-1]).any().any():
+            if X_out[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Columns to be encoded cannot contain new values')
 
         X_out = self.basen_encode(X_out, cols=self.cols)

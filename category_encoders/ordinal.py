@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import warnings
+from typing import Callable
 
 import numpy as np
 import pandas as pd
@@ -41,13 +42,20 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             {'col': 'col1', 'mapping': {None: 0, 'a': 1, 'b': 2}},
             {'col': 'col2', 'mapping': {None: 0, 'x': 1, 'y': 2}}
         ]
-    handle_unknown: str
+    handle_unknown: str, int, float or callable
         options are 'error', 'return_nan' and 'value', defaults to 'value',
-        which will impute the category -1.
-    handle_missing: str
+        which will impute the category -1. A number is imputed directly, and
+        a callable fn(value, mapping) is evaluated per unseen value at transform
+        time, where `value` is the unseen label and `mapping` is the fitted
+        category-to-label mapping.
+    handle_missing: str, int, float or callable
         options are 'error', 'return_nan', and 'value, default to 'value',
         which treat nan as a category at fit time,
         or -2 at transform time if nan is not a category during fit.
+        A number replaces the -2 default for missing values that were not seen
+        at fit time, and a callable fn(value, mapping) is evaluated once per
+        column with `value` = np.nan and `mapping` the fitted
+        category-to-label mapping.
     index_start: int
         integer at which to start labelling the categories. Defaults to 1.
         Set to 0 for zero-indexed labels, which can be convenient when feeding
@@ -197,10 +205,10 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
         if self.handle_unknown == 'value':
             for col in self.cols:
-                if any(X[col] == -1):
+                if any(X[col] == util.UNKNOWN_SENTINEL):
                     warnings.warn(
                         'inverse_transform is not supported because transform impute '
-                        f'the unknown category -1 when encode {col}',
+                        f'the unknown category {util.UNKNOWN_SENTINEL} when encode {col}',
                         stacklevel=4,
                     )
 
@@ -246,9 +254,14 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             for switch in mapping:
                 column = switch.get('col')
                 col_mapping = switch['mapping']
+                raw_values = X[column] if callable(handle_unknown) else None
                 X[column] = OrdinalEncoder._map_column(X[column], col_mapping)
-                X[column] = OrdinalEncoder._apply_unknown_policy(X[column], column, handle_unknown)
-                X[column] = OrdinalEncoder._apply_missing_policy(X[column], handle_missing)
+                X[column] = OrdinalEncoder._apply_unknown_policy(
+                    X[column], column, handle_unknown, raw_values, col_mapping
+                )
+                X[column] = OrdinalEncoder._apply_missing_policy(
+                    X[column], handle_missing, column, col_mapping
+                )
         else:
             mapping_out = []
             for col in cols:
@@ -285,23 +298,50 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         return values
 
     @staticmethod
-    def _apply_unknown_policy(values: pd.Series, column: str, handle_unknown: str) -> pd.Series:
-        """Resolve unseen categories after mapping: impute -1 or raise."""
+    def _apply_unknown_policy(
+        values: pd.Series,
+        column: str,
+        handle_unknown: str | float | Callable,
+        raw_values: pd.Series | None,
+        col_mapping: pd.Series,
+    ) -> pd.Series:
+        """Resolve unseen categories after mapping: impute, raise, or defer to a scalar/callable."""
+        unknown_mask = values.isna()
         if handle_unknown == 'value':
-            return values.fillna(-1)
+            return values.fillna(util.UNKNOWN_SENTINEL)
         if handle_unknown == 'error':
-            missing = values.isna()
-            if any(missing):
+            if unknown_mask.any():
                 raise ValueError(f'Unexpected categories found in column {column}')
+        elif callable(handle_unknown):
+            # each unseen raw value is passed to the callable individually, so unlike
+            # handle_missing (a single conceptual nan) this bypasses evaluate_handle_callable
+            filled = raw_values[unknown_mask].map(lambda value: handle_unknown(value, col_mapping))
+            values = values.mask(unknown_mask, filled)
+        elif isinstance(handle_unknown, util.NUMERIC_SCALARS):
+            util.validate_scalar_handle_value(handle_unknown, col_mapping, 'handle_unknown', column)
+            values = values.fillna(handle_unknown)
         return values
 
     @staticmethod
-    def _apply_missing_policy(values: pd.Series, handle_missing: str) -> pd.Series:
-        """Map the -2 missing sentinel back to NaN when handle_missing is 'return_nan'."""
-        if handle_missing != 'return_nan':
-            return values
-        return_nan_series = pd.Series(data=[np.nan], index=[-2])
-        return values.map(return_nan_series).where(values == -2, values)
+    def _apply_missing_policy(
+        values: pd.Series,
+        handle_missing: str | float | Callable,
+        column: str,
+        col_mapping: pd.Series,
+    ) -> pd.Series:
+        """Map the missing sentinel to NaN, or to a scalar/callable result, per handle_missing."""
+        if handle_missing == 'return_nan':
+            return_nan_series = pd.Series(data=[np.nan], index=[util.MISSING_SENTINEL])
+            return values.map(return_nan_series).where(values == util.MISSING_SENTINEL, values)
+        if callable(handle_missing):
+            missing_value = util.evaluate_handle_callable(
+                handle_missing, np.nan, col_mapping, 'handle_missing'
+            )
+            return values.mask(values == util.MISSING_SENTINEL, missing_value)
+        if isinstance(handle_missing, util.NUMERIC_SCALARS):
+            util.validate_scalar_handle_value(handle_missing, col_mapping, 'handle_missing', column)
+            return values.mask(values == util.MISSING_SENTINEL, handle_missing)
+        return values
 
     @staticmethod
     def _get_categories(values: pd.Series) -> list:
@@ -325,7 +365,9 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         return categories
 
     @staticmethod
-    def _fit_column_mapping(values: pd.Series, handle_missing: str, index_start: int) -> pd.Series:
+    def _fit_column_mapping(
+        values: pd.Series, handle_missing: str | float | Callable, index_start: int
+    ) -> pd.Series:
         """Build the category-to-code mapping of one column from the fit data."""
         nan_identity = np.nan
         categories = OrdinalEncoder._get_categories(values)
@@ -338,9 +380,13 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         )
 
         if handle_missing == 'value' and ~data.index.isna().any():
-            data.loc[nan_identity] = -2
+            data.loc[nan_identity] = util.MISSING_SENTINEL
         elif handle_missing == 'return_nan':
-            data.loc[nan_identity] = -2
+            data.loc[nan_identity] = util.MISSING_SENTINEL
+        elif callable(handle_missing) or isinstance(handle_missing, util.NUMERIC_SCALARS):
+            # reserve the missing code so transform can replace it with
+            # the user's scalar / callable result
+            data.loc[nan_identity] = util.MISSING_SENTINEL
 
         return data
 

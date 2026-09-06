@@ -28,10 +28,15 @@ class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform
         (otherwise it will be a numpy array).
-    handle_missing: str
+    handle_missing: str, int, float or callable
         options are 'return_nan', 'error' and 'value', defaults to 'value', which will assume WOE=0.
-    handle_unknown: str
+        A number is used as the encoded value for missing values that were not seen at fit time,
+        and a callable fn(value, mapping) is evaluated once per column when the mapping is
+        finalized during fit.
+    handle_unknown: str, int, float or callable
         options are 'return_nan', 'error' and 'value', defaults to 'value', which will assume WOE=0.
+        A number is used as the encoded value for unseen categories, and a callable
+        fn(value, mapping) is evaluated once per column when the mapping is finalized during fit.
     randomized: bool,
         adds Gaussian regularization noise to the encoded values during fit
         to decrease overfitting. The noise is multiplicative — encoded values
@@ -187,7 +192,7 @@ class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         )
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
+            if X[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
         # Loop over columns and replace nominal values with WOE
@@ -220,15 +225,9 @@ class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             # Ignore unique values. This helps to prevent overfitting on id-like columns.
             woe[stats['count'] == 1] = 0
 
-            if self.handle_unknown == 'return_nan':
-                woe.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                woe.loc[-1] = 0
-
-            if self.handle_missing == 'return_nan':
-                woe.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                woe.loc[-2] = 0
+            woe = util.finalize_encoding_mapping(
+                woe, values, self.handle_unknown, self.handle_missing, 0
+            )
 
             # Store WOE for transform() function
             mapping[col] = woe

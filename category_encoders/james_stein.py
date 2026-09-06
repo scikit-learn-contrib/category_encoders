@@ -75,12 +75,17 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform
         (otherwise it will be a numpy array).
-    handle_missing: str
+    handle_missing: str, int, float or callable
         options are 'return_nan', 'error' and 'value', defaults to 'value',
-        which returns the prior probability.
-    handle_unknown: str
+        which returns the prior probability. A number is used as the encoded value
+        for missing values that were not seen at fit time, and a callable
+        fn(value, mapping) is evaluated once per column when the mapping is
+        finalized during fit.
+    handle_unknown: str, int, float or callable
         options are 'return_nan', 'error' and 'value', defaults to 'value',
-        which returns the prior probability.
+        which returns the prior probability. A number is used as the encoded value
+        for unseen categories, and a callable fn(value, mapping) is evaluated
+        once per column when the mapping is finalized during fit.
     model: str
         options are 'pooled', 'beta', 'binary' and 'independent', defaults to 'independent'.
     randomized: bool,
@@ -290,15 +295,9 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             if len(stats['mean']) == global_count:
                 estimate[:] = prior
 
-            if self.handle_unknown == 'return_nan':
-                estimate.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                estimate.loc[-1] = prior
-
-            if self.handle_missing == 'return_nan':
-                estimate.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                estimate.loc[-2] = prior
+            estimate = util.finalize_encoding_mapping(
+                estimate, values, self.handle_unknown, self.handle_missing, prior
+            )
 
             # Store the estimate for transform() function
             mapping[col] = estimate
@@ -356,15 +355,10 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             if len(stats['mean']) == global_count:
                 estimate[:] = prior
 
-            if self.handle_unknown == 'return_nan':
-                estimate.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                estimate.loc[-1] = prior
 
-            if self.handle_missing == 'return_nan':
-                estimate.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                estimate.loc[-2] = prior
+            estimate = util.finalize_encoding_mapping(
+                estimate, values, self.handle_unknown, self.handle_missing, prior
+            )
 
             # Store the estimate for transform() function
             mapping[col] = estimate
@@ -458,15 +452,9 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
                 else:
                     estimate = pd.Series(0, index=values)
 
-            if self.handle_unknown == 'return_nan':
-                estimate.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                estimate.loc[-1] = 0
-
-            if self.handle_missing == 'return_nan':
-                estimate.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                estimate.loc[-2] = 0
+            estimate = util.finalize_encoding_mapping(
+                estimate, values, self.handle_unknown, self.handle_missing, 0
+            )
 
             # Store the estimate for transform() function
             mapping[col] = estimate
@@ -499,15 +487,9 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             if len(stats['mean']) == global_count:
                 estimate[:] = prior
 
-            if self.handle_unknown == 'return_nan':
-                estimate.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                estimate.loc[-1] = prior
-
-            if self.handle_missing == 'return_nan':
-                estimate.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                estimate.loc[-2] = prior
+            estimate = util.finalize_encoding_mapping(
+                estimate, values, self.handle_unknown, self.handle_missing, prior
+            )
 
             # Store the estimate for transform() function
             mapping[col] = estimate

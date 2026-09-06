@@ -39,12 +39,17 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     return_df: bool
         boolean for whether to return a pandas DataFrame from transform
         (otherwise it will be a numpy array).
-    handle_missing: str
+    handle_missing: str, int, float or callable
         options are 'error', 'return_nan'  and 'value', defaults to 'value',
-        which returns the target mean.
-    handle_unknown: str
+        which returns the target mean. A number is used as the encoded value
+        for missing values that were not seen at fit time, and a callable
+        fn(value, mapping) is evaluated once per column when the mapping is
+        finalized during fit.
+    handle_unknown: str, int, float or callable
         options are 'error', 'return_nan' and 'value', defaults to 'value',
-        which returns the target mean.
+        which returns the target mean. A number is used as the encoded value
+        for unseen categories, and a callable fn(value, mapping) is evaluated
+        once per column when the mapping is finalized during fit.
     min_samples_leaf: int
         For regularization the weighted average between category mean and global mean is taken.
         The weight is an S-shaped curve between 0 and 1 with the number of samples for a category
@@ -272,15 +277,9 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
 
                 smoothing = scalar * (1 - smoove) + stats['mean'] * smoove
 
-                if self.handle_unknown == 'return_nan':
-                    smoothing.loc[-1] = np.nan
-                elif self.handle_unknown == 'value':
-                    smoothing.loc[-1] = prior
-
-                if self.handle_missing == 'return_nan':
-                    smoothing.loc[values.loc[np.nan]] = np.nan
-                elif self.handle_missing == 'value':
-                    smoothing.loc[-2] = prior
+                smoothing = util.finalize_encoding_mapping(
+                    smoothing, values, self.handle_unknown, self.handle_missing, prior
+                )
 
                 mapping[col] = smoothing
 
@@ -291,7 +290,7 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
+            if X[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
         X = self.target_encode(X)

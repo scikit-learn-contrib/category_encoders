@@ -202,7 +202,7 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
                     found_column_counts[n_col_name] = found_count + 1
                     n_col_name += '#' * found_count
                 new_columns.append(n_col_name)
-                index.append(-1)
+                index.append(util.UNKNOWN_SENTINEL)
 
             if append_nan_to_index:
                 index.append(append_nan_to_index)
@@ -211,14 +211,14 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             base_df = pd.DataFrame(data=base_matrix, columns=new_columns, index=index)
 
             if self.handle_unknown == 'value':
-                base_df.loc[-1] = 0
+                base_df.loc[util.UNKNOWN_SENTINEL] = 0
             elif self.handle_unknown == 'return_nan':
-                base_df.loc[-1] = np.nan
+                base_df.loc[util.UNKNOWN_SENTINEL] = np.nan
 
             if self.handle_missing == 'return_nan':
-                base_df.loc[-2] = np.nan
+                base_df.loc[util.MISSING_SENTINEL] = np.nan
             elif self.handle_missing in ['value', 'ignore']:
-                base_df.loc[-2] = 0
+                base_df.loc[util.MISSING_SENTINEL] = 0
 
             mapping.append({'col': col, 'mapping': base_df})
 
@@ -237,7 +237,7 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         )
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
+            if X[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Columns to be encoded cannot contain new values')
 
         X = self.get_dummies(X)
@@ -322,7 +322,7 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         for col in X_in.columns:
             if col in mapping_by_col:
                 mod = mapping_by_col[col]
-                base_df = mod.reindex(X_in[col].fillna(-2))
+                base_df = mod.reindex(X_in[col].fillna(util.MISSING_SENTINEL))
                 blocks.append(base_df.set_index(X_in.index))
             else:
                 blocks.append(X_in[[col]])
