@@ -297,21 +297,20 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         dummies : DataFrame
 
         """
-        X = X_in.copy(deep=True)
-
-        cols = X.columns.tolist()
+        cols = X_in.columns.tolist()
+        encoded = []
 
         for switch in self.mapping:
             col = switch.get('col')
             mod = switch.get('mapping')
 
-            base_df = mod.reindex(X[col].fillna(-2))
-            base_df = base_df.set_index(X.index)
-            X = pd.concat([base_df, X], axis=1)
+            base_df = mod.reindex(X_in[col].fillna(-2))
+            encoded.append(base_df.set_index(X_in.index))
 
             old_column_index = cols.index(col)
             cols[old_column_index : old_column_index + 1] = mod.columns
 
+        X = pd.concat([*reversed(encoded), X_in], axis=1)
         X = X.reindex(columns=cols)
 
         return X
