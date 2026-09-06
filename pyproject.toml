@@ -21,7 +21,7 @@ numpydoc = "^1.8.0"
 ruff = "^0.14.3"
 sphinx = "^8.2.3"
 sphinx_rtd_theme = "^3.0.2"
-pytest = "^8.3.3"
+pytest = "^9.0.3"
 pytest-subtests = "^0.15.0"
 
 [tool.ruff]
