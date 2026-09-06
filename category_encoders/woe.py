@@ -187,7 +187,7 @@ class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         )
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
+            if X[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
         # Loop over columns and replace nominal values with WOE
@@ -220,15 +220,9 @@ class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             # Ignore unique values. This helps to prevent overfitting on id-like columns.
             woe[stats['count'] == 1] = 0
 
-            if self.handle_unknown == 'return_nan':
-                woe.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                woe.loc[-1] = 0
-
-            if self.handle_missing == 'return_nan':
-                woe.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                woe.loc[-2] = 0
+            woe = util.finalize_encoding_mapping(
+                woe, values, self.handle_unknown, self.handle_missing, 0
+            )
 
             # Store WOE for transform() function
             mapping[col] = woe

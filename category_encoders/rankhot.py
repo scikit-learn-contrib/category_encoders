@@ -145,7 +145,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         input_cols = X.columns.tolist()
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
+            if X[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Columns to be encoded cannot contain new values')
 
         for switch, _ordinal_switch in zip(
@@ -155,7 +155,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             mod = switch.get('mapping')
             encode_feature_series = X[col]
 
-            unknow_elements = encode_feature_series[encode_feature_series == -1]
+            unknow_elements = encode_feature_series[encode_feature_series == util.UNKNOWN_SENTINEL]
 
             encoding_dict = {
                 i: list(row.values()) for i, row in mod.to_dict(orient='index').items()

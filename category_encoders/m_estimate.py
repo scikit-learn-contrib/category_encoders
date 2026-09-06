@@ -1,6 +1,5 @@
 """M-probability estimate."""
 
-import numpy as np
 from sklearn.utils.random import check_random_state
 
 import category_encoders.utils as util
@@ -145,7 +144,7 @@ class MEstimateEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
+            if X[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
         # Loop over the columns and replace the nominal values with the numbers
@@ -180,15 +179,9 @@ class MEstimateEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             if len(stats['count']) == self._count:
                 estimate[:] = prior
 
-            if self.handle_unknown == 'return_nan':
-                estimate.loc[-1] = np.nan
-            elif self.handle_unknown == 'value':
-                estimate.loc[-1] = prior
-
-            if self.handle_missing == 'return_nan':
-                estimate.loc[values.loc[np.nan]] = np.nan
-            elif self.handle_missing == 'value':
-                estimate.loc[-2] = prior
+            estimate = util.finalize_encoding_mapping(
+                estimate, values, self.handle_unknown, self.handle_missing, prior
+            )
 
             # Store the m-probability estimate for transform() function
             mapping[col] = estimate

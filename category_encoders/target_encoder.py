@@ -272,15 +272,9 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
 
                 smoothing = scalar * (1 - smoove) + stats['mean'] * smoove
 
-                if self.handle_unknown == 'return_nan':
-                    smoothing.loc[-1] = np.nan
-                elif self.handle_unknown == 'value':
-                    smoothing.loc[-1] = prior
-
-                if self.handle_missing == 'return_nan':
-                    smoothing.loc[values.loc[np.nan]] = np.nan
-                elif self.handle_missing == 'value':
-                    smoothing.loc[-2] = prior
+                smoothing = util.finalize_encoding_mapping(
+                    smoothing, values, self.handle_unknown, self.handle_missing, prior
+                )
 
                 mapping[col] = smoothing
 
@@ -291,7 +285,7 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
+            if X[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
         X = self.target_encode(X)

@@ -159,7 +159,7 @@ class GLMMEncoder( util.SupervisedTransformerMixin ,util.BaseEncoder):
         X = self.ordinal_encoder.transform(X)
 
         if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
+            if X[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Unexpected categories found in dataframe')
 
         # Loop over the columns and replace the nominal values with the numbers
@@ -228,15 +228,9 @@ class GLMMEncoder( util.SupervisedTransformerMixin ,util.BaseEncoder):
                 if len(X[col].unique()) == len(y):
                     estimate[:] = 0
 
-                if self.handle_unknown == 'return_nan':
-                    estimate.loc[-1] = np.nan
-                elif self.handle_unknown == 'value':
-                    estimate.loc[-1] = 0
-
-                if self.handle_missing == 'return_nan':
-                    estimate.loc[values.loc[np.nan]] = np.nan
-                elif self.handle_missing == 'value':
-                    estimate.loc[-2] = 0
+                estimate = util.finalize_encoding_mapping(
+                    estimate, values, self.handle_unknown, self.handle_missing, 0
+                )
 
                 mapping[col] = estimate
         finally:

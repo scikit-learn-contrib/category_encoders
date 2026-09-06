@@ -24,6 +24,15 @@ __author__ = 'willmcginnis'
 X_type = np.ndarray | pd.DataFrame | list | np.generic | csr_matrix
 y_type = list | pd.Series | np.ndarray | tuple | pd.DataFrame
 
+# Ordinal codes reserved for rows that cannot be mapped to a fitted category:
+# UNKNOWN for labels never seen at fit time, MISSING for missing values when
+# no missing category was seen at fit time.
+UNKNOWN_SENTINEL = -1
+MISSING_SENTINEL = -2
+
+# Numeric types accepted for the handle_unknown/handle_missing strategies.
+NUMERIC_SCALARS = (int, float, np.integer, np.floating)
+
 
 def convert_cols_to_list(
     cols: pd.Series | np.ndarray | set | tuple | CategoricalDtype | str | int,
@@ -361,6 +370,54 @@ class EncoderTags(Tags):
             for field in fields(tags)
         }
         return cls(**as_dict)
+
+def finalize_encoding_mapping(
+    estimate: pd.Series | pd.DataFrame,
+    values: pd.Series,
+    handle_unknown: str,
+    handle_missing: str,
+    prior: float,
+) -> pd.Series | pd.DataFrame:
+    """Finalize the unknown/missing rows of a per-column encoding mapping.
+
+    Encoders that map ordinal codes to encoded values all share the same final
+    step: the row for the unknown code (``UNKNOWN_SENTINEL``) and the row for
+    the missing code (``MISSING_SENTINEL``) are filled according to the
+    ``handle_unknown`` / ``handle_missing`` strategies. This helper implements
+    that step once; ``estimate`` is modified in place and returned.
+
+    Parameters
+    ----------
+    estimate: pd.Series or pd.DataFrame
+        Per-code statistics computed by the encoder, indexed by ordinal code.
+    values: pd.Series
+        The fitted ordinal mapping (category -> ordinal code).
+    handle_unknown: str
+        Strategy for unseen categories: 'value' fills with ``prior``,
+        'return_nan' fills with nan, anything else leaves the row untouched.
+    handle_missing: str
+        Strategy for missing values: 'value' fills with ``prior``,
+        'return_nan' fills with nan, anything else leaves the row untouched.
+    prior: float
+        Encoder default (mean, quantile, zero, ...) used by the 'value' strategy.
+
+    Returns
+    -------
+    The finalized mapping (same object as ``estimate``).
+
+    """
+    if handle_unknown == 'return_nan':
+        estimate.loc[UNKNOWN_SENTINEL] = np.nan
+    elif handle_unknown == 'value':
+        estimate.loc[UNKNOWN_SENTINEL] = prior
+
+    if handle_missing == 'return_nan':
+        estimate.loc[values.loc[np.nan]] = np.nan
+    elif handle_missing == 'value':
+        estimate.loc[MISSING_SENTINEL] = prior
+
+    return estimate
+
 
 class BaseEncoder(BaseEstimator):
     """BaseEstimator class for all encoders.

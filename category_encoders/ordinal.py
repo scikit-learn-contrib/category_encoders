@@ -197,10 +197,10 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
         if self.handle_unknown == 'value':
             for col in self.cols:
-                if any(X[col] == -1):
+                if any(X[col] == util.UNKNOWN_SENTINEL):
                     warnings.warn(
                         'inverse_transform is not supported because transform impute '
-                        f'the unknown category -1 when encode {col}',
+                        f'the unknown category {util.UNKNOWN_SENTINEL} when encode {col}',
                         stacklevel=4,
                     )
 
@@ -286,9 +286,9 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     @staticmethod
     def _apply_unknown_policy(values: pd.Series, column: str, handle_unknown: str) -> pd.Series:
-        """Resolve unseen categories after mapping: impute -1 or raise."""
+        """Resolve unseen categories after mapping: impute the unknown sentinel or raise."""
         if handle_unknown == 'value':
-            return values.fillna(-1)
+            return values.fillna(util.UNKNOWN_SENTINEL)
         if handle_unknown == 'error':
             missing = values.isna()
             if any(missing):
@@ -297,11 +297,11 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     @staticmethod
     def _apply_missing_policy(values: pd.Series, handle_missing: str) -> pd.Series:
-        """Map the -2 missing sentinel back to NaN when handle_missing is 'return_nan'."""
+        """Map the missing sentinel back to NaN when handle_missing is 'return_nan'."""
         if handle_missing != 'return_nan':
             return values
-        return_nan_series = pd.Series(data=[np.nan], index=[-2])
-        return values.map(return_nan_series).where(values == -2, values)
+        return_nan_series = pd.Series(data=[np.nan], index=[util.MISSING_SENTINEL])
+        return values.map(return_nan_series).where(values == util.MISSING_SENTINEL, values)
 
     @staticmethod
     def _get_categories(values: pd.Series) -> list:
@@ -338,9 +338,9 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         )
 
         if handle_missing == 'value' and ~data.index.isna().any():
-            data.loc[nan_identity] = -2
+            data.loc[nan_identity] = util.MISSING_SENTINEL
         elif handle_missing == 'return_nan':
-            data.loc[nan_identity] = -2
+            data.loc[nan_identity] = util.MISSING_SENTINEL
 
         return data
 

@@ -101,7 +101,7 @@ class BaseContrastEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
     def _transform(self, X) -> pd.DataFrame:
         X = self.ordinal_encoder.transform(X)
         if self.handle_unknown == 'error':
-            if X[self.cols].isin([-1]).any().any():
+            if X[self.cols].isin([util.UNKNOWN_SENTINEL]).any().any():
                 raise ValueError('Columns to be encoded cannot contain new values')
 
         X = self.transform_contrast_coding(X, mapping=self.mapping)
@@ -142,7 +142,7 @@ class BaseContrastEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
             return pd.DataFrame(index=values_to_encode)
 
         if handle_unknown == 'indicator':
-            values_to_encode = np.append(values_to_encode, -1)
+            values_to_encode = np.append(values_to_encode, util.UNKNOWN_SENTINEL)
 
         contrast_matrix = self.get_contrast_matrix(values_to_encode)
         df = pd.DataFrame(
@@ -151,15 +151,7 @@ class BaseContrastEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
             columns=[f'{col}_{i}' for i in range(len(contrast_matrix.column_suffixes))],
         )
 
-        if handle_unknown == 'return_nan':
-            df.loc[-1] = np.nan
-        elif handle_unknown == 'value':
-            df.loc[-1] = np.zeros(len(values_to_encode) - 1)
-
-        if handle_missing == 'return_nan':
-            df.loc[values.loc[np.nan]] = np.nan
-        elif handle_missing == 'value':
-            df.loc[-2] = np.zeros(len(values_to_encode) - 1)
+        df = util.finalize_encoding_mapping(df, values, handle_unknown, handle_missing, 0)
 
         return df
 
