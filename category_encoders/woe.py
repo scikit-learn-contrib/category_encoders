@@ -144,17 +144,47 @@ class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             )
             raise ValueError(msg)
 
-        self.ordinal_encoder = OrdinalEncoder(
-            verbose=self.verbose, cols=self.cols, handle_unknown='value', handle_missing='value'
+        # One ordinal pass: derive the category mapping read-only, then fit the
+        # helper encoder from that mapping. With a mapping supplied, fit only
+        # binds column metadata (the #503 contract: the mapping, not the data,
+        # is the source of truth), so it needs no full-frame pass over the data.
+        _, categories = OrdinalEncoder.ordinal_encoding(
+            X, cols=self.cols, handle_unknown='value', handle_missing='value'
         )
-        self.ordinal_encoder = self.ordinal_encoder.fit(X)
-        X_ordinal = self.ordinal_encoder.transform(X)
+        self.ordinal_encoder = OrdinalEncoder(
+            verbose=self.verbose,
+            cols=self.cols,
+            mapping=categories,
+            handle_unknown='value',
+            handle_missing='value',
+        )
+        self.ordinal_encoder.fit(X.iloc[0:0])
+
+        # Ordinal-encode one disposable copy in place for training.
+        X_ordinal = X.copy(deep=True)
+        OrdinalEncoder.ordinal_encoding(
+            X_ordinal,
+            mapping=self.ordinal_encoder.mapping,
+            cols=self.ordinal_encoder.cols,
+            handle_unknown=self.ordinal_encoder.handle_unknown,
+            handle_missing=self.ordinal_encoder.handle_missing,
+            index_start=self.ordinal_encoder.index_start,
+        )
 
         # Training
         self.mapping = self._train(X_ordinal, y)
 
     def _transform(self, X, y=None):
-        X = self.ordinal_encoder.transform(X)
+        # X is the private copy made by the transformer API (the #503 contract):
+        # ordinal-encode it in place instead of stacking another wrapper copy.
+        OrdinalEncoder.ordinal_encoding(
+            X,
+            mapping=self.ordinal_encoder.mapping,
+            cols=self.ordinal_encoder.cols,
+            handle_unknown=self.ordinal_encoder.handle_unknown,
+            handle_missing=self.ordinal_encoder.handle_missing,
+            index_start=self.ordinal_encoder.index_start,
+        )
 
         if self.handle_unknown == 'error':
             if X[self.cols].isin([-1]).any().any():
