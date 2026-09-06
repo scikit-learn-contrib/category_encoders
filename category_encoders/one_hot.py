@@ -297,22 +297,32 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         dummies : DataFrame
 
         """
-        X = X_in.copy(deep=True)
+        mapping_by_col = {switch.get('col'): switch.get('mapping') for switch in self.mapping}
 
-        cols = X.columns.tolist()
+        missing_cols = [col for col in mapping_by_col if col not in X_in.columns]
+        if missing_cols:
+            raise KeyError(missing_cols[0])
 
-        for switch in self.mapping:
-            col = switch.get('col')
-            mod = switch.get('mapping')
+        # Dummy blocks are built per input column, in input order, so a single
+        # pd.concat produces the final column layout directly. The previous
+        # accumulator re-concatenated the growing frame once per column and
+        # then reindexed, which transiently allocates a multiple of the output
+        # size and dominates the memory profile of transform on wide or
+        # high-cardinality inputs (GH #362).
+        blocks = []
+        for col in X_in.columns:
+            if col in mapping_by_col:
+                mod = mapping_by_col[col]
+                base_df = mod.reindex(X_in[col].fillna(-2))
+                blocks.append(base_df.set_index(X_in.index))
+            else:
+                blocks.append(X_in[[col]])
 
-            base_df = mod.reindex(X[col].fillna(-2))
-            base_df = base_df.set_index(X.index)
-            X = pd.concat([base_df, X], axis=1)
-
-            old_column_index = cols.index(col)
-            cols[old_column_index : old_column_index + 1] = mod.columns
-
-        X = X.reindex(columns=cols)
+        X = pd.concat(blocks, axis=1)
+        if X.columns.has_duplicates:
+            # A dummy column name collided with another output column;
+            # the final reindex this replaces raised the same error.
+            raise ValueError('cannot reindex on an axis with duplicate labels')
 
         return X
 
