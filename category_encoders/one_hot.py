@@ -225,7 +225,16 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         return mapping
 
     def _transform(self, X):
-        X = self.ordinal_encoder.transform(X)
+        # X is the private copy made by the transformer API (the #503 contract):
+        # ordinal-encode it in place instead of stacking another wrapper copy.
+        OrdinalEncoder.ordinal_encoding(
+            X,
+            mapping=self.ordinal_encoder.mapping,
+            cols=self.ordinal_encoder.cols,
+            handle_unknown=self.ordinal_encoder.handle_unknown,
+            handle_missing=self.ordinal_encoder.handle_missing,
+            index_start=self.ordinal_encoder.index_start,
+        )
 
         if self.handle_unknown == 'error':
             if X[self.cols].isin([-1]).any().any():
