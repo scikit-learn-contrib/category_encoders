@@ -26,6 +26,7 @@ __Unsupervised:__
  * Helmert Contrast [2][3]
  * Ordinal [2][3]
  * One-Hot [2][3]
+ * Multi-Hot [17]
  * Rank Hot [15]
  * Polynomial Contrast [2][3]
  * Sum Contrast [2][3]
@@ -156,3 +157,4 @@ References
  14. Gray Encoding. From https://en.wikipedia.org/wiki/Gray_code 
  15. Jacob Buckman, Aurko Roy, Colin Raffel, Ian Goodfellow: Thermometer Encoding: One Hot Way To Resist Adversarial Examples. From https://openreview.net/forum?id=S18Su--CW
  16. Fairness implications of encoding protected categorical attributes. Carlos Mougan, Jose Alvarez, Salvatore Ruggieri, and Steffen Staab.  In Proceedings of the 2023 AAAI/ACM Conference on AI, Ethics, and Society, AIES ’21, https://arxiv.org/abs/2201.11358
+ 17. scikit-learn MultiLabelBinarizer. From https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MultiLabelBinarizer.html
