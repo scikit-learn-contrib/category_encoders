@@ -33,6 +33,7 @@ __Unsupervised:__
 
 __Supervised:__
  * CatBoost [11]
+ * Count Target Encoding [17]
  * Generalized Linear Mixed Model [12] 
  * James-Stein Estimator [9]
  * LeaveOneOut [4]
@@ -158,3 +159,4 @@ References
  15. Jacob Buckman, Aurko Roy, Colin Raffel, Ian Goodfellow: Thermometer Encoding: One Hot Way To Resist Adversarial Examples. From https://openreview.net/forum?id=S18Su--CW
  16. Fairness implications of encoding protected categorical attributes. Carlos Mougan, Jose Alvarez, Salvatore Ruggieri, and Steffen Staab.  In Proceedings of the 2023 AAAI/ACM Conference on AI, Ethics, and Society, AIES ’21, https://arxiv.org/abs/2201.11358
  17. scikit-learn MultiLabelBinarizer. From https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MultiLabelBinarizer.html
+ 18. Big Learning Made Easy with Counts (the "Dracula" count-based target scheme). From https://learn.microsoft.com/en-us/archive/blogs/machinelearning/big-learning-made-easy-with-counts
