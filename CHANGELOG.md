@@ -15,6 +15,10 @@ unreleased
   names for arraylike input, matching the BaseN/OneHot precedent.
 * Fix: fitting on a non-DataFrame input with named ``cols`` now explains in the
   error that the names cannot be recovered positionally and how to proceed.
+* Fix: ``transform`` now accepts DataFrames carrying extra pass-through columns
+  beyond the encoded ones (GH #355 scenario, GH #367). Arraylike inputs keep the
+  strict dimension check, and missing encoded columns raise a clear error naming
+  them instead of a ``KeyError``.
 * Fix: ``GrayEncoder.inverse_transform`` now recovers the original categories.
   Previously it inherited the positional base-N decoder from ``BaseNEncoder``,
   which cannot invert a Gray code (consecutive code words differ by a single

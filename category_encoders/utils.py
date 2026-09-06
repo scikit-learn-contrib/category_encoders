@@ -570,13 +570,22 @@ class BaseEncoder(BaseEstimator):
                 'of the documentation for details.'
             )
 
+        missing = [col for col in self.cols if col not in df.columns]
+        if missing:
+            raise ValueError(f'X does not contain the columns listed in cols: {missing}')
+
         if self.handle_missing == 'error':
             if df[self.cols].isna().any().any():
                 raise ValueError('Columns to be encoded cannot contain null')
 
         # then make sure that it is the right size
         if df.shape[1] != self._dim:
-            raise ValueError(f'Unexpected input dimension {df.shape[1]}, expected {self._dim}')
+            # DataFrames may carry extra pass-through columns beyond the fitted width:
+            # encoders only touch self.cols and pass the rest through (GH #367). Narrower
+            # frames keep the strict check, and arraylike input is already validated
+            # positionally while the fitted names are re-attached.
+            if df.shape[1] < self._dim:
+                raise ValueError(f'Unexpected input dimension {df.shape[1]}, expected {self._dim}')
 
     def _transform_input_columns(self, X: X_type) -> list | None:
         """Resolve the column names to re-attach for a non-DataFrame transform input.

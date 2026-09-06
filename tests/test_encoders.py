@@ -706,17 +706,20 @@ class TestEncoders(TestCase):
     def test_error_messages(self):
         """Test if the error messages are meaningful.
 
-        Case 1: The count of features changes must be the same in training and scoring.
+        Case 1: scoring data must contain the encoded columns; extra columns are
+        passed through (GH #367).
         Case 2: supervised encoders must obtain 'y' of the same length as 'x' during training.
         """
         # Case 1
         data = pd.DataFrame(data={'x': ['A', 'B', 'C', 'A', 'B'], 'y': [1, 0, 1, 0, 1]})
-        data2 = pd.DataFrame(data={'x': ['C', 'A', 'B'], 'x2': ['C', 'A', 'B']})
+        data_extra = pd.DataFrame(data={'x': ['C', 'A', 'B'], 'x2': ['C', 'A', 'B']})
+        data_missing = pd.DataFrame(data={'z': ['C', 'A', 'B']})
         for encoder_name in encoders.__all__:
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
                 enc.fit(data.x, data.y)
-                self.assertRaises(ValueError, enc.transform, data2)
+                enc.transform(data_extra)
+                self.assertRaises(ValueError, enc.transform, data_missing)
 
         # Case 2
         x = ['A', 'B', 'C']
