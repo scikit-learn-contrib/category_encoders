@@ -22,6 +22,10 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
     _VALID_HANDLE_MISSING = None
     _VALID_HANDLE_UNKNOWN = None
 
+    # CountEncoder implements min_group_size itself (per-column dicts, with the
+    # threshold tied to `normalize`); it opts out of the base-level lumping hooks.
+    _min_group_hooks_enabled = False
+
     def __init__(
         self,
         verbose=0,

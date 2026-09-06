@@ -137,6 +137,9 @@ class HashingEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         return_df=True,
         hash_method='md5',
         process_creation_method='fork',
+        min_group_size: int | float | None = None,
+        min_group_name: str | None = None,
+        combine_min_nan_groups: bool | str | None = None,
     ):
         super().__init__(
             verbose=verbose,
@@ -145,6 +148,9 @@ class HashingEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             return_df=return_df,
             handle_unknown='does not apply',
             handle_missing='does not apply',
+            min_group_size=min_group_size,
+            min_group_name=min_group_name,
+            combine_min_nan_groups=combine_min_nan_groups,
         )
 
         if max_process not in range(1, 128):
