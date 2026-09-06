@@ -18,6 +18,7 @@ from category_encoders.helmert import HelmertEncoder
 from category_encoders.james_stein import JamesSteinEncoder
 from category_encoders.leave_one_out import LeaveOneOutEncoder
 from category_encoders.m_estimate import MEstimateEncoder
+from category_encoders.multi_hot import MultiHotEncoder
 from category_encoders.one_hot import OneHotEncoder
 from category_encoders.ordinal import OrdinalEncoder
 from category_encoders.polynomial import PolynomialEncoder
@@ -47,6 +48,7 @@ __all__ = [
     'TargetEncoder',
     'WOEEncoder',
     'MEstimateEncoder',
+    'MultiHotEncoder',
     'JamesSteinEncoder',
     'CatBoostEncoder',
     'GLMMEncoder',
