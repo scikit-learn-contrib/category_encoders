@@ -23,6 +23,13 @@ unreleased
   Previously it inherited the positional base-N decoder from ``BaseNEncoder``,
   which cannot invert a Gray code (consecutive code words differ by a single
   bit and are not positional), so it returned the wrong categories.
+* Change: Removed direct dependency on ``patsy``. The four contrast-coding
+  encoders (Polynomial, Helmert, BackwardDifference, Sum) now build their
+  contrast matrices in-tree.
+* Change: ``statsmodels`` is now an optional extra. ``GLMMEncoder`` is
+  loaded lazily and raises a clear ``ImportError`` if statsmodels is not
+  installed. Install with ``pip install category_encoders[glmm]`` to use
+  it. Removes both ``statsmodels`` and ``patsy`` from the default install.
 
 v.2.10.0
 ========

@@ -27,7 +27,22 @@ jobs:
       run: |
         python -m pip install --upgrade pip wheel
         python -m pip install poetry
-        poetry install
+        poetry install --extras glmm
     - name: Test with pytest
       run: |
         poetry run pytest tests
+    - name: Verify package imports without optional extras
+      run: |
+        python -m venv /tmp/no-extras
+        /tmp/no-extras/bin/pip install --upgrade pip
+        /tmp/no-extras/bin/pip install .
+        /tmp/no-extras/bin/python -c "import category_encoders; e = category_encoders.OneHotEncoder()"
+        /tmp/no-extras/bin/python -c "
+        import category_encoders
+        try:
+          category_encoders.GLMMEncoder
+        except ImportError as e:
+          assert 'statsmodels' in str(e), str(e)
+        else:
+          raise AssertionError('GLMMEncoder should fail without statsmodels')
+        "

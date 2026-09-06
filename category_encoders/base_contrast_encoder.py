@@ -4,7 +4,7 @@ from abc import abstractmethod
 
 import numpy as np
 import pandas as pd
-from patsy.contrasts import ContrastMatrix
+from category_encoders._contrasts import ContrastMatrix
 
 import category_encoders.utils as util
 from category_encoders.ordinal import OrdinalEncoder

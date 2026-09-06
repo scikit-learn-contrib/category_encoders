@@ -1,7 +1,7 @@
 """Helmert contrast coding."""
 
 import numpy as np
-from patsy.contrasts import ContrastMatrix, Helmert
+from category_encoders._contrasts import ContrastMatrix, Helmert
 
 from category_encoders.base_contrast_encoder import BaseContrastEncoder
 
