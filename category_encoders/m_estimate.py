@@ -120,6 +120,8 @@ class MEstimateEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         min_group_size: int | float | None = None,
         min_group_name: str | None = None,
         combine_min_nan_groups: bool | str | None = None,
+        composite_cols=None,
+        keep_components=False,
     ):
         super().__init__(
             verbose=verbose,
@@ -131,6 +133,8 @@ class MEstimateEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             min_group_size=min_group_size,
             min_group_name=min_group_name,
             combine_min_nan_groups=combine_min_nan_groups,
+            composite_cols=composite_cols,
+            keep_components=keep_components,
         )
         self.ordinal_encoder = None
         self.mapping = None
