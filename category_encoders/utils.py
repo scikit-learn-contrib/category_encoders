@@ -540,12 +540,23 @@ class BaseEncoder(BaseEstimator):
                 )
 
     def _check_transform_inputs(self, df: pd.DataFrame) -> None:
+        # Fittedness is checked on the sklearn-standard n_features_in_ attribute, which
+        # clone() never copies: a re-created encoder is unfitted by design, even when
+        # constructor parameters leaked fitted state (Issue #232).
+        if getattr(self, 'n_features_in_', None) is None:
+            raise NotFittedError(
+                f'This {type(self).__name__} instance is not fitted yet: call fit before '
+                'using transform. If you passed a fitted encoder as a parameter of another '
+                "estimator, scikit-learn's clone() re-created it unfitted. Fit the encoder "
+                'inside the pipeline or cross-validation loop (for example as a Pipeline '
+                'step), or implement __sklearn_clone__ on the wrapper estimator that holds '
+                'it (scikit-learn >= 1.6). See the "Cloning and cross-validation" section '
+                'of the documentation for details.'
+            )
+
         if self.handle_missing == 'error':
             if df[self.cols].isna().any().any():
                 raise ValueError('Columns to be encoded cannot contain null')
-
-        if self._dim is None:
-            raise NotFittedError('Must train encoder before it can be used to transform data.')
 
         # then make sure that it is the right size
         if df.shape[1] != self._dim:
