@@ -1,5 +1,5 @@
 """Tests for the OneHotEncoder."""
-from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest import TestCase, mock  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
 import numpy as np
@@ -10,6 +10,18 @@ import tests.helpers as th
 
 class TestOneHotEncoder(TestCase):
     """Tests for the OneHotEncoder."""
+
+    def test_get_dummies_concatenates_once(self):
+        """Build all encoded columns without repeatedly copying the growing output."""
+        data = pd.DataFrame({'first': ['a', 'b'], 'second': ['c', 'd']})
+        encoder = encoders.OneHotEncoder().fit(data)
+        ordinal = encoder.ordinal_encoder.transform(data)
+
+        with mock.patch.object(pd, 'concat', wraps=pd.concat) as concat:
+            result = encoder.get_dummies(ordinal)
+
+        self.assertEqual(concat.call_count, 1)
+        pd.testing.assert_frame_equal(result, encoder.transform(data))
 
     def test_one_hot(self):
         """Test basic functionality."""
