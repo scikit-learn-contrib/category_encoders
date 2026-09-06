@@ -1,6 +1,12 @@
 unreleased
 ==========
 
+* Feat: Added issue#420 - ``CountTargetEncoder``, a supervised count-based
+  encoder that stores per-class category counts and encodes categories as
+  smoothing-adjusted log-odds against the global target prior (binary targets
+  emit one WOE-style column, multiclass targets one column per class).
+  Classification-only for now; a binning-based regression variant is planned
+  as a follow-up.
 * Fix: ``GrayEncoder.inverse_transform`` now recovers the original categories.
   Previously it inherited the positional base-N decoder from ``BaseNEncoder``,
   which cannot invert a Gray code (consecutive code words differ by a single

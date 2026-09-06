@@ -52,6 +52,7 @@ To use:
     encoder = ce.BinaryEncoder(cols=[...])
     encoder = ce.CatBoostEncoder(cols=[...])
     encoder = ce.CountEncoder(cols=[...])
+    encoder = ce.CountTargetEncoder(cols=[...])
     encoder = ce.GLMMEncoder(cols=[...])
     encoder = ce.GrayEncoder(cols=[...])
     encoder = ce.HashingEncoder(cols=[...])
@@ -109,6 +110,7 @@ Contents:
    catboost
    clone_contract
    count
+   count_target
    glmm
    gray
    hashing
