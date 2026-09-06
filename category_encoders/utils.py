@@ -356,6 +356,75 @@ def get_docstring_output_shape(in_out_relation: EncodingRelation) -> str:
         return 'M features (M can be anything)'
 
 
+def build_min_group_map(
+    group_sizes: pd.Series,
+    min_group_size: int | float,
+    min_group_name: str | None,
+    combine_min_nan_groups: bool | str | None,
+) -> tuple[pd.Series, dict]:
+    """Lump groups whose size is below `min_group_size` into one leftovers group.
+
+    Pure helper behind CountEncoder's min_group_size lumping and the optional
+    BaseEncoder-level min_group_size / min_group_name lumping.
+
+    Parameters
+    ----------
+    group_sizes: pd.Series
+        Size of each group, indexed by label. The index may contain NaN, which
+        represents the group of missing values.
+    min_group_size: int or float
+        Resolved threshold a group must reach to be kept as its own group.
+        Callers resolve int (absolute size) vs float (fraction of rows) semantics
+        before calling.
+    min_group_name: str or None
+        Name of the leftovers group. When None, the names of the lumped labels are
+        joined alphabetically with a `_` delimiter.
+    combine_min_nan_groups: bool or 'force' or None
+        Whether the missing-values group is folded into the leftovers group.
+        True folds it in when it is itself below the threshold, 'force' always
+        folds it in, False and None never do.
+
+    Returns
+    -------
+    tuple[pd.Series, dict]
+        The reduced group sizes, with the lumped groups replaced by the leftovers
+        group, and the lumping map {label: lumped name}. The map is empty when no
+        group was lumped. The input Series is not modified.
+    """
+    if combine_min_nan_groups is True:
+        min_groups_idx = group_sizes < min_group_size
+    elif combine_min_nan_groups == 'force':
+        min_groups_idx = (group_sizes < min_group_size) | (group_sizes.index.isna())
+    else:
+        min_groups_idx = (group_sizes < min_group_size) & (~group_sizes.index.isna())
+
+    min_groups_sum = group_sizes.loc[min_groups_idx].sum()
+
+    if (
+        min_groups_sum > 0
+        and min_groups_idx.sum() > 1
+        and not min_groups_idx.loc[~min_groups_idx.index.isna()].all()
+    ):
+        if isinstance(min_group_name, str):
+            lumped_name = min_group_name
+        else:
+            lumped_name = '_'.join(
+                [
+                    str(idx)
+                    for idx in group_sizes.loc[min_groups_idx].index.astype(str).sort_values()
+                ]
+            )
+        lumping_map = dict.fromkeys(group_sizes.loc[min_groups_idx].index.tolist(), lumped_name)
+
+        if not min_groups_idx.all():
+            group_sizes = group_sizes.loc[~min_groups_idx]
+            group_sizes[lumped_name] = min_groups_sum
+
+        return group_sizes, lumping_map
+
+    return group_sizes, {}
+
+
 @dataclass
 class EncoderTags(Tags):
     """Custom Tags for encoders."""
