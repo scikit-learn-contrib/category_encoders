@@ -74,7 +74,8 @@ To use:
     X_cleaned = encoder.transform(X_dirty)
 
 All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. If
-the cols parameter isn't passed, every non-numeric column will be converted. See below for detailed documentation
+the cols parameter isn't passed, every non-numeric column will be converted. See below for detailed documentation.
+The ways in which this library's conventions differ from scikit-learn's are described in :doc:`conventions_vs_sklearn`.
 
 Known issues:
 -------------
@@ -109,6 +110,7 @@ Contents:
    binary
    catboost
    clone_contract
+   conventions_vs_sklearn
    count
    count_target
    glmm
