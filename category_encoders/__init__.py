@@ -11,6 +11,7 @@ from category_encoders.basen import BaseNEncoder
 from category_encoders.binary import BinaryEncoder
 from category_encoders.cat_boost import CatBoostEncoder
 from category_encoders.count import CountEncoder
+from category_encoders.count_target import CountTargetEncoder
 from category_encoders.glmm import GLMMEncoder
 from category_encoders.gray import GrayEncoder
 from category_encoders.hashing import HashingEncoder
@@ -37,6 +38,7 @@ __all__ = [
     'BinaryEncoder',
     'GrayEncoder',
     'CountEncoder',
+    'CountTargetEncoder',
     'HashingEncoder',
     'HelmertEncoder',
     'OneHotEncoder',
