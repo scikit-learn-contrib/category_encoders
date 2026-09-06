@@ -235,8 +235,6 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         Otherwise, the classes are assumed to have no true order and integers are selected
         at random.
         """
-        return_nan_series = pd.Series(data=[np.nan], index=[-2])
-
         X = X_in
 
         if cols is None:
@@ -247,70 +245,103 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             for switch in mapping:
                 column = switch.get('col')
                 col_mapping = switch['mapping']
-
-                # Convert to object to accept np.nan (dtype string doesn't)
-                # fillna changes None and pd.NA to np.nan
-                try:
-                    with pd.option_context('future.no_silent_downcasting', True):
-                        X[column] = X[column].astype('object').fillna(np.nan).map(col_mapping)
-                except pd._config.config.OptionError:  # old pandas versions
-                    X[column] = X[column].astype('object').fillna(np.nan).map(col_mapping)
-                if util.is_category(X[column].dtype):
-                    nan_identity = col_mapping.loc[col_mapping.index.isna()].array[0]
-                    X[column] = X[column].cat.add_categories(nan_identity)
-                    X[column] = X[column].fillna(nan_identity)
-                try:
-                    X[column] = X[column].astype(int)
-                except ValueError:
-                    X[column] = X[column].astype(float)
-
-                if handle_unknown == 'value':
-                    X[column] = X[column].fillna(-1)
-                elif handle_unknown == 'error':
-                    missing = X[column].isna()
-                    if any(missing):
-                        raise ValueError(f'Unexpected categories found in column {column}')
-
-                if handle_missing == 'return_nan':
-                    X[column] = X[column].map(return_nan_series).where(X[column] == -2, X[column])
-
+                X[column] = OrdinalEncoder._map_column(X[column], col_mapping)
+                X[column] = OrdinalEncoder._apply_unknown_policy(X[column], column, handle_unknown)
+                X[column] = OrdinalEncoder._apply_missing_policy(X[column], handle_missing)
         else:
             mapping_out = []
             for col in cols:
-                nan_identity = np.nan
-                categories = X[col].unique()
-                # make nan last category
-                if pd.isna(categories).any():
-                    categories = [c for c in categories if not pd.isna(c)] + [nan_identity]
-                else:
-                    categories = list(categories)
-                if util.is_category(X[col].dtype):
-                    # Avoid using pandas category dtype meta-data if possible, see #235, #238.
-                    if X[col].dtype.ordered:
-                        category_set = set(
-                            categories
-                        )  # convert to set for faster membership checks c.f. #407
-                        categories = [c for c in X[col].dtype.categories if c in category_set]
-                    if X[col].isna().any():
-                        categories += [np.nan]
-
-                index = pd.Series(categories).fillna(nan_identity).unique()
-
-                data = pd.Series(
-                    index=index,
-                    data=range(index_start, len(index) + index_start),
-                )
-
-                if handle_missing == 'value' and ~data.index.isna().any():
-                    data.loc[nan_identity] = -2
-                elif handle_missing == 'return_nan':
-                    data.loc[nan_identity] = -2
-
                 mapping_out.append(
-                    {'col': col, 'mapping': data, 'data_type': X[col].dtype},
+                    {
+                        'col': col,
+                        'mapping': OrdinalEncoder._fit_column_mapping(
+                            X[col], handle_missing, index_start
+                        ),
+                        'data_type': X[col].dtype,
+                    }
                 )
 
         return X, mapping_out
+
+    @staticmethod
+    def _map_column(values: pd.Series, col_mapping: pd.Series) -> pd.Series:
+        """Map one column through its fitted category-to-code mapping."""
+        # Convert to object to accept np.nan (dtype string doesn't)
+        # fillna changes None and pd.NA to np.nan
+        try:
+            with pd.option_context('future.no_silent_downcasting', True):
+                values = values.astype('object').fillna(np.nan).map(col_mapping)
+        except pd._config.config.OptionError:  # old pandas versions
+            values = values.astype('object').fillna(np.nan).map(col_mapping)
+        if util.is_category(values.dtype):
+            nan_identity = col_mapping.loc[col_mapping.index.isna()].array[0]
+            values = values.cat.add_categories(nan_identity)
+            values = values.fillna(nan_identity)
+        try:
+            values = values.astype(int)
+        except ValueError:
+            values = values.astype(float)
+        return values
+
+    @staticmethod
+    def _apply_unknown_policy(values: pd.Series, column: str, handle_unknown: str) -> pd.Series:
+        """Resolve unseen categories after mapping: impute -1 or raise."""
+        if handle_unknown == 'value':
+            return values.fillna(-1)
+        if handle_unknown == 'error':
+            missing = values.isna()
+            if any(missing):
+                raise ValueError(f'Unexpected categories found in column {column}')
+        return values
+
+    @staticmethod
+    def _apply_missing_policy(values: pd.Series, handle_missing: str) -> pd.Series:
+        """Map the -2 missing sentinel back to NaN when handle_missing is 'return_nan'."""
+        if handle_missing != 'return_nan':
+            return values
+        return_nan_series = pd.Series(data=[np.nan], index=[-2])
+        return values.map(return_nan_series).where(values == -2, values)
+
+    @staticmethod
+    def _get_categories(values: pd.Series) -> list:
+        """Collect the unique categories of one column, NaN last."""
+        nan_identity = np.nan
+        categories = values.unique()
+        # make nan last category
+        if pd.isna(categories).any():
+            categories = [c for c in categories if not pd.isna(c)] + [nan_identity]
+        else:
+            categories = list(categories)
+        if util.is_category(values.dtype):
+            # Avoid using pandas category dtype meta-data if possible, see #235, #238.
+            if values.dtype.ordered:
+                category_set = set(
+                    categories
+                )  # convert to set for faster membership checks c.f. #407
+                categories = [c for c in values.dtype.categories if c in category_set]
+            if values.isna().any():
+                categories += [np.nan]
+        return categories
+
+    @staticmethod
+    def _fit_column_mapping(values: pd.Series, handle_missing: str, index_start: int) -> pd.Series:
+        """Build the category-to-code mapping of one column from the fit data."""
+        nan_identity = np.nan
+        categories = OrdinalEncoder._get_categories(values)
+
+        index = pd.Series(categories).fillna(nan_identity).unique()
+
+        data = pd.Series(
+            index=index,
+            data=range(index_start, len(index) + index_start),
+        )
+
+        if handle_missing == 'value' and ~data.index.isna().any():
+            data.loc[nan_identity] = -2
+        elif handle_missing == 'return_nan':
+            data.loc[nan_identity] = -2
+
+        return data
 
     def _validate_supplied_mapping(
         self, supplied_mapping: list[dict[str, str | dict | pd.Series]]
