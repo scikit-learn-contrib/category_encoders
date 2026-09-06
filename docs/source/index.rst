@@ -106,6 +106,7 @@ Contents:
    basen
    binary
    catboost
+   clone_contract
    count
    glmm
    gray
