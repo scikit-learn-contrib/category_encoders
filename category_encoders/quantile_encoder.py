@@ -49,6 +49,13 @@ class QuantileEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
         options are 'error', 'return_nan' and 'value', defaults to 'value',
         which returns the target quantile.
 
+    Notes
+    -----
+    Columns in which every category is unique (id-like columns) are not
+    encoded with their own category statistics: all their categories are
+    encoded with the prior quantile instead, which prevents overfitting on
+    identifier-like columns.
+
     Example
     -------
     >>> from category_encoders import *
@@ -169,6 +176,10 @@ class QuantileEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
                 stats['count'] + self.m
             )
 
+            # Ignore unique columns. This helps to prevent overfitting on id-like columns
+            if len(stats) == len(y):
+                estimate[:] = prior
+
             if self.handle_unknown == 'return_nan':
                 estimate.loc[-1] = np.nan
             elif self.handle_unknown == 'value':
@@ -232,6 +243,13 @@ class SummaryEncoder(BaseEstimator):
     handle_unknown: str
         options are 'error', 'return_nan' and 'value', defaults to 'value',
         which returns the target quantile.
+
+    Notes
+    -----
+    Each quantile is encoded by an underlying QuantileEncoder, so columns in
+    which every category is unique (id-like columns) are encoded with the
+    prior quantile at every quantile, which prevents overfitting on
+    identifier-like columns.
 
     Example
     -------
