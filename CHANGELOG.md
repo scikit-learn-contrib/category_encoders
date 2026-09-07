@@ -1,11 +1,13 @@
-unreleased
-==========
+v.2.11.0
+========
 
 * Docs: Fixed issue#400 - ``OneHotEncoder``'s ``handle_missing='value'`` docstring wrongly
   claimed missing values are zero-filled; corrected it to describe the actual (and, per
   ``test_missing_values``, intended library-wide) behavior of treating a missing value seen
   during fit as its own category, same as ``MultiHotEncoder``'s existing ``value``/``ignore``
   split. No behavior change: the existing ``ignore`` option already zero-fills missing values.
+* Docs: Added a documentation page on how category_encoders differs from
+  scikit-learn conventions (issue#480).
 * Feat: Added ``handle_missing='ignore'`` to ``RankHotEncoder``, matching the option already
   available on ``OneHotEncoder`` and ``MultiHotEncoder`` (issue#400's RankHotEncoder gap).
   Zero-fills a missing value at both fit and transform time, without adding an extra
@@ -17,6 +19,29 @@ unreleased
   emit one WOE-style column, multiclass targets one column per class).
   Classification-only for now; a binning-based regression variant is planned
   as a follow-up.
+* Feat: Added ``MultiHotEncoder``, an unsupervised encoder for delimiter-separated
+  multi-value cells (e.g. ``'mathematics|physics'``): every distinct item seen at
+  fit gets one binary column, with configurable ``delimiter`` and the usual
+  ``handle_unknown``/``handle_missing`` support (issue#161).
+* Feat: Added ``composite_cols`` on supervised encoders (Target, MEstimate, WOE,
+  JamesStein, CatBoost, GLMM, LeaveOneOut, Quantile): joint ("composite") target
+  encoding of column groups passed as tuples, learning statistics over
+  combinations rather than per column (issue#429). A new ``keep_components``
+  flag controls whether component columns are kept alongside the output.
+* Feat: Generalized ``min_group_size``/``min_group_name`` rare-category lumping
+  from ``CountEncoder`` to every encoder derived from ``BaseEncoder``; small
+  groups are merged before the encoder's own statistics are computed (issue#279).
+* Feat: ``handle_unknown``/``handle_missing`` now accept callables and integers
+  across the supervised and ordinal encoders: a callable receives the
+  unknown/missing value and returns the encoding to use, an integer assigns a
+  dedicated code (issues #283, #344). The ad-hoc ``-1``/``-2`` codes are now
+  shared sentinel constants and mapping finalization is centralized in one helper.
+* Perf: ``OneHotEncoder.transform``'s dummy expansion now assembles the output
+  with a single allocation instead of a per-column accumulator: measured peak
+  memory on a 100k×10×20 frame dropped 626 → 337 MB (−46%) (issue#362). Repro
+  script: ``benchmarks/repro-362.py``.
+* Perf: Removed redundant input copies from the shared ordinal preprocessing
+  passes used by WOE and OneHotEncoder (issues #364; PRs #503, #518).
 * Fix: encoders fitted on a DataFrame now accept arraylike input at ``transform``
   (e.g. the numpy array emitted by the previous step of a scikit-learn pipeline):
   the fitted column names are re-attached positionally and object/category dtypes
@@ -33,6 +58,13 @@ unreleased
   Previously it inherited the positional base-N decoder from ``BaseNEncoder``,
   which cannot invert a Gray code (consecutive code words differ by a single
   bit and are not positional), so it returned the wrong categories.
+* Fix: Categorical missing values in ``CatBoostEncoder`` and ``RankHotEncoder``
+  are now handled consistently instead of producing degenerate encodings.
+* Fix: ``QuantileEncoder`` collapses singleton (unique-value) levels to the prior
+  instead of emitting degenerate quantile statistics (issue#327).
+* Fix: Encoders used inside scikit-learn CV without ``fit`` now raise an
+  informative ``NotFittedError`` naming the encoder instead of an opaque
+  ``AttributeError`` (issue#232 follow-up).
 * Change: Removed direct dependency on ``patsy``. The four contrast-coding
   encoders (Polynomial, Helmert, BackwardDifference, Sum) now build their
   contrast matrices in-tree.
