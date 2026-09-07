@@ -1,4 +1,7 @@
+
+
 """Tests for the Ordinal encoder."""
+import warnings
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
@@ -441,3 +444,64 @@ class TestOrdinalEncoder(TestCase):
             pd.testing.assert_series_equal(
                 actual_valid_mapping[idx]['mapping'], expected_valid_mapping[idx]['mapping']
             )
+
+
+class TestOrdinalMutationHardening(TestCase):
+    """Targeted tests for survivors of the mutation-testing campaign in ordinal."""
+
+    def test_inverse_transform_round_trip_emits_no_warning_on_clean_data(self):
+        """A clean fit/transform/inverse round trip must not emit any UserWarning.
+
+        Kills ordinal.xǁOrdinalEncoderǁinverse_transform__mutmut_29 (UNKNOWN_SENTINEL
+        equality flipped, warning on every clean row).
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c'], 'num': [1.0, 2.0, 3.0]})
+        encoder = encoders.OrdinalEncoder(cols=['x', 'num'])
+        encoder.fit(df)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter('always')
+            restored = encoder.inverse_transform(encoder.transform(df))
+        self.assertEqual(
+            [], [str(w.message) for w in caught if issubclass(w.category, UserWarning)]
+        )
+        pd.testing.assert_frame_equal(df, restored)
+
+    def test_inverse_transform_accepts_arraylike_input(self):
+        """inverse_transform accepts the ndarray produced by return_df=False transforms.
+
+        Kills ordinal.xǁOrdinalEncoderǁinverse_transform__mutmut_8 (columns=None for
+        arraylike input).
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c'], 'num': [1.5, 2.5, 3.5]})
+        encoder = encoders.OrdinalEncoder(cols=['x', 'num'])
+        encoder.fit(df)
+        encoded_array = encoder.transform(df).to_numpy()
+        restored = encoder.inverse_transform(encoded_array)
+        pd.testing.assert_frame_equal(df, restored)
+
+    def test_inverse_transform_does_not_mutate_encoded_input(self):
+        """inverse_transform must not modify the encoded frame it receives.
+
+        Kills the deep-copy mutants of ordinal.xǁOrdinalEncoderǁinverse_transform
+        (mutmut_9/-11/-12/-13).
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c']})
+        encoder = encoders.OrdinalEncoder(cols=['x'])
+        encoder.fit(df)
+        encoded = encoder.transform(df)
+        snapshot = encoded.copy()
+        encoder.inverse_transform(encoded)
+        pd.testing.assert_frame_equal(snapshot, encoded)
+
+    def test_inverse_transform_warns_when_unknown_values_were_imputed(self):
+        """Unknown values imputed by handle_unknown='value' must warn on inverse.
+
+        Pins the warning contract next to the mixed-config guard mutants
+        (ordinal inverse_transform mutmut_37 cluster).
+        """
+        train = pd.DataFrame({'x': ['a', 'b']})
+        encoder = encoders.OrdinalEncoder(handle_unknown='value', handle_missing='return_nan')
+        encoder.fit(train)
+        result = encoder.transform(pd.DataFrame({'x': ['a', 'unseen']}))
+        with self.assertWarns(UserWarning):
+            encoder.inverse_transform(result)

@@ -1,3 +1,9 @@
+[tool.mutmut]
+# Mutation-testing configuration (tests/mutation-hardening).
+# Mutate only the library source and run the full test suite for every mutant.
+source_paths = ["category_encoders"]
+pytest_add_cli_args_test_selection = ["tests"]
+
 [tool.poetry]
 name = "category_encoders"
 version = "2.10.0"

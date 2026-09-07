@@ -4,6 +4,7 @@ import unittest
 import category_encoders as encoders
 import numpy as np
 import pandas as pd
+from sklearn.exceptions import NotFittedError
 
 
 class TestQuantileEncoder(unittest.TestCase):
@@ -160,3 +161,49 @@ class TestSummaryEncoder(unittest.TestCase):
                 quantile_results[self.col].values,
                 summary_results[col_name].values,
             )
+
+
+class TestSummaryEncoderHardening(unittest.TestCase):
+    """Hardening tests for SummaryEncoder mutation survivors."""
+
+    def setUp(self):
+        """Shared six-row fixture with three categories and a float target."""
+        self.df = pd.DataFrame({'c': ['a', 'a', 'b', 'b', 'c', 'c']})
+        self.target = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
+
+    def test_fit_transform_matches_fit_then_transform_with_target(self):
+        """fit_transform must pass the target through to transform.
+
+        Mutant in category_encoders/quantile_encoder.py::SummaryEncoder
+        fit_transform (transform(X, None)) drops y, silently producing
+        unsupervised output instead of the fit-then-transform result.
+        """
+        fit_transform_out = encoders.SummaryEncoder(quantiles=[0.25, 0.75]).fit_transform(
+            self.df, self.target
+        )
+        encoder = encoders.SummaryEncoder(quantiles=[0.25, 0.75])
+        encoder.fit(self.df, self.target)
+        transform_out = encoder.transform(self.df, self.target)
+        pd.testing.assert_frame_equal(fit_transform_out, transform_out)
+
+    def test_get_feature_names_in_requires_fit(self):
+        """get_feature_names_in before fit raises NotFittedError.
+
+        Mutant dropping the getattr default in get_feature_names_in turns
+        the documented NotFittedError into a bare AttributeError.
+        """
+        encoder = encoders.SummaryEncoder(quantiles=[0.25, 0.75])
+        with self.assertRaises(NotFittedError):
+            encoder.get_feature_names_in()
+
+    def test_feature_names_out_is_object_array(self):
+        """Feature names come back as an object-dtype numpy array.
+
+        Mutant np.array(out_feats, dtype=object) -> dtype=None returns a
+        '<U...' unicode array instead of object dtype.
+        """
+        encoder = encoders.SummaryEncoder(quantiles=[0.25, 0.75]).fit(self.df, self.target)
+        names = encoder.get_feature_names_out()
+        self.assertIsInstance(names, np.ndarray)
+        self.assertEqual(names.dtype, object)
+
