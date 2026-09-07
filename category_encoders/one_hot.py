@@ -38,11 +38,14 @@ class OneHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         'value' will encode a new value as 0 in every dummy column.
         'indicator' will add an additional dummy column (in both training and test data).
     handle_missing: str
-        options are 'error', 'return_nan', 'value', and 'indicator'. The default is 'value'.
+        options are 'error', 'return_nan', 'value', 'indicator', and 'ignore'. The default is
+        'value'.
 
         'error' will raise a `ValueError` if a missing value is encountered.
         'return_nan' will encode a missing value as `np.nan` in every dummy column.
-        'value' will encode a missing value as 0 in every dummy column.
+        'value' will treat a missing value seen during fit as its own category, adding a dummy
+        column for it if the training data contained missing values (matching the treatment of
+        any other category). See 'ignore' below to zero-fill missing values instead.
         'indicator' will treat missingness as its own category, adding an additional dummy column
         (whether there are missing values in the training set or not).
         'ignore' will encode missing values as 0 in every dummy column,

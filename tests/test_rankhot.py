@@ -131,6 +131,42 @@ class TestRankHotEncoder(TestCase):
             self.assertEqual(m1['col'], m2['col'])
             pd.testing.assert_series_equal(m1['mapping'], m2['mapping'])
 
+    def test_handle_missing_ignore(self):
+        """handle_missing='ignore' should zero-fill a missing value, adding no rank column."""
+        train = pd.DataFrame({'grade': ['A', 'B', 'C', np.nan]})
+
+        with_missing = encoders.RankHotEncoder(handle_missing='ignore').fit_transform(train)
+        without_missing = encoders.RankHotEncoder(handle_missing='ignore').fit_transform(
+            train.dropna()
+        )
+
+        self.assertListEqual(list(with_missing.columns), list(without_missing.columns))
+        self.assertTrue((with_missing.iloc[3] == 0).all())
+
+    def test_handle_missing_ignore_inverse_transform(self):
+        """A missing value zero-filled by 'ignore' round-trips through inverse_transform."""
+        train = pd.DataFrame({'grade': ['A', 'B', 'C', np.nan]})
+        enc = encoders.RankHotEncoder(handle_missing='ignore')
+        encoded = enc.fit_transform(train)
+        decoded = enc.inverse_transform(encoded)
+
+        self.assertTrue(pd.isna(decoded['grade'].iloc[3]))
+        pd.testing.assert_series_equal(
+            decoded['grade'].iloc[:3], train['grade'].iloc[:3], check_dtype=False
+        )
+
+    def test_handle_missing_value_still_gets_own_column(self):
+        """handle_missing='value' (default) still gives a fit-time missing its own category."""
+        train = pd.DataFrame({'grade': ['A', 'B', 'C', np.nan]})
+
+        with_missing = encoders.RankHotEncoder(handle_missing='value').fit_transform(train)
+        without_missing = encoders.RankHotEncoder(handle_missing='value').fit_transform(
+            train.dropna()
+        )
+
+        self.assertEqual(len(with_missing.columns), len(without_missing.columns) + 1)
+
+
 class TestRankHotHardening(TestCase):
     """Hardening tests for RankHotEncoder mutation survivors."""
 
