@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.one_hot &mdash; Category Encoders 2.10.0 documentation</title>
+  <title>category_encoders.one_hot &mdash; Category Encoders 2.11.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -44,7 +44,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../basen.html">BaseN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../binary.html">Binary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../count_target.html">Count Target Encoding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glmm.html">Generalized Linear Mixed Model Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
@@ -52,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../leaveoneout.html">Leave One Out</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../multihot.html">Multi-Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../onehot.html">One Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../polynomial.html">Polynomial Coding</a></li>
@@ -131,11 +135,14 @@
 <span class="sd">        &#39;value&#39; will encode a new value as 0 in every dummy column.</span>
 <span class="sd">        &#39;indicator&#39; will add an additional dummy column (in both training and test data).</span>
 <span class="sd">    handle_missing: str</span>
-<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;.</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, &#39;indicator&#39;, and &#39;ignore&#39;. The default is</span>
+<span class="sd">        &#39;value&#39;.</span>
 
 <span class="sd">        &#39;error&#39; will raise a `ValueError` if a missing value is encountered.</span>
 <span class="sd">        &#39;return_nan&#39; will encode a missing value as `np.nan` in every dummy column.</span>
-<span class="sd">        &#39;value&#39; will encode a missing value as 0 in every dummy column.</span>
+<span class="sd">        &#39;value&#39; will treat a missing value seen during fit as its own category, adding a dummy</span>
+<span class="sd">        column for it if the training data contained missing values (matching the treatment of</span>
+<span class="sd">        any other category). See &#39;ignore&#39; below to zero-fill missing values instead.</span>
 <span class="sd">        &#39;indicator&#39; will treat missingness as its own category, adding an additional dummy column</span>
 <span class="sd">        (whether there are missing values in the training set or not).</span>
 <span class="sd">        &#39;ignore&#39; will encode missing values as 0 in every dummy column,</span>
@@ -211,6 +218,9 @@
         <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
         <span class="n">handle_unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
         <span class="n">use_cat_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">min_group_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">combine_min_nan_groups</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
@@ -219,6 +229,9 @@
             <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
             <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
             <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+            <span class="n">min_group_size</span><span class="o">=</span><span class="n">min_group_size</span><span class="p">,</span>
+            <span class="n">min_group_name</span><span class="o">=</span><span class="n">min_group_name</span><span class="p">,</span>
+            <span class="n">combine_min_nan_groups</span><span class="o">=</span><span class="n">combine_min_nan_groups</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="kc">None</span>
@@ -297,7 +310,7 @@
                     <span class="n">found_column_counts</span><span class="p">[</span><span class="n">n_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">found_count</span> <span class="o">+</span> <span class="mi">1</span>
                     <span class="n">n_col_name</span> <span class="o">+=</span> <span class="s1">&#39;#&#39;</span> <span class="o">*</span> <span class="n">found_count</span>
                 <span class="n">new_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_col_name</span><span class="p">)</span>
-                <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">UNKNOWN_SENTINEL</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">append_nan_to_index</span><span class="p">:</span>
                 <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">append_nan_to_index</span><span class="p">)</span>
@@ -306,14 +319,14 @@
             <span class="n">base_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">base_matrix</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">new_columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">util</span><span class="o">.</span><span class="n">UNKNOWN_SENTINEL</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">util</span><span class="o">.</span><span class="n">UNKNOWN_SENTINEL</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">]:</span>
-                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">base_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
             <span class="n">mapping</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;col&#39;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span><span class="p">:</span> <span class="n">base_df</span><span class="p">})</span>
 
@@ -321,10 +334,19 @@
 
 
     <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="c1"># X is the private copy made by the transformer API (the #503 contract):</span>
+        <span class="c1"># ordinal-encode it in place instead of stacking another wrapper copy.</span>
+        <span class="n">OrdinalEncoder</span><span class="o">.</span><span class="n">ordinal_encoding</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span>
+            <span class="n">mapping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span>
+            <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">handle_unknown</span><span class="p">,</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">,</span>
+            <span class="n">index_start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">index_start</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="n">util</span><span class="o">.</span><span class="n">UNKNOWN_SENTINEL</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns to be encoded cannot contain new values&#39;</span><span class="p">)</span>
 
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
@@ -398,22 +420,32 @@
 <span class="sd">        dummies : DataFrame</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">mapping_by_col</span> <span class="o">=</span> <span class="p">{</span><span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">):</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mapping&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">}</span>
 
-        <span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">missing_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">mapping_by_col</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">X_in</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">missing_cols</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">missing_cols</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">:</span>
-            <span class="n">col</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)</span>
-            <span class="n">mod</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mapping&#39;</span><span class="p">)</span>
+        <span class="c1"># Dummy blocks are built per input column, in input order, so a single</span>
+        <span class="c1"># pd.concat produces the final column layout directly. The previous</span>
+        <span class="c1"># accumulator re-concatenated the growing frame once per column and</span>
+        <span class="c1"># then reindexed, which transiently allocates a multiple of the output</span>
+        <span class="c1"># size and dominates the memory profile of transform on wide or</span>
+        <span class="c1"># high-cardinality inputs (GH #362).</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X_in</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">mapping_by_col</span><span class="p">:</span>
+                <span class="n">mod</span> <span class="o">=</span> <span class="n">mapping_by_col</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+                <span class="n">base_df</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">X_in</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span><span class="p">))</span>
+                <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">base_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">X_in</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X_in</span><span class="p">[[</span><span class="n">col</span><span class="p">]])</span>
 
-            <span class="n">base_df</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span>
-            <span class="n">base_df</span> <span class="o">=</span> <span class="n">base_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-            <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">base_df</span><span class="p">,</span> <span class="n">X</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-            <span class="n">old_column_index</span> <span class="o">=</span> <span class="n">cols</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
-            <span class="n">cols</span><span class="p">[</span><span class="n">old_column_index</span> <span class="p">:</span> <span class="n">old_column_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">columns</span>
-
-        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">:</span>
+            <span class="c1"># A dummy column name collided with another output column;</span>
+            <span class="c1"># the final reindex this replaces raised the same error.</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cannot reindex on an axis with duplicate labels&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">X</span></div>
 

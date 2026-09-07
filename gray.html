@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gray &mdash; Category Encoders 2.10.0 documentation</title>
+  <title>Gray &mdash; Category Encoders 2.11.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=67920a36"></script>
+      <script src="_static/documentation_options.js?v=1647406f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -47,7 +47,10 @@
 <li class="toctree-l1"><a class="reference internal" href="basen.html">BaseN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="binary.html">Binary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_target.html">Count Target Encoding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Gray</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#category_encoders.gray.GrayEncoder"><code class="docutils literal notranslate"><span class="pre">GrayEncoder</span></code></a><ul>
@@ -80,6 +83,7 @@
 <li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="leaveoneout.html">Leave One Out</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multihot.html">Multi-Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onehot.html">One Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="polynomial.html">Polynomial Coding</a></li>
@@ -120,7 +124,7 @@
 <h1>Gray<a class="headerlink" href="#gray" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="category_encoders.gray.GrayEncoder">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">category_encoders.gray.</span></span><span class="sig-name descname"><span class="pre">GrayEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_invariant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_unknown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/gray.html#GrayEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.gray.GrayEncoder" title="Link to this definition"></a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">category_encoders.gray.</span></span><span class="sig-name descname"><span class="pre">GrayEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mapping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_invariant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_unknown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_group_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_group_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combine_min_nan_groups</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/gray.html#GrayEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.gray.GrayEncoder" title="Link to this definition"></a></dt>
 <dd><p>Gray encoding for categorical variables.</p>
 <p>Gray encoding is a form of binary encoding where consecutive values only differ by a single bit.
 Hence, gray encoding only makes sense for ordinal features.
@@ -155,7 +159,7 @@ has nan values. This can cause unexpected changes in dimension in some cases.</p
 <td><p>Basen encoding encodes the integers as basen code with one column per digit.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.gray.GrayEncoder.basen_to_integer" title="category_encoders.gray.GrayEncoder.basen_to_integer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">basen_to_integer</span></code></a>(X, cols, base)</p></td>
-<td><p>Convert basen code as integers.</p></td>
+<td><p>Convert Gray-encoded columns back to their ordinal integers.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.gray.GrayEncoder.calc_required_digits" title="category_encoders.gray.GrayEncoder.calc_required_digits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_required_digits</span></code></a>(values)</p></td>
 <td><p>Figure out how many digits we need to represent the classes present.</p></td>
@@ -248,16 +252,23 @@ Article 25 (October 2017)</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="category_encoders.gray.GrayEncoder.basen_to_integer">
-<span class="sig-name descname"><span class="pre">basen_to_integer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.gray.GrayEncoder.basen_to_integer" title="Link to this definition"></a></dt>
-<dd><p>Convert basen code as integers.</p>
+<span class="sig-name descname"><span class="pre">basen_to_integer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/gray.html#GrayEncoder.basen_to_integer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.gray.GrayEncoder.basen_to_integer" title="Link to this definition"></a></dt>
+<dd><p>Convert Gray-encoded columns back to their ordinal integers.</p>
+<p>The positional base-N decoding used by <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseNEncoder</span></code> cannot invert
+a Gray code: consecutive code words differ only by a single bit and do not
+represent a positional value, so the inherited decoder recovers the wrong
+category. Instead, every Gray code word is looked up in the fitted mapping
+to recover the original ordinal value, mirroring the table lookup used in
+the forward transform.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>X</strong><span class="classifier">DataFrame</span></dt><dd><p>encoded data</p>
 </dd>
-<dt><strong>cols</strong><span class="classifier">list-like</span></dt><dd><p>Column names in the DataFrame that be encoded</p>
+<dt><strong>cols</strong><span class="classifier">list-like</span></dt><dd><p>Column names in the DataFrame that were encoded</p>
 </dd>
-<dt><strong>base</strong><span class="classifier">int</span></dt><dd><p>The base of transform</p>
+<dt><strong>base</strong><span class="classifier">int</span></dt><dd><p>The base of the transform. Unused, kept for signature compatibility
+with <code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseNEncoder.basen_to_integer()</span></code>.</p>
 </dd>
 </dl>
 </dd>
@@ -646,6 +657,12 @@ parameters and not others.</p>
 </dl>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If the encoder was fitted on a DataFrame, arraylike input (e.g. the numpy
+array emitted by the previous step of a scikit-learn pipeline) is accepted:
+the fitted column names are re-attached positionally, so the result matches
+transforming the equivalent DataFrame (GH #406). A DataFrame may additionally
+carry extra pass-through columns beyond the encoded ones (GH #367).</p>
 </dd></dl>
 
 </dd></dl>

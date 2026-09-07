@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>category_encoders.multi_hot &mdash; Category Encoders 2.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Category Encoders
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../backward_difference.html">Backward Difference Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../basen.html">BaseN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../binary.html">Binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../count_target.html">Count Target Encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gray.html">Gray</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../helmert.html">Helmert Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../leaveoneout.html">Leave One Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../multihot.html">Multi-Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../onehot.html">One Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ordinal.html">Ordinal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../polynomial.html">Polynomial Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quantile.html">Quantile Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rankhot.html">RankHotEncoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sum.html">Sum Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../summary.html">Summary Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../targetencoder.html">Target Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../woe.html">Weight of Evidence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wrapper.html">Wrappers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Category Encoders</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">category_encoders.multi_hot</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for category_encoders.multi_hot</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Multi-hot encoding of delimiter-separated categorical items.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Obvious&#39;</span>
+
+
+<div class="viewcode-block" id="MultiHotEncoder">
+<a class="viewcode-back" href="../../multihot.html#category_encoders.multi_hot.MultiHotEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">MultiHotEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">UnsupervisedTransformerMixin</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multi-hot encoding for cells that contain several delimiter-separated items.</span>
+
+<span class="sd">    Where :class:`OneHotEncoder` treats each cell as one atomic category,</span>
+<span class="sd">    MultiHotEncoder splits the cell on a delimiter and activates one binary</span>
+<span class="sd">    column per item, so that ``&#39;mathematics|physics&#39;`` lights both the</span>
+<span class="sd">    mathematics and the physics column. The set of items is learned at fit</span>
+<span class="sd">    time; the number of output columns is fixed by the fit, so</span>
+<span class="sd">    ``get_feature_names_out`` always matches the transform output.</span>
+
+<span class="sd">    Items are the delimiter-split fragments of a cell with surrounding</span>
+<span class="sd">    whitespace stripped; fragments that are empty after stripping are dropped.</span>
+<span class="sd">    This means a cell such as ``&#39;a | b&#39;``, ``&#39;a||b&#39;`` or ``&#39;a|&#39;`` contributes</span>
+<span class="sd">    the items ``a`` and ``b`` (or, for the last two, only ``a``), and a cell</span>
+<span class="sd">    that is empty or consists solely of the delimiter contributes no items.</span>
+<span class="sd">    Items cannot themselves contain the delimiter: a cell such as</span>
+<span class="sd">    ``&#39;Smith, John&#39;`` with the default delimiter is stored as two items, so</span>
+<span class="sd">    choose a delimiter that does not occur inside the items.</span>
+
+<span class="sd">    The encoding is unsupervised and has no ``inverse_transform``: a multi-hot</span>
+<span class="sd">    row does not uniquely determine the original cell.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    verbose: int</span>
+<span class="sd">        integer indicating verbosity of the output. 0 for none.</span>
+<span class="sd">    cols: list</span>
+<span class="sd">        a list of columns to encode, if None, all string and categorical columns</span>
+<span class="sd">        will be encoded.</span>
+<span class="sd">    drop_invariant: bool</span>
+<span class="sd">        boolean for whether to drop columns with 0 variance.</span>
+<span class="sd">    return_df: bool</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform</span>
+<span class="sd">        (otherwise it will be a numpy array).</span>
+<span class="sd">    handle_unknown: str</span>
+<span class="sd">        how to handle items that were not seen at fit time. Options are</span>
+<span class="sd">        &#39;error&#39;, &#39;return_nan&#39;, &#39;value&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;.</span>
+
+<span class="sd">        &#39;error&#39; will raise a `ValueError` at transform time if an unknown item appears.</span>
+<span class="sd">        &#39;return_nan&#39; will encode a row that contains an unknown item as `np.nan` in</span>
+<span class="sd">        every dummy column of the affected input column.</span>
+<span class="sd">        &#39;value&#39; will ignore unknown items; the known items of the same cell still</span>
+<span class="sd">        activate their columns, so a fully unknown cell becomes all zeros.</span>
+<span class="sd">        &#39;indicator&#39; behaves like &#39;value&#39; and additionally adds one dummy column</span>
+<span class="sd">        per input column (in both training and test data) that is activated</span>
+<span class="sd">        whenever an unknown item appears.</span>
+<span class="sd">    handle_missing: str</span>
+<span class="sd">        how to handle missing values (NaN). Options are &#39;error&#39;, &#39;return_nan&#39;,</span>
+<span class="sd">        &#39;value&#39;, &#39;ignore&#39;, and &#39;indicator&#39;. The default is &#39;value&#39;.</span>
+
+<span class="sd">        &#39;error&#39; will raise a `ValueError` if a missing value is encountered.</span>
+<span class="sd">        &#39;return_nan&#39; will encode a row that contains a missing value as `np.nan`</span>
+<span class="sd">        in every dummy column of the affected input column.</span>
+<span class="sd">        &#39;value&#39; will treat missing values as another valid item at fit time, so</span>
+<span class="sd">        a missing cell activates the missing-item column.</span>
+<span class="sd">        &#39;ignore&#39; will encode missing values as 0 in every dummy column,</span>
+<span class="sd">        NOT adding an additional category.</span>
+<span class="sd">        &#39;indicator&#39; behaves like &#39;ignore&#39; and additionally adds one dummy column</span>
+<span class="sd">        per input column that is activated whenever a value is missing.</span>
+<span class="sd">    delimiter: str</span>
+<span class="sd">        the string that separates multiple items within one cell.</span>
+<span class="sd">        Must be a non-empty string and must not occur inside a single item.</span>
+<span class="sd">    use_cat_names: bool</span>
+<span class="sd">        if True, the seen item values will be included in the encoded column</span>
+<span class="sd">        names (e.g. ``city_paris``); collisions are suffixed with &#39;#&#39;. If False,</span>
+<span class="sd">        columns are named by order of first appearance (e.g. ``city_1``), which</span>
+<span class="sd">        keeps the names stable under category relabeling.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">    &gt;&gt;&gt; from category_encoders import MultiHotEncoder</span>
+<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame({&#39;topic&#39;: [&#39;math|physics&#39;, &#39;math&#39;, &#39;physics|art&#39;, &#39;art&#39;]})</span>
+<span class="sd">    &gt;&gt;&gt; MultiHotEncoder(use_cat_names=True).fit_transform(X)</span>
+<span class="sd">       topic_math  topic_physics  topic_art</span>
+<span class="sd">    0           1              1          0</span>
+<span class="sd">    1           1              0          0</span>
+<span class="sd">    2           0              1          1</span>
+<span class="sd">    3           0              0          1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">prefit_ordinal</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_N_UNIQUE</span>
+    <span class="n">_VALID_HANDLE_MISSING</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="s1">&#39;indicator&#39;</span><span class="p">)</span>
+    <span class="n">_VALID_HANDLE_UNKNOWN</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;indicator&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_invariant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_df</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span>
+        <span class="n">use_cat_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span>
+            <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span>
+            <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">=</span> <span class="n">delimiter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_cat_names</span> <span class="o">=</span> <span class="n">use_cat_names</span>
+
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;delimiter must be a non-empty string, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="si">!r}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_column</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_fit_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Learn the item slots of one column in order of first appearance.&quot;&quot;&quot;</span>
+        <span class="c1"># track distinct items; the nan slot (when handle_missing=&#39;value&#39;) keeps</span>
+        <span class="c1"># its position among the items by order of first appearance</span>
+        <span class="n">slots</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">nan_slot_seen</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">cell</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">nan_slot_seen</span><span class="p">:</span>
+                    <span class="n">nan_slot_seen</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">slots</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">True</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_cell</span><span class="p">(</span><span class="n">cell</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+                    <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                    <span class="n">slots</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="kc">False</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+
+        <span class="n">counts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">item_pos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">nan_value_pos</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">is_nan_slot</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">slots</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_nan_slot</span><span class="p">:</span>
+                <span class="n">nan_value_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+                <span class="n">suffix</span> <span class="o">=</span> <span class="s1">&#39;nan&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">item_pos</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+                <span class="n">suffix</span> <span class="o">=</span> <span class="n">item</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_name</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">suffix</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">),</span> <span class="n">counts</span><span class="p">))</span>
+
+        <span class="n">unknown_pos</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;indicator&#39;</span><span class="p">:</span>
+            <span class="n">unknown_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_name</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="s1">&#39;-1&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">),</span> <span class="n">counts</span><span class="p">))</span>
+
+        <span class="n">missing_pos</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;indicator&#39;</span><span class="p">:</span>
+            <span class="n">missing_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_name</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="s1">&#39;-2&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">),</span> <span class="n">counts</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;col&#39;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
+            <span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="n">names</span><span class="p">,</span>
+            <span class="s1">&#39;item_pos&#39;</span><span class="p">:</span> <span class="n">item_pos</span><span class="p">,</span>
+            <span class="s1">&#39;nan_value_pos&#39;</span><span class="p">:</span> <span class="n">nan_value_pos</span><span class="p">,</span>
+            <span class="s1">&#39;unknown_pos&#39;</span><span class="p">:</span> <span class="n">unknown_pos</span><span class="p">,</span>
+            <span class="s1">&#39;missing_pos&#39;</span><span class="p">:</span> <span class="n">missing_pos</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_column_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">counts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build one output column name, deduplicating collisions for item names.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_cat_names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">position</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">counts</span><span class="p">[</span><span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="n">found</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">base</span> <span class="o">+</span> <span class="s1">&#39;#&#39;</span> <span class="o">*</span> <span class="n">found</span>
+
+    <span class="k">def</span> <span class="nf">_split_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Split one cell into its non-empty, whitespace-stripped items.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">item</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span><span class="n">fragment</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delimiter</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">item</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">spec_by_col</span> <span class="o">=</span> <span class="p">{</span><span class="n">switch</span><span class="p">[</span><span class="s1">&#39;col&#39;</span><span class="p">]:</span> <span class="n">switch</span> <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">}</span>
+        <span class="n">absent</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">spec_by_col</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">absent</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Columns to be encoded are missing from the input data: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">absent</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+
+        <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="n">switch</span> <span class="o">=</span> <span class="n">spec_by_col</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">switch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">position</span> <span class="p">:</span> <span class="n">position</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_encode_column</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="n">position</span><span class="p">],</span> <span class="n">switch</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_encode_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">switch</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the binary block for one column, positionally (index-safe).&quot;&quot;&quot;</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">switch</span><span class="p">[</span><span class="s1">&#39;col&#39;</span><span class="p">]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">switch</span><span class="p">[</span><span class="s1">&#39;columns&#39;</span><span class="p">]</span>
+        <span class="n">item_pos</span> <span class="o">=</span> <span class="n">switch</span><span class="p">[</span><span class="s1">&#39;item_pos&#39;</span><span class="p">]</span>
+        <span class="n">nan_value_pos</span> <span class="o">=</span> <span class="n">switch</span><span class="p">[</span><span class="s1">&#39;nan_value_pos&#39;</span><span class="p">]</span>
+        <span class="n">unknown_pos</span> <span class="o">=</span> <span class="n">switch</span><span class="p">[</span><span class="s1">&#39;unknown_pos&#39;</span><span class="p">]</span>
+        <span class="n">missing_pos</span> <span class="o">=</span> <span class="n">switch</span><span class="p">[</span><span class="s1">&#39;missing_pos&#39;</span><span class="p">]</span>
+
+        <span class="n">raw</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+        <span class="n">missing_mask</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+        <span class="n">produces_nan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">raw</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span> <span class="k">if</span> <span class="n">produces_nan</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+        <span class="n">missing_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">missing_mask</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">missing_idx</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;indicator&#39;</span> <span class="ow">and</span> <span class="n">missing_pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">missing_idx</span><span class="p">,</span> <span class="n">missing_pos</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">missing_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span> <span class="ow">and</span> <span class="n">nan_value_pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">missing_idx</span><span class="p">,</span> <span class="n">nan_value_pos</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1"># &#39;ignore&#39; (and &#39;value&#39; without a fitted missing slot): leave all zeros</span>
+
+        <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="o">~</span><span class="n">missing_mask</span><span class="p">):</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_cell</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="n">row_idx</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">!=</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
+                <span class="n">unknown_items</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">item_pos</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">unknown_items</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s1">&#39;MultiHotEncoder: unknown item(s) </span><span class="si">{</span><span class="n">unknown_items</span><span class="si">!r}</span><span class="s1"> found in &#39;</span>
+                            <span class="sa">f</span><span class="s2">&quot;column </span><span class="si">{</span><span class="n">col</span><span class="si">!r}</span><span class="s2"> at transform time. Use handle_unknown=&#39;value&#39; &quot;</span>
+                            <span class="s1">&#39;or fit on data that covers all items.&#39;</span>
+                        <span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
+                        <span class="n">out</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;indicator&#39;</span> <span class="ow">and</span> <span class="n">unknown_pos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">out</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">unknown_pos</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="n">position</span> <span class="o">=</span> <span class="n">item_pos</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">out</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">values</span><span class="o">.</span><span class="n">index</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

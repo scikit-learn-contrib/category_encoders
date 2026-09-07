@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.james_stein &mdash; Category Encoders 2.10.0 documentation</title>
+  <title>category_encoders.james_stein &mdash; Category Encoders 2.11.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -44,7 +44,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../basen.html">BaseN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../binary.html">Binary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../count_target.html">Count Target Encoding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glmm.html">Generalized Linear Mixed Model Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
@@ -52,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../leaveoneout.html">Leave One Out</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../multihot.html">Multi-Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../onehot.html">One Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../polynomial.html">Polynomial Coding</a></li>
@@ -168,12 +172,17 @@
 <span class="sd">    return_df: bool</span>
 <span class="sd">        boolean for whether to return a pandas DataFrame from transform</span>
 <span class="sd">        (otherwise it will be a numpy array).</span>
-<span class="sd">    handle_missing: str</span>
+<span class="sd">    handle_missing: str, int, float or callable</span>
 <span class="sd">        options are &#39;return_nan&#39;, &#39;error&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
-<span class="sd">        which returns the prior probability.</span>
-<span class="sd">    handle_unknown: str</span>
+<span class="sd">        which returns the prior probability. A number is used as the encoded value</span>
+<span class="sd">        for missing values that were not seen at fit time, and a callable</span>
+<span class="sd">        fn(value, mapping) is evaluated once per column when the mapping is</span>
+<span class="sd">        finalized during fit.</span>
+<span class="sd">    handle_unknown: str, int, float or callable</span>
 <span class="sd">        options are &#39;return_nan&#39;, &#39;error&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
-<span class="sd">        which returns the prior probability.</span>
+<span class="sd">        which returns the prior probability. A number is used as the encoded value</span>
+<span class="sd">        for unseen categories, and a callable fn(value, mapping) is evaluated</span>
+<span class="sd">        once per column when the mapping is finalized during fit.</span>
 <span class="sd">    model: str</span>
 <span class="sd">        options are &#39;pooled&#39;, &#39;beta&#39;, &#39;binary&#39; and &#39;independent&#39;, defaults to &#39;independent&#39;.</span>
 <span class="sd">    randomized: bool,</span>
@@ -256,6 +265,11 @@
         <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">randomized</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">sigma</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">min_group_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">combine_min_nan_groups</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">composite_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">keep_components</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
@@ -264,6 +278,11 @@
             <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
             <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
             <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+            <span class="n">min_group_size</span><span class="o">=</span><span class="n">min_group_size</span><span class="p">,</span>
+            <span class="n">min_group_name</span><span class="o">=</span><span class="n">min_group_name</span><span class="p">,</span>
+            <span class="n">combine_min_nan_groups</span><span class="o">=</span><span class="n">combine_min_nan_groups</span><span class="p">,</span>
+            <span class="n">composite_cols</span><span class="o">=</span><span class="n">composite_cols</span><span class="p">,</span>
+            <span class="n">keep_components</span><span class="o">=</span><span class="n">keep_components</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
@@ -383,15 +402,9 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="n">global_count</span><span class="p">:</span>
                 <span class="n">estimate</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">prior</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">prior</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">prior</span>
+            <span class="n">estimate</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">finalize_encoding_mapping</span><span class="p">(</span>
+                <span class="n">estimate</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">,</span> <span class="n">prior</span>
+            <span class="p">)</span>
 
             <span class="c1"># Store the estimate for transform() function</span>
             <span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimate</span>
@@ -449,15 +462,10 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="n">global_count</span><span class="p">:</span>
                 <span class="n">estimate</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">prior</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">prior</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">prior</span>
+            <span class="n">estimate</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">finalize_encoding_mapping</span><span class="p">(</span>
+                <span class="n">estimate</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">,</span> <span class="n">prior</span>
+            <span class="p">)</span>
 
             <span class="c1"># Store the estimate for transform() function</span>
             <span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimate</span>
@@ -551,15 +559,9 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">estimate</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">values</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">estimate</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">finalize_encoding_mapping</span><span class="p">(</span>
+                <span class="n">estimate</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="p">)</span>
 
             <span class="c1"># Store the estimate for transform() function</span>
             <span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimate</span>
@@ -592,15 +594,9 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="n">global_count</span><span class="p">:</span>
                 <span class="n">estimate</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">prior</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">prior</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                <span class="n">estimate</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">prior</span>
+            <span class="n">estimate</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">finalize_encoding_mapping</span><span class="p">(</span>
+                <span class="n">estimate</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">,</span> <span class="n">prior</span>
+            <span class="p">)</span>
 
             <span class="c1"># Store the estimate for transform() function</span>
             <span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">estimate</span>

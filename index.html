@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Category Encoders &mdash; Category Encoders 2.10.0 documentation</title>
+  <title>Category Encoders &mdash; Category Encoders 2.11.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=67920a36"></script>
+      <script src="_static/documentation_options.js?v=1647406f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -46,7 +46,10 @@
 <li class="toctree-l1"><a class="reference internal" href="basen.html">BaseN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="binary.html">Binary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_target.html">Count Target Encoding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
@@ -54,6 +57,7 @@
 <li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="leaveoneout.html">Leave One Out</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multihot.html">Multi-Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onehot.html">One Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="polynomial.html">Polynomial Coding</a></li>
@@ -127,6 +131,7 @@ transformers in this library all share a few useful properties:</p>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">BinaryEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">CatBoostEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">CountEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">CountTargetEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">GLMMEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">GrayEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">HashingEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
@@ -134,6 +139,7 @@ transformers in this library all share a few useful properties:</p>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">JamesSteinEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">LeaveOneOutEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">MEstimateEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">MultiHotEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">OrdinalEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
 <span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">PolynomialEncoder</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
@@ -148,7 +154,8 @@ transformers in this library all share a few useful properties:</p>
 </pre></div>
 </div>
 <p>All of these are fully compatible sklearn transformers, so they can be used in pipelines or in your existing scripts. If
-the cols parameter isn’t passed, every non-numeric column will be converted. See below for detailed documentation</p>
+the cols parameter isn’t passed, every non-numeric column will be converted. See below for detailed documentation.
+The ways in which this library’s conventions differ from scikit-learn’s are described in <a class="reference internal" href="conventions_vs_sklearn.html"><span class="doc">How category_encoders differs from scikit-learn</span></a>.</p>
 </section>
 <section id="known-issues">
 <h2>Known issues:<a class="headerlink" href="#known-issues" title="Link to this heading"></a></h2>
@@ -258,6 +265,26 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="clone_contract.html">Cloning and cross-validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="clone_contract.html#why-clones-are-unfitted">Why clones are unfitted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clone_contract.html#the-cross-validation-pitfall">The cross-validation pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clone_contract.html#recommended-patterns">Recommended patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clone_contract.html#why-the-encoders-themselves-do-not-implement-sklearn-clone">Why the encoders themselves do not implement <code class="docutils literal notranslate"><span class="pre">__sklearn_clone__</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#the-target-is-required-to-fit">The target is required to fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#transform-may-use-the-target"><code class="docutils literal notranslate"><span class="pre">transform</span></code> may use the target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#missing-and-unknown-values-default-to-value">Missing and unknown values default to <code class="docutils literal notranslate"><span class="pre">'value'</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#output-type-a-dataframe-by-default">Output type: a DataFrame by default</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#column-selection-happens-inside-the-estimator">Column selection happens inside the estimator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#feature-names-require-a-fit">Feature names require a fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#x-and-y-indexes-are-aligned"><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> indexes are aligned</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#fitted-attributes-and-clone">Fitted attributes and <code class="docutils literal notranslate"><span class="pre">clone()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#sklearn-tags"><code class="docutils literal notranslate"><span class="pre">__sklearn_tags__</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions_vs_sklearn.html#side-by-side-onehotencoder">Side by side: <code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder"><code class="docutils literal notranslate"><span class="pre">CountEncoder</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.combine_min_categories"><code class="docutils literal notranslate"><span class="pre">CountEncoder.combine_min_categories()</span></code></a></li>
@@ -272,6 +299,23 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">CountEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">CountEncoder.set_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="count.html#category_encoders.count.CountEncoder.transform"><code class="docutils literal notranslate"><span class="pre">CountEncoder.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="count_target.html">Count Target Encoding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.fit"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.get_feature_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.get_feature_names_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.get_feature_names_out()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.get_metadata_routing()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.set_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.set_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.set_transform_request()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="count_target.html#category_encoders.count_target.CountTargetEncoder.transform"><code class="docutils literal notranslate"><span class="pre">CountTargetEncoder.transform()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -409,6 +453,23 @@ the cols parameter isn’t passed, every non-numeric column will be converted. S
 <li class="toctree-l3"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder.set_params()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder.set_transform_request()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.transform"><code class="docutils literal notranslate"><span class="pre">MEstimateEncoder.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="multihot.html">Multi-Hot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.fit"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_feature_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_feature_names_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_feature_names_out()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_metadata_routing()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.set_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.set_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.set_transform_request()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.transform"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.transform()</span></code></a></li>
 </ul>
 </li>
 </ul>

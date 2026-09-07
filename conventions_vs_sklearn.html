@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How category_encoders differs from scikit-learn &mdash; Category Encoders 2.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=1647406f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Count Encoder" href="count.html" />
+    <link rel="prev" title="Cloning and cross-validation" href="clone_contract.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Category Encoders
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="backward_difference.html">Backward Difference Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basen.html">BaseN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="binary.html">Binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">How category_encoders differs from scikit-learn</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-target-is-required-to-fit">The target is required to fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transform-may-use-the-target"><code class="docutils literal notranslate"><span class="pre">transform</span></code> may use the target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#missing-and-unknown-values-default-to-value">Missing and unknown values default to <code class="docutils literal notranslate"><span class="pre">'value'</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#output-type-a-dataframe-by-default">Output type: a DataFrame by default</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#column-selection-happens-inside-the-estimator">Column selection happens inside the estimator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#feature-names-require-a-fit">Feature names require a fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#x-and-y-indexes-are-aligned"><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> indexes are aligned</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fitted-attributes-and-clone">Fitted attributes and <code class="docutils literal notranslate"><span class="pre">clone()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sklearn-tags"><code class="docutils literal notranslate"><span class="pre">__sklearn_tags__</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#side-by-side-onehotencoder">Side by side: <code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_target.html">Count Target Encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helmert.html">Helmert Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaveoneout.html">Leave One Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multihot.html">Multi-Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onehot.html">One Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ordinal.html">Ordinal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="polynomial.html">Polynomial Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantile.html">Quantile Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rankhot.html">RankHotEncoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sum.html">Sum Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="targetencoder.html">Target Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="woe.html">Weight of Evidence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrapper.html">Wrappers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Category Encoders</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">How category_encoders differs from scikit-learn</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/conventions_vs_sklearn.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="how-category-encoders-differs-from-scikit-learn">
+<h1>How category_encoders differs from scikit-learn<a class="headerlink" href="#how-category-encoders-differs-from-scikit-learn" title="Link to this heading"></a></h1>
+<p>The encoders in this library follow the scikit-learn estimator pattern: they are
+configured in the constructor, <code class="docutils literal notranslate"><span class="pre">fit</span></code> learns the encoding from training data,
+and <code class="docutils literal notranslate"><span class="pre">transform</span></code> applies it to new data. They work with
+<code class="docutils literal notranslate"><span class="pre">sklearn.pipeline.Pipeline</span></code>, <code class="docutils literal notranslate"><span class="pre">get_params</span></code>/<code class="docutils literal notranslate"><span class="pre">set_params</span></code>, pickling, and
+model-inspection tools.</p>
+<p>They are nevertheless not drop-in replacements for the scikit-learn transformers
+they resemble. This page describes the conventions that differ, so that
+pipelines, cross-validation, and custom wrappers behave as expected.</p>
+<section id="the-target-is-required-to-fit">
+<h2>The target is required to fit<a class="headerlink" href="#the-target-is-required-to-fit" title="Link to this heading"></a></h2>
+<p>Most encoders in this library are <em>supervised</em>: the encoding is learned from the
+relationship between each categorical column and the target <code class="docutils literal notranslate"><span class="pre">y</span></code>. For these,
+<code class="docutils literal notranslate"><span class="pre">y</span></code> is a required argument of <code class="docutils literal notranslate"><span class="pre">fit</span></code> — fitting without it raises a
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (“Supervised encoders need a target for the fitting”), and <code class="docutils literal notranslate"><span class="pre">y</span></code>
+must not contain missing values.</p>
+<p>The supervised encoders are: <code class="docutils literal notranslate"><span class="pre">CatBoostEncoder</span></code>, <code class="docutils literal notranslate"><span class="pre">GLMMEncoder</span></code>,
+<code class="docutils literal notranslate"><span class="pre">JamesSteinEncoder</span></code>, <code class="docutils literal notranslate"><span class="pre">LeaveOneOutEncoder</span></code>, <code class="docutils literal notranslate"><span class="pre">MEstimateEncoder</span></code>,
+<code class="docutils literal notranslate"><span class="pre">QuantileEncoder</span></code>, <code class="docutils literal notranslate"><span class="pre">SummaryEncoder</span></code>, <code class="docutils literal notranslate"><span class="pre">TargetEncoder</span></code> and
+<code class="docutils literal notranslate"><span class="pre">WOEEncoder</span></code>. All other encoders are unsupervised: they accept <code class="docutils literal notranslate"><span class="pre">fit(X)</span></code>,
+ignore <code class="docutils literal notranslate"><span class="pre">y</span></code> if one is passed, and their <code class="docutils literal notranslate"><span class="pre">transform</span></code> takes no <code class="docutils literal notranslate"><span class="pre">y</span></code> at all.</p>
+<p>A non-numeric <code class="docutils literal notranslate"><span class="pre">y</span></code> does not need to be pre-encoded: supervised encoders fit an
+internal <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.preprocessing.LabelEncoder</span></code> (stored as
+<code class="docutils literal notranslate"><span class="pre">lab_encoder_</span></code>) on string or boolean targets.</p>
+</section>
+<section id="transform-may-use-the-target">
+<h2><code class="docutils literal notranslate"><span class="pre">transform</span></code> may use the target<a class="headerlink" href="#transform-may-use-the-target" title="Link to this heading"></a></h2>
+<p>In scikit-learn, <code class="docutils literal notranslate"><span class="pre">transform</span></code> never sees <code class="docutils literal notranslate"><span class="pre">y</span></code>. Here, supervised encoders
+<em>may</em> be called with one:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">X_train_encoded</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>  <span class="c1"># training data</span>
+<span class="n">X_test_encoded</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>             <span class="c1"># test data</span>
+</pre></div>
+</div>
+<p>Passing <code class="docutils literal notranslate"><span class="pre">y</span></code> on training data lets the encoder apply its regularization (for
+example leave-one-out or smoothing statistics) instead of the unregularized
+mapping. Related to this, <code class="docutils literal notranslate"><span class="pre">fit_transform</span></code> is not merely a <code class="docutils literal notranslate"><span class="pre">fit</span></code> followed by
+an untargeted <code class="docutils literal notranslate"><span class="pre">transform</span></code>: it requires <code class="docutils literal notranslate"><span class="pre">y</span></code> (a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> is raised
+without it) and uses the target for transforming as well.</p>
+</section>
+<section id="missing-and-unknown-values-default-to-value">
+<h2>Missing and unknown values default to <code class="docutils literal notranslate"><span class="pre">'value'</span></code><a class="headerlink" href="#missing-and-unknown-values-default-to-value" title="Link to this heading"></a></h2>
+<p>By default, missing values and categories unseen at fit time are not errors —
+they are treated as countable categories and encoded like any other value
+(<code class="docutils literal notranslate"><span class="pre">handle_missing='value'</span></code> and <code class="docutils literal notranslate"><span class="pre">handle_unknown='value'</span></code>).
+scikit-learn’s <code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code> instead raises by default on unseen categories
+at transform time (<code class="docutils literal notranslate"><span class="pre">handle_unknown='error'</span></code>).</p>
+<p>Both <code class="docutils literal notranslate"><span class="pre">handle_missing</span></code> and <code class="docutils literal notranslate"><span class="pre">handle_unknown</span></code> accept the strings <code class="docutils literal notranslate"><span class="pre">'error'</span></code>
+(raise), <code class="docutils literal notranslate"><span class="pre">'return_nan'</span></code> (propagate NaN), and <code class="docutils literal notranslate"><span class="pre">'value'</span></code> (encode as a
+category). The strategies are validated at fit time; an unrecognized string
+raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> naming the supported values. Two families extend the
+base set:</p>
+<ul class="simple">
+<li><p>the one-hot, base-N, and contrast families (<code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code>,
+<code class="docutils literal notranslate"><span class="pre">BaseNEncoder</span></code>, <code class="docutils literal notranslate"><span class="pre">BinaryEncoder</span></code>, <code class="docutils literal notranslate"><span class="pre">GrayEncoder</span></code>,
+<code class="docutils literal notranslate"><span class="pre">BackwardDifferenceEncoder</span></code>, <code class="docutils literal notranslate"><span class="pre">HelmertEncoder</span></code>, <code class="docutils literal notranslate"><span class="pre">PolynomialEncoder</span></code>,
+<code class="docutils literal notranslate"><span class="pre">SumEncoder</span></code>) additionally accept <code class="docutils literal notranslate"><span class="pre">'indicator'</span></code>, which reserves an extra
+column for unknown or missing values;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CountEncoder</span></code> and <code class="docutils literal notranslate"><span class="pre">HashingEncoder</span></code> accept additional non-string values
+and do not validate these two parameters against the string set.</p></li>
+</ul>
+<p>Note that scikit-learn’s <code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code> has no <code class="docutils literal notranslate"><span class="pre">handle_missing</span></code> parameter
+at all: it always treats NaN as its own category during fitting.</p>
+</section>
+<section id="output-type-a-dataframe-by-default">
+<h2>Output type: a DataFrame by default<a class="headerlink" href="#output-type-a-dataframe-by-default" title="Link to this heading"></a></h2>
+<p>scikit-learn transformers return NumPy arrays unless configured otherwise. Here,
+<code class="docutils literal notranslate"><span class="pre">transform</span></code> returns a pandas DataFrame by default (<code class="docutils literal notranslate"><span class="pre">return_df=True</span></code>);
+passing <code class="docutils literal notranslate"><span class="pre">return_df=False</span></code> at construction yields a NumPy array instead.
+Output DataFrames carry the input index and the fitted output column names
+(see <code class="docutils literal notranslate"><span class="pre">get_feature_names_out</span></code> below).</p>
+<p><code class="docutils literal notranslate"><span class="pre">set_output</span></code> works as usual: encoders inherit it from
+<code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.base.TransformerMixin</span></code>, so
+<code class="docutils literal notranslate"><span class="pre">encoder.set_output(transform=&quot;pandas&quot;)</span></code> (or the global
+<code class="docutils literal notranslate"><span class="pre">sklearn.set_config(transform_output=&quot;pandas&quot;)</span></code>) integrates them into
+pipelines that mix DataFrame- and array-valued steps.</p>
+</section>
+<section id="column-selection-happens-inside-the-estimator">
+<h2>Column selection happens inside the estimator<a class="headerlink" href="#column-selection-happens-inside-the-estimator" title="Link to this heading"></a></h2>
+<p>scikit-learn selects which columns a transformer applies to <em>outside</em> of the
+estimator, typically via <code class="xref py py-class docutils literal notranslate"><span class="pre">sklearn.compose.ColumnTransformer</span></code>. Here, the
+selection is part of the estimator itself, via the <code class="docutils literal notranslate"><span class="pre">cols</span></code> parameter:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cols=None</span></code> (default): all columns with an object, category, or string
+dtype are encoded, numeric columns pass through untouched;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cols='all'</span></code>: every column is encoded regardless of dtype;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cols=['a',</span> <span class="pre">'b']</span></code>: exactly the named columns are encoded.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">fit</span></code> records the input width (<code class="docutils literal notranslate"><span class="pre">n_features_in_</span></code>), and <code class="docutils literal notranslate"><span class="pre">transform</span></code>
+raises a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> (“Unexpected input dimension …”) when called on data
+with a different number of columns.</p>
+</section>
+<section id="feature-names-require-a-fit">
+<h2>Feature names require a fit<a class="headerlink" href="#feature-names-require-a-fit" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">get_feature_names_out()</span></code> returns the names of the encoded output columns,
+but — unlike in scikit-learn, where names can be derived from
+<code class="docutils literal notranslate"><span class="pre">input_features</span></code> without fitting — here the encoder must be fitted first;
+calling it before <code class="docutils literal notranslate"><span class="pre">fit</span></code> raises a <code class="docutils literal notranslate"><span class="pre">NotFittedError</span></code>. The deprecated
+<code class="docutils literal notranslate"><span class="pre">get_feature_names</span></code> method forwards to it with a <code class="docutils literal notranslate"><span class="pre">FutureWarning</span></code>.</p>
+<p>The fitted attributes follow the scikit-learn naming convention:
+<code class="docutils literal notranslate"><span class="pre">feature_names_in_</span></code>, <code class="docutils literal notranslate"><span class="pre">n_features_in_</span></code> and <code class="docutils literal notranslate"><span class="pre">feature_names_out_</span></code>.</p>
+</section>
+<section id="x-and-y-indexes-are-aligned">
+<h2><code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> indexes are aligned<a class="headerlink" href="#x-and-y-indexes-are-aligned" title="Link to this heading"></a></h2>
+<p>scikit-learn treats inputs as positional arrays. When <code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are both
+pandas objects, this library aligns them by index: if the two indexes do not
+match, <code class="docutils literal notranslate"><span class="pre">fit</span></code> (and <code class="docutils literal notranslate"><span class="pre">transform</span></code>) raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> suggesting to use
+NumPy arrays when the data is intentionally shuffled (for example inside
+<code class="docutils literal notranslate"><span class="pre">sklearn.model_selection.permutation_test_score</span></code>). This catches
+row-misalignment bugs that positional libraries cannot see — at the cost of
+rejecting inputs scikit-learn would silently accept.</p>
+</section>
+<section id="fitted-attributes-and-clone">
+<h2>Fitted attributes and <code class="docutils literal notranslate"><span class="pre">clone()</span></code><a class="headerlink" href="#fitted-attributes-and-clone" title="Link to this heading"></a></h2>
+<p>Fitted state lives in trailing-underscore attributes
+(<code class="docutils literal notranslate"><span class="pre">feature_names_in_</span></code>, <code class="docutils literal notranslate"><span class="pre">n_features_in_</span></code>, <code class="docutils literal notranslate"><span class="pre">feature_names_out_</span></code>,
+<code class="docutils literal notranslate"><span class="pre">lab_encoder_</span></code>), alongside older non-underscore attributes such as
+<code class="docutils literal notranslate"><span class="pre">mapping</span></code> and <code class="docutils literal notranslate"><span class="pre">_dim</span></code>. Note that <code class="docutils literal notranslate"><span class="pre">fit</span></code> re-derives the encoded columns from
+<code class="docutils literal notranslate"><span class="pre">cols</span></code>, so <code class="docutils literal notranslate"><span class="pre">self.cols</span></code> (and, for the encoders that take a <code class="docutils literal notranslate"><span class="pre">mapping</span></code>
+constructor parameter, <code class="docutils literal notranslate"><span class="pre">self.mapping</span></code>) are constructor parameters that
+<code class="docutils literal notranslate"><span class="pre">fit</span></code> overwrites with fitted values.</p>
+<p>Keep this in mind when combining encoders with <code class="docutils literal notranslate"><span class="pre">sklearn.base.clone</span></code>:
+a clone is a fresh, unfitted estimator — passing a <em>fitted</em> encoder as a
+constructor argument of another estimator (for example a custom classifier used
+with <code class="docutils literal notranslate"><span class="pre">cross_val_predict</span></code>) results in an unfitted clone in each fold, and
+<code class="docutils literal notranslate"><span class="pre">transform</span></code> on it raises a <code class="docutils literal notranslate"><span class="pre">NotFittedError</span></code>. Fit the encoder inside the
+pipeline or cross-validation loop instead.</p>
+</section>
+<section id="sklearn-tags">
+<h2><code class="docutils literal notranslate"><span class="pre">__sklearn_tags__</span></code><a class="headerlink" href="#sklearn-tags" title="Link to this heading"></a></h2>
+<p>Encoders implement the scikit-learn tags interface (sklearn &gt;= 1.6). The
+supervised/unsupervised split is machine-readable:
+<code class="docutils literal notranslate"><span class="pre">encoder.__sklearn_tags__().target_tags.required</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> exactly for the
+supervised encoders listed above. The library’s tag class additionally carries
+<code class="docutils literal notranslate"><span class="pre">predict_depends_on_y</span></code> (currently always <code class="docutils literal notranslate"><span class="pre">False</span></code>).</p>
+</section>
+<section id="side-by-side-onehotencoder">
+<h2>Side by side: <code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code><a class="headerlink" href="#side-by-side-onehotencoder" title="Link to this heading"></a></h2>
+<p>The changelog line “Created a onehot encoder that follows the same conventions
+as the rest of the library instead of using sklearns” is where this page’s
+topic began. The two <code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code> classes share a name, not a contract:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 35.0%" />
+<col style="width: 35.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">category_encoders.OneHotEncoder</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">sklearn.preprocessing.OneHotEncoder</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Input</p></td>
+<td><p>DataFrame (or array-like), categories selected by <code class="docutils literal notranslate"><span class="pre">cols</span></code></p></td>
+<td><p>array-like, one column per feature</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output</p></td>
+<td><p>DataFrame by default (<code class="docutils literal notranslate"><span class="pre">return_df</span></code>), one binary column per category</p></td>
+<td><p>sparse matrix by default (<code class="docutils literal notranslate"><span class="pre">sparse_output</span></code>), <code class="docutils literal notranslate"><span class="pre">dtype</span></code> configurable</p></td>
+</tr>
+<tr class="row-even"><td><p>Unknown categories</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">handle_unknown='value'</span></code> by default (encoded as zeros); <code class="docutils literal notranslate"><span class="pre">'error'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'return_nan'</span></code>, <code class="docutils literal notranslate"><span class="pre">'indicator'</span></code> available</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">handle_unknown='error'</span></code> by default (raises); <code class="docutils literal notranslate"><span class="pre">'ignore'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'infrequent_if_exist'</span></code> available</p></td>
+</tr>
+<tr class="row-odd"><td><p>Missing values</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">handle_missing='value'</span></code> by default (NaN becomes a countable
+category); <code class="docutils literal notranslate"><span class="pre">'error'</span></code>, <code class="docutils literal notranslate"><span class="pre">'return_nan'</span></code>, <code class="docutils literal notranslate"><span class="pre">'indicator'</span></code>, <code class="docutils literal notranslate"><span class="pre">'ignore'</span></code>
+available</p></td>
+<td><p>no <code class="docutils literal notranslate"><span class="pre">handle_missing</span></code> parameter; NaN is always treated as its own
+category at fit</p></td>
+</tr>
+<tr class="row-even"><td><p>Column naming</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">use_cat_names</span></code> includes category values in output column names</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">feature_name_combiner</span></code> customizes names</p></td>
+</tr>
+<tr class="row-odd"><td><p>Category reduction</p></td>
+<td><p>not available</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">min_frequency</span></code>, <code class="docutils literal notranslate"><span class="pre">max_categories</span></code>, <code class="docutils literal notranslate"><span class="pre">drop</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="clone_contract.html" class="btn btn-neutral float-left" title="Cloning and cross-validation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="count.html" class="btn btn-neutral float-right" title="Count Encoder" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

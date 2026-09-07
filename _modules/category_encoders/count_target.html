@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>category_encoders.count_target &mdash; Category Encoders 2.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Category Encoders
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../backward_difference.html">Backward Difference Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../basen.html">BaseN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../binary.html">Binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../count_target.html">Count Target Encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gray.html">Gray</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../helmert.html">Helmert Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../leaveoneout.html">Leave One Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../multihot.html">Multi-Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../onehot.html">One Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ordinal.html">Ordinal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../polynomial.html">Polynomial Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../quantile.html">Quantile Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rankhot.html">RankHotEncoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sum.html">Sum Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../summary.html">Summary Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../targetencoder.html">Target Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../woe.html">Weight of Evidence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../wrapper.html">Wrappers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Category Encoders</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">category_encoders.count_target</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for category_encoders.count_target</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Count-based target encoder.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">expit</span>
+
+<span class="kn">import</span> <span class="nn">category_encoders.utils</span> <span class="k">as</span> <span class="nn">util</span>
+<span class="kn">from</span> <span class="nn">category_encoders.ordinal</span> <span class="kn">import</span> <span class="n">OrdinalEncoder</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Obvious&#39;</span>
+
+
+<div class="viewcode-block" id="CountTargetEncoder">
+<a class="viewcode-back" href="../../count_target.html#category_encoders.count_target.CountTargetEncoder">[docs]</a>
+<span class="k">class</span> <span class="nc">CountTargetEncoder</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">SupervisedTransformerMixin</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">BaseEncoder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count-based target encoding with smoothing-adjusted log-odds.</span>
+
+<span class="sd">    Supported targets: binary and multiclass classification. A continuous</span>
+<span class="sd">    target raises NotImplementedError; regression via target binning is a</span>
+<span class="sd">    planned follow-up (see issue #420).</span>
+
+<span class="sd">    For every category of every encoded column, fit stores the per-class</span>
+<span class="sd">    observation counts, the category size, and smoothing-adjusted log-odds</span>
+<span class="sd">    against the global target prior. Transform emits those log-odds:</span>
+
+<span class="sd">    - binary target: a single output column per encoded feature, matching the</span>
+<span class="sd">      WOEEncoder column convention</span>
+<span class="sd">    - multiclass target: one output column per class per encoded feature,</span>
+<span class="sd">      named ``&lt;column&gt;_&lt;class&gt;``</span>
+
+<span class="sd">    For a category c and class k let n_k(c) be the number of training rows in</span>
+<span class="sd">    category c with class k, n(c) their sum, and prior_k the global class</span>
+<span class="sd">    probability. The empirical class shares are blended with the prior by an</span>
+<span class="sd">    S-shaped weight::</span>
+
+<span class="sd">        w(c) = expit((n(c) - min_samples_leaf) / smoothing)</span>
+<span class="sd">        p_smooth(k | c) = w(c) * n_k(c) / n(c) + (1 - w(c)) * prior_k</span>
+
+<span class="sd">    and the encoded value is the log-evidence of the smoothed probability</span>
+<span class="sd">    against the prior::</span>
+
+<span class="sd">        binary:     log(p_smooth(1 | c) / p_smooth(0 | c)) - log(prior_1 / prior_0)</span>
+<span class="sd">        multiclass: log(p_smooth(k | c) / prior_k)            (one column per class)</span>
+
+<span class="sd">    Small categories are shrunk toward zero evidence, which tames the</span>
+<span class="sd">    overfitting that raw counts would otherwise introduce on id-like columns.</span>
+<span class="sd">    A category never observed at fit time encodes to 0 (&quot;no evidence against</span>
+<span class="sd">    the prior&quot;) under the default ``handle_unknown=&#39;value&#39;``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    verbose: int</span>
+<span class="sd">        integer indicating verbosity of the output. 0 for none.</span>
+<span class="sd">    cols: list</span>
+<span class="sd">        a list of columns to encode, if None, all string columns will be encoded.</span>
+<span class="sd">    drop_invariant: bool</span>
+<span class="sd">        boolean for whether or not to drop columns with 0 variance.</span>
+<span class="sd">    return_df: bool</span>
+<span class="sd">        boolean for whether to return a pandas DataFrame from transform</span>
+<span class="sd">        (otherwise it will be a numpy array).</span>
+<span class="sd">    handle_missing: str</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which treats missing values as a countable category at fit time.</span>
+<span class="sd">    handle_unknown: str</span>
+<span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
+<span class="sd">        which maps unseen categories to zero evidence against the prior.</span>
+<span class="sd">    min_samples_leaf: int</span>
+<span class="sd">        category size at which the S-curve weight reaches 0.5. Categories</span>
+<span class="sd">        smaller than this are dominated by the prior, larger ones by their</span>
+<span class="sd">        own counts (parameter k in the original target-encoding paper).</span>
+<span class="sd">    smoothing: float</span>
+<span class="sd">        slope of the S-curve between category size and the prior/count blend.</span>
+<span class="sd">        Higher values mean stronger regularization. The value must be strictly</span>
+<span class="sd">        bigger than 0.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    counts_ : dict</span>
+<span class="sd">        Maps every encoded column to a DataFrame with the per-class counts</span>
+<span class="sd">        observed at fit time (rows are the categories, columns the classes).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from category_encoders import CountTargetEncoder</span>
+<span class="sd">    &gt;&gt;&gt; import pandas as pd</span>
+<span class="sd">    &gt;&gt;&gt; X = pd.DataFrame({&#39;city&#39;: [&#39;chicago&#39;, &#39;chicago&#39;, &#39;denver&#39;, &#39;denver&#39;, &#39;denver&#39;]})</span>
+<span class="sd">    &gt;&gt;&gt; y = [1, 0, 1, 1, 0]</span>
+<span class="sd">    &gt;&gt;&gt; enc = CountTargetEncoder().fit(X, y)</span>
+<span class="sd">    &gt;&gt;&gt; enc.transform(X)</span>
+<span class="sd">           city</span>
+<span class="sd">    0 -0.058774</span>
+<span class="sd">    1 -0.058774</span>
+<span class="sd">    2  0.043099</span>
+<span class="sd">    3  0.043099</span>
+<span class="sd">    4  0.043099</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    .. [1] Big Learning Made Easy with Counts (the &quot;Dracula&quot; count-based</span>
+<span class="sd">        target scheme), from</span>
+<span class="sd">        https://learn.microsoft.com/en-us/archive/blogs/machinelearning/big-learning-made-easy-with-counts</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">prefit_ordinal</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_M</span>
+
+    <span class="n">_CONTINUOUS_TARGET_MSG</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;CountTargetEncoder supports classification targets only (binary or &#39;</span>
+        <span class="s1">&#39;multiclass). A continuous target would first have to be discretized &#39;</span>
+        <span class="s1">&#39;into bins, and encoding per bin is planned as a binning follow-up &#39;</span>
+        <span class="s1">&#39;(see issue #420). For continuous targets please use TargetEncoder &#39;</span>
+        <span class="s1">&#39;or GLMMEncoder.&#39;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">drop_invariant</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">return_df</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
+        <span class="n">min_samples_leaf</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="n">smoothing</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span>
+            <span class="n">drop_invariant</span><span class="o">=</span><span class="n">drop_invariant</span><span class="p">,</span>
+            <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
+            <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
+            <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_samples_leaf</span> <span class="o">=</span> <span class="n">min_samples_leaf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="o">=</span> <span class="n">smoothing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counts_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_class_labels</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prior</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">X_type</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">util</span><span class="o">.</span><span class="n">y_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># y arrives here label-encoded: bool/int stay, strings/categoricals are</span>
+        <span class="c1"># coded by BaseEncoder.fit through LabelEncoder. Anything else (float,</span>
+        <span class="c1"># complex) is a continuous target and out of scope for v1.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_integer_dtype</span><span class="p">(</span><span class="n">y</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_CONTINUOUS_TARGET_MSG</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;smoothing must be strictly bigger than 0.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">handle_missing</span><span class="o">=</span><span class="s1">&#39;value&#39;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">X_ordinal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="n">class_counts</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prior</span> <span class="o">=</span> <span class="n">class_counts</span> <span class="o">/</span> <span class="n">class_counts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lab_encoder_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_class_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lab_encoder_</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_class_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">counts_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_mapping</span><span class="p">(</span><span class="n">X_ordinal</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit_mapping</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">X_ordinal</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute per-column count tables and smoothed log-odds tables.</span>
+
+<span class="sd">        Returns the transform-time mapping (ordinal code -&gt; encoded value(s))</span>
+<span class="sd">        and the inspectable per-class count tables (category -&gt; counts).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">counts_tables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">is_binary</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="n">prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prior</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">category_mapping</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mapping&#39;</span><span class="p">)</span>
+
+            <span class="c1"># per-class counts per ordinal code; rows are observed codes only.</span>
+            <span class="c1"># raw arrays, not Series: crosstab would align their (possibly</span>
+            <span class="c1"># duplicated) indexes instead of pairing values positionally</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">X_ordinal</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="n">counts_np</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">counts_np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="n">expit</span><span class="p">((</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_samples_leaf</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span><span class="p">)</span>
+            <span class="n">shares</span> <span class="o">=</span> <span class="n">counts_np</span> <span class="o">/</span> <span class="n">n</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">smoothed</span> <span class="o">=</span> <span class="n">prior</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">weight</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">shares</span> <span class="o">*</span> <span class="n">weight</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">is_binary</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">smoothed</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">smoothed</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">prior</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">prior</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                    <span class="n">index</span><span class="o">=</span><span class="n">counts</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">class_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_labels</span><span class="p">]</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">smoothed</span> <span class="o">/</span> <span class="n">prior</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]),</span> <span class="n">index</span><span class="o">=</span><span class="n">counts</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">class_cols</span>
+                <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_sentinel_fills</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+
+            <span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span>
+            <span class="c1"># reindex the counts from codes back to the original categories</span>
+            <span class="n">code_to_category</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="n">values</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="n">code_to_category</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+            <span class="n">counts_tables</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">counts_np</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">categories</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_class_labels</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">counts_tables</span>
+
+    <span class="k">def</span> <span class="nf">_add_sentinel_fills</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ordinal_values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fill the unknown (-1) and missing (-2) sentinel rows of a table.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
+            <span class="c1"># a NaN seen at fit has a real ordinal code; on clean fit data the</span>
+            <span class="c1"># ordinal mapping pre-registers NaN -&gt; -2 (see OrdinalEncoder)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ordinal_values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unexpected categories found in dataframe&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+                <span class="c1"># binary: single log-odds column replaces the input in place</span>
+                <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># multiclass: one column per class, inserted at the position</span>
+                <span class="c1"># of the original column to preserve the column order</span>
+                <span class="n">positions</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_indexer</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">positions</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unexpected category code found in column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">expanded</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[</span><span class="n">positions</span><span class="p">]</span>
+                <span class="n">position</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">class_idx</span><span class="p">,</span> <span class="n">class_col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                    <span class="n">X</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">position</span> <span class="o">+</span> <span class="n">class_idx</span><span class="p">,</span> <span class="n">class_col</span><span class="p">,</span> <span class="n">expanded</span><span class="p">[:,</span> <span class="n">class_idx</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">X</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

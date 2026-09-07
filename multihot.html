@@ -1,0 +1,498 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Hot &mdash; Category Encoders 2.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=1647406f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="One Hot" href="onehot.html" />
+    <link rel="prev" title="M-estimate" href="mestimate.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Category Encoders
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="backward_difference.html">Backward Difference Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basen.html">BaseN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="binary.html">Binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_target.html">Count Target Encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helmert.html">Helmert Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaveoneout.html">Leave One Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mestimate.html">M-estimate</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Multi-Hot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.fit"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.fit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.fit_transform"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.fit_transform()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_feature_names"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_feature_names()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_in"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_feature_names_in()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_out"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_feature_names_out()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_metadata_routing"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_metadata_routing()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_params"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.get_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.set_output"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.set_output()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.set_params"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.set_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.set_transform_request"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.set_transform_request()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.transform"><code class="docutils literal notranslate"><span class="pre">MultiHotEncoder.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="onehot.html">One Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ordinal.html">Ordinal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="polynomial.html">Polynomial Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantile.html">Quantile Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rankhot.html">RankHotEncoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sum.html">Sum Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="targetencoder.html">Target Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="woe.html">Weight of Evidence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrapper.html">Wrappers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Category Encoders</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Multi-Hot</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/multihot.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="multi-hot">
+<h1>Multi-Hot<a class="headerlink" href="#multi-hot" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">category_encoders.multi_hot.</span></span><span class="sig-name descname"><span class="pre">MultiHotEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_invariant</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_unknown</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handle_missing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'|'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cat_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/category_encoders/multi_hot.html#MultiHotEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder" title="Link to this definition"></a></dt>
+<dd><p>Multi-hot encoding for cells that contain several delimiter-separated items.</p>
+<p>Where <code class="xref py py-class docutils literal notranslate"><span class="pre">OneHotEncoder</span></code> treats each cell as one atomic category,
+MultiHotEncoder splits the cell on a delimiter and activates one binary
+column per item, so that <code class="docutils literal notranslate"><span class="pre">'mathematics|physics'</span></code> lights both the
+mathematics and the physics column. The set of items is learned at fit
+time; the number of output columns is fixed by the fit, so
+<code class="docutils literal notranslate"><span class="pre">get_feature_names_out</span></code> always matches the transform output.</p>
+<p>Items are the delimiter-split fragments of a cell with surrounding
+whitespace stripped; fragments that are empty after stripping are dropped.
+This means a cell such as <code class="docutils literal notranslate"><span class="pre">'a</span> <span class="pre">|</span> <span class="pre">b'</span></code>, <code class="docutils literal notranslate"><span class="pre">'a||b'</span></code> or <code class="docutils literal notranslate"><span class="pre">'a|'</span></code> contributes
+the items <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> (or, for the last two, only <code class="docutils literal notranslate"><span class="pre">a</span></code>), and a cell
+that is empty or consists solely of the delimiter contributes no items.
+Items cannot themselves contain the delimiter: a cell such as
+<code class="docutils literal notranslate"><span class="pre">'Smith,</span> <span class="pre">John'</span></code> with the default delimiter is stored as two items, so
+choose a delimiter that does not occur inside the items.</p>
+<p>The encoding is unsupervised and has no <code class="docutils literal notranslate"><span class="pre">inverse_transform</span></code>: a multi-hot
+row does not uniquely determine the original cell.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>verbose: int</strong></dt><dd><p>integer indicating verbosity of the output. 0 for none.</p>
+</dd>
+<dt><strong>cols: list</strong></dt><dd><p>a list of columns to encode, if None, all string and categorical columns
+will be encoded.</p>
+</dd>
+<dt><strong>drop_invariant: bool</strong></dt><dd><p>boolean for whether to drop columns with 0 variance.</p>
+</dd>
+<dt><strong>return_df: bool</strong></dt><dd><p>boolean for whether to return a pandas DataFrame from transform
+(otherwise it will be a numpy array).</p>
+</dd>
+<dt><strong>handle_unknown: str</strong></dt><dd><p>how to handle items that were not seen at fit time. Options are
+‘error’, ‘return_nan’, ‘value’, and ‘indicator’. The default is ‘value’.</p>
+<p>‘error’ will raise a <cite>ValueError</cite> at transform time if an unknown item appears.
+‘return_nan’ will encode a row that contains an unknown item as <cite>np.nan</cite> in
+every dummy column of the affected input column.
+‘value’ will ignore unknown items; the known items of the same cell still
+activate their columns, so a fully unknown cell becomes all zeros.
+‘indicator’ behaves like ‘value’ and additionally adds one dummy column
+per input column (in both training and test data) that is activated
+whenever an unknown item appears.</p>
+</dd>
+<dt><strong>handle_missing: str</strong></dt><dd><p>how to handle missing values (NaN). Options are ‘error’, ‘return_nan’,
+‘value’, ‘ignore’, and ‘indicator’. The default is ‘value’.</p>
+<p>‘error’ will raise a <cite>ValueError</cite> if a missing value is encountered.
+‘return_nan’ will encode a row that contains a missing value as <cite>np.nan</cite>
+in every dummy column of the affected input column.
+‘value’ will treat missing values as another valid item at fit time, so
+a missing cell activates the missing-item column.
+‘ignore’ will encode missing values as 0 in every dummy column,
+NOT adding an additional category.
+‘indicator’ behaves like ‘ignore’ and additionally adds one dummy column
+per input column that is activated whenever a value is missing.</p>
+</dd>
+<dt><strong>delimiter: str</strong></dt><dd><p>the string that separates multiple items within one cell.
+Must be a non-empty string and must not occur inside a single item.</p>
+</dd>
+<dt><strong>use_cat_names: bool</strong></dt><dd><p>if True, the seen item values will be included in the encoded column
+names (e.g. <code class="docutils literal notranslate"><span class="pre">city_paris</span></code>); collisions are suffixed with ‘#’. If False,
+columns are named by order of first appearance (e.g. <code class="docutils literal notranslate"><span class="pre">city_1</span></code>), which
+keeps the names stable under category relabeling.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.fit" title="category_encoders.multi_hot.MultiHotEncoder.fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit</span></code></a>(X[, y])</p></td>
+<td><p>Fits the encoder according to X and y.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.fit_transform" title="category_encoders.multi_hot.MultiHotEncoder.fit_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fit_transform</span></code></a>(X[, y])</p></td>
+<td><p>Fit to data, then transform it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_feature_names" title="category_encoders.multi_hot.MultiHotEncoder.get_feature_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names</span></code></a>()</p></td>
+<td><p>Deprecated method to get feature names.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_in" title="category_encoders.multi_hot.MultiHotEncoder.get_feature_names_in"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_in</span></code></a>()</p></td>
+<td><p>Get the names of all input columns present when fitting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_out" title="category_encoders.multi_hot.MultiHotEncoder.get_feature_names_out"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_feature_names_out</span></code></a>([input_features])</p></td>
+<td><p>Get the names of all transformed / added columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_metadata_routing" title="category_encoders.multi_hot.MultiHotEncoder.get_metadata_routing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_metadata_routing</span></code></a>()</p></td>
+<td><p>Get metadata routing of this object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.get_params" title="category_encoders.multi_hot.MultiHotEncoder.get_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_params</span></code></a>([deep])</p></td>
+<td><p>Get parameters for this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.set_output" title="category_encoders.multi_hot.MultiHotEncoder.set_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_output</span></code></a>(*[, transform])</p></td>
+<td><p>Set output container.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.set_params" title="category_encoders.multi_hot.MultiHotEncoder.set_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_params</span></code></a>(**params)</p></td>
+<td><p>Set the parameters of this estimator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.set_transform_request" title="category_encoders.multi_hot.MultiHotEncoder.set_transform_request"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_transform_request</span></code></a>(*[, override_return_df])</p></td>
+<td><p>Configure whether metadata should be requested to be passed to the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder.transform" title="category_encoders.multi_hot.MultiHotEncoder.transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transform</span></code></a>(X[, override_return_df])</p></td>
+<td><p>Perform the transformation to new categorical data.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">generic</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">csr_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Series</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.fit" title="Link to this definition"></a></dt>
+<dd><p>Fits the encoder according to X and y.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd><p>Training vectors, where n_samples is the number of samples
+and n_features is the number of features.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like, shape = [n_samples]</span></dt><dd><p>Target values.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">encoder</span></dt><dd><p>Returns self.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.fit_transform">
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.fit_transform" title="Link to this definition"></a></dt>
+<dd><p>Fit to data, then transform it.</p>
+<p>Fits transformer to <cite>X</cite> and <cite>y</cite> with optional parameters <cite>fit_params</cite>
+and returns a transformed version of <cite>X</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like of shape (n_samples, n_features)</span></dt><dd><p>Input samples.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">array-like of shape (n_samples,) or (n_samples, n_outputs),                 default=None</span></dt><dd><p>Target values (None for unsupervised transformations).</p>
+</dd>
+<dt><strong>**fit_params</strong><span class="classifier">dict</span></dt><dd><p>Additional fit parameters.
+Pass only if the estimator accepts additional params in its <cite>fit</cite> method.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>X_new</strong><span class="classifier">ndarray array of shape (n_samples, n_features_new)</span></dt><dd><p>Transformed array.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.get_feature_names">
+<span class="sig-name descname"><span class="pre">get_feature_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.get_feature_names" title="Link to this definition"></a></dt>
+<dd><p>Deprecated method to get feature names. Use <cite>get_feature_names_out</cite> instead.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.get_feature_names_in">
+<span class="sig-name descname"><span class="pre">get_feature_names_in</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_in" title="Link to this definition"></a></dt>
+<dd><p>Get the names of all input columns present when fitting.</p>
+<p>These columns are necessary for the transform step.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.get_feature_names_out">
+<span class="sig-name descname"><span class="pre">get_feature_names_out</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_out" title="Link to this definition"></a></dt>
+<dd><p>Get the names of all transformed / added columns.</p>
+<p>Note that in sklearn the get_feature_names_out function takes the feature_names_in
+as an argument and determines the output feature names using the input.
+A fit is usually not necessary and if so a NotFittedError is raised.
+We just require a fit all the time and return the fitted output columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>feature_names: np.ndarray</dt><dd><p>A numpy array with all feature names transformed or added.
+Note: potentially dropped features (because the feature is constant/invariant)
+are not included!</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.get_metadata_routing">
+<span class="sig-name descname"><span class="pre">get_metadata_routing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.get_metadata_routing" title="Link to this definition"></a></dt>
+<dd><p>Get metadata routing of this object.</p>
+<p>Please check <span class="xref std std-ref">User Guide</span> on how the routing
+mechanism works.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>routing</strong><span class="classifier">MetadataRequest</span></dt><dd><p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">MetadataRequest</span></code> encapsulating
+routing information.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.get_params">
+<span class="sig-name descname"><span class="pre">get_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.get_params" title="Link to this definition"></a></dt>
+<dd><p>Get parameters for this estimator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>deep</strong><span class="classifier">bool, default=True</span></dt><dd><p>If True, will return the parameters for this estimator and
+contained subobjects that are estimators.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>params</strong><span class="classifier">dict</span></dt><dd><p>Parameter names mapped to their values.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.set_output">
+<span class="sig-name descname"><span class="pre">set_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.set_output" title="Link to this definition"></a></dt>
+<dd><p>Set output container.</p>
+<p>Refer to the <span class="xref std std-ref">user guide</span> for more details
+and <span class="xref std std-ref">sphx_glr_auto_examples_miscellaneous_plot_set_output.py</span> for an
+example on how to use the API.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>transform</strong><span class="classifier">{“default”, “pandas”, “polars”}, default=None</span></dt><dd><p>Configure output of <cite>transform</cite> and <cite>fit_transform</cite>.</p>
+<ul class="simple">
+<li><p><cite>“default”</cite>: Default output format of a transformer</p></li>
+<li><p><cite>“pandas”</cite>: DataFrame output</p></li>
+<li><p><cite>“polars”</cite>: Polars output</p></li>
+<li><p><cite>None</cite>: Transform configuration is unchanged</p></li>
+</ul>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.4: </span><cite>“polars”</cite> option was added.</p>
+</div>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">estimator instance</span></dt><dd><p>Estimator instance.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.set_params">
+<span class="sig-name descname"><span class="pre">set_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.set_params" title="Link to this definition"></a></dt>
+<dd><p>Set the parameters of this estimator.</p>
+<p>The method works on simple estimators as well as on nested objects
+(such as <code class="xref py py-class docutils literal notranslate"><span class="pre">Pipeline</span></code>). The latter have
+parameters of the form <code class="docutils literal notranslate"><span class="pre">&lt;component&gt;__&lt;parameter&gt;</span></code> so that it’s
+possible to update each component of a nested object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>**params</strong><span class="classifier">dict</span></dt><dd><p>Estimator parameters.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">estimator instance</span></dt><dd><p>Estimator instance.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.set_transform_request">
+<span class="sig-name descname"><span class="pre">set_transform_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_return_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#category_encoders.multi_hot.MultiHotEncoder" title="category_encoders.multi_hot.MultiHotEncoder"><span class="pre">MultiHotEncoder</span></a></span></span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.set_transform_request" title="Link to this definition"></a></dt>
+<dd><p>Configure whether metadata should be requested to be passed to the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method.</p>
+<p>Note that this method is only relevant when this estimator is used as a
+sub-estimator within a <span class="xref std std-term">meta-estimator</span> and metadata routing is enabled
+with <code class="docutils literal notranslate"><span class="pre">enable_metadata_routing=True</span></code> (see <code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.set_config()</span></code>).
+Please check the <span class="xref std std-ref">User Guide</span> on how the routing
+mechanism works.</p>
+<p>The options for each parameter are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: metadata is requested, and passed to <code class="docutils literal notranslate"><span class="pre">transform</span></code> if provided. The request is ignored if metadata is not provided.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: metadata is not requested and the meta-estimator will not pass it to <code class="docutils literal notranslate"><span class="pre">transform</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: metadata is not requested, and the meta-estimator will raise an error if the user provides it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: metadata should be passed to the meta-estimator with this given alias instead of the original name.</p></li>
+</ul>
+<p>The default (<code class="docutils literal notranslate"><span class="pre">sklearn.utils.metadata_routing.UNCHANGED</span></code>) retains the
+existing request. This allows you to change the request for some
+parameters and not others.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.3.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>override_return_df</strong><span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">override_return_df</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">transform</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self</strong><span class="classifier">object</span></dt><dd><p>The updated object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="category_encoders.multi_hot.MultiHotEncoder.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">generic</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">csr_matrix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_return_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#category_encoders.multi_hot.MultiHotEncoder.transform" title="Link to this definition"></a></dt>
+<dd><p>Perform the transformation to new categorical data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">array-like, shape = [n_samples, n_features]</span></dt><dd></dd>
+<dt><strong>override_return_df</strong><span class="classifier">bool</span></dt><dd><p>override self.return_df to force to return a data frame</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>p</strong><span class="classifier">array or DataFrame, shape = [n_samples, n_features_out]</span></dt><dd><p>Transformed values with encoding applied.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If the encoder was fitted on a DataFrame, arraylike input (e.g. the numpy
+array emitted by the previous step of a scikit-learn pipeline) is accepted:
+the fitted column names are re-attached positionally, so the result matches
+transforming the equivalent DataFrame (GH #406). A DataFrame may additionally
+carry extra pass-through columns beyond the encoded ones (GH #367).</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mestimate.html" class="btn btn-neutral float-left" title="M-estimate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="onehot.html" class="btn btn-neutral float-right" title="One Hot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

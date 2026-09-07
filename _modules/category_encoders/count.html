@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.count &mdash; Category Encoders 2.10.0 documentation</title>
+  <title>category_encoders.count &mdash; Category Encoders 2.11.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -44,7 +44,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../basen.html">BaseN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../binary.html">Binary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../count_target.html">Count Target Encoding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glmm.html">Generalized Linear Mixed Model Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
@@ -52,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../leaveoneout.html">Leave One Out</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../multihot.html">Multi-Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../onehot.html">One Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../polynomial.html">Polynomial Coding</a></li>
@@ -114,6 +118,10 @@
     <span class="n">encoding_relation</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">EncodingRelation</span><span class="o">.</span><span class="n">ONE_TO_ONE</span>
     <span class="n">_VALID_HANDLE_MISSING</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_VALID_HANDLE_UNKNOWN</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># CountEncoder implements min_group_size itself (per-column dicts, with the</span>
+    <span class="c1"># threshold tied to `normalize`); it opts out of the base-level lumping hooks.</span>
+    <span class="n">_min_group_hooks_enabled</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -315,39 +323,14 @@
             <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="nb">float</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">*</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_min_nan_groups</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">min_groups_idx</span> <span class="o">=</span> <span class="n">mapper</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_min_nan_groups</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;force&#39;</span><span class="p">:</span>
-                <span class="n">min_groups_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">mapper</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">mapper</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">())</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">min_groups_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">mapper</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">mapper</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">())</span>
-
-            <span class="n">min_groups_sum</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_groups_idx</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="n">min_groups_sum</span> <span class="o">&gt;</span> <span class="mi">0</span>
-                <span class="ow">and</span> <span class="n">min_groups_idx</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="n">min_groups_idx</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">min_groups_idx</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-            <span class="p">):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_group_name</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-                    <span class="n">min_group_mapper_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_name</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">min_group_mapper_name</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="p">[</span>
-                            <span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-                            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">mapper</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_groups_idx</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span>
-                        <span class="p">]</span>
-                    <span class="p">)</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_categories</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span>
-                    <span class="n">mapper</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">min_groups_idx</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">min_group_mapper_name</span>
-                <span class="p">)</span>
-
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">min_groups_idx</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-                    <span class="n">mapper</span> <span class="o">=</span> <span class="n">mapper</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">min_groups_idx</span><span class="p">]</span>
-                    <span class="n">mapper</span><span class="p">[</span><span class="n">min_group_mapper_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_groups_sum</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapper</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">lumping_map</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">build_min_group_map</span><span class="p">(</span>
+                <span class="n">mapper</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_size</span><span class="p">[</span><span class="n">col</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_name</span><span class="p">[</span><span class="n">col</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_combine_min_nan_groups</span><span class="p">[</span><span class="n">col</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">lumping_map</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_min_group_categories</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">lumping_map</span></div>
 
 
     <span class="k">def</span> <span class="nf">_check_set_create_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Category Encoders 2.10.0 documentation</title>
+  <title>Index &mdash; Category Encoders 2.11.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=67920a36"></script>
+      <script src="_static/documentation_options.js?v=1647406f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -44,7 +44,10 @@
 <li class="toctree-l1"><a class="reference internal" href="basen.html">BaseN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="binary.html">Binary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_target.html">Count Target Encoding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
@@ -52,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="leaveoneout.html">Leave One Out</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multihot.html">Multi-Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="onehot.html">One Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="polynomial.html">Polynomial Coding</a></li>
@@ -173,6 +177,8 @@
 </li>
       <li><a href="count.html#category_encoders.count.CountEncoder">CountEncoder (class in category_encoders.count)</a>
 </li>
+      <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder">CountTargetEncoder (class in category_encoders.count_target)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -190,6 +196,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.fit">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.fit">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.fit">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.fit">(category_encoders.gray.GrayEncoder method)</a>
@@ -203,6 +211,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.fit">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.fit">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.fit">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.fit">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -264,6 +274,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.fit_transform">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.fit_transform">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.fit_transform">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.fit_transform">(category_encoders.gray.GrayEncoder method)</a>
@@ -277,6 +289,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.fit_transform">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.fit_transform">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.fit_transform">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.fit_transform">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -336,6 +350,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.get_feature_names">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_feature_names">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.get_feature_names">(category_encoders.gray.GrayEncoder method)</a>
@@ -349,6 +365,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_feature_names">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_feature_names">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_feature_names">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_feature_names">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -380,6 +398,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.get_feature_names_in">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_feature_names_in">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names_in">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.get_feature_names_in">(category_encoders.gray.GrayEncoder method)</a>
@@ -393,6 +413,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_feature_names_in">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_feature_names_in">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_in">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_feature_names_in">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -424,6 +446,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.get_feature_names_out">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_feature_names_out">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.get_feature_names_out">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.get_feature_names_out">(category_encoders.gray.GrayEncoder method)</a>
@@ -437,6 +461,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_feature_names_out">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_feature_names_out">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_feature_names_out">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_feature_names_out">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -470,6 +496,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.get_metadata_routing">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_metadata_routing">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.get_metadata_routing">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.get_metadata_routing">(category_encoders.gray.GrayEncoder method)</a>
@@ -483,6 +511,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_metadata_routing">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_metadata_routing">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_metadata_routing">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_metadata_routing">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -514,6 +544,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.get_params">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.get_params">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.get_params">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.get_params">(category_encoders.gray.GrayEncoder method)</a>
@@ -527,6 +559,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.get_params">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.get_params">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.get_params">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.get_params">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -616,6 +650,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder">MEstimateEncoder (class in category_encoders.m_estimate)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder">MultiHotEncoder (class in category_encoders.multi_hot)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -714,6 +752,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.set_output">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.set_output">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.set_output">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.set_output">(category_encoders.gray.GrayEncoder method)</a>
@@ -727,6 +767,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.set_output">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.set_output">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.set_output">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.set_output">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -756,6 +798,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.set_params">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.set_params">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.set_params">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.set_params">(category_encoders.gray.GrayEncoder method)</a>
@@ -769,6 +813,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.set_params">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.set_params">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.set_params">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.set_params">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -802,6 +848,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.set_transform_request">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.set_transform_request">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.set_transform_request">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.set_transform_request">(category_encoders.gray.GrayEncoder method)</a>
@@ -815,6 +863,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.set_transform_request">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.set_transform_request">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.set_transform_request">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.set_transform_request">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>
@@ -860,6 +910,8 @@
 </li>
         <li><a href="count.html#category_encoders.count.CountEncoder.transform">(category_encoders.count.CountEncoder method)</a>
 </li>
+        <li><a href="count_target.html#category_encoders.count_target.CountTargetEncoder.transform">(category_encoders.count_target.CountTargetEncoder method)</a>
+</li>
         <li><a href="glmm.html#category_encoders.glmm.GLMMEncoder.transform">(category_encoders.glmm.GLMMEncoder method)</a>
 </li>
         <li><a href="gray.html#category_encoders.gray.GrayEncoder.transform">(category_encoders.gray.GrayEncoder method)</a>
@@ -873,6 +925,8 @@
         <li><a href="leaveoneout.html#category_encoders.leave_one_out.LeaveOneOutEncoder.transform">(category_encoders.leave_one_out.LeaveOneOutEncoder method)</a>
 </li>
         <li><a href="mestimate.html#category_encoders.m_estimate.MEstimateEncoder.transform">(category_encoders.m_estimate.MEstimateEncoder method)</a>
+</li>
+        <li><a href="multihot.html#category_encoders.multi_hot.MultiHotEncoder.transform">(category_encoders.multi_hot.MultiHotEncoder method)</a>
 </li>
         <li><a href="onehot.html#category_encoders.one_hot.OneHotEncoder.transform">(category_encoders.one_hot.OneHotEncoder method)</a>
 </li>

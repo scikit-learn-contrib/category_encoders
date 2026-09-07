@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloning and cross-validation &mdash; Category Encoders 2.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=1647406f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How category_encoders differs from scikit-learn" href="conventions_vs_sklearn.html" />
+    <link rel="prev" title="CatBoost Encoder" href="catboost.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Category Encoders
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="backward_difference.html">Backward Difference Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basen.html">BaseN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="binary.html">Binary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Cloning and cross-validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#why-clones-are-unfitted">Why clones are unfitted</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-cross-validation-pitfall">The cross-validation pitfall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-patterns">Recommended patterns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-the-encoders-themselves-do-not-implement-sklearn-clone">Why the encoders themselves do not implement <code class="docutils literal notranslate"><span class="pre">__sklearn_clone__</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="count_target.html">Count Target Encoding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glmm.html">Generalized Linear Mixed Model Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gray.html">Gray</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hashing.html">Hashing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="helmert.html">Helmert Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="jamesstein.html">James-Stein Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="leaveoneout.html">Leave One Out</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multihot.html">Multi-Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="onehot.html">One Hot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ordinal.html">Ordinal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="polynomial.html">Polynomial Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quantile.html">Quantile Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rankhot.html">RankHotEncoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sum.html">Sum Coding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="targetencoder.html">Target Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="woe.html">Weight of Evidence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wrapper.html">Wrappers</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Category Encoders</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Cloning and cross-validation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/clone_contract.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cloning-and-cross-validation">
+<h1>Cloning and cross-validation<a class="headerlink" href="#cloning-and-cross-validation" title="Link to this heading"></a></h1>
+<p>All encoders follow the scikit-learn estimator contract, including <code class="docutils literal notranslate"><span class="pre">sklearn.base.clone</span></code>:
+cloning re-creates an estimator from its constructor parameters, and a clone is <strong>always
+unfitted</strong>, even when the original encoder was fitted.</p>
+<section id="why-clones-are-unfitted">
+<h2>Why clones are unfitted<a class="headerlink" href="#why-clones-are-unfitted" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">clone()</span></code> must return an unfitted estimator. That guarantee is what makes
+cross-validation, grid searches, and pipelines safe: every fold or candidate receives its
+own fresh estimator, so no information can leak between folds through fitted state.
+Fitted attributes such as <code class="docutils literal notranslate"><span class="pre">n_features_in_</span></code> or <code class="docutils literal notranslate"><span class="pre">feature_names_in_</span></code> are deliberately not
+carried over.</p>
+</section>
+<section id="the-cross-validation-pitfall">
+<h2>The cross-validation pitfall<a class="headerlink" href="#the-cross-validation-pitfall" title="Link to this heading"></a></h2>
+<p>Passing a <em>fitted</em> encoder as a constructor parameter of another estimator does not
+survive cloning. When scikit-learn clones the outer estimator (for example inside
+<code class="docutils literal notranslate"><span class="pre">cross_val_predict</span></code>), it also clones the encoder, and that clone is unfitted:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClassifierMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">cross_val_predict</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
+<span class="kn">import</span> <span class="nn">category_encoders</span> <span class="k">as</span> <span class="nn">ce</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">20</span><span class="p">})</span>
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">BinaryEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;A&#39;</span><span class="p">]])</span>
+
+<span class="k">class</span> <span class="nc">ToyClassifier</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClassifierMixin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="c1"># raises NotFittedError: within each fold the encoder is an unfitted clone</span>
+<span class="n">cross_val_predict</span><span class="p">(</span><span class="n">ToyClassifier</span><span class="p">(</span><span class="n">encoder</span><span class="o">=</span><span class="n">encoder</span><span class="p">),</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;A&#39;</span><span class="p">]],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Transforming with an unfitted encoder raises <code class="docutils literal notranslate"><span class="pre">NotFittedError</span></code> with a message that names
+the problem and the ways out.</p>
+</section>
+<section id="recommended-patterns">
+<h2>Recommended patterns<a class="headerlink" href="#recommended-patterns" title="Link to this heading"></a></h2>
+<p><strong>Fit the encoder inside the pipeline or the cross-validation loop</strong> (recommended). Put
+the encoder in a <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> and cross-validate the pipeline; the encoder is refit on
+each training fold, which is also the statistically correct treatment:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span>
+
+<span class="n">pipe</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="n">ce</span><span class="o">.</span><span class="n">BinaryEncoder</span><span class="p">(),</span> <span class="n">SVC</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mi">1000</span><span class="p">))</span>
+<span class="n">cross_val_predict</span><span class="p">(</span><span class="n">pipe</span><span class="p">,</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;A&#39;</span><span class="p">]],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>Hold a pre-fitted encoder with ``__sklearn_clone__``</strong> (scikit-learn &gt;= 1.6). If you
+genuinely want one global fit shared across all folds — for example because fitting is
+expensive — give the <em>wrapper</em> a <code class="docutils literal notranslate"><span class="pre">__sklearn_clone__</span></code> method that preserves the encoder:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PreFittedClassifier</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">ClassifierMixin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">encoder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__sklearn_clone__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>  <span class="c1"># keep the pre-fitted encoder; the SVC is refit per fold</span>
+
+<span class="n">cross_val_predict</span><span class="p">(</span><span class="n">PreFittedClassifier</span><span class="p">(</span><span class="n">encoder</span><span class="o">=</span><span class="n">encoder</span><span class="p">),</span> <span class="n">data</span><span class="p">[[</span><span class="s1">&#39;A&#39;</span><span class="p">]],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Note that this wrapper deliberately steps outside the usual scikit-learn isolation rules:
+cloning no longer produces a fresh, independent copy, so use it only when a shared global
+fit is really what you want.</p>
+</section>
+<section id="why-the-encoders-themselves-do-not-implement-sklearn-clone">
+<h2>Why the encoders themselves do not implement <code class="docutils literal notranslate"><span class="pre">__sklearn_clone__</span></code><a class="headerlink" href="#why-the-encoders-themselves-do-not-implement-sklearn-clone" title="Link to this heading"></a></h2>
+<p>Implementing <code class="docutils literal notranslate"><span class="pre">__sklearn_clone__</span></code> on the encoders to return the fitted instance would
+break the clone-is-unfitted guarantee for every other consumer: the clones that
+cross-validation, grid search, and pipelines create would silently share fitted state and
+leak information between folds. If you need a shared fit, make that explicit in your own
+wrapper, as shown above.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="catboost.html" class="btn btn-neutral float-left" title="CatBoost Encoder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="conventions_vs_sklearn.html" class="btn btn-neutral float-right" title="How category_encoders differs from scikit-learn" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Paul Westenthanner, Will McGinnis.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

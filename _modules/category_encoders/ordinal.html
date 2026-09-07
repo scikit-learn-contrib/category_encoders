@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.ordinal &mdash; Category Encoders 2.10.0 documentation</title>
+  <title>category_encoders.ordinal &mdash; Category Encoders 2.11.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=67920a36"></script>
+      <script src="../../_static/documentation_options.js?v=1647406f"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -44,7 +44,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../basen.html">BaseN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../binary.html">Binary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../catboost.html">CatBoost Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clone_contract.html">Cloning and cross-validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../conventions_vs_sklearn.html">How category_encoders differs from scikit-learn</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../count.html">Count Encoder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../count_target.html">Count Target Encoding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../glmm.html">Generalized Linear Mixed Model Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../gray.html">Gray</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../hashing.html">Hashing</a></li>
@@ -52,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../jamesstein.html">James-Stein Encoder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../leaveoneout.html">Leave One Out</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mestimate.html">M-estimate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../multihot.html">Multi-Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../onehot.html">One Hot</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ordinal.html">Ordinal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../polynomial.html">Polynomial Coding</a></li>
@@ -94,6 +98,7 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -134,13 +139,20 @@
 <span class="sd">            {&#39;col&#39;: &#39;col1&#39;, &#39;mapping&#39;: {None: 0, &#39;a&#39;: 1, &#39;b&#39;: 2}},</span>
 <span class="sd">            {&#39;col&#39;: &#39;col2&#39;, &#39;mapping&#39;: {None: 0, &#39;x&#39;: 1, &#39;y&#39;: 2}}</span>
 <span class="sd">        ]</span>
-<span class="sd">    handle_unknown: str</span>
+<span class="sd">    handle_unknown: str, int, float or callable</span>
 <span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39; and &#39;value&#39;, defaults to &#39;value&#39;,</span>
-<span class="sd">        which will impute the category -1.</span>
-<span class="sd">    handle_missing: str</span>
+<span class="sd">        which will impute the category -1. A number is imputed directly, and</span>
+<span class="sd">        a callable fn(value, mapping) is evaluated per unseen value at transform</span>
+<span class="sd">        time, where `value` is the unseen label and `mapping` is the fitted</span>
+<span class="sd">        category-to-label mapping.</span>
+<span class="sd">    handle_missing: str, int, float or callable</span>
 <span class="sd">        options are &#39;error&#39;, &#39;return_nan&#39;, and &#39;value, default to &#39;value&#39;,</span>
 <span class="sd">        which treat nan as a category at fit time,</span>
 <span class="sd">        or -2 at transform time if nan is not a category during fit.</span>
+<span class="sd">        A number replaces the -2 default for missing values that were not seen</span>
+<span class="sd">        at fit time, and a callable fn(value, mapping) is evaluated once per</span>
+<span class="sd">        column with `value` = np.nan and `mapping` the fitted</span>
+<span class="sd">        category-to-label mapping.</span>
 <span class="sd">    index_start: int</span>
 <span class="sd">        integer at which to start labelling the categories. Defaults to 1.</span>
 <span class="sd">        Set to 0 for zero-indexed labels, which can be convenient when feeding</span>
@@ -206,6 +218,9 @@
         <span class="n">handle_unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
         <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span>
         <span class="n">index_start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">min_group_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">combine_min_nan_groups</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
@@ -214,6 +229,9 @@
             <span class="n">return_df</span><span class="o">=</span><span class="n">return_df</span><span class="p">,</span>
             <span class="n">handle_unknown</span><span class="o">=</span><span class="n">handle_unknown</span><span class="p">,</span>
             <span class="n">handle_missing</span><span class="o">=</span><span class="n">handle_missing</span><span class="p">,</span>
+            <span class="n">min_group_size</span><span class="o">=</span><span class="n">min_group_size</span><span class="p">,</span>
+            <span class="n">min_group_name</span><span class="o">=</span><span class="n">min_group_name</span><span class="p">,</span>
+            <span class="n">combine_min_nan_groups</span><span class="o">=</span><span class="n">combine_min_nan_groups</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mapping_supplied</span> <span class="o">=</span> <span class="n">mapping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping_supplied</span><span class="p">:</span>
@@ -228,11 +246,11 @@
 
     <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># reset mapping in case of refit</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping_supplied</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping_supplied</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordinal_encoding</span><span class="p">(</span>
             <span class="n">X</span><span class="p">,</span>
-            <span class="n">mapping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">,</span>
             <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">,</span>
             <span class="n">handle_unknown</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span><span class="p">,</span>
             <span class="n">handle_missing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_missing</span><span class="p">,</span>
@@ -273,8 +291,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must train encoder before it can be used to inverse_transform data&#39;</span><span class="p">)</span>
 
-        <span class="c1"># first check the type and make deep copy</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">convert_input</span><span class="p">(</span><span class="n">X_in</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># first check the type and make deep copy; re-attach the fitted output names</span>
+        <span class="c1"># for arraylike input, matching the BaseN/OneHot inverse_transform precedent</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">convert_input</span><span class="p">(</span><span class="n">X_in</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_names_out_</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># then make sure that it is the right size</span>
         <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dim</span><span class="p">:</span>
@@ -291,10 +310,10 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
-                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">==</span> <span class="n">util</span><span class="o">.</span><span class="n">UNKNOWN_SENTINEL</span><span class="p">):</span>
                     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                         <span class="s1">&#39;inverse_transform is not supported because transform impute &#39;</span>
-                        <span class="sa">f</span><span class="s1">&#39;the unknown category -1 when encode </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;the unknown category </span><span class="si">{</span><span class="n">util</span><span class="o">.</span><span class="n">UNKNOWN_SENTINEL</span><span class="si">}</span><span class="s1"> when encode </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
                         <span class="n">stacklevel</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
                     <span class="p">)</span>
 
@@ -333,9 +352,7 @@
 <span class="sd">        Otherwise, the classes are assumed to have no true order and integers are selected</span>
 <span class="sd">        at random.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">return_nan_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-
-        <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X_in</span>
 
         <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span>
@@ -345,71 +362,142 @@
             <span class="k">for</span> <span class="n">switch</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">:</span>
                 <span class="n">column</span> <span class="o">=</span> <span class="n">switch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;col&#39;</span><span class="p">)</span>
                 <span class="n">col_mapping</span> <span class="o">=</span> <span class="n">switch</span><span class="p">[</span><span class="s1">&#39;mapping&#39;</span><span class="p">]</span>
-
-                <span class="c1"># Convert to object to accept np.nan (dtype string doesn&#39;t)</span>
-                <span class="c1"># fillna changes None and pd.NA to np.nan</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s1">&#39;future.no_silent_downcasting&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
-                        <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">col_mapping</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">pd</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">OptionError</span><span class="p">:</span>  <span class="c1"># old pandas versions</span>
-                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">col_mapping</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">util</span><span class="o">.</span><span class="n">is_category</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
-                    <span class="n">nan_identity</span> <span class="o">=</span> <span class="n">col_mapping</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">col_mapping</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">add_categories</span><span class="p">(</span><span class="n">nan_identity</span><span class="p">)</span>
-                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">nan_identity</span><span class="p">)</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
-                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
-                    <span class="n">missing</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">missing</span><span class="p">):</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unexpected categories found in column </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">return_nan_series</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">])</span>
-
+                <span class="n">raw_values</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">handle_unknown</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="o">.</span><span class="n">_map_column</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">col_mapping</span><span class="p">)</span>
+                <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="o">.</span><span class="n">_apply_unknown_policy</span><span class="p">(</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">column</span><span class="p">,</span> <span class="n">handle_unknown</span><span class="p">,</span> <span class="n">raw_values</span><span class="p">,</span> <span class="n">col_mapping</span>
+                <span class="p">)</span>
+                <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="o">.</span><span class="n">_apply_missing_policy</span><span class="p">(</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">handle_missing</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">col_mapping</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mapping_out</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
-                <span class="n">nan_identity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-                <span class="n">categories</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-                <span class="c1"># make nan last category</span>
-                <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                    <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">categories</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">c</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="n">nan_identity</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">categories</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">util</span><span class="o">.</span><span class="n">is_category</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
-                    <span class="c1"># Avoid using pandas category dtype meta-data if possible, see #235, #238.</span>
-                    <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">ordered</span><span class="p">:</span>
-                        <span class="n">category_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                            <span class="n">categories</span>
-                        <span class="p">)</span>  <span class="c1"># convert to set for faster membership checks c.f. #407</span>
-                        <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">categories</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">category_set</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                        <span class="n">categories</span> <span class="o">+=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span>
-
-                <span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">nan_identity</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-
-                <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
-                    <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
-                    <span class="n">data</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">index_start</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">+</span> <span class="n">index_start</span><span class="p">),</span>
-                <span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span> <span class="ow">and</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nan_identity</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
-                <span class="k">elif</span> <span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
-                    <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nan_identity</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
-
                 <span class="n">mapping_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="p">{</span><span class="s1">&#39;col&#39;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span> <span class="s1">&#39;mapping&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="s1">&#39;data_type&#39;</span><span class="p">:</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">},</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;col&#39;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
+                        <span class="s1">&#39;mapping&#39;</span><span class="p">:</span> <span class="n">OrdinalEncoder</span><span class="o">.</span><span class="n">_fit_column_mapping</span><span class="p">(</span>
+                            <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">handle_missing</span><span class="p">,</span> <span class="n">index_start</span>
+                        <span class="p">),</span>
+                        <span class="s1">&#39;data_type&#39;</span><span class="p">:</span> <span class="n">X</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                    <span class="p">}</span>
                 <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">mapping_out</span></div>
 
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_map_column</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">col_mapping</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map one column through its fitted category-to-code mapping.&quot;&quot;&quot;</span>
+        <span class="c1"># Convert to object to accept np.nan (dtype string doesn&#39;t)</span>
+        <span class="c1"># fillna changes None and pd.NA to np.nan</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s1">&#39;future.no_silent_downcasting&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">col_mapping</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">pd</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">OptionError</span><span class="p">:</span>  <span class="c1"># old pandas versions</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">col_mapping</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">util</span><span class="o">.</span><span class="n">is_category</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
+            <span class="n">nan_identity</span> <span class="o">=</span> <span class="n">col_mapping</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">col_mapping</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">cat</span><span class="o">.</span><span class="n">add_categories</span><span class="p">(</span><span class="n">nan_identity</span><span class="p">)</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">nan_identity</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_apply_unknown_policy</span><span class="p">(</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+        <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">handle_unknown</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">raw_values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">col_mapping</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve unseen categories after mapping: impute, raise, or defer to a scalar/callable.&quot;&quot;&quot;</span>
+        <span class="n">unknown_mask</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">util</span><span class="o">.</span><span class="n">UNKNOWN_SENTINEL</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">handle_unknown</span> <span class="o">==</span> <span class="s1">&#39;error&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">unknown_mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unexpected categories found in column </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">handle_unknown</span><span class="p">):</span>
+            <span class="c1"># each unseen raw value is passed to the callable individually, so unlike</span>
+            <span class="c1"># handle_missing (a single conceptual nan) this bypasses evaluate_handle_callable</span>
+            <span class="n">filled</span> <span class="o">=</span> <span class="n">raw_values</span><span class="p">[</span><span class="n">unknown_mask</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="n">handle_unknown</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">col_mapping</span><span class="p">))</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">unknown_mask</span><span class="p">,</span> <span class="n">filled</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">NUMERIC_SCALARS</span><span class="p">):</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">validate_scalar_handle_value</span><span class="p">(</span><span class="n">handle_unknown</span><span class="p">,</span> <span class="n">col_mapping</span><span class="p">,</span> <span class="s1">&#39;handle_unknown&#39;</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">handle_unknown</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_apply_missing_policy</span><span class="p">(</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+        <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">column</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">col_mapping</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Map the missing sentinel to NaN, or to a scalar/callable result, per handle_missing.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
+            <span class="n">return_nan_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">return_nan_series</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">values</span> <span class="o">==</span> <span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">handle_missing</span><span class="p">):</span>
+            <span class="n">missing_value</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">evaluate_handle_callable</span><span class="p">(</span>
+                <span class="n">handle_missing</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">col_mapping</span><span class="p">,</span> <span class="s1">&#39;handle_missing&#39;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">values</span> <span class="o">==</span> <span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span><span class="p">,</span> <span class="n">missing_value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handle_missing</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">NUMERIC_SCALARS</span><span class="p">):</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">validate_scalar_handle_value</span><span class="p">(</span><span class="n">handle_missing</span><span class="p">,</span> <span class="n">col_mapping</span><span class="p">,</span> <span class="s1">&#39;handle_missing&#39;</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">values</span> <span class="o">==</span> <span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span><span class="p">,</span> <span class="n">handle_missing</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_categories</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Collect the unique categories of one column, NaN last.&quot;&quot;&quot;</span>
+        <span class="n">nan_identity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="c1"># make nan last category</span>
+        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">categories</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">c</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="n">nan_identity</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">util</span><span class="o">.</span><span class="n">is_category</span><span class="p">(</span><span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="p">):</span>
+            <span class="c1"># Avoid using pandas category dtype meta-data if possible, see #235, #238.</span>
+            <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">ordered</span><span class="p">:</span>
+                <span class="n">category_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                    <span class="n">categories</span>
+                <span class="p">)</span>  <span class="c1"># convert to set for faster membership checks c.f. #407</span>
+                <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">categories</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">category_set</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">categories</span> <span class="o">+=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">categories</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_fit_column_mapping</span><span class="p">(</span>
+        <span class="n">values</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">handle_missing</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">index_start</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the category-to-code mapping of one column from the fit data.&quot;&quot;&quot;</span>
+        <span class="n">nan_identity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="n">OrdinalEncoder</span><span class="o">.</span><span class="n">_get_categories</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">nan_identity</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">index_start</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">+</span> <span class="n">index_start</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;value&#39;</span> <span class="ow">and</span> <span class="o">~</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nan_identity</span><span class="p">]</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span>
+        <span class="k">elif</span> <span class="n">handle_missing</span> <span class="o">==</span> <span class="s1">&#39;return_nan&#39;</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nan_identity</span><span class="p">]</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span>
+        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">handle_missing</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handle_missing</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">NUMERIC_SCALARS</span><span class="p">):</span>
+            <span class="c1"># reserve the missing code so transform can replace it with</span>
+            <span class="c1"># the user&#39;s scalar / callable result</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nan_identity</span><span class="p">]</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">MISSING_SENTINEL</span>
+
+        <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">_validate_supplied_mapping</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">supplied_mapping</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">]]</span>
