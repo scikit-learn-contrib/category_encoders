@@ -130,3 +130,41 @@ class TestRankHotEncoder(TestCase):
         for m1, m2 in zip(mapping_order_1, mapping_order_2, strict=False):
             self.assertEqual(m1['col'], m2['col'])
             pd.testing.assert_series_equal(m1['mapping'], m2['mapping'])
+
+class TestRankHotHardening(TestCase):
+    """Hardening tests for RankHotEncoder mutation survivors."""
+
+    def test_inverse_round_trip_preserves_values_and_input(self):
+        """Inverse rank-hot output restores the original frame, input untouched.
+
+        Mutants category_encoders/rankhot.py::_create_dataframe mutmut_3/5/6
+        (dropping the encoded data or its column names) corrupt the restored
+        frame, and the input frame must stay unmodified.
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c', 'a'], 'keep': [1, 2, 3, 4]})
+        enc = encoders.RankHotEncoder()
+        enc.fit(df)
+        encoded = enc.transform(df)
+        snapshot = encoded.copy(deep=True)
+        restored = enc.inverse_transform(encoded)
+        pd.testing.assert_frame_equal(restored, df)
+        pd.testing.assert_frame_equal(encoded, snapshot)
+
+    def test_unknown_rank_row_decodes_to_nan(self):
+        """An all-zero rank block decodes to NaN, not zero and not None.
+
+        Mutants category_encoders/rankhot.py::inverse_transform mutmut_50
+        (any(x == 0) -> any(x != 0)) and mutmut_52 (np.nan -> None) break the
+        unknown-value decoding: a NaN fails an equality check with itself,
+        while 0 and None do not.
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c', 'a']})
+        enc = encoders.RankHotEncoder()
+        enc.fit(df)
+        encoded = enc.transform(df)
+        block_cols = [c for c in encoded.columns if c.startswith('x_')]
+        unknown = encoded.iloc[[0]].copy()
+        unknown[block_cols] = 0
+        restored = enc.inverse_transform(unknown)
+        self.assertNotEqual(restored['x'].iloc[0], restored['x'].iloc[0])
+

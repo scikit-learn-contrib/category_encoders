@@ -7,9 +7,12 @@ import pandas as pd
 import pytest
 from category_encoders.utils import (
     BaseEncoder,
+    build_min_group_map,
     convert_input_vector,
     convert_inputs,
+    flatten_reverse_dict,
     get_categorical_cols,
+    get_generated_cols,
 )
 from packaging.version import Version
 from sklearn import __version__ as skl_version
@@ -269,3 +272,112 @@ class TestNdarrayTransform(TestCase):
         enc = encoders.OrdinalEncoder(cols=['str_col'])
         with self.assertRaisesRegex(ValueError, 'set_output'):
             enc.fit(X)
+
+
+class TestUtilsMutationHardening(TestCase):
+    """Targeted tests for survivors of the mutation-testing campaign in utils."""
+
+    def test_flatten_reverse_dict_inverts_nested_mapping(self):
+        """flatten_reverse_dict inverts {outer: {inner: value}} into {value: (outer, inner)}."""
+        nested = {'a': {'b': 1, 'c': 2}}
+        self.assertEqual({1: ('a', 'b'), 2: ('a', 'c')}, flatten_reverse_dict(nested))
+
+    def test_get_categorical_cols_selects_string_dtyped_columns(self):
+        """get_categorical_cols selects object/category/string-dtyped columns only."""
+        df = pd.DataFrame(
+            {
+                'text': ['a', 'b'],
+                'category': pd.Series(['a', 'b'], dtype='category'),
+                'string': pd.Series(['a', 'b'], dtype='string'),
+                'number': [1.0, 2.0],
+            }
+        )
+        self.assertEqual(['text', 'category', 'string'], get_categorical_cols(df))
+
+    def test_build_min_group_map_does_not_lump_when_group_sizes_sum_to_zero(self):
+        """A group_sizes series summing to zero must not lump anything."""
+        sizes = pd.Series([0, 0, 5], index=['a', 'b', 'c'])
+        kept, lumped = build_min_group_map(sizes, 1, None, None)
+        self.assertEqual({'a': 0, 'b': 0, 'c': 5}, kept.to_dict())
+        self.assertEqual({}, lumped)
+
+    def test_get_generated_cols_returns_encoded_and_to_transform_columns(self):
+        """get_generated_cols unions encoded and to-transform columns."""
+        X_original = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})
+        X_transformed = pd.DataFrame({'a': [1, 2], 'a_enc': [1, 2]})
+        self.assertEqual(['a', 'a_enc'], get_generated_cols(X_original, X_transformed, ['a']))
+        identical = pd.DataFrame({'a': [1, 2], 'b': [3, 4]})
+        self.assertEqual([], get_generated_cols(X_original, identical, []))
+
+    def test_composite_cols_validation_rejects_malformed_groups(self):
+        """_validate_composite_cols rejects single-member, non-tuple, and unknown members."""
+        X = pd.DataFrame({'a': ['x', 'y'], 'b': [1, 2]})
+        y = pd.Series([0, 1])
+        for bad_spec in [(('a',),), (['a', 'b'],), (('a', 'nope'),)]:
+            with self.subTest(bad_spec=bad_spec):
+                encoder = encoders.TargetEncoder(composite_cols=bad_spec)
+                with self.assertRaises(ValueError):
+                    encoder.fit(X, y)
+
+    def test_composite_cols_accepts_two_distinct_groups(self):
+        """Two distinct composite groups fit; a join collision is rejected.
+
+        Kills the _validate_composite_cols length/membership/duplicate-name mutants
+        (mutmut_8/-9/-19/-22/-28): valid two-group specs must fit, and two groups whose
+        joined names collide must raise ValueError.
+        """
+        X = pd.DataFrame(
+            {
+                'p': ['x', 'y', 'z'],
+                'q': ['1', '2', '3'],
+                'r': ['u', 'v', 'w'],
+                's': ['a', 'b', 'c'],
+            }
+        )
+        y = pd.Series([1, 0, 1])
+        encoder = encoders.TargetEncoder(composite_cols=[('p', 'q'), ('r', 's')])
+        encoder.fit(X, y)
+        self.assertIn('p|q', encoder.mapping)
+        self.assertIn('r|s', encoder.mapping)
+
+        X_piped = pd.DataFrame(
+            {
+                'p': ['x', 'y', 'z'],
+                'q': ['1', '2', '3'],
+                'r': ['u', 'v', 'w'],
+                'p|q': ['a', 'b', 'c'],
+                'q|r': ['d', 'e', 'f'],
+            }
+        )
+        collision = encoders.TargetEncoder(composite_cols=[('p|q', 'r'), ('p', 'q|r')])
+        with self.assertRaises(ValueError):
+            collision.fit(X_piped, y)
+
+    def test_transform_output_restores_fitted_dtypes_for_arraylike_input(self):
+        """Arraylike transform input must restore the fitted object/category dtypes.
+
+        Only object and category columns carry encoding semantics an ndarray loses
+        (GH #406); kills _restore_fitted_dtypes mutmut_3/-4 (the dtype gate).
+        """
+        X = pd.DataFrame(
+            {
+                'str_col': ['a', 'b', 'c'],
+                'cat_col': pd.Series(['x', 'y', 'z'], dtype='category'),
+            }
+        )
+        encoder = encoders.OrdinalEncoder(cols=['str_col'])
+        encoder.fit(X)
+        out = encoder.transform(X.to_numpy())
+        self.assertEqual('int64', str(out['str_col'].dtype))
+        self.assertEqual('category', str(out['cat_col'].dtype))
+
+    def test_get_feature_names_in_requires_and_reflects_fit(self):
+        """get_feature_names_in raises NotFittedError before fit and reflects columns after."""
+        encoder = encoders.OrdinalEncoder(cols=['str_col'])
+        with self.assertRaises(NotFittedError):
+            encoder.get_feature_names_in()
+        X = pd.DataFrame({'str_col': ['a', 'b'], 'num': [1, 2]})
+        encoder.fit(X)
+        np.testing.assert_array_equal(
+            np.array(['str_col', 'num']), encoder.get_feature_names_in()
+        )

@@ -1,4 +1,5 @@
 """Tests for the BaseNEncoder class."""
+import warnings
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
@@ -198,3 +199,65 @@ class TestBaseNEncoder(TestCase):
         self.assertEqual(num_cols(0, 2), 1)
 
         self.assertEqual(num_cols(55, 7), 3)
+
+
+class TestBaseNMutationHardening(TestCase):
+    """Targeted tests for survivors of the mutation-testing campaign in basen."""
+
+    def test_base1_round_trip_and_no_input_mutation(self):
+        """Base-1 encoding is an invertible one-hot that must not mutate its input.
+
+        Kills the base-1 branch of basen_to_integer (mutmut_18/-19/-20/-21/-24) and pins
+        the round-trip contract exercised by inverse_transform.
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c'], 'num': [1, 2, 3]})
+        snapshot = df.copy()
+        encoder = encoders.BaseNEncoder(base=1)
+        encoded = encoder.fit_transform(df)
+        self.assertEqual(4, len([col for col in encoded.columns if col.startswith('x_')]))
+        restored = encoder.inverse_transform(encoded)
+        pd.testing.assert_frame_equal(df, restored)
+        pd.testing.assert_frame_equal(snapshot, df)
+
+    def test_inverse_transform_works_with_drop_invariant_and_no_invariant_columns(self):
+        """inverse_transform works with drop_invariant=True when nothing was dropped.
+
+        Kills basen.xǁBaseNEncoderǁinverse_transform__mutmut_14 (and→or in the guard).
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c']})
+        encoder = encoders.BaseNEncoder(base=2, drop_invariant=True)
+        encoder.fit(df)
+        restored = encoder.inverse_transform(encoder.transform(df))
+        pd.testing.assert_frame_equal(df, restored)
+
+    def test_inverse_transform_does_not_mutate_encoded_input(self):
+        """inverse_transform must not modify the encoded frame it receives.
+
+        Kills the deep-copy mutants of basen.xǁBaseNEncoderǁinverse_transform
+        (mutmut_9/-12/-13).
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c', 'd']})
+        encoder = encoders.BaseNEncoder(base=2)
+        encoder.fit(df)
+        encoded = encoder.transform(df)
+        snapshot = encoded.copy()
+        encoder.inverse_transform(encoded)
+        pd.testing.assert_frame_equal(snapshot, encoded)
+
+    def test_inverse_transform_mixed_config_emits_no_inverse_warning(self):
+        """handle_missing='return_nan' with handle_unknown='value' must not warn.
+
+        Kills basen.xǁBaseNEncoderǁinverse_transform__mutmut_54 (and→or in the
+        both-return_nan warning guard).
+        """
+        train = pd.DataFrame({'city': ['chicago', np.nan]})
+        encoder = encoders.BaseNEncoder(handle_missing='return_nan', handle_unknown='value')
+        encoder.fit(train)
+        result = encoder.transform(train)
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter('always')
+            restored = encoder.inverse_transform(result)
+        self.assertEqual(
+            [], [str(w.message) for w in caught if issubclass(w.category, UserWarning)]
+        )
+        pd.testing.assert_frame_equal(train, restored)

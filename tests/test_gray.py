@@ -122,3 +122,23 @@ class TestGrayEncoder(TestCase):
             n, n_bits = test_input
             out = encoders.GrayEncoder.gray_code(n, n_bits)
             self.assertEqual(out, expected_output)
+
+
+class TestGrayHardening(TestCase):
+    """Contract tests for GrayEncoder inverse behavior."""
+
+    def test_inverse_round_trip_two_categories(self):
+        """Round-trip a 2-category column through the Gray code path.
+
+        The smallest possible Gray mapping still carries sentinel rows in its
+        binary mapping, so both encoded columns exist; inverse must restore
+        the original strings and dtypes.
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'a', 'b']})
+        enc = encoders.GrayEncoder()
+        enc.fit(df)
+        encoded = enc.transform(df)
+        self.assertEqual(len([c for c in encoded.columns if c.startswith('x_')]), 2)
+        restored = enc.inverse_transform(encoded)
+        pd.testing.assert_frame_equal(restored, df)
+

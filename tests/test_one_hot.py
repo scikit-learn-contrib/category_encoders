@@ -351,3 +351,37 @@ class TestOneHotEncoder(TestCase):
                 result = enc.transform(test_data)
                 original = enc.inverse_transform(result)
                 pd.testing.assert_frame_equal(expected, original)
+
+class TestOneHotHardening(TestCase):
+    """Hardening tests for OneHotEncoder mutation survivors."""
+
+    def test_inverse_round_trip_covers_first_category(self):
+        """Round-trip every category, including the first (index 1).
+
+        Mutant category_encoders/one_hot.py::reverse_dummies mutmut_23
+        (positive-index filter > 0 -> >= 0) shifts the category value that
+        each dummy column maps back to, corrupting the restored strings.
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c', 'a']})
+        enc = encoders.OneHotEncoder(use_cat_names=True)
+        enc.fit(df)
+        restored = enc.inverse_transform(enc.transform(df))
+        pd.testing.assert_frame_equal(restored, df)
+
+    def test_inverse_decodes_all_zero_dummy_row_to_nan(self):
+        """A row with every dummy zero belongs to no known category -> NaN.
+
+        Pins the unknown-category inverse contract exercised by mutants
+        mutmut_17/23 of reverse_dummies (insert value and index filter):
+        baseline decodes the zero row to NaN through the mapping lookup.
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c']})
+        enc = encoders.OneHotEncoder(use_cat_names=True)
+        enc.fit(df)
+        encoded = enc.transform(df)
+        dummy_cols = [c for c in encoded.columns if c.startswith('x_')]
+        unknown = encoded.iloc[[0]].copy()
+        unknown[dummy_cols] = 0
+        restored = enc.inverse_transform(unknown)
+        self.assertTrue(pd.isna(restored['x'].iloc[0]))
+
