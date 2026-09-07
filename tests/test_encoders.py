@@ -1058,7 +1058,25 @@ class TestEncoders(TestCase):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)(cols=['col1'])
                 out = enc.fit_transform(X, y)
-                self.assertTrue(pd.isna(out.col2[2]))
+                self.assertTrue(pd.isna(out.col2.iloc[2]))
+
+                # additional check for np.nan
+                X_nan = pd.DataFrame({
+                    'col1': ['A', 'B', np.nan],
+                    'col2': ['C', 'D', np.nan]
+                })
+                enc_nan = getattr(encoders, encoder_name)(cols=['col1'])
+                out_nan = enc_nan.fit_transform(X_nan, y)
+                self.assertTrue(pd.isna(out_nan.col2.iloc[2]))
+
+                # additional check for pd.NA
+                X_pdna = pd.DataFrame({
+                    'col1': ['A', 'B', pd.NA],
+                    'col2': ['C', 'D', pd.NA]
+                })
+                enc_pdna = getattr(encoders, encoder_name)(cols=['col1'])
+                out_pdna = enc_pdna.fit_transform(X_pdna, y)
+                self.assertTrue(pd.isna(out_pdna.col2.iloc[2]))
 
     def test_invalid_handle_missing_raises(self):
         opted_out = {'CountEncoder', 'HashingEncoder'}
