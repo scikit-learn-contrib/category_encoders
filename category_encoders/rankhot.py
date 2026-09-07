@@ -36,8 +36,15 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         'error': If an unknown label occurs, error message is displayed.
         'return_nan': If an unknown label occurs, np.nan is returned in all columns.
     handle_missing: str
-        options are 'error', 'value' and 'return_nan'. The default is 'value'.
-        Missing value also considered as unknown value in the final data set.
+        options are 'error', 'return_nan', 'value', and 'ignore'. The default is 'value'.
+
+        'error' will raise a `ValueError` if a missing value is encountered.
+        'return_nan' will encode a missing value as `np.nan` in every rank column.
+        'value' will treat a missing value seen during fit as its own category, adding a rank
+        column for it if the training data contained missing values (matching the treatment of
+        any other category). See 'ignore' below to zero-fill missing values instead.
+        'ignore' will encode missing values as 0 in every rank column,
+        NOT adding an additional category.
 
     Example
     -------
@@ -84,6 +91,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
     prefit_ordinal = True
     encoding_relation = util.EncodingRelation.ONE_TO_N_UNIQUE
+    _VALID_HANDLE_MISSING = ('error', 'return_nan', 'value', 'ignore')
 
     def __init__(
         self,
@@ -119,6 +127,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             'return_nan': 'return_nan',
             'value': 'value',
             'indicator': 'return_nan',
+            'ignore': 'return_nan',
         }[self.handle_missing]
         # supply custom mapping in order to assure order of ordinal variable
         ordered_mapping = []
@@ -184,7 +193,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             def apply_coding(row: pd.Series):
                 val = row.iloc[0]
                 if pd.isna(val):
-                    if self.handle_missing == 'value':
+                    if self.handle_missing in ('value', 'ignore'):
                         return default_value
                     elif self.handle_missing == 'return_nan':
                         return [np.nan] * len(default_value)
@@ -277,7 +286,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             col: str = switch.get('col')
             values: pd.Series = switch.get('mapping').copy(deep=True)
 
-            if self.handle_missing == 'value':
+            if self.handle_missing in ('value', 'ignore'):
                 values = values[values > 0]
 
             if len(values) == 0:

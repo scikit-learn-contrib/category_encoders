@@ -1,6 +1,16 @@
 unreleased
 ==========
 
+* Docs: Fixed issue#400 - ``OneHotEncoder``'s ``handle_missing='value'`` docstring wrongly
+  claimed missing values are zero-filled; corrected it to describe the actual (and, per
+  ``test_missing_values``, intended library-wide) behavior of treating a missing value seen
+  during fit as its own category, same as ``MultiHotEncoder``'s existing ``value``/``ignore``
+  split. No behavior change: the existing ``ignore`` option already zero-fills missing values.
+* Feat: Added ``handle_missing='ignore'`` to ``RankHotEncoder``, matching the option already
+  available on ``OneHotEncoder`` and ``MultiHotEncoder`` (issue#400's RankHotEncoder gap).
+  Zero-fills a missing value at both fit and transform time, without adding an extra
+  thermometer column for it; the default ``value`` behavior (own category, unchanged) still
+  matches ``test_missing_values``' library-wide invariant.
 * Feat: Added issue#420 - ``CountTargetEncoder``, a supervised count-based
   encoder that stores per-class category counts and encodes categories as
   smoothing-adjusted log-odds against the global target prior (binary targets
