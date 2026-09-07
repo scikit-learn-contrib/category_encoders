@@ -43,7 +43,7 @@ def __getattr__(name):
         return GLMMEncoder
     raise AttributeError(f'module {__name__!r} has no attribute {name!r}')
 
-__version__ = '2.10.0'
+__version__ = '2.11.0'
 
 __author__ = 'willmcginnis', 'cmougan', 'paulwestenthanner'
 
