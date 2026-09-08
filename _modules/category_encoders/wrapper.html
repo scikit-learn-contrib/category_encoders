@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>category_encoders.wrapper &mdash; Category Encoders 2.11.0 documentation</title>
+  <title>category_encoders.wrapper &mdash; Category Encoders 2.11.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=1647406f"></script>
+      <script src="../../_static/documentation_options.js?v=b23fc476"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -99,6 +99,7 @@
 
 <span class="kn">import</span> <span class="nn">copy</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">StratifiedKFold</span>
@@ -413,18 +414,30 @@
 <span class="sd">        :param groups: Groups to be passed to the cv method, e.g. for GroupKFold</span>
 <span class="sd">        :param fit_params:</span>
 <span class="sd">        :return: array, shape = [n_samples, n_numeric + N]</span>
-<span class="sd">                 Transformed values with encoding applied.</span>
+<span class="sd">                 Transformed values with encoding applied. Rows are returned</span>
+<span class="sd">                 in the input&#39;s original order.</span>
 <span class="sd">                 Returns multiple arrays if X_test is not None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">convert_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
         <span class="c1"># Get out-of-fold encoding for the training data</span>
         <span class="n">out_of_fold</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="c1"># order[i] = concat position holding X&#39;s row i. cv.split() yields positional indices,</span>
+        <span class="c1"># so with a shuffling splitter the concatenated folds arrive out of input order</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">row_cursor</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">for</span> <span class="n">trn_idx</span><span class="p">,</span> <span class="n">oof_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
             <span class="n">feature_encoder</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="p">)</span>
             <span class="n">feature_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">trn_idx</span><span class="p">],</span> <span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">trn_idx</span><span class="p">])</span>
-            <span class="n">out_of_fold</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">out_of_fold</span><span class="p">,</span> <span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">oof_idx</span><span class="p">])])</span>
+            <span class="n">fold_out</span> <span class="o">=</span> <span class="n">feature_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">oof_idx</span><span class="p">])</span>
+            <span class="n">order</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">oof_idx</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">row_cursor</span><span class="p">,</span> <span class="n">row_cursor</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">oof_idx</span><span class="p">))</span>
+            <span class="n">row_cursor</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fold_out</span><span class="p">)</span>
+            <span class="n">out_of_fold</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">out_of_fold</span><span class="p">,</span> <span class="n">fold_out</span><span class="p">])</span>
+
+        <span class="c1"># Every position appears in exactly one fold, so order is a permutation</span>
+        <span class="c1"># restoring X&#39;s original row order (safe under duplicate index labels)</span>
+        <span class="n">out_of_fold</span> <span class="o">=</span> <span class="n">out_of_fold</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">order</span><span class="p">]</span>
 
         <span class="c1"># Train the encoder on all the training data for testing data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_encoder</span><span class="p">)</span>
