@@ -1,3 +1,13 @@
+unreleased
+==========
+
+* Fix: ``NestedCVWrapper.fit_transform`` now returns out-of-fold rows in the
+  input's original order (issue#526). Previously the per-fold encodings were
+  concatenated in cross-validation iteration order, so with a shuffling
+  splitter (including the wrapper's default ``StratifiedKFold``) positional
+  consumers (NumPy arrays, ``.iloc``, scikit-learn estimators) received rows
+  misaligned with ``y`` even though the index labels were correct.
+
 v.2.11.0
 ========
 
