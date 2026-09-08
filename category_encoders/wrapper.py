@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 
+import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.model_selection import StratifiedKFold
@@ -296,18 +297,30 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         :param groups: Groups to be passed to the cv method, e.g. for GroupKFold
         :param fit_params:
         :return: array, shape = [n_samples, n_numeric + N]
-                 Transformed values with encoding applied.
+                 Transformed values with encoding applied. Rows are returned
+                 in the input's original order.
                  Returns multiple arrays if X_test is not None
         """
         X, y = utils.convert_inputs(X, y)
 
         # Get out-of-fold encoding for the training data
         out_of_fold = pd.DataFrame()
+        # order[i] = concat position holding X's row i. cv.split() yields positional indices,
+        # so with a shuffling splitter the concatenated folds arrive out of input order
+        order = np.empty(len(X), dtype=int)
+        row_cursor = 0
 
         for trn_idx, oof_idx in self.cv.split(X, y, groups):
             feature_encoder = copy.deepcopy(self.feature_encoder)
             feature_encoder.fit(X.iloc[trn_idx], y.iloc[trn_idx])
-            out_of_fold = pd.concat([out_of_fold, feature_encoder.transform(X.iloc[oof_idx])])
+            fold_out = feature_encoder.transform(X.iloc[oof_idx])
+            order[np.asarray(oof_idx)] = np.arange(row_cursor, row_cursor + len(oof_idx))
+            row_cursor += len(fold_out)
+            out_of_fold = pd.concat([out_of_fold, fold_out])
+
+        # Every position appears in exactly one fold, so order is a permutation
+        # restoring X's original row order (safe under duplicate index labels)
+        out_of_fold = out_of_fold.iloc[order]
 
         # Train the encoder on all the training data for testing data
         self.feature_encoder = copy.deepcopy(self.feature_encoder)
