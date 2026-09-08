@@ -32,9 +32,9 @@ authors:
     given-names: Jonathan
     orcid: "https://orcid.org/0009-0001-2553-5920"
     affiliation: "Meta, Inc."
-version: 2.11.0
+version: 2.11.1
 doi: 10.5281/zenodo.1157109
-date-released: 2026-09-07
+date-released: 2026-09-08
 license: BSD-3-Clause
 repository-code: "https://github.com/scikit-learn-contrib/category_encoders"
 url: "http://contrib.scikit-learn.org/category_encoders/"
