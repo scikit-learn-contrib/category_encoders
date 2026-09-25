@@ -1037,16 +1037,20 @@ class BaseEncoder(BaseEstimator):
         member is missing become missing so the regular handle_missing machinery
         applies to composites unchanged.
         """
+        missing = X[list(members)].isna().any(axis=1)
         parts = X[list(members)].astype(str)
         joined = parts[members[0]]
         for member in members[1:]:
             joined = joined + '|' + parts[member]
-        if len(set(joined)) < len(set(map(tuple, parts.to_numpy()))):
+        # Rows with a missing member become missing anyway, and pandas >= 3 keeps them
+        # as NaN through astype(str), so only complete rows can collide.
+        complete = ~missing
+        if len(set(joined[complete])) < len(set(map(tuple, parts[complete].to_numpy()))):
             raise ValueError(
                 f'Composite column {name!r} is ambiguous: the "|" separator occurs in '
                 'the data, so distinct value combinations collide after joining.'
             )
-        joined[X[list(members)].isna().any(axis=1)] = np.nan
+        joined[missing] = np.nan
         return joined
 
     def _add_composite_columns(self, X: pd.DataFrame) -> pd.DataFrame:
