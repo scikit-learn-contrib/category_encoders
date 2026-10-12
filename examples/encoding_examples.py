@@ -1,6 +1,4 @@
-"""
-Tested to work with scikit-learn >= 1.6.0
-"""
+"""Tested to work with scikit-learn >= 1.6.0."""
 
 import gc
 import time
@@ -13,6 +11,7 @@ import pandas as pd
 from sklearn import linear_model
 from sklearn.exceptions import DataConversionWarning
 from sklearn.model_selection import cross_validate
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from examples.source_data.loaders import get_cars_data
@@ -24,35 +23,46 @@ plt.style.use('ggplot')
 __author__ = 'willmcginnis'
 
 
+def make_evaluation_pipeline(clf, encoder):
+    """Build a pipeline that fits preprocessing separately in every CV fold."""
+    return Pipeline(
+        [
+            ('encoder', encoder()),
+            ('scaler', StandardScaler()),
+            ('classifier', clf),
+        ]
+    )
+
+
 def score_models(clf, X, y, encoder, runs=1):
-    """
-    Takes in a classifier that supports multiclass classification, and X and a y, and returns a cross validation score.
-
-    """
+    """Return cross-validation scores for an encoder and classifier pipeline."""
     scores = []
+    feature_counts = []
 
-    X_test = None
     for _ in range(runs):
-        X_test = encoder().fit_transform(X, y)
-
-        # Some models, like logistic regression, like normalized features otherwise they underperform and/or take a long time to converge.
-        # To be rigorous, we should have trained the normalization on each fold individually via pipelines.
-        # See grid_search_example to learn how to do it.
-        X_test = StandardScaler().fit_transform(X_test)
-
-        scores.append(cross_validate(clf, X_test, y, n_jobs=1, cv=5)['test_score'])
+        pipeline = make_evaluation_pipeline(clf, encoder)
+        cv_results = cross_validate(
+            pipeline, X, y, n_jobs=1, cv=5, return_estimator=True
+        )
+        scores.append(cv_results['test_score'])
+        feature_counts.extend(
+            len(estimator.named_steps['encoder'].get_feature_names_out())
+            for estimator in cv_results['estimator']
+        )
         gc.collect()
 
-    scores = [y for z in [x for x in scores] for y in z]
+    scores = [score for run_scores in scores for score in run_scores]
 
-    return float(np.mean(scores)), float(np.std(scores)), scores, X_test.shape[1]
+    return (
+        float(np.mean(scores)),
+        float(np.std(scores)),
+        scores,
+        int(np.mean(feature_counts)),
+    )
 
 
 def main(loader, name):
-    """
-    Here we iterate through the datasets and score them with a classifier using different encodings.
-
-    """
+    """Score the dataset with each encoder that supports multiclass targets."""
     scores = []
     raw_scores_ds = {}
 

@@ -1,3 +1,10 @@
+Unreleased
+==========
+
+* Fix: ``examples/encoding_examples.py`` now fits categorical encoders and scaling
+  within each cross-validation fold, preventing supervised encoders from using
+  validation-fold targets during evaluation.
+
 v.2.11.1
 ========
 
