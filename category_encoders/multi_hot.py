@@ -72,9 +72,10 @@ class MultiHotEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
         Must be a non-empty string and must not occur inside a single item.
     use_cat_names: bool
         if True, the seen item values will be included in the encoded column
-        names (e.g. ``city_paris``); collisions are suffixed with '#'. If False,
-        columns are named by order of first appearance (e.g. ``city_1``), which
-        keeps the names stable under category relabeling.
+        names (e.g. ``city_paris``); collisions are suffixed with '#' until the
+        names are unique across encoded columns. If False, columns are named
+        by order of first appearance (e.g. ``city_1``), which keeps the names
+        stable under category relabeling.
 
     Example
     -------
@@ -119,9 +120,10 @@ class MultiHotEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
     def _fit(self, X, y=None, **kwargs):
         if not isinstance(self.delimiter, str) or not self.delimiter:
             raise ValueError(f'delimiter must be a non-empty string, got {self.delimiter!r}')
-        self.mapping = [self._fit_column(X[col], col) for col in self.cols]
+        used_names: set[str] = set()
+        self.mapping = [self._fit_column(X[col], col, used_names) for col in self.cols]
 
-    def _fit_column(self, values: pd.Series, col: str) -> dict:
+    def _fit_column(self, values: pd.Series, col: str, used_names: set[str]) -> dict:
         """Learn the item slots of one column in order of first appearance."""
         # track distinct items; the nan slot (when handle_missing='value') keeps
         # its position among the items by order of first appearance
@@ -139,7 +141,6 @@ class MultiHotEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
                     seen.add(item)
                     slots.append((False, item))
 
-        counts: dict[str, int] = {}
         names: list[str] = []
         item_pos: dict[str, int] = {}
         nan_value_pos = None
@@ -150,17 +151,17 @@ class MultiHotEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
             else:
                 item_pos[item] = len(names)
                 suffix = item
-            names.append(self._column_name(col, suffix, len(names), counts))
+            names.append(self._column_name(col, suffix, len(names), used_names))
 
         unknown_pos = None
         if self.handle_unknown == 'indicator':
             unknown_pos = len(names)
-            names.append(self._column_name(col, '-1', len(names), counts))
+            names.append(self._column_name(col, '-1', len(names), used_names))
 
         missing_pos = None
         if self.handle_missing == 'indicator':
             missing_pos = len(names)
-            names.append(self._column_name(col, '-2', len(names), counts))
+            names.append(self._column_name(col, '-2', len(names), used_names))
 
         return {
             'col': col,
@@ -171,14 +172,11 @@ class MultiHotEncoder(util.UnsupervisedTransformerMixin, util.BaseEncoder):
             'missing_pos': missing_pos,
         }
 
-    def _column_name(self, col: str, suffix: str, position: int, counts: dict[str, int]) -> str:
+    def _column_name(self, col: str, suffix: str, position: int, used_names: set[str]) -> str:
         """Build one output column name, deduplicating collisions for item names."""
         if not self.use_cat_names:
             return f'{col}_{position + 1}'
-        base = f'{col}_{suffix}'
-        found = counts.get(base, 0)
-        counts[base] = found + 1
-        return base + '#' * found
+        return util.get_unique_column_name(f'{col}_{suffix}', used_names)
 
     def _split_cell(self, cell: object) -> list[str]:
         """Split one cell into its non-empty, whitespace-stripped items."""
