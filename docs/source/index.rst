@@ -30,15 +30,22 @@ Usage
 
 install as:
 
-.. code-block:: python
+.. code-block:: shell
 
     pip install category_encoders
 
 or
 
-.. code-block:: python
+.. code-block:: shell
 
     conda install -c conda-forge category_encoders
+
+``GLMMEncoder`` additionally requires ``statsmodels``. For pip installations, enable
+the ``glmm`` extra:
+
+.. code-block:: shell
+
+    pip install 'category_encoders[glmm]'
 
 
 To use:
