@@ -267,10 +267,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         self.shuffle = shuffle
         self.random_state = random_state
 
-        if isinstance(cv, int):
-            self.cv = StratifiedKFold(n_splits=cv, shuffle=shuffle, random_state=random_state)
-        else:
-            self.cv = cv
+        self.cv = cv
 
     def fit(self, X, y, **kwargs):
         """Fit on the base feature_encoder without nested cross validation."""
@@ -303,6 +300,13 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         """
         X, y = utils.convert_inputs(X, y)
 
+        if isinstance(self.cv, int):
+            cv = StratifiedKFold(
+                n_splits=self.cv, shuffle=self.shuffle, random_state=self.random_state
+            )
+        else:
+            cv = self.cv
+
         # Get out-of-fold encoding for the training data
         out_of_fold = pd.DataFrame()
         # order[i] = concat position holding X's row i. cv.split() yields positional indices,
@@ -310,7 +314,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         order = np.empty(len(X), dtype=int)
         row_cursor = 0
 
-        for trn_idx, oof_idx in self.cv.split(X, y, groups):
+        for trn_idx, oof_idx in cv.split(X, y, groups):
             feature_encoder = copy.deepcopy(self.feature_encoder)
             feature_encoder.fit(X.iloc[trn_idx], y.iloc[trn_idx])
             fold_out = feature_encoder.transform(X.iloc[oof_idx])
