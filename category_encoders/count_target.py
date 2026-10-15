@@ -196,7 +196,7 @@ class CountTargetEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
             # Keep the prior contribution when the sigmoid rounds to one or
             # its complementary probability is too small to represent.
             log_prior = np.log(prior)
-            with np.errstate(divide='ignore'):
+            with np.errstate(divide='ignore', under='ignore'):
                 log_smoothed = np.logaddexp(
                     log_prior[None, :] - np.logaddexp(0, z)[:, None],
                     np.log(shares) - np.logaddexp(0, -z)[:, None],
