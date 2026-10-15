@@ -1,6 +1,9 @@
 v.2.11.1
 ========
 
+* Fix: ``CountTargetEncoder`` calculates smoothed evidence in log space so
+  large pure-category groups keep finite output instead of producing infinities.
+
 * Fix: ``NestedCVWrapper.fit_transform`` now returns out-of-fold rows in the
   input's original order (issue#526). Previously the per-fold encodings were
   concatenated in cross-validation iteration order, so with a shuffling

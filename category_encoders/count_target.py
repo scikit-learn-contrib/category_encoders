@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from scipy.special import expit
 
 import category_encoders.utils as util
 from category_encoders.ordinal import OrdinalEncoder
@@ -192,20 +191,27 @@ class CountTargetEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
             )
             counts_np = counts.to_numpy(dtype=float)
             n = counts_np.sum(axis=1)
-            weight = expit((n - self.min_samples_leaf) / self.smoothing)
+            z = (n - self.min_samples_leaf) / self.smoothing
             shares = counts_np / n[:, None]
-            smoothed = prior[None, :] * (1 - weight)[:, None] + shares * weight[:, None]
+            # Keep the prior contribution when the sigmoid rounds to one or
+            # its complementary probability is too small to represent.
+            log_prior = np.log(prior)
+            with np.errstate(divide='ignore'):
+                log_smoothed = np.logaddexp(
+                    log_prior[None, :] - np.logaddexp(0, z)[:, None],
+                    np.log(shares) - np.logaddexp(0, -z)[:, None],
+                )
 
             if is_binary:
                 table = pd.Series(
-                    np.log(smoothed[:, 1] / smoothed[:, 0]) - np.log(prior[1] / prior[0]),
+                    log_smoothed[:, 1] - log_smoothed[:, 0] - (log_prior[1] - log_prior[0]),
                     index=counts.index,
                     dtype=float,
                 )
             else:
                 class_cols = [f'{col}_{label}' for label in self._class_labels]
                 table = pd.DataFrame(
-                    np.log(smoothed / prior[None, :]), index=counts.index, columns=class_cols
+                    log_smoothed - log_prior[None, :], index=counts.index, columns=class_cols
                 )
 
             self._add_sentinel_fills(table, values)
