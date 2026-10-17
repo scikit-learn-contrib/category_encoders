@@ -1,9 +1,11 @@
 """Unit tests for the James-Stein encoder."""
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest.mock import patch
 
 import category_encoders as encoders
 import numpy as np
 import pandas as pd
+import scipy
 
 
 class TestJamesSteinEncoder(TestCase):
@@ -261,3 +263,27 @@ class TestJamesSteinHardening(TestCase):
         expected = [1.95833333, 1.9375, 1.875, 2.02083333, 2.08333333]
         np.testing.assert_allclose(out['cat'], np.tile(expected, 4), atol=1e-6)
 
+    def test_binary_model_fits_do_not_share_state(self):
+        """A binary fit is not affected by another binary fit running meanwhile.
+
+        Simulates a second fit (e.g. in another thread) finishing between the
+        sigma optimization and its use. The estimated mean log-odds ratio used
+        to be stored in a module-level global, so the second fit overwrote it.
+        """
+        X = pd.DataFrame({'cat': ['a', 'b', 'c', 'd', 'e'] * 4})
+        y = pd.Series([0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1])
+        X_other = pd.DataFrame({'cat': ['a', 'b', 'c', 'd'] * 5})
+        y_other = pd.Series([1, 1, 1, 0] * 5)
+        expected = encoders.JamesSteinEncoder(model='binary').fit_transform(X, y)
+
+        minimize = scipy.optimize.minimize
+
+        def minimize_then_fit_other(*args, **kwargs):
+            result = minimize(*args, **kwargs)
+            with patch.object(scipy.optimize, 'minimize', minimize):
+                encoders.JamesSteinEncoder(model='binary').fit(X_other, y_other)
+            return result
+
+        with patch.object(scipy.optimize, 'minimize', minimize_then_fit_other):
+            out = encoders.JamesSteinEncoder(model='binary').fit_transform(X, y)
+        pd.testing.assert_frame_equal(out, expected)
