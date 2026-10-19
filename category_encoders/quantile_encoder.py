@@ -507,7 +507,7 @@ class SummaryEncoder(BaseEstimator):
         """
         in_feats = getattr(self, 'feature_names_in_', None)
         if isinstance(in_feats, list):
-            in_feats = np.array(in_feats)
+            in_feats = pd.Index(in_feats, dtype=object, tupleize_cols=False).to_numpy()
         if not isinstance(in_feats, np.ndarray):
             raise NotFittedError('Estimator has to be fitted to return feature names.')
         else:

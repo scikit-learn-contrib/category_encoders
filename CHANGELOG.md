@@ -1,6 +1,8 @@
 v.2.11.1
 ========
 
+* Fix: ``get_feature_names_in`` preserves mixed-type and tuple column labels
+  as a one-dimensional array that can select the original input columns.
 * Fix: ``NestedCVWrapper.fit_transform`` now returns out-of-fold rows in the
   input's original order (issue#526). Previously the per-fold encodings were
   concatenated in cross-validation iteration order, so with a shuffling
