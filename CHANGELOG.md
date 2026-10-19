@@ -1,6 +1,9 @@
 v.2.11.1
 ========
 
+* Fix: ``HashingEncoder`` supports available OpenSSL algorithms without a named
+  hashlib constructor, such as ``sm3`` and ``ripemd160``.
+
 * Fix: ``NestedCVWrapper.fit_transform`` now returns out-of-fold rows in the
   input's original order (issue#526). Previously the per-fold encodings were
   concatenated in cross-validation iteration order, so with a shuffling
