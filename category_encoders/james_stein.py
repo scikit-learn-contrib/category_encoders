@@ -389,10 +389,13 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         # This problem is traditionally solved with Newton-Raphson method:
         #   https://en.wikipedia.org/wiki/Newton%27s_method
         # But we just use sklearn minimizer.
-        def get_best_sigma(sigma, mu_k, sigma_k, K):
-            global mu  # Ugly. But I want to be able to read it once the optimization ends.
+        def get_mu(sigma, mu_k, sigma_k):
             w_k = 1.0 / (sigma**2 + sigma_k**2)  # Weights depends on sigma
-            mu = sum(w_k * mu_k) / sum(w_k)  # Mu transitively depends on sigma
+            return sum(w_k * mu_k) / sum(w_k)  # Mu transitively depends on sigma
+
+        def get_best_sigma(sigma, mu_k, sigma_k, K):
+            w_k = 1.0 / (sigma**2 + sigma_k**2)
+            mu = get_mu(sigma, mu_k, sigma_k)
             total = sum(w_k * (mu_k - mu) ** 2)  # We want this to be close to K-1
             loss = abs(total - (K - 1))
             return loss
@@ -446,6 +449,7 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
                         options={'gtol': 1e-12, 'ftol': 1e-12, 'eps': 1e-12},
                     )
                     sigma = result.x[0]
+                    mu = get_mu(sigma, mu_k, sigma_k)
 
                     # Empirical Bayes follows equation 7.
                     # However, James-Stein estimator behaves perversely when K < 3.
