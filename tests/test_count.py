@@ -81,6 +81,54 @@ X_t = pd.DataFrame(
 class TestCountEncoder(TestCase):
     """Unit tests for the CountEncoder."""
 
+    def test_refit_clears_previous_min_groups(self):
+        """Categories that are no longer rare get counts from the new training data."""
+        first = pd.DataFrame({'cat': ['a', 'b'] + ['c'] * 6})
+        second = pd.DataFrame({'cat': ['a'] * 4 + ['b'] * 3 + ['c'] * 2})
+        for normalize in (False, True):
+            for min_group_size in (2, 0.2):
+                with self.subTest(normalize=normalize, min_group_size=min_group_size):
+                    enc = encoders.CountEncoder(
+                        min_group_size=min_group_size,
+                        normalize=normalize,
+                        combine_min_nan_groups=False,
+                    )
+                    enc.fit(first)
+                    self.assertTrue(enc._min_group_categories)
+                    enc.fit(second)
+                    result = enc.transform(pd.DataFrame({'cat': ['a', 'b', 'c', 'new']}))
+                    expected = np.array([4, 3, 2, 0], dtype=float)
+                    if normalize:
+                        expected /= len(second)
+                    np.testing.assert_allclose(result['cat'], expected)
+
+    def test_refit_after_disabling_min_groups(self):
+        """Disabling grouping before refitting removes the learned grouping map."""
+        data = pd.DataFrame({'cat': ['a', 'b'] + ['c'] * 6})
+        enc = encoders.CountEncoder(min_group_size=2)
+        enc.fit(data)
+        enc.set_params(min_group_size=None)
+        result = enc.fit_transform(data)
+        np.testing.assert_array_equal(result['cat'], [1, 1, 6, 6, 6, 6, 6, 6])
+
+    def test_refit_clears_min_groups_per_column(self):
+        """Refitting clears old groups even when another column still needs grouping."""
+        first = pd.DataFrame(
+            {'left': ['a', 'b'] + ['c'] * 6, 'right': ['x'] * 4 + ['y'] * 4}
+        )
+        second = pd.DataFrame(
+            {'left': ['a'] * 4 + ['b'] * 4, 'right': ['x', 'y'] + ['z'] * 6}
+        )
+        enc = encoders.CountEncoder(
+            min_group_size={'left': 2, 'right': 2},
+            min_group_name={'left': 'rare_left', 'right': 'rare_right'},
+            combine_min_nan_groups=False,
+        )
+        enc.fit(first)
+        result = enc.fit_transform(second)
+        np.testing.assert_array_equal(result['left'], [4] * 8)
+        np.testing.assert_array_equal(result['right'], [2, 2, 6, 6, 6, 6, 6, 6])
+
     def test_count_defaults(self):
         """Test the defaults are working as expected on 'none' and 'categorical'.
 

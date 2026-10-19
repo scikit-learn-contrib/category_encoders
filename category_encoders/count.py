@@ -150,6 +150,7 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         self._handle_missing = {}
 
     def _fit(self, X, y=None, **kwargs):
+        self._min_group_categories = {}
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose, cols=self.cols, handle_unknown='value', handle_missing='value'
         )
