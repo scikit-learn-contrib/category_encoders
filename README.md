@@ -132,6 +132,7 @@ Furthermore, you may benefit from following wrappers:
  * NestedCVWrapper, which helps to prevent overfitting  
 
 Additional examples and benchmarks can be found in the `examples` directory.
+The `examples/encoding_examples.py` script evaluates encoders in a scikit-learn pipeline, so categorical encoding and scaling are fit separately in every cross-validation fold.
 
 Contributing
 ------------
