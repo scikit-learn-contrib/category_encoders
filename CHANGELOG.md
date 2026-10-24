@@ -13,6 +13,10 @@ v.2.11.2
 v.2.11.1
 ========
 
+* Fix: ``NestedCVWrapper`` constructs integer-``cv`` splitters during fitting,
+  so parameter searches honor updated ``cv``, ``shuffle`` and ``random_state``
+  values. Caller-supplied splitter objects remain unchanged.
+
 * Fix: ``NestedCVWrapper.fit_transform`` now returns out-of-fold rows in the
   input's original order (issue#526). Previously the per-fold encodings were
   concatenated in cross-validation iteration order, so with a shuffling
