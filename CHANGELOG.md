@@ -1,3 +1,15 @@
+v.2.11.2
+========
+
+* Fix: ``composite_cols`` no longer raises the "separator occurs in the data"
+  ``ValueError`` for column groups containing missing values on pandas >= 3,
+  where ``astype(str)`` keeps missing values as NaN. The separator-collision
+  check now runs on complete rows only; behavior on pandas 2 is unchanged (#528).
+* Fix: ``CountEncoder`` now clears its learned rare-category groups at the start
+  of each fit, so refitting (including refitting a pipeline) with
+  ``min_group_size`` no longer applies a stale grouping from the previous fit (#529).
+* Chore: bumped ``certifi`` and ``urllib3`` in ``poetry.lock`` (#551, #535).
+
 v.2.11.1
 ========
 
