@@ -245,6 +245,13 @@ class TestJamesSteinHardening(TestCase):
         expected = [-1.00064993, 0.28554869, -0.3573236, -0.3573236, 1.12007235]
         np.testing.assert_allclose(out['cat'], np.tile(expected, 4), atol=1e-6)
 
+    def test_binary_model_rejects_labels_other_than_zero_and_one(self):
+        """Reject two numeric classes that are not the required zero/one labels."""
+        X = pd.DataFrame({'cat': ['a', 'a', 'b', 'b']})
+        for labels in ([-1, 1], [0, 2]):
+            with self.subTest(labels=labels), self.assertRaisesRegex(ValueError, 'values'):
+                encoders.JamesSteinEncoder(model='binary').fit(X, labels * 2)
+
     def test_beta_model_golden_values(self):
         """Beta-model estimates match captured golden values.
 
