@@ -303,6 +303,27 @@ def get_generated_cols(
     return current_cols
 
 
+def get_unique_column_name(name: str, used_names: set[str]) -> str:
+    """Append '#' until a generated column name is unused, then reserve it.
+
+    Parameters
+    ----------
+    name : str
+        The proposed encoded column name.
+    used_names : set of str
+        Previously generated names. Updated with the returned name.
+
+    Returns
+    -------
+    str
+        A name that does not duplicate any previously generated column.
+    """
+    while name in used_names:
+        name += '#'
+    used_names.add(name)
+    return name
+
+
 def flatten_reverse_dict(dict_to_flatten: dict) -> dict:
     """Flatten a dictionary into a tuple of nested keys.
 

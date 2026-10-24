@@ -278,7 +278,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
         """
         mapping = []
-        found_column_counts = {}
+        found_column_names: set[str] = set()
 
         for switch in self.ordinal_encoder.mapping:
             col: str = switch.get('col')
@@ -295,10 +295,9 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
             for cat_name, class_ in values.items():
                 if self.use_cat_names:
-                    n_col_name = f'{col}_{cat_name}'
-                    found_count = found_column_counts.get(n_col_name, 0)
-                    found_column_counts[n_col_name] = found_count + 1
-                    n_col_name += '#' * found_count
+                    n_col_name = util.get_unique_column_name(
+                        f'{col}_{cat_name}', found_column_names
+                    )
                 else:
                     n_col_name = f'{col}_{class_}'
 
