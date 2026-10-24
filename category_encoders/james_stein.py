@@ -358,6 +358,8 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             smoothing = smoothing.clip(
                 lower=0, upper=1
             )  # Smoothing should be in the interval <0,1>
+            # With a constant target, both variances vanish and all category means equal the prior.
+            smoothing = smoothing.fillna(1)
 
             estimate = smoothing * (stats['mean']) + (1 - smoothing) * prior
 
