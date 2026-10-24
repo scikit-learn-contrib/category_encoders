@@ -289,7 +289,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
                   and n_features is the number of features.
         :param y: array-like, shape = [n_samples]
                   Target values for the supervised encoder.
-        :param X_test, optional: array-like, shape = [m_samples, n_features]
+        :param X_test: array-like, shape = [m_samples, n_features]
                        or a tuple of array-likes (X_test, X_valid...)
                        Vectors to be used for inference by an encoder
                        (e.g. test or validation sets) trained on the
