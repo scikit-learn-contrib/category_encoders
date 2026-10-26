@@ -5,6 +5,7 @@ import math
 import multiprocessing
 import platform
 from concurrent.futures import ProcessPoolExecutor
+from functools import partial
 
 import numpy as np
 import pandas as pd
@@ -231,7 +232,7 @@ class HashingEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             Hashed data.
         """
         # Calling getattr outside the loop saves some time in the loop
-        hasher_constructor = getattr(hashlib, hash_method)
+        hasher_constructor = getattr(hashlib, hash_method, partial(hashlib.new, hash_method))
         # Same when the call to getattr is implicit
         int_from_bytes = int.from_bytes
         result = np.zeros((np_df.shape[0], N), dtype='int')

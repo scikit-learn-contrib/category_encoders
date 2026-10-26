@@ -5,7 +5,39 @@ from unittest import TestCase
 import category_encoders as encoders
 import numpy as np
 import pandas as pd
+import pytest
 from pandas.testing import assert_frame_equal, assert_index_equal
+
+
+@pytest.mark.parametrize('hash_method', ['md5', 'sha256', 'sm3', 'ripemd160'])
+@pytest.mark.parametrize('return_df', [True, False])
+@pytest.mark.parametrize('max_process', [1, 2])
+def test_available_hash_methods(hash_method, return_df, max_process):
+    """Available fixed-length algorithms produce the expected hash buckets."""
+    if hash_method not in hashlib.algorithms_available:
+        pytest.skip(f'{hash_method} is unavailable in this Python build')
+    df = pd.DataFrame(
+        {'city': ['paris', 'tokyo', 'paris', None], 'amount': [1, 2, 3, 4]},
+        index=pd.Index([13, 27, 45, 72], name='record'),
+    )
+    before = df.copy(deep=True)
+    expected = np.zeros((len(df), 8), dtype=int)
+    for row, value in enumerate(df['city']):
+        if value is not None:
+            bucket = int(hashlib.new(hash_method, value.encode('utf-8')).hexdigest(), 16) % 8
+            expected[row, bucket] += 1
+    expected = pd.DataFrame(expected, index=df.index, columns=[f'col_{i}' for i in range(8)])
+    expected['amount'] = df['amount']
+    encoder = encoders.HashingEncoder(
+        cols=['city'], n_components=8, hash_method=hash_method,
+        max_process=max_process, return_df=return_df,
+    )
+    result = encoder.fit_transform(df)
+    if return_df:
+        assert_frame_equal(result, expected)
+    else:
+        np.testing.assert_array_equal(result, expected.to_numpy())
+    assert_frame_equal(df, before)
 
 
 class TestHashingEncoder(TestCase):
