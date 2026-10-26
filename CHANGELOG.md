@@ -13,6 +13,10 @@ v.2.11.2
 v.2.11.1
 ========
 
+* Fix: ``BaseNEncoder``, ``BinaryEncoder`` and ``GrayEncoder`` inverse transforms
+  use fitted encoded columns, preserving original columns that share a numeric
+  prefix with an encoded feature.
+
 * Fix: ``NestedCVWrapper.fit_transform`` now returns out-of-fold rows in the
   input's original order (issue#526). Previously the per-fold encodings were
   concatenated in cross-validation iteration order, so with a shuffling
