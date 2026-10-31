@@ -686,6 +686,14 @@ class BaseEncoder(BaseEstimator):
         self.keep_components = keep_components
         self._dim = None
 
+    def set_params(self, **params):
+        """Set parameters and refresh column selection when explicitly changed."""
+        super().set_params(**params)
+        if 'cols' in params:
+            self.use_default_cols = self.cols is None
+            self.use_all_cols = isinstance(self.cols, str) and self.cols.lower() == 'all'
+        return self
+
     def fit(self, X: X_type, y: y_type | None = None, **kwargs):
         """Fits the encoder according to X and y.
 
