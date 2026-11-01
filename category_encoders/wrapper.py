@@ -115,7 +115,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         """Encode new data."""
         # unite the input into pandas types
-        X = utils.convert_input(X)
+        X, y = utils.convert_inputs(X, y)
 
         # initialization
         encoded = None
