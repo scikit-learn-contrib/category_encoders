@@ -110,6 +110,21 @@ class TestRankHotEncoder(TestCase):
         inv_tf = enc.inverse_transform(t_f)
         th.verify_inverse_transform(X, inv_tf)
 
+    def test_inverse_transform_with_reordered_cols(self):
+        """Restore every column when encoded columns are listed out of input order."""
+        train = pd.DataFrame(
+            {
+                'a': ['x', 'y', 'z', 'x'],
+                'b': ['p', 'q', 'p', 'r'],
+                'keep': [1, 2, 3, 4],
+            }
+        )
+        enc = encoders.RankHotEncoder(cols=['b', 'a'])
+
+        decoded = enc.inverse_transform(enc.fit_transform(train))
+
+        pd.testing.assert_frame_equal(decoded, train)
+
     def test_order(self):
         """Test that the mapping is independent of the order of the input data.
 
