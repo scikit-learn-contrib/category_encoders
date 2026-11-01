@@ -353,13 +353,17 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             # while we generally # do not have that.
             # Nice discussion about that is given at:
             #   http://chris-said.io/2017/05/03/empirical-bayes-for-multiple-sample-sizes/
-            smoothing = i_var / (global_var + i_var) * (unique_cnt - 3) / (unique_cnt - 1)
-            smoothing = 1 - smoothing
-            smoothing = smoothing.clip(
-                lower=0, upper=1
-            )  # Smoothing should be in the interval <0,1>
+            if global_var == 0:
+                # Every category has the same mean, so the shrinkage weight is immaterial.
+                estimate = stats['mean']
+            else:
+                smoothing = i_var / (global_var + i_var) * (unique_cnt - 3) / (unique_cnt - 1)
+                smoothing = 1 - smoothing
+                smoothing = smoothing.clip(
+                    lower=0, upper=1
+                )  # Smoothing should be in the interval <0,1>
 
-            estimate = smoothing * (stats['mean']) + (1 - smoothing) * prior
+                estimate = smoothing * (stats['mean']) + (1 - smoothing) * prior
 
             # Ignore unique values. This helps to prevent overfitting on id-like columns
             if len(stats['mean']) == global_count:
