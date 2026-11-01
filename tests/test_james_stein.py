@@ -40,6 +40,19 @@ class TestJamesSteinEncoder(TestCase):
         out = encoders.JamesSteinEncoder(return_df=False, model='independent').fit_transform(X, y)
         self.assertEqual([0, 1, 1, 1, 1], list(out), 'Should not result into division by zero')
 
+    def test_constant_target_independent(self):
+        """A constant target should encode known and unknown categories to its mean."""
+        for categories in (['a'] * 3, ['a', 'a', 'b', 'b', 'c', 'c', 'd', 'd']):
+            with self.subTest(categories=categories):
+                X = pd.DataFrame({'x': categories})
+                encoder = encoders.JamesSteinEncoder(cols=['x'], model='independent')
+
+                encoded = encoder.fit_transform(X, [3.5] * len(X))
+                unknown = encoder.transform(pd.DataFrame({'x': ['new']}))
+
+                np.testing.assert_array_equal(encoded['x'], np.full(len(X), 3.5))
+                np.testing.assert_array_equal(unknown['x'], [3.5])
+
     def test_continuous_target(self):
         """Test the James-Stein encoder with continuous target."""
         X = np.array(['a', 'b', 'b', 'c'])
