@@ -259,9 +259,10 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
             X = self._create_dataframe(X, reencode2, col)
 
+            first_encoded_index = min(cols.index(encoded_col) for encoded_col in cats.columns)
             for encoded_col in cats.columns:
                 cols.remove(encoded_col)
-            cols.insert(self.ordinal_encoder.feature_names_out_.tolist().index(col), col)
+            cols.insert(first_encoded_index, col)
 
         X = X.reindex(columns=cols)
 

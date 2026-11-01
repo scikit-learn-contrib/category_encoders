@@ -1,4 +1,5 @@
 """Tests for the RankHotEncoder."""
+from itertools import permutations
 from unittest import TestCase
 
 import category_encoders as encoders
@@ -124,6 +125,24 @@ class TestRankHotEncoder(TestCase):
         decoded = enc.inverse_transform(enc.fit_transform(train))
 
         pd.testing.assert_frame_equal(decoded, train)
+
+    def test_inverse_transform_with_interleaved_columns(self):
+        """Restore pass-through columns between encoded columns in any mapping order."""
+        train = pd.DataFrame(
+            {
+                'keep_0': [1, 2, 3],
+                'a': ['x', 'y', 'z'],
+                'keep_1': [4, 5, 6],
+                'b': ['p', 'q', 'r'],
+                'c': ['u', 'v', 'w'],
+                'keep_2': [7, 8, 9],
+            }
+        )
+        for cols in permutations(['a', 'b', 'c']):
+            with self.subTest(cols=cols):
+                enc = encoders.RankHotEncoder(cols=list(cols))
+                decoded = enc.inverse_transform(enc.fit_transform(train))
+                pd.testing.assert_frame_equal(decoded, train)
 
     def test_order(self):
         """Test that the mapping is independent of the order of the input data.
