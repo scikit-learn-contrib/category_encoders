@@ -263,7 +263,8 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             last_index = cols.index(cats.columns[-1]) + 1
 
             del cols[first_inex:last_index]
-            cols.insert(self.ordinal_encoder.feature_names_out_.tolist().index(col), col)
+            # the encoded block replaced the original column in place, so restore it there
+            cols.insert(first_inex, col)
 
         X = X.reindex(columns=cols)
 
