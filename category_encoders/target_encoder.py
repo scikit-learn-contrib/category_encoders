@@ -278,9 +278,10 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
                             scalar_hier = (
                                 scalar * (1 - smoove_hier) + stats_hier['mean'] * smoove_hier
                             )
-                            scalar_hier_long = X[[col_hier_m1, col_hier]].drop_duplicates()
-                            scalar_hier_long.index = np.arange(1, scalar_hier_long.shape[0] + 1)
-                            scalar = scalar_hier_long[col_hier].map(scalar_hier.to_dict())
+                            # key the parent prior by child ordinal code (codes need not follow
+                            # row order); a child seen under several parents in a columnwise
+                            # hierarchy gets the mean prior over its rows
+                            scalar = X[col_hier].map(scalar_hier).groupby(X[col_hier_m1]).mean()
 
                 stats = y.groupby(X[col]).agg(['count', 'mean'])
                 smoove = self._weighting(stats['count'])
