@@ -10,6 +10,8 @@ from scipy.special import expit
 
 import category_encoders.utils as util
 from category_encoders.ordinal import OrdinalEncoder
+from sklearn.base import clone
+from sklearn.model_selection import KFold
 
 __author__ = 'chappers'
 
@@ -160,6 +162,7 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         combine_min_nan_groups: bool | str | None = None,
         composite_cols: list[tuple[str, ...]] | None = None,
         keep_components: bool = False,
+        cv = None,
     ) -> None:
         super().__init__(
             verbose=verbose,
@@ -180,6 +183,7 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         self.ordinal_encoder = None
         self.mapping = None
         self._mean = None
+        self.cv = cv
         # Call this in the constructor only for the possible side effect of raising an exception.
         self._generate_inverted_hierarchy()
 
@@ -198,6 +202,32 @@ class TargetEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         min_tuple_size = min(len(v) for v in dict_to_check.values())
         max_tuple_size = max(len(v) for v in dict_to_check.values())
         return min_tuple_size == max_tuple_size, min_tuple_size
+    
+    def fit_transform(self, X, y = None, **fit_params):
+        if self.cv is None:
+            return super().fit_transform(X, y, **fit_params)
+        else:
+            self.fit(X, y, **fit_params)
+            X_reset = X.reset_index(drop = True)
+            y_reset = y.reset_index(drop = True)
+            X_out = X_reset.copy(deep = True)
+            for col in self.cols:
+                X_out[col] = 0.0
+            if isinstance(self.cv, int):
+                cv_obj = KFold(n_splits=self.cv, shuffle=True, random_state=42)
+            else:
+                cv_obj = self.cv
+            for train_idx, val_idx in cv_obj.split(X_reset, y_reset):
+                X_train_fold = X_reset.iloc[train_idx]
+                y_train_fold = y_reset.iloc[train_idx]
+                X_val_fold = X_reset.iloc[val_idx]
+                temp_encoder = clone(self)
+                temp_encoder.cv = None
+                X_val_encoded = temp_encoder.fit(X_train_fold, y_train_fold).transform(X_val_fold)
+                for  col in self.cols:
+                    X_out.loc[val_idx, col] = X_val_encoded[col].values
+            X_out.index = X.index
+            return X_out
 
     def _fit(self, X: util.X_type, y: util.y_type, **kwargs) -> None:
         inverted_hierarchy, self.hierarchy_depth = self._generate_inverted_hierarchy()
