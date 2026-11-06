@@ -151,6 +151,10 @@ class TestUtils(TestCase):
         self.assertEqual(get_categorical_cols(df.astype('category')), ['col'])
         self.assertEqual(get_categorical_cols(df.astype('string')), ['col'])
 
+        numeric_only = pd.DataFrame({'col': [1, 2]})
+        with self.assertWarns(UserWarning):
+            self.assertEqual(get_categorical_cols(numeric_only), [])
+
 
 class TestBaseEncoder(TestCase):
     """Tests for the BaseEncoder class."""
