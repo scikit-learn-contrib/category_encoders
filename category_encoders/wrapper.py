@@ -205,6 +205,9 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
     cv: int or sklearn cv Object
         if an int is given, StratifiedKFold is used by default, where the int
         is the number of folds.
+        Test folds must include every input row exactly once. Splitters with
+        missing or repeated test rows, such as TimeSeriesSplit or RepeatedKFold,
+        are not supported.
 
     shuffle: boolean, optional
         whether to shuffle each classes samples before splitting into batches.
@@ -303,6 +306,20 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         """
         X, y = utils.convert_inputs(X, y)
 
+        splits = list(self.cv.split(X, y, groups))
+        test_indices = (
+            np.concatenate([test for _, test in splits]) if splits else np.array([], dtype=int)
+        )
+        if (
+            test_indices.shape != (len(X),)
+            or not np.issubdtype(test_indices.dtype, np.integer)
+            or not np.array_equal(np.sort(test_indices), np.arange(len(X)))
+        ):
+            raise ValueError(
+                'NestedCVWrapper requires a partition: '
+                'test folds must include each row exactly once.'
+            )
+
         # Get out-of-fold encoding for the training data
         out_of_fold = pd.DataFrame()
         # order[i] = concat position holding X's row i. cv.split() yields positional indices,
@@ -310,7 +327,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         order = np.empty(len(X), dtype=int)
         row_cursor = 0
 
-        for trn_idx, oof_idx in self.cv.split(X, y, groups):
+        for trn_idx, oof_idx in splits:
             feature_encoder = copy.deepcopy(self.feature_encoder)
             feature_encoder.fit(X.iloc[trn_idx], y.iloc[trn_idx])
             fold_out = feature_encoder.transform(X.iloc[oof_idx])
