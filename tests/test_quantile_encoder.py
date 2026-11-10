@@ -4,6 +4,7 @@ import unittest
 import category_encoders as encoders
 import numpy as np
 import pandas as pd
+from sklearn.compose import ColumnTransformer
 from sklearn.exceptions import NotFittedError
 
 
@@ -161,6 +162,30 @@ class TestSummaryEncoder(unittest.TestCase):
                 quantile_results[self.col].values,
                 summary_results[col_name].values,
             )
+
+    def test_set_output(self):
+        """SummaryEncoder supports set_output, also inside scikit-learn compositions."""
+        X = self.df.assign(num=np.arange(len(self.df), dtype=float))
+        X.index = X.index + 10
+
+        encoder = encoders.SummaryEncoder(cols=[self.col], return_df=False)
+        encoder.set_output(transform='pandas')
+        result = encoder.fit_transform(X, self.target)
+        self.assertIsInstance(result, pd.DataFrame)
+        self.assertListEqual(list(result.columns), list(encoder.get_feature_names_out()))
+        pd.testing.assert_index_equal(result.index, X.index)
+
+        encoder.set_output(transform='default')
+        self.assertIsInstance(encoder.transform(X), np.ndarray)
+
+        transformer = ColumnTransformer(
+            [('summary', encoders.SummaryEncoder(), [self.col])], remainder='passthrough'
+        ).set_output(transform='pandas')
+        result = transformer.fit_transform(X, self.target)
+        self.assertListEqual(
+            list(result.columns),
+            ['summary__categories_25', 'summary__categories_75', 'remainder__num'],
+        )
 
 
 class TestSummaryEncoderHardening(unittest.TestCase):
