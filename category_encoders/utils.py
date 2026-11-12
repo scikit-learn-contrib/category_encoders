@@ -632,8 +632,9 @@ class BaseEncoder(BaseEstimator):
             category-to-ordinal-code mapping.
         handle_unknown: str, int, float, callable or dict of {column : option, ...}.
             how to handle unknown labels at transform time. Options are 'error',
-            'return_nan', 'value' and int. Defaults to None which uses nan behaviour
-            specified at fit time. Passing an int will fill with this int value.
+            'return_nan', 'value' and int. Default 'value', which fills unknown
+            labels with the encoder's default value. Passing an int will fill with
+            this int value.
             Passing a callable fn(value, mapping) computes the encoded value for
             unseen labels once per column when the mapping is finalized during fit
             (with `value` = np.nan). CountEncoder additionally accepts a dict of
