@@ -1,3 +1,9 @@
+Unreleased
+==========
+
+* Fix: ``PolynomialWrapper.fit`` and ``NestedCVWrapper.fit`` return the fitted
+  wrapper, allowing standard scikit-learn-style chained fitting and inference.
+
 v.2.11.2
 ========
 
