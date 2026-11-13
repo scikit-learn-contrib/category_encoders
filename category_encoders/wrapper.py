@@ -111,6 +111,7 @@ class PolynomialWrapper(BaseEstimator, TransformerMixin):
         self.feature_encoders = {}
         for class_name, label in labels.items():
             self.feature_encoders[class_name] = copy.deepcopy(self.feature_encoder).fit(X, label)
+        return self
 
     def transform(self, X, y=None):
         """Encode new data."""
@@ -275,6 +276,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
     def fit(self, X, y, **kwargs):
         """Fit on the base feature_encoder without nested cross validation."""
         self.feature_encoder.fit(X, y, **kwargs)
+        return self
 
     def transform(self, X):
         """Transform on the base feature_encoder without nested cross validation."""
