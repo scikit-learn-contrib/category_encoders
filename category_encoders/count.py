@@ -77,7 +77,9 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         min_group_name: None, str or dict of {column : option, ...}.
             Set the name of the combined minimum groups when the defaults become
             too long. Default None. In this case the category names will be joined
-            alphabetically with a `_` delimiter.
+            alphabetically with a `_` delimiter and suffixed with `#` as needed
+            to keep the name distinct from retained categories. A supplied name
+            matching a retained category raises `ValueError`.
             Note: The default name can be long and may keep changing, for example,
             in cross-validation.
         combine_min_nan_groups: bool or dict of {column : bool, ...}.
