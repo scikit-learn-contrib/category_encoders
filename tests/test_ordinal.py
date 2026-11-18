@@ -420,6 +420,25 @@ class TestOrdinalEncoder(TestCase):
                 recovered = enc.inverse_transform(df[categoricals])
                 pd.testing.assert_frame_equal(X[categoricals], recovered)
 
+    def test_custom_mapping_missing_key_spellings(self):
+        """A missing-value key in a supplied mapping matches missing values however it is spelled.
+
+        The documented example uses ``None`` as the key. On pandas < 3 that key used to stay
+        ``None`` in an object index and never matched NaN, so missing values were treated as
+        unknown (-1) instead of getting the supplied code, unlike on pandas >= 3.
+        """
+        train = pd.DataFrame({'col1': ['a', 'b', np.nan, None, 'c']})
+        expected = [1, 2, 0, 0, -1]
+        for missing_key in [None, np.nan, pd.NA, float('nan')]:
+            for as_series in [False, True]:
+                with self.subTest(missing_key=missing_key, as_series=as_series):
+                    col_mapping = {missing_key: 0, 'a': 1, 'b': 2}
+                    if as_series:
+                        col_mapping = pd.Series(col_mapping)
+                    enc = encoders.OrdinalEncoder(mapping=[{'col': 'col1', 'mapping': col_mapping}])
+                    out = enc.fit_transform(train)
+                    self.assertListEqual(out['col1'].tolist(), expected)
+
     def test_validate_mapping(self):
         """Test that the mapping is validated correctly."""
         custom_mapping = [
