@@ -872,9 +872,17 @@ class BaseEncoder(BaseEstimator):
 
         Only object and category columns carry encoding semantics that an ndarray
         loses when rebuilt into a DataFrame; numeric dtypes survive unchanged.
+        Retain unseen values so the fitted encoder can apply its unknown policy.
         """
         for position, dtype in enumerate(self.feature_dtypes_in_):
             column = df.columns[position]
+            if isinstance(dtype, CategoricalDtype):
+                incoming = pd.Index(df[column].dropna().unique())
+                new_categories = incoming[~incoming.isin(dtype.categories)]
+                if not new_categories.empty:
+                    dtype = CategoricalDtype(
+                        dtype.categories.append(new_categories), ordered=dtype.ordered
+                    )
             if is_object_dtype(dtype) or isinstance(dtype, CategoricalDtype):
                 df[column] = df[column].astype(dtype)
         return df
