@@ -20,6 +20,16 @@ y_t = pd.DataFrame(np_y_t)
 class TestWeightOfEvidenceEncoder(TestCase):
     """Unit tests for the Weight of Evidence encoder."""
 
+    def test_rejects_labels_other_than_zero_and_one(self):
+        """Reject two numeric classes unless they are exactly zero and one."""
+        X = pd.DataFrame({'cat': ['a', 'a', 'b', 'b']})
+        for labels in ([-1, 1], [0, 2]):
+            with (
+                self.subTest(labels=labels),
+                self.assertRaisesRegex(ValueError, r'values \{0, 1\}'),
+            ):
+                encoders.WOEEncoder(cols=['cat']).fit(X, labels * 2)
+
     def test_woe(self):
         """Test the Weight of Evidence encoder."""
         cols = [

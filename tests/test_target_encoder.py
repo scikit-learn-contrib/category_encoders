@@ -496,6 +496,37 @@ class TestTargetEncoder(TestCase):
                 verbose=1, smoothing=2, min_samples_leaf=2, hierarchy=hierarchical_map
             )
 
+    def test_hierarchy_with_missing_values_does_not_depend_on_row_order(self):
+        """Test that a missing value seen early does not shift the hierarchical priors."""
+        hierarchical_map = {'Animal': {'Feline': ('Cat', 'Tiger'), 'Canine': ('Dog', 'Wolf')}}
+        animals = ['Cat', np.nan, 'Dog', 'Tiger', 'Wolf', 'Cat']
+        X = pd.DataFrame({'Animal': animals + ['Dog', np.nan, 'Tiger', 'Wolf', 'Cat', 'Dog']})
+        y = pd.Series([1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0])
+        X_test = pd.DataFrame({'Animal': ['Cat', 'Tiger', 'Dog', 'Wolf']})
+
+        def fitted_values(rows):
+            enc = encoders.TargetEncoder(
+                smoothing=1, min_samples_leaf=2, hierarchy=hierarchical_map, cols=['Animal']
+            )
+            enc.fit(X.iloc[rows].reset_index(drop=True), y.iloc[rows].reset_index(drop=True))
+            return enc.transform(X_test)['Animal'].to_numpy()
+
+        missing_first = fitted_values([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+        missing_last = fitted_values([0, 2, 3, 4, 5, 6, 8, 9, 10, 11, 1, 7])
+        np.testing.assert_allclose(missing_first, missing_last)
+        np.testing.assert_allclose(missing_first, [0.9936, 0.9881, 0.0576, 0.3571], atol=1e-4)
+
+    def test_hierarchy_dataframe_missing_values_under_several_parents(self):
+        """Test a columnwise hierarchy where missing values belong to different parents."""
+        X = pd.DataFrame({'A': ['a', np.nan, 'b', 'c', np.nan, 'a', 'b', 'c']})
+        hierarchy = pd.DataFrame({'HIER_A_1': ['P', 'P', 'P', 'Q', 'Q', 'P', 'P', 'Q']})
+        y = pd.Series([1, 0, 1, 0, 1, 1, 0, 0])
+        enc = encoders.TargetEncoder(
+            smoothing=1, min_samples_leaf=2, hierarchy=hierarchy, cols=['A']
+        ).fit(X, y)
+        values = enc.transform(pd.DataFrame({'A': ['a', 'b', 'c']}))['A'].to_numpy()
+        np.testing.assert_allclose(values, [0.7976, 0.5476, 0.1891], atol=1e-4)
+
     def test_hierarchy_mapping_cols_missing(self):
         """Test that an error is raised when the dataframe is missing the hierarchy column."""
         X = ['N', 'N', 'NE', 'NE', 'NE', 'SE', 'SE', 'S', 'S', 'S', 'S', 'W', 'W', 'W', 'W', 'W']

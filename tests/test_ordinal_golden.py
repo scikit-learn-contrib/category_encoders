@@ -114,7 +114,10 @@ GOLDEN = {
             [2.0, 2.0, 2.0, 2.0, 3.0],
         ],
     },
-    'supplied_dict': {'transform': [[1.0], [2.0], [-1.0], [1.0], [-1.0]]},
+    # Row 2 is a missing value and the supplied mapping has a ``None`` key, so it is
+    # encoded as that key's code (0). The pre-refactor capture on pandas 2 recorded -1
+    # (unknown) here, because a ``None`` key never matched NaN on pandas < 3.
+    'supplied_dict': {'transform': [[1.0], [2.0], [0.0], [1.0], [-1.0]]},
     'supplied_series': {'transform': [[1], [2], [7], [1], [3]]},
     'universal_fixture': {
         'mapping': [
@@ -223,11 +226,23 @@ def _canonical_mapping(mapping):
     return {'nan' if pd.isna(key) else key: int(value) for key, value in mapping.to_dict().items()}
 
 
+def _canonical_dtype(dtype):
+    """Dtype as recorded in GOLDEN.
+
+    The goldens were captured on pandas 2, where string columns have dtype ``object``.
+    pandas >= 3 infers the dedicated ``str`` dtype for the same columns instead, so
+    treat both as ``'object'``.
+    """
+    if isinstance(dtype, pd.StringDtype):
+        return 'object'
+    return dtype
+
+
 def _assert_golden_mapping(actual_switches, expected_switches):
     assert len(actual_switches) == len(expected_switches)
     for switch, expected in zip(actual_switches, expected_switches, strict=True):
         assert switch['col'] == expected['col']
-        assert switch['data_type'] == expected['data_type']
+        assert _canonical_dtype(switch['data_type']) == expected['data_type']
         assert _canonical_mapping(switch['mapping']) == expected['mapping']
 
 
