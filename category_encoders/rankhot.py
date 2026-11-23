@@ -201,10 +201,17 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
                         raise ValueError('Unhandled nan')
                 return encoding_dict.get(row.iloc[0], default_value)
 
-            encoded = encode_feature_series.to_frame().apply(
-                apply_coding, axis=1, result_type='expand'
-            )
-            encoded.columns = mod.columns
+            if encode_feature_series.empty:
+                # DataFrame.apply cannot infer the output columns without any rows
+                encoded = pd.DataFrame(
+                    {c: pd.Series(dtype=int) for c in mod.columns},
+                    index=encode_feature_series.index,
+                )
+            else:
+                encoded = encode_feature_series.to_frame().apply(
+                    apply_coding, axis=1, result_type='expand'
+                )
+                encoded.columns = mod.columns
 
             X = pd.concat([encoded, X], axis=1)
 
