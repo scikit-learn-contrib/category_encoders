@@ -1,9 +1,11 @@
 """Tests for cat boost encoder."""
+
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
 import numpy as np
 import pandas as pd
+import pytest
 
 
 class TestCatBoostEncoder(TestCase):
@@ -97,3 +99,31 @@ class TestCatBoostEncoder(TestCase):
                 (17 + prior) / 4,
             ],
         )
+
+
+@pytest.mark.parametrize(
+    'categories',
+    [[1, '1'], [None, 'None'], [np.nan, 'nan'], [pd.NA, '<NA>'], [True, 'True'], ['A', 'B']],
+)
+@pytest.mark.parametrize('index', [None, [7, 3, 8, 1]])
+def test_cat_boost_preserves_category_identity(categories, index):
+    """Running target statistics must not combine distinct category values."""
+    X = pd.DataFrame({'col': categories * 2}, index=index)
+    y = pd.Series([1, 0, 1, 0], index=X.index)
+    encoder = encoders.CatBoostEncoder(cols=['col'])
+
+    result = encoder.fit_transform(X, y)
+
+    # Each category starts from the prior; its next value uses only its own target.
+    np.testing.assert_allclose(result['col'], [0.5, 0.5, 0.75, 0.25])
+    pd.testing.assert_index_equal(result.index, X.index)
+
+
+def test_cat_boost_groups_missing_representations():
+    """None, NaN and pd.NA belong to one missing category, apart from strings."""
+    X = pd.DataFrame({'col': [None, 'nan', np.nan, 'nan', pd.NA, 'nan']})
+    y = pd.Series([1, 0, 1, 0, 1, 0])
+
+    result = encoders.CatBoostEncoder(cols=['col']).fit_transform(X, y)
+
+    np.testing.assert_allclose(result['col'], [0.5, 0.5, 0.75, 0.25, 2.5 / 3, 0.5 / 3])

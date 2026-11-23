@@ -201,10 +201,17 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
                         raise ValueError('Unhandled nan')
                 return encoding_dict.get(row.iloc[0], default_value)
 
-            encoded = encode_feature_series.to_frame().apply(
-                apply_coding, axis=1, result_type='expand'
-            )
-            encoded.columns = mod.columns
+            if encode_feature_series.empty:
+                # DataFrame.apply cannot infer the output columns without any rows
+                encoded = pd.DataFrame(
+                    {c: pd.Series(dtype=int) for c in mod.columns},
+                    index=encode_feature_series.index,
+                )
+            else:
+                encoded = encode_feature_series.to_frame().apply(
+                    apply_coding, axis=1, result_type='expand'
+                )
+                encoded.columns = mod.columns
 
             X = pd.concat([encoded, X], axis=1)
 
@@ -263,7 +270,8 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             last_index = cols.index(cats.columns[-1]) + 1
 
             del cols[first_inex:last_index]
-            cols.insert(self.ordinal_encoder.feature_names_out_.tolist().index(col), col)
+            # the encoded block replaced the original column in place, so restore it there
+            cols.insert(first_inex, col)
 
         X = X.reindex(columns=cols)
 
@@ -278,7 +286,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
         """
         mapping = []
-        found_column_counts = {}
+        found_column_names: set[str] = set()
 
         for switch in self.ordinal_encoder.mapping:
             col: str = switch.get('col')
@@ -295,10 +303,9 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
             for cat_name, class_ in values.items():
                 if self.use_cat_names:
-                    n_col_name = f'{col}_{cat_name}'
-                    found_count = found_column_counts.get(n_col_name, 0)
-                    found_column_counts[n_col_name] = found_count + 1
-                    n_col_name += '#' * found_count
+                    n_col_name = util.get_unique_column_name(
+                        f'{col}_{cat_name}', found_column_names
+                    )
                 else:
                     n_col_name = f'{col}_{class_}'
 
