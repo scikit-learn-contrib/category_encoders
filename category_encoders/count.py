@@ -62,8 +62,8 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             fit time.
         handle_unknown: str, int or dict of {column : option, ...}.
             how to handle unknown labels at transform time. Options are 'error'
-            'return_nan', 'value' and int. Defaults to None which uses nan behaviour
-            specified at fit time. Passing an int will fill with this int value.
+            'return_nan', 'value' and int. Default 'value', which fills unknown
+            labels with 0. Passing an int will fill with this int value.
         normalize: bool or dict of {column : bool, ...}.
             whether to normalize the counts to the range (0, 1). See Pandas `value_counts`
             for more details.
