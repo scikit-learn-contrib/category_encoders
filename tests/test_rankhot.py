@@ -213,3 +213,12 @@ class TestRankHotHardening(TestCase):
         restored = enc.inverse_transform(unknown)
         self.assertNotEqual(restored['x'].iloc[0], restored['x'].iloc[0])
 
+    def test_transform_empty_frame(self):
+        """Transforming a frame with no rows returns an empty frame with the encoded columns."""
+        df = pd.DataFrame({'x': ['a', 'b', 'c', 'a'], 'y': ['p', 'q', 'p', 'q']})
+        enc = encoders.RankHotEncoder(cols=['x', 'y'])
+        enc.fit(df)
+        expected_columns = enc.transform(df).columns
+        encoded = enc.transform(df.iloc[:0])
+        self.assertEqual(len(encoded), 0)
+        self.assertListEqual(list(encoded.columns), list(expected_columns))
