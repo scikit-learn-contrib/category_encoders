@@ -5,6 +5,12 @@ Unreleased
   have a different type from fitted categories, instead of trying to cast them
   to the fitted dtype first. Missing values retain their separate policy.
 
+* Fix: ``OneHotEncoder``, ``RankHotEncoder`` and ``MultiHotEncoder`` now keep
+  generated feature names unique with ``use_cat_names=True`` when category
+  names already contain ``#`` suffixes or encoded column prefixes overlap.
+  Missing/unknown indicator names share the same collision handling, without
+  changing encoded values or the default numeric-name mode.
+
 v.2.11.2
 ========
 
