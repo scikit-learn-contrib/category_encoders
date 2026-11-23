@@ -11,6 +11,9 @@ Unreleased
   Missing/unknown indicator names share the same collision handling, without
   changing encoded values or the default numeric-name mode.
 
+* Fix: ``CountTargetEncoder`` calculates smoothed evidence in log space so
+  large pure-category groups keep finite output instead of producing infinities.
+
 v.2.11.2
 ========
 
