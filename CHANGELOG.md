@@ -14,6 +14,9 @@ Unreleased
 * Fix: ``CountTargetEncoder`` calculates smoothed evidence in log space so
   large pure-category groups keep finite output instead of producing infinities.
 
+* Fix: ``get_feature_names_in`` preserves mixed-type and tuple column labels
+  as a one-dimensional array that can select the original input columns.
+
 v.2.11.2
 ========
 
