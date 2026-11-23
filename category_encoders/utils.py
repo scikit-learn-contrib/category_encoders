@@ -86,11 +86,8 @@ def get_categorical_cols(df: pd.DataFrame) -> list[str]:
             obj_cols.append(col)
 
     if not obj_cols:
-        msg = (
-            'Warning: No categorical columns found. '
-            "Calling 'transform' will only return input data."
-        )
-        print(msg)
+        msg = "No categorical columns found. Calling 'transform' will only return input data."
+        warnings.warn(msg, stacklevel=4)
 
     return obj_cols
 
