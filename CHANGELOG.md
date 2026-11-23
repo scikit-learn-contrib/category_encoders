@@ -1,6 +1,11 @@
 v.2.11.2
 ========
 
+* Fix: ``NestedCVWrapper.fit_transform`` now rejects cross-validation splitters
+  whose test folds omit or repeat input rows, before fitting any encoders.
+  Previously these splitters could silently duplicate rows, discard repeated
+  encodings, or fail with an out-of-bounds error when restoring row order.
+
 * Fix: ``composite_cols`` no longer raises the "separator occurs in the data"
   ``ValueError`` for column groups containing missing values on pandas >= 3,
   where ``astype(str)`` keeps missing values as NaN. The separator-collision
