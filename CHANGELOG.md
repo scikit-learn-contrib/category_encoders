@@ -17,6 +17,10 @@ Unreleased
 * Fix: ``get_feature_names_in`` preserves mixed-type and tuple column labels
   as a one-dimensional array that can select the original input columns.
 
+* Fix: ``NestedCVWrapper`` constructs integer-``cv`` splitters during fitting,
+  so parameter searches honor updated ``cv``, ``shuffle`` and ``random_state``
+  values. Caller-supplied splitter objects remain unchanged.
+
 v.2.11.2
 ========
 
