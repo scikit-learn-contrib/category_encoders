@@ -7,6 +7,7 @@ from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import category_encoders as encoders
 import numpy as np
 import pandas as pd
+import pytest
 
 import tests.helpers as th
 
@@ -505,3 +506,13 @@ class TestOrdinalMutationHardening(TestCase):
         result = encoder.transform(pd.DataFrame({'x': ['a', 'unseen']}))
         with self.assertWarns(UserWarning):
             encoder.inverse_transform(result)
+
+
+@pytest.mark.skipif(not hasattr(pd.errors, 'Pandas4Warning'), reason='pandas without Pandas4Warning')
+@pytest.mark.parametrize('encoder', [encoders.OrdinalEncoder, encoders.GrayEncoder])
+def test_no_pandas4_warnings(encoder):
+    """Fitting and transforming emits no pandas 4 deprecation warnings (issue #553)."""
+    X = pd.DataFrame({'c': ['a', 'b', 'a', None], 'd': ['x', 'x', 'y', 'z']})
+    with warnings.catch_warnings():
+        warnings.simplefilter('error', pd.errors.Pandas4Warning)
+        encoder().fit(X).transform(X)

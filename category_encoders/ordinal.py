@@ -10,6 +10,8 @@ import pandas as pd
 
 import category_encoders.utils as util
 
+PANDAS_MAJOR = int(pd.__version__.split('.')[0])
+
 __author__ = 'willmcginnis'
 
 
@@ -288,11 +290,15 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         """Map one column through its fitted category-to-code mapping."""
         # Convert to object to accept np.nan (dtype string doesn't)
         # fillna changes None and pd.NA to np.nan
-        try:
-            with pd.option_context('future.no_silent_downcasting', True):
-                values = values.astype('object').fillna(np.nan).map(col_mapping)
-        except pd._config.config.OptionError:  # old pandas versions
+        if PANDAS_MAJOR >= 3:
+            # pandas 3 never downcasts silently, and 3.1 deprecates the option that opted in to it
             values = values.astype('object').fillna(np.nan).map(col_mapping)
+        else:
+            try:
+                with pd.option_context('future.no_silent_downcasting', True):
+                    values = values.astype('object').fillna(np.nan).map(col_mapping)
+            except pd._config.config.OptionError:  # old pandas versions
+                values = values.astype('object').fillna(np.nan).map(col_mapping)
         if util.is_category(values.dtype):
             nan_identity = col_mapping.loc[col_mapping.index.isna()].array[0]
             values = values.cat.add_categories(nan_identity)
