@@ -110,6 +110,15 @@ class TestRankHotEncoder(TestCase):
         inv_tf = enc.inverse_transform(t_f)
         th.verify_inverse_transform(X, inv_tf)
 
+    def test_inverse_transform_cols_not_in_frame_order(self):
+        """Inverse transform restores every column when cols differ from the frame order."""
+        df = pd.DataFrame(
+            {'a': ['x', 'y', 'z', 'x'], 'b': ['p', 'q', 'p', 'r'], 'keep': [1, 2, 3, 4]}
+        )
+        enc = encoders.RankHotEncoder(cols=['b', 'a'])
+        restored = enc.inverse_transform(enc.fit_transform(df))
+        pd.testing.assert_frame_equal(restored, df)
+
     def test_order(self):
         """Test that the mapping is independent of the order of the input data.
 
@@ -204,3 +213,12 @@ class TestRankHotHardening(TestCase):
         restored = enc.inverse_transform(unknown)
         self.assertNotEqual(restored['x'].iloc[0], restored['x'].iloc[0])
 
+    def test_transform_empty_frame(self):
+        """Transforming a frame with no rows returns an empty frame with the encoded columns."""
+        df = pd.DataFrame({'x': ['a', 'b', 'c', 'a'], 'y': ['p', 'q', 'p', 'q']})
+        enc = encoders.RankHotEncoder(cols=['x', 'y'])
+        enc.fit(df)
+        expected_columns = enc.transform(df).columns
+        encoded = enc.transform(df.iloc[:0])
+        self.assertEqual(len(encoded), 0)
+        self.assertListEqual(list(encoded.columns), list(expected_columns))

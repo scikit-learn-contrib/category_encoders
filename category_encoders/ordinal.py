@@ -10,6 +10,8 @@ import pandas as pd
 
 import category_encoders.utils as util
 
+PANDAS_MAJOR = int(pd.__version__.split('.')[0])
+
 __author__ = 'willmcginnis'
 
 
@@ -288,11 +290,15 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         """Map one column through its fitted category-to-code mapping."""
         # Convert to object to accept np.nan (dtype string doesn't)
         # fillna changes None and pd.NA to np.nan
-        try:
-            with pd.option_context('future.no_silent_downcasting', True):
-                values = values.astype('object').fillna(np.nan).map(col_mapping)
-        except pd._config.config.OptionError:  # old pandas versions
+        if PANDAS_MAJOR >= 3:
+            # pandas 3 never downcasts silently, and 3.1 deprecates the option that opted in to it
             values = values.astype('object').fillna(np.nan).map(col_mapping)
+        else:
+            try:
+                with pd.option_context('future.no_silent_downcasting', True):
+                    values = values.astype('object').fillna(np.nan).map(col_mapping)
+            except pd._config.config.OptionError:  # old pandas versions
+                values = values.astype('object').fillna(np.nan).map(col_mapping)
         if util.is_category(values.dtype):
             nan_identity = col_mapping.loc[col_mapping.index.isna()].array[0]
             values = values.cat.add_categories(nan_identity)
@@ -419,10 +425,15 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
                 raise KeyError("Mapping must contain a key 'col' for each column to encode")
             if 'mapping' not in mapping_el:
                 raise KeyError("Mapping must contain a key 'mapping' for each column to encode")
-            mapping = mapping_el['mapping']
-            if isinstance(mapping_el, dict):
-                # convert to dict in order to standardise
-                mapping_el['mapping'] = pd.Series(mapping)
+            mapping = pd.Series(mapping_el['mapping'])
+            # Canonicalise missing-value keys (None, pd.NA, NaN) to np.nan. Without this,
+            # pandas < 3 keeps a None key in an object index, which never matches the NaN
+            # that missing values become in _map_column, while pandas >= 3 infers a str
+            # index that stores None as NaN. The same supplied mapping would then encode
+            # missing values differently depending on the installed pandas version.
+            if mapping.index.hasnans or any(key is None for key in mapping.index):
+                mapping.index = pd.Index([np.nan if pd.isna(key) else key for key in mapping.index])
+            mapping_el['mapping'] = mapping
             if 'data_type' not in mapping_el:
                 mapping_el['data_type'] = mapping_el['mapping'].index.dtype
         return supplied_mapping

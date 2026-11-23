@@ -1,6 +1,5 @@
 """Gray encoding."""
 
-import re
 from functools import partialmethod
 from typing import List
 
@@ -119,7 +118,7 @@ class GrayEncoder(BaseNEncoder):
             col = col_to_encode['col']
             bin_mapping = col_to_encode['mapping']
             n_cols_out = bin_mapping.shape[1]
-            null_cond = (bin_mapping.index < 0) | (bin_mapping.isna().all(1))
+            null_cond = (bin_mapping.index < 0) | (bin_mapping.isna().all(axis=1))
             map_null = bin_mapping[null_cond]
             map_non_null = bin_mapping[~null_cond].copy()
             ordinal_mapping = [m for m in self.ordinal_encoder.mapping if m.get('col') == col]
@@ -166,12 +165,10 @@ class GrayEncoder(BaseNEncoder):
         out_cols = X.columns.tolist()
 
         for col in cols:
-            col_list = [
-                col0 for col0 in out_cols if re.match(re.escape(str(col)) + '_\\d+', str(col0))
-            ]
+            col_mapping = next(m['mapping'] for m in self.mapping if m['col'] == col)
+            col_list = col_mapping.columns.tolist()
             insert_at = out_cols.index(col_list[0])
 
-            col_mapping = next(m['mapping'] for m in self.mapping if m['col'] == col)
             # forward encoding is a table lookup, so invert it the same way:
             # map each Gray code word back to its ordinal value.
             code_word_to_value = {}
