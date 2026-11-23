@@ -1,3 +1,10 @@
+Unreleased
+==========
+
+* Fix: ``LeaveOneOutEncoder`` now applies ``handle_unknown`` when new labels
+  have a different type from fitted categories, instead of trying to cast them
+  to the fitted dtype first. Missing values retain their separate policy.
+
 v.2.11.2
 ========
 
