@@ -186,10 +186,10 @@ class CatBoostEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
                 # Still, it works better than leave-one-out without any noise.
                 # See:
                 #   https://tech.yandex.com/catboost/doc/dg/concepts/algorithm-main-stages_cat-to-numberic-docpage/
-                # Cumsum does not work nicely with None (while cumcount does).
-                # As a workaround, we cast the grouping column as string.
-                # See: issue #209
-                temp = y.groupby(X[col].astype(str).fillna('nan')).agg(['cumsum', 'cumcount'])
+                # Factorize preserves category identity and groups all missing values under -1.
+                # String conversion can merge distinct levels such as 1 and '1'.
+                codes, _ = pd.factorize(X[col])
+                temp = y.groupby(codes).agg(['cumsum', 'cumcount'])
                 X[col] = (temp['cumsum'] - y + self._mean * self.a) / (temp['cumcount'] + self.a)
 
             if self.handle_unknown == 'value':
@@ -203,7 +203,7 @@ class CatBoostEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
                 # only set value if there are actually missing values.
                 # In case of pd.Categorical columns setting values that are not seen in
                 # pd.Categorical gives an error.
-                nan_cond = is_nan & unseen_values.isna().any()
+                nan_cond = is_nan & (not unique_train.isna().any())
                 if nan_cond.any():
                     X.loc[nan_cond, col] = self._mean
             elif self.handle_missing == 'return_nan':
