@@ -46,3 +46,28 @@ jobs:
         else:
           raise AssertionError('GLMMEncoder should fail without statsmodels')
         "
+
+  latest-dependencies:
+    # The build job installs from poetry.lock, so it never sees the newest releases
+    # of pandas, scikit-learn or statsmodels that `pip install category_encoders`
+    # resolves to. This job installs without the lock file to catch those breakages
+    # early (e.g. #566, the pandas 3 / statsmodels 0.15 failures).
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.13']
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install latest released dependencies
+      run: |
+        python -m pip install --upgrade pip wheel
+        python -m pip install --upgrade ".[glmm]" pytest
+        python -m pip list | grep -iE "^(pandas|numpy|scikit-learn|scipy|statsmodels) "
+    - name: Test with pytest
+      run: |
+        python -m pytest tests
