@@ -348,6 +348,14 @@ class SummaryEncoder(BaseEstimator):
         self.m = m
         self.encoder_list = None
 
+    def set_params(self, **params):
+        """Set parameters and refresh column selection when explicitly changed."""
+        super().set_params(**params)
+        if 'cols' in params:
+            self.use_default_cols = self.cols is None
+            self.use_all_cols = isinstance(self.cols, str) and self.cols.lower() == 'all'
+        return self
+
     def fit(self, X: util.X_type, y: util.y_type) -> SummaryEncoder:
         """Fits the encoder according to X and y by fitting the individual encoders.
 
