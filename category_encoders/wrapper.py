@@ -271,10 +271,7 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         self.shuffle = shuffle
         self.random_state = random_state
 
-        if isinstance(cv, int):
-            self.cv = StratifiedKFold(n_splits=cv, shuffle=shuffle, random_state=random_state)
-        else:
-            self.cv = cv
+        self.cv = cv
 
     def fit(self, X, y, **kwargs):
         """Fit on the base feature_encoder without nested cross validation."""
@@ -308,7 +305,14 @@ class NestedCVWrapper(BaseEstimator, TransformerMixin):
         """
         X, y = utils.convert_inputs(X, y)
 
-        splits = list(self.cv.split(X, y, groups))
+        if isinstance(self.cv, int):
+            cv = StratifiedKFold(
+                n_splits=self.cv, shuffle=self.shuffle, random_state=self.random_state
+            )
+        else:
+            cv = self.cv
+
+        splits = list(cv.split(X, y, groups))
         test_indices = (
             np.concatenate([test for _, test in splits]) if splits else np.array([], dtype=int)
         )

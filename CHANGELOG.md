@@ -5,6 +5,22 @@ Unreleased
   have a different type from fitted categories, instead of trying to cast them
   to the fitted dtype first. Missing values retain their separate policy.
 
+* Fix: ``OneHotEncoder``, ``RankHotEncoder`` and ``MultiHotEncoder`` now keep
+  generated feature names unique with ``use_cat_names=True`` when category
+  names already contain ``#`` suffixes or encoded column prefixes overlap.
+  Missing/unknown indicator names share the same collision handling, without
+  changing encoded values or the default numeric-name mode.
+
+* Fix: ``CountTargetEncoder`` calculates smoothed evidence in log space so
+  large pure-category groups keep finite output instead of producing infinities.
+
+* Fix: ``get_feature_names_in`` preserves mixed-type and tuple column labels
+  as a one-dimensional array that can select the original input columns.
+
+* Fix: ``NestedCVWrapper`` constructs integer-``cv`` splitters during fitting,
+  so parameter searches honor updated ``cv``, ``shuffle`` and ``random_state``
+  values. Caller-supplied splitter objects remain unchanged.
+
 * Fix: ``PolynomialWrapper.fit`` and ``NestedCVWrapper.fit`` return the fitted
   wrapper, allowing standard scikit-learn-style chained fitting and inference.
 
