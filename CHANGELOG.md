@@ -21,6 +21,9 @@ Unreleased
   so parameter searches honor updated ``cv``, ``shuffle`` and ``random_state``
   values. Caller-supplied splitter objects remain unchanged.
 
+* Fix: ``PolynomialWrapper.fit`` and ``NestedCVWrapper.fit`` return the fitted
+  wrapper, allowing standard scikit-learn-style chained fitting and inference.
+
 v.2.11.2
 ========
 
