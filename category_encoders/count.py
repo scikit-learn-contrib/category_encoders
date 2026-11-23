@@ -62,8 +62,8 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             fit time.
         handle_unknown: str, int or dict of {column : option, ...}.
             how to handle unknown labels at transform time. Options are 'error'
-            'return_nan', 'value' and int. Defaults to None which uses nan behaviour
-            specified at fit time. Passing an int will fill with this int value.
+            'return_nan', 'value' and int. Default 'value', which fills unknown
+            labels with 0. Passing an int will fill with this int value.
         normalize: bool or dict of {column : bool, ...}.
             whether to normalize the counts to the range (0, 1). See Pandas `value_counts`
             for more details.
@@ -77,7 +77,9 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         min_group_name: None, str or dict of {column : option, ...}.
             Set the name of the combined minimum groups when the defaults become
             too long. Default None. In this case the category names will be joined
-            alphabetically with a `_` delimiter.
+            alphabetically with a `_` delimiter and suffixed with `#` as needed
+            to keep the name distinct from retained categories. A supplied name
+            matching a retained category raises `ValueError`.
             Note: The default name can be long and may keep changing, for example,
             in cross-validation.
         combine_min_nan_groups: bool or dict of {column : bool, ...}.
@@ -150,6 +152,7 @@ class CountEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         self._handle_missing = {}
 
     def _fit(self, X, y=None, **kwargs):
+        self._min_group_categories = {}
         self.ordinal_encoder = OrdinalEncoder(
             verbose=self.verbose, cols=self.cols, handle_unknown='value', handle_missing='value'
         )

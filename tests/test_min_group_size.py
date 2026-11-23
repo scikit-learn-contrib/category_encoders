@@ -102,6 +102,13 @@ class TestBuildMinGroupMap(TestCase):
 
         self.assertEqual({'C': 'dave', 'D': 'dave'}, lumping_map)
 
+    def test_custom_name_can_reuse_lumped_label(self):
+        """A label being removed is available as the leftovers name."""
+        sizes, lumping_map = build_min_group_map(GROUP_SIZES, 4, 'C', True)
+
+        self.assertEqual({'C': 'C', 'D': 'C'}, lumping_map)
+        self.assertEqual({'A': 8, 'B': 4, 'C': 3, np.nan: 5}, dict(sizes))
+
     def test_input_series_is_not_modified(self):
         """The helper is pure: the passed group sizes are left untouched."""
         sizes = pd.Series({'A': 8, 'B': 4, 'C': 2, 'D': 1})
@@ -286,3 +293,41 @@ class TestCountEncoderOptOut(TestCase):
         self.assertFalse(enc._min_group_hooks_enabled)
         self.assertEqual({}, enc.min_group_lumping_)
         self.assertTrue(enc._min_group_categories)
+
+
+class TestLeftoversNameCollision(TestCase):
+    """Keep common values separate from a synthesized rare category."""
+
+    def setUp(self):
+        """Use two real categories that match the first two candidate labels."""
+        self.X = pd.DataFrame({'grade': ['A_B'] * 4 + ['A_B#'] * 3 + ['A', 'B']})
+        self.y = [1, 1, 1, 0, 0, 0, 0, 0, 0]
+        self.probe = pd.DataFrame({'grade': ['A_B', 'A_B#', 'A', 'B', 'unseen']})
+
+    def test_count_encoder_preserves_counts_and_proportions(self):
+        """The count and normalized mappings both retain the full training sample."""
+        for normalize in (False, True):
+            with self.subTest(normalize=normalize):
+                enc = encoders.CountEncoder(min_group_size=3, normalize=normalize)
+                enc.fit(self.X.astype('category'))
+                expected = np.array([4, 3, 2, 2, 0]) / (len(self.X) if normalize else 1)
+
+                np.testing.assert_allclose(enc.transform(self.probe)['grade'], expected)
+                self.assertAlmostEqual(1 if normalize else len(self.X), enc.mapping['grade'].sum())
+
+    def test_woe_encoder_preserves_event_rates(self):
+        """The common and pooled categories each get their own weight of evidence."""
+        enc = encoders.WOEEncoder(min_group_size=3).fit(self.X, self.y)
+
+        # With regularization 1, the global event and non-event denominators are 5 and 8.
+        expected = np.log([3.2, 0.4, 8 / 15, 8 / 15, 1])
+        actual = enc.transform(self.probe.to_numpy())['grade']
+        np.testing.assert_allclose(actual, expected)
+        self.assertEqual({'A': 'A_B##', 'B': 'A_B##'}, enc.min_group_lumping_['grade'])
+
+    def test_explicit_name_cannot_replace_a_retained_category(self):
+        """An explicit collision raises before it can change fitted statistics."""
+        for encoder in (encoders.CountEncoder, encoders.WOEEncoder):
+            with self.subTest(encoder=encoder.__name__):
+                with self.assertRaisesRegex(ValueError, r"min_group_name='A_B'.*retained"):
+                    encoder(min_group_size=3, min_group_name='A_B').fit(self.X, self.y)

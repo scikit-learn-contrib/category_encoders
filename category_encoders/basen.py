@@ -1,6 +1,5 @@
 """BaseX encoding."""
 
-import re
 import warnings
 from typing import Any
 
@@ -318,9 +317,8 @@ class BaseNEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         out_cols = X.columns.tolist()
 
         for col in cols:
-            col_list = [
-                col0 for col0 in out_cols if re.match(re.escape(str(col)) + '_\\d+', str(col0))
-            ]
+            col_mapping = next(m['mapping'] for m in self.mapping if m['col'] == col)
+            col_list = col_mapping.columns.tolist()
             insert_at = out_cols.index(col_list[0])
 
             if base == 1:
