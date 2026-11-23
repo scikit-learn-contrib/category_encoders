@@ -181,13 +181,9 @@ class LeaveOneOutEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         for col, colmap in mapping.items():
             level_notunique = colmap['count'] > 1
 
-            unique_train = colmap.index
-            unseen_values = pd.Series(
-                [x for x in X[col].unique() if x not in unique_train], dtype=unique_train.dtype
-            )
-
             is_nan = X[col].isna()
-            is_unknown_value = X[col].isin(unseen_values.dropna().astype(object))
+            is_unknown_value = ~X[col].isin(colmap.index) & ~is_nan
+            missing_unseen = not colmap.index.isna().any()
 
             if (
                 X[col].dtype.name == 'category'
@@ -218,7 +214,7 @@ class LeaveOneOutEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
                 X.loc[is_unknown_value, col] = np.nan
 
             if self.handle_missing == 'value':
-                X.loc[is_nan & unseen_values.isna().any(), col] = self._mean
+                X.loc[is_nan & missing_unseen, col] = self._mean
             elif self.handle_missing == 'return_nan':
                 X.loc[is_nan, col] = np.nan
 
