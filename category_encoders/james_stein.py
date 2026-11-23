@@ -219,12 +219,12 @@ class JamesSteinEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
                 )
             if y.isna().any():
                 raise ValueError('The target column y must not contain missing values.')
-            if np.max(unique) < 1:
+            if np.max(unique) != 1:
                 raise ValueError(
                     'The target column y must be binary with values {0, 1}. '
                     'Value 1 was not found in the target.'
                 )
-            if np.min(unique) > 0:
+            if np.min(unique) != 0:
                 raise ValueError(
                     'The target column y must be binary with values {0, 1}. '
                     'Value 0 was not found in the target.'
