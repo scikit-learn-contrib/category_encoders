@@ -377,7 +377,8 @@ def build_min_group_map(
         before calling.
     min_group_name: str or None
         Name of the leftovers group. When None, the names of the lumped labels are
-        joined alphabetically with a `_` delimiter.
+        joined alphabetically with a `_` delimiter, with `#` appended as needed to
+        avoid matching a retained group. An explicit name must not match a retained group.
     combine_min_nan_groups: bool or 'force' or None
         Whether the missing-values group is folded into the leftovers group.
         True folds it in when it is itself below the threshold, 'force' always
@@ -397,29 +398,27 @@ def build_min_group_map(
     else:
         min_groups_idx = (group_sizes < min_group_size) & (~group_sizes.index.isna())
 
-    min_groups_sum = group_sizes.loc[min_groups_idx].sum()
+    min_groups = group_sizes.loc[min_groups_idx]
+    min_groups_sum = min_groups.sum()
 
     if (
         min_groups_sum > 0
-        and min_groups_idx.sum() > 1
+        and len(min_groups) > 1
         and not min_groups_idx.loc[~min_groups_idx.index.isna()].all()
     ):
+        retained_groups = group_sizes.loc[~min_groups_idx]
         if isinstance(min_group_name, str):
+            if min_group_name in retained_groups.index:
+                raise ValueError(f'min_group_name={min_group_name!r} matches a retained category.')
             lumped_name = min_group_name
         else:
-            lumped_name = '_'.join(
-                [
-                    str(idx)
-                    for idx in group_sizes.loc[min_groups_idx].index.astype(str).sort_values()
-                ]
-            )
-        lumping_map = dict.fromkeys(group_sizes.loc[min_groups_idx].index.tolist(), lumped_name)
+            lumped_name = '_'.join(map(str, min_groups.index.astype(str).sort_values()))
+            while lumped_name in retained_groups.index:
+                lumped_name += '#'
+        lumping_map = dict.fromkeys(min_groups.index.tolist(), lumped_name)
+        retained_groups.loc[lumped_name] = min_groups_sum
 
-        if not min_groups_idx.all():
-            group_sizes = group_sizes.loc[~min_groups_idx]
-            group_sizes[lumped_name] = min_groups_sum
-
-        return group_sizes, lumping_map
+        return retained_groups, lumping_map
 
     return group_sizes, {}
 
@@ -644,7 +643,9 @@ class BaseEncoder(BaseEstimator):
         min_group_name: str, optional
             name of the leftovers group created by `min_group_size`. Default
             None, in which case the names of the lumped categories are joined
-            alphabetically with a `_` delimiter.
+            alphabetically with a `_` delimiter. The generated name is suffixed
+            with `#` as needed to keep it distinct from retained categories. An
+            explicit name that matches a retained category raises `ValueError`.
         combine_min_nan_groups: bool or 'force', optional
             whether the missing-values group is folded into the leftovers group
             created by `min_group_size`. True folds it in when it is itself below
