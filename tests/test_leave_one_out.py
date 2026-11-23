@@ -1,4 +1,5 @@
 """Unit tests for the LeaveOneOutEncoder."""
+
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
@@ -145,3 +146,47 @@ class TestLeaveOneOutEncoder(TestCase):
 
         for col in obtained.columns:
             self.assertEqual([0.0, 0.5, 0.5, 0.5, 1.0, 0.5], list(obtained[col]))
+
+
+class TestMixedCategoryTypes(TestCase):
+    """Unknown categories need not share the fitted category dtype."""
+
+    def test_unknown_category_policies(self):
+        """Apply unknown policies without casting new labels to the fitted dtype."""
+        cases = [
+            ([1, 1, 2, 2], ['new', 1, None]),
+            ([False, False, True, True], ['new', False, None]),
+        ]
+        for train, query in cases:
+            for with_target in (False, True):
+                for policy in ('value', 'return_nan', 'error'):
+                    with self.subTest(train=train, with_target=with_target, policy=policy):
+                        encoder = encoders.LeaveOneOutEncoder(cols=['x'], handle_unknown=policy)
+                        encoder.fit(pd.DataFrame({'x': train}), [1, 3, 5, 7])
+                        X = pd.DataFrame({'x': query}, index=[8, 2, 8])
+                        original = X.copy(deep=True)
+                        y = [1, 1, 1] if with_target else None
+                        if policy == 'error':
+                            with self.assertRaisesRegex(ValueError, 'cannot contain new values'):
+                                encoder.transform(X, y)
+                        else:
+                            actual = encoder.transform(X, y)
+                            unknown = 4.0 if policy == 'value' else np.nan
+                            expected = pd.DataFrame(
+                                {'x': [unknown, 3.0 if with_target else 2.0, 4.0]},
+                                index=X.index,
+                            )
+                            pd.testing.assert_frame_equal(actual, expected)
+                        pd.testing.assert_frame_equal(X, original)
+
+    def test_missing_category_keeps_its_fitted_statistics(self):
+        """Mixed unknown labels do not change the separate missing-value policy."""
+        for missing in ('value', 'return_nan'):
+            with self.subTest(missing=missing):
+                encoder = encoders.LeaveOneOutEncoder(
+                    cols=['x'], handle_unknown='value', handle_missing=missing
+                )
+                encoder.fit(pd.DataFrame({'x': [1, 1, None, None]}), [1, 3, 5, 7])
+                actual = encoder.transform(pd.DataFrame({'x': ['new', 1, np.nan]}))
+                expected = pd.DataFrame({'x': [4.0, 2.0, 6.0 if missing == 'value' else np.nan]})
+                pd.testing.assert_frame_equal(actual, expected)

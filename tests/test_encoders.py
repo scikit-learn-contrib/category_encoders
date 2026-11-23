@@ -748,6 +748,13 @@ class TestEncoders(TestCase):
             }
         )
         y_local = pd.Series([1, 0, 1, 0, 1, 0])
+        queries = pd.DataFrame(
+            {
+                'str_col': ['a', 'new', None],
+                'cat_col': ['x', 'new', None],
+                'num_col': [1.0, 2.0, 3.0],
+            }
+        )
         for encoder_name in ('OneHotEncoder', 'OrdinalEncoder', 'BinaryEncoder', 'TargetEncoder'):
             with self.subTest(encoder_name=encoder_name):
                 enc = getattr(encoders, encoder_name)()
@@ -759,6 +766,22 @@ class TestEncoders(TestCase):
                 for col in out_df.columns:
                     if col != 'num_col':  # numeric pass-through keeps the array's own dtype
                         self.assertEqual(out_df[col].dtype, out_arr[col].dtype)
+
+                pd.testing.assert_frame_equal(
+                    enc.transform(queries.to_numpy()), enc.transform(queries), check_dtype=False
+                )
+                self.assertEqual(list(enc.feature_dtypes_in_[1].categories), ['x', 'y', 'z'])
+
+    def test_transform_ndarray_preserves_unknown_categorical_error(self):
+        """Unseen categorical values must reach the fitted unknown policy for array input."""
+        encoder = encoders.OrdinalEncoder(handle_unknown='error').fit(
+            pd.DataFrame({'col': pd.Categorical(['a', 'b'])})
+        )
+        queries = pd.DataFrame({'col': ['new']})
+        for values in (queries, queries.to_numpy()):
+            with self.subTest(input_type=type(values).__name__):
+                with self.assertRaisesRegex(ValueError, 'Unexpected categories'):
+                    encoder.transform(values)
 
     def test_pipeline_without_pandas_output_completes(self):
         """A preprocessor -> encoder pipeline without set_output('pandas') completes (GH #406)."""

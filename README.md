@@ -46,15 +46,15 @@ __Supervised:__
 Installation
 ------------
 
-The package requires: `numpy`, `statsmodels`, and `scipy`.
+The package requires Python 3.11 or newer, `numpy`, `pandas`, `scikit-learn`, and `scipy`.
 
-To install the package, execute:
+To install from a source checkout, run from the repository root:
 
 ```shell
-$ python setup.py install
+pip install .
 ```
 
-or 
+or install from PyPI:
 
 ```shell
 pip install category_encoders
@@ -64,6 +64,12 @@ or
 
 ```shell
 conda install -c conda-forge category_encoders
+```
+
+To use `GLMMEncoder`, install the optional `statsmodels` dependency with the `glmm` extra:
+
+```shell
+pip install 'category_encoders[glmm]'
 ```
 
 To install the development version, you may use:
@@ -84,7 +90,7 @@ Examples
 --------
 There are two types of encoders: unsupervised and supervised. An unsupervised example:
 ```python
-from category_encoders import *
+from category_encoders import BinaryEncoder
 import pandas as pd
 
 # prepare some data with categorical features
@@ -103,7 +109,7 @@ numeric_dataset = enc.transform(X)
 
 And a supervised example:
 ```python
-from category_encoders import *
+from category_encoders import TargetEncoder
 import pandas as pd
 
 # prepare some training and test data with categorical features and a target
