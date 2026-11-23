@@ -1,5 +1,6 @@
 """Generalized linear mixed model."""
 
+import inspect
 import re
 import warnings
 
@@ -13,6 +14,17 @@ import category_encoders.utils as util
 from category_encoders.ordinal import OrdinalEncoder
 
 __author__ = 'Jan Motl'
+
+_FIT_SEED = 2001
+
+# statsmodels >= 0.15 draws the variational-Bayes starting values from its own
+# ``rng`` argument (fresh OS entropy by default) instead of the global numpy RNG, so
+# seeding ``np.random`` alone no longer makes ``fit_vb`` deterministic.
+_FIT_VB_KWARGS = (
+    {'rng': _FIT_SEED}
+    if 'rng' in inspect.signature(BinomialBayesMixedGLM.fit_vb).parameters
+    else {}
+)
 
 
 class GLMMEncoder( util.SupervisedTransformerMixin ,util.BaseEncoder):
@@ -202,7 +214,7 @@ class GLMMEncoder( util.SupervisedTransformerMixin ,util.BaseEncoder):
 
         # The estimation does not have to converge -> at least converge to the same value.
         original_state = np.random.get_state()
-        np.random.seed(2001)
+        np.random.seed(_FIT_SEED)  # statsmodels < 0.15 uses the global RNG
 
         # Reset random state on completion
         try:
@@ -221,7 +233,7 @@ class GLMMEncoder( util.SupervisedTransformerMixin ,util.BaseEncoder):
                             # output = fe_mean + vcp_mean + vc_mean[category]
                             md = BinomialBayesMixedGLM.from_formula(
                                 'target ~ 1', {'a': '0 + C(feature)'}, data
-                            ).fit_vb()
+                            ).fit_vb(**_FIT_VB_KWARGS)
                             index_names = [
                                 int(float(re.sub(r'C\(feature\)\[(\S+)\]', r'\1', index_name)))
                                 for index_name in md.model.vc_names
