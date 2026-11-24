@@ -61,6 +61,23 @@ class QuantileEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
     encoded with the prior quantile instead, which prevents overfitting on
     identifier-like columns.
 
+    min_group_size: int or float, optional
+        minimum group size needed for a category to be encoded as its own
+        group; smaller categories are lumped into a single "leftovers" group
+        before fitting. An int is an absolute group size, a float is a
+        fraction of the number of rows. Default None, which disables lumping.
+    min_group_name: str, optional
+        name of the leftovers group created by `min_group_size`. Default
+        None, in which case the names of the lumped categories are joined
+        alphabetically with a `_` delimiter. The generated name is suffixed
+        with `#` as needed to keep it distinct from retained categories. An
+        explicit name that matches a retained category raises `ValueError`.
+    combine_min_nan_groups: bool or 'force', optional
+        whether the missing-values group is folded into the leftovers group
+        created by `min_group_size`. True folds it in when it is itself below
+        the threshold (the default), 'force' always folds it in, and False
+        never does. 'force' requires `handle_missing` != 'return_nan'.
+
     Example
     -------
     >>> from category_encoders import *
@@ -440,7 +457,12 @@ class SummaryEncoder(TransformerMixin, BaseEstimator):
 
         """
         if self.encoder_list is None:
-            raise ValueError('Must train encoder before it can be used to transform data.')
+            # Match the BaseEncoder contract: NotFittedError (a ValueError subclass,
+            # so callers catching ValueError keep working).
+            raise NotFittedError(
+                'This SummaryEncoder instance is not fitted yet: '
+                'must train encoder before it can be used to transform data.'
+            )
         X, y = util.convert_inputs(X, y)
 
         orig_cols = X.columns

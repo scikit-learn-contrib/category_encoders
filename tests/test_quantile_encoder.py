@@ -232,3 +232,12 @@ class TestSummaryEncoderHardening(unittest.TestCase):
         self.assertIsInstance(names, np.ndarray)
         self.assertEqual(names.dtype, object)
 
+    def test_transform_before_fit_raises_notfittederror(self):
+        """Unfitted transform raises NotFittedError like the BaseEncoder contract.
+
+        SummaryEncoder raises NotFittedError (a ValueError subclass), so callers
+        catching the old bare ValueError keep working.
+        """
+        with self.assertRaises(NotFittedError):
+            encoders.SummaryEncoder(quantiles=[0.25, 0.75]).transform(self.df)
+
