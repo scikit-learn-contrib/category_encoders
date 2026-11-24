@@ -350,10 +350,10 @@ class TestCountEncoder(TestCase):
         When normalize=True, encoded values are proportions with inherently small variance.
         The invariance check should not falsely flag these columns as invariant.
         """
-        np.random.seed(42)
+        rng = np.random.default_rng(42)
         n = 1000
         categories = [f"cat_{i}" for i in range(40)]
-        data = np.random.choice(categories, size=n)
+        data = rng.choice(categories, size=n)
         df = pd.DataFrame({"col": data})
 
         enc = encoders.CountEncoder(
@@ -375,10 +375,10 @@ class TestCountEncoder(TestCase):
         Regression test for https://github.com/scikit-learn-contrib/category_encoders/issues/457.
         This is the exact combination reported in the issue.
         """
-        np.random.seed(42)
+        rng = np.random.default_rng(42)
         n = 1000
         categories = [f"cat_{i}" for i in range(40)]
-        data = np.random.choice(categories, size=n)
+        data = rng.choice(categories, size=n)
         df = pd.DataFrame({"col": data})
 
         enc = encoders.CountEncoder(

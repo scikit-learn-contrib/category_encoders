@@ -1,5 +1,7 @@
 """Tests for the HashingEncoder."""
 import hashlib
+import math
+import multiprocessing
 from unittest import TestCase
 
 import category_encoders as encoders
@@ -136,6 +138,77 @@ class TestHashingHardening(TestCase):
         self.assertEqual(encoder.verbose, 0)
         self.assertEqual(encoder.handle_unknown, 'does not apply')
         self.assertEqual(encoder.handle_missing, 'does not apply')
+
+    def test_max_process_ladder_clamps_auto_selection(self):
+        """max_process=0 auto-selects a worker count clamped to [1, 128].
+
+        Covers the auto-selection ladder in __init__ (the non-Windows branch
+        with its lower and upper clamps) and passes an explicit value through.
+        """
+        expected = min(max(int(math.ceil(multiprocessing.cpu_count() / 2)), 1), 128)
+        self.assertEqual(expected, encoders.HashingEncoder().max_process)
+        self.assertEqual(1, encoders.HashingEncoder(max_process=1).max_process)
+
+    def test_parallel_path_matches_single_process_result(self):
+        """The ProcessPoolExecutor path hashes identically to the single-process path."""
+        df = pd.DataFrame({'c': ['a', 'b', 'c'] * 6, 'd': ['x', 'y'] * 9})
+        single = encoders.HashingEncoder(max_process=1, n_components=4).fit_transform(df)
+        parallel = encoders.HashingEncoder(max_process=2, n_components=4).fit_transform(df)
+        assert_frame_equal(single, parallel)
+
+    def test_max_process_windows_and_clamp_ladder(self):
+        """Windows picks 1 worker with spawn; the CPU-derived count clamps to [1, 128].
+
+        Covers the platform branches of the __init__ ladder that a Linux host
+        cannot reach naturally.
+        """
+        from unittest.mock import patch
+
+        with (
+            patch('category_encoders.hashing.platform.system', return_value='Windows'),
+            patch('category_encoders.hashing.multiprocessing.cpu_count', return_value=8),
+        ):
+            windows_encoder = encoders.HashingEncoder()
+        self.assertEqual(1, windows_encoder.max_process)
+        self.assertEqual('spawn', windows_encoder.process_creation_method)
+
+        with (
+            patch('category_encoders.hashing.platform.system', return_value='Linux'),
+            patch('category_encoders.hashing.multiprocessing.cpu_count', return_value=0),
+        ):
+            self.assertEqual(1, encoders.HashingEncoder().max_process)
+
+        with (
+            patch('category_encoders.hashing.platform.system', return_value='Linux'),
+            patch('category_encoders.hashing.multiprocessing.cpu_count', return_value=300),
+        ):
+            self.assertEqual(128, encoders.HashingEncoder().max_process)
+
+    def test_transform_before_fit_raises(self):
+        """Unfitted transform raises the documented NotFittedError contract."""
+        df = pd.DataFrame({'c': ['a', 'b']})
+        with self.assertRaisesRegex(ValueError, 'not fitted yet'):
+            encoders.HashingEncoder().transform(df)
+
+    def test_transform_with_no_cols_is_identity(self):
+        """cols=[] short-circuits transform to the (converted) input frame."""
+        df = pd.DataFrame({'c': ['a', 'b']})
+        encoder = encoders.HashingEncoder(cols=[])
+        encoder.fit(df)
+        assert_frame_equal(df, encoder.transform(df))
+
+    def test_hashing_trick_rejects_unknown_method(self):
+        """hashing_trick rejects a hashing method hashlib does not offer."""
+        df = pd.DataFrame({'c': ['a', 'b']})
+        with self.assertRaisesRegex(ValueError, 'not available'):
+            encoders.HashingEncoder().hashing_trick(df, hashing_method='not-a-hash')
+
+    def test_hashing_trick_without_copy_hashes_in_place(self):
+        """make_copy=False hashes the frame in place and returns the same object."""
+        df = pd.DataFrame({'c': ['a', 'b']})
+        result = encoders.HashingEncoder().hashing_trick(df.copy(), make_copy=False)
+        # With cols=None every column is hashed away and replaced by hashed columns.
+        self.assertEqual([], [col for col in result.columns if col == 'c'])
 
     def test_hashing_trick_hashes_all_columns_by_default(self):
         """hashing_trick with cols=None hashes every column.

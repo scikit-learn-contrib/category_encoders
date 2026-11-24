@@ -15,8 +15,9 @@ def verify_numeric(X_test):
         assert dt.kind in _NUMERIC_KINDS
 
 
-def create_array(n_rows=1000, extras=False, has_none=True):
+def create_array(n_rows=1000, extras=False, has_none=True, random_seed=2001):
     """Creates a numpy dataset with some categorical variables."""
+    random.seed(random_seed)
     ds = [
         [
             random.random(),
