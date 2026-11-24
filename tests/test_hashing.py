@@ -8,6 +8,7 @@ import category_encoders as encoders
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal, assert_index_equal
+import pytest
 
 
 class TestHashingEncoder(TestCase):
@@ -220,3 +221,59 @@ class TestHashingHardening(TestCase):
         trick = encoders.HashingEncoder().hashing_trick(df, N=3)
         self.assertEqual(trick.shape, (2, 3))
         self.assertEqual(trick.iloc[0].sum(), 2)
+
+
+def test_default_constructor_attributes():
+    enc = encoders.HashingEncoder()
+    assert enc.max_sample == 0
+    assert enc.n_components == 8
+    assert enc.hash_method == 'md5'
+    expected_max_process = min(max(int(math.ceil(multiprocessing.cpu_count() / 2)), 1), 128)
+    assert enc.max_process == expected_max_process
+
+
+def test_pooling_params_are_stored():
+    enc = encoders.HashingEncoder(
+        min_group_size=5, min_group_name='rare', combine_min_nan_groups=True
+    )
+    assert enc.min_group_size == 5
+    assert enc.min_group_name == 'rare'
+    assert enc.combine_min_nan_groups is True
+
+
+def test_max_process_above_limit_recomputes_from_cpu_count():
+    # 128 is outside the accepted range(1, 128), so the encoder must fall back
+    # to half the logical CPU count rather than accepting the passed value.
+    enc = encoders.HashingEncoder(max_process=128)
+    expected = min(max(int(math.ceil(multiprocessing.cpu_count() / 2)), 1), 128)
+    assert enc.max_process == expected
+
+
+def test_transform_before_fit_exact_message():
+    enc = encoders.HashingEncoder(cols=['a'])
+    X = pd.DataFrame({'a': ['x', 'y']})
+    with pytest.raises(
+        ValueError,
+        match=r'^Must train encoder before it can be used to transform data\.$',
+    ):
+        enc._transform(X)
+
+
+def test_output_dtype_is_integer():
+    X = pd.DataFrame({'a': ['x', 'y', 'z']})
+    out = encoders.HashingEncoder(cols=['a']).fit_transform(X)
+    assert all(np.issubdtype(dt, np.integer) for dt in out.dtypes)
+
+
+def test_hash_method_changes_encoding():
+    X = pd.DataFrame({'a': ['hello', 'world', 'foo', 'bar']})
+    md5_out = encoders.HashingEncoder(hash_method='md5').fit_transform(X)
+    sha_out = encoders.HashingEncoder(hash_method='sha256').fit_transform(X)
+    assert not md5_out.equals(sha_out)
+
+
+def test_parallel_matches_serial_output():
+    X = pd.DataFrame({'a': ['x', 'y', 'z', 'x'] * 10})
+    parallel = encoders.HashingEncoder(max_process=2).fit_transform(X)
+    serial = encoders.HashingEncoder(max_process=1).fit_transform(X)
+    assert_frame_equal(parallel, serial)
