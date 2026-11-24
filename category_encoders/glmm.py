@@ -78,12 +78,37 @@ class GLMMEncoder( util.SupervisedTransformerMixin ,util.BaseEncoder):
         to decrease overfitting. The noise is multiplicative — encoded values
         are scaled by ``N(1, sigma)`` — so it is centered on 1, not 0
         (testing data are untouched).
+    random_state: int, RandomState instance or None
+        seed controlling the Gaussian noise drawn when ``randomized=True``.
+        Pass an int for reproducible encoding. Note on determinism: with
+        ``randomized=False`` (the default), encodings are deterministic only
+        with ``statsmodels >= 0.15``, which seeds the variational fit
+        internally; older statsmodels draw the variational-Bayes starting
+        values from the global NumPy RNG, so fits are reproducible only right
+        after ``numpy.random.seed``.
     sigma: float
         standard deviation (spread or "width") of the normal distribution.
     binomial_target: bool
         if True, the target must be binomial with values {0, 1} and Binomial mixed model is used.
         If False, the target must be continuous and Linear mixed model is used.
         If None (the default), a heuristic is applied to estimate the target type.
+
+    min_group_size: int or float, optional
+        minimum group size needed for a category to be encoded as its own
+        group; smaller categories are lumped into a single "leftovers" group
+        before fitting. An int is an absolute group size, a float is a
+        fraction of the number of rows. Default None, which disables lumping.
+    min_group_name: str, optional
+        name of the leftovers group created by `min_group_size`. Default
+        None, in which case the names of the lumped categories are joined
+        alphabetically with a `_` delimiter. The generated name is suffixed
+        with `#` as needed to keep it distinct from retained categories. An
+        explicit name that matches a retained category raises `ValueError`.
+    combine_min_nan_groups: bool or 'force', optional
+        whether the missing-values group is folded into the leftovers group
+        created by `min_group_size`. True folds it in when it is itself below
+        the threshold (the default), 'force' always folds it in, and False
+        never does. 'force' requires `handle_missing` != 'return_nan'.
 
     Example
     -------

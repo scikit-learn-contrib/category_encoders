@@ -74,6 +74,7 @@ To use:
     encoder = ce.QuantileEncoder(cols=[...])
     encoder = ce.RankHotEncoder(cols=[...])
     encoder = ce.SumEncoder(cols=[...])
+    encoder = ce.SummaryEncoder(cols=[...])
     encoder = ce.TargetEncoder(cols=[...])
     encoder = ce.WOEEncoder(cols=[...])
 
