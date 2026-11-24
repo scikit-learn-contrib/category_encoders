@@ -86,11 +86,8 @@ def get_categorical_cols(df: pd.DataFrame) -> list[str]:
             obj_cols.append(col)
 
     if not obj_cols:
-        msg = (
-            'Warning: No categorical columns found. '
-            "Calling 'transform' will only return input data."
-        )
-        print(msg)
+        msg = "No categorical columns found. Calling 'transform' will only return input data."
+        warnings.warn(msg, stacklevel=4)
 
     return obj_cols
 
@@ -303,6 +300,27 @@ def get_generated_cols(
     return current_cols
 
 
+def get_unique_column_name(name: str, used_names: set[str]) -> str:
+    """Append '#' until a generated column name is unused, then reserve it.
+
+    Parameters
+    ----------
+    name : str
+        The proposed encoded column name.
+    used_names : set of str
+        Previously generated names. Updated with the returned name.
+
+    Returns
+    -------
+    str
+        A name that does not duplicate any previously generated column.
+    """
+    while name in used_names:
+        name += '#'
+    used_names.add(name)
+    return name
+
+
 def flatten_reverse_dict(dict_to_flatten: dict) -> dict:
     """Flatten a dictionary into a tuple of nested keys.
 
@@ -380,7 +398,8 @@ def build_min_group_map(
         before calling.
     min_group_name: str or None
         Name of the leftovers group. When None, the names of the lumped labels are
-        joined alphabetically with a `_` delimiter.
+        joined alphabetically with a `_` delimiter, with `#` appended as needed to
+        avoid matching a retained group. An explicit name must not match a retained group.
     combine_min_nan_groups: bool or 'force' or None
         Whether the missing-values group is folded into the leftovers group.
         True folds it in when it is itself below the threshold, 'force' always
@@ -400,29 +419,27 @@ def build_min_group_map(
     else:
         min_groups_idx = (group_sizes < min_group_size) & (~group_sizes.index.isna())
 
-    min_groups_sum = group_sizes.loc[min_groups_idx].sum()
+    min_groups = group_sizes.loc[min_groups_idx]
+    min_groups_sum = min_groups.sum()
 
     if (
         min_groups_sum > 0
-        and min_groups_idx.sum() > 1
+        and len(min_groups) > 1
         and not min_groups_idx.loc[~min_groups_idx.index.isna()].all()
     ):
+        retained_groups = group_sizes.loc[~min_groups_idx]
         if isinstance(min_group_name, str):
+            if min_group_name in retained_groups.index:
+                raise ValueError(f'min_group_name={min_group_name!r} matches a retained category.')
             lumped_name = min_group_name
         else:
-            lumped_name = '_'.join(
-                [
-                    str(idx)
-                    for idx in group_sizes.loc[min_groups_idx].index.astype(str).sort_values()
-                ]
-            )
-        lumping_map = dict.fromkeys(group_sizes.loc[min_groups_idx].index.tolist(), lumped_name)
+            lumped_name = '_'.join(map(str, min_groups.index.astype(str).sort_values()))
+            while lumped_name in retained_groups.index:
+                lumped_name += '#'
+        lumping_map = dict.fromkeys(min_groups.index.tolist(), lumped_name)
+        retained_groups.loc[lumped_name] = min_groups_sum
 
-        if not min_groups_idx.all():
-            group_sizes = group_sizes.loc[~min_groups_idx]
-            group_sizes[lumped_name] = min_groups_sum
-
-        return group_sizes, lumping_map
+        return retained_groups, lumping_map
 
     return group_sizes, {}
 
@@ -632,8 +649,9 @@ class BaseEncoder(BaseEstimator):
             category-to-ordinal-code mapping.
         handle_unknown: str, int, float, callable or dict of {column : option, ...}.
             how to handle unknown labels at transform time. Options are 'error',
-            'return_nan', 'value' and int. Defaults to None which uses nan behaviour
-            specified at fit time. Passing an int will fill with this int value.
+            'return_nan', 'value' and int. Default 'value', which fills unknown
+            labels with the encoder's default value. Passing an int will fill with
+            this int value.
             Passing a callable fn(value, mapping) computes the encoded value for
             unseen labels once per column when the mapping is finalized during fit
             (with `value` = np.nan). CountEncoder additionally accepts a dict of
@@ -646,7 +664,9 @@ class BaseEncoder(BaseEstimator):
         min_group_name: str, optional
             name of the leftovers group created by `min_group_size`. Default
             None, in which case the names of the lumped categories are joined
-            alphabetically with a `_` delimiter.
+            alphabetically with a `_` delimiter. The generated name is suffixed
+            with `#` as needed to keep it distinct from retained categories. An
+            explicit name that matches a retained category raises `ValueError`.
         combine_min_nan_groups: bool or 'force', optional
             whether the missing-values group is folded into the leftovers group
             created by `min_group_size`. True folds it in when it is itself below
@@ -685,6 +705,14 @@ class BaseEncoder(BaseEstimator):
         self.composite_cols = composite_cols
         self.keep_components = keep_components
         self._dim = None
+
+    def set_params(self, **params):
+        """Set parameters and refresh column selection when explicitly changed."""
+        super().set_params(**params)
+        if 'cols' in params:
+            self.use_default_cols = self.cols is None
+            self.use_all_cols = isinstance(self.cols, str) and self.cols.lower() == 'all'
+        return self
 
     def fit(self, X: X_type, y: y_type | None = None, **kwargs):
         """Fits the encoder according to X and y.
@@ -872,9 +900,17 @@ class BaseEncoder(BaseEstimator):
 
         Only object and category columns carry encoding semantics that an ndarray
         loses when rebuilt into a DataFrame; numeric dtypes survive unchanged.
+        Retain unseen values so the fitted encoder can apply its unknown policy.
         """
         for position, dtype in enumerate(self.feature_dtypes_in_):
             column = df.columns[position]
+            if isinstance(dtype, CategoricalDtype):
+                incoming = pd.Index(df[column].dropna().unique())
+                new_categories = incoming[~incoming.isin(dtype.categories)]
+                if not new_categories.empty:
+                    dtype = CategoricalDtype(
+                        dtype.categories.append(new_categories), ordered=dtype.ordered
+                    )
             if is_object_dtype(dtype) or isinstance(dtype, CategoricalDtype):
                 df[column] = df[column].astype(dtype)
         return df
@@ -1037,16 +1073,20 @@ class BaseEncoder(BaseEstimator):
         member is missing become missing so the regular handle_missing machinery
         applies to composites unchanged.
         """
+        missing = X[list(members)].isna().any(axis=1)
         parts = X[list(members)].astype(str)
         joined = parts[members[0]]
         for member in members[1:]:
             joined = joined + '|' + parts[member]
-        if len(set(joined)) < len(set(map(tuple, parts.to_numpy()))):
+        # Rows with a missing member become missing anyway, and pandas >= 3 keeps them
+        # as NaN through astype(str), so only complete rows can collide.
+        complete = ~missing
+        if len(set(joined[complete])) < len(set(map(tuple, parts[complete].to_numpy()))):
             raise ValueError(
                 f'Composite column {name!r} is ambiguous: the "|" separator occurs in '
                 'the data, so distinct value combinations collide after joining.'
             )
-        joined[X[list(members)].isna().any(axis=1)] = np.nan
+        joined[missing] = np.nan
         return joined
 
     def _add_composite_columns(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -1118,7 +1158,7 @@ class BaseEncoder(BaseEstimator):
         """
         in_feats = getattr(self, 'feature_names_in_', None)
         if isinstance(in_feats, list):
-            in_feats = np.array(in_feats)
+            in_feats = pd.Index(in_feats, dtype=object, tupleize_cols=False).to_numpy()
         if not isinstance(in_feats, np.ndarray):
             raise NotFittedError('Estimator has to be fitted to return feature names.')
         else:

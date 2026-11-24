@@ -7,6 +7,7 @@ from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import category_encoders as encoders
 import numpy as np
 import pandas as pd
+import pytest
 
 import tests.helpers as th
 
@@ -420,6 +421,25 @@ class TestOrdinalEncoder(TestCase):
                 recovered = enc.inverse_transform(df[categoricals])
                 pd.testing.assert_frame_equal(X[categoricals], recovered)
 
+    def test_custom_mapping_missing_key_spellings(self):
+        """A missing-value key in a supplied mapping matches missing values however it is spelled.
+
+        The documented example uses ``None`` as the key. On pandas < 3 that key used to stay
+        ``None`` in an object index and never matched NaN, so missing values were treated as
+        unknown (-1) instead of getting the supplied code, unlike on pandas >= 3.
+        """
+        train = pd.DataFrame({'col1': ['a', 'b', np.nan, None, 'c']})
+        expected = [1, 2, 0, 0, -1]
+        for missing_key in [None, np.nan, pd.NA, float('nan')]:
+            for as_series in [False, True]:
+                with self.subTest(missing_key=missing_key, as_series=as_series):
+                    col_mapping = {missing_key: 0, 'a': 1, 'b': 2}
+                    if as_series:
+                        col_mapping = pd.Series(col_mapping)
+                    enc = encoders.OrdinalEncoder(mapping=[{'col': 'col1', 'mapping': col_mapping}])
+                    out = enc.fit_transform(train)
+                    self.assertListEqual(out['col1'].tolist(), expected)
+
     def test_validate_mapping(self):
         """Test that the mapping is validated correctly."""
         custom_mapping = [
@@ -505,3 +525,13 @@ class TestOrdinalMutationHardening(TestCase):
         result = encoder.transform(pd.DataFrame({'x': ['a', 'unseen']}))
         with self.assertWarns(UserWarning):
             encoder.inverse_transform(result)
+
+
+@pytest.mark.skipif(not hasattr(pd.errors, 'Pandas4Warning'), reason='pandas without Pandas4Warning')
+@pytest.mark.parametrize('encoder', [encoders.OrdinalEncoder, encoders.GrayEncoder])
+def test_no_pandas4_warnings(encoder):
+    """Fitting and transforming emits no pandas 4 deprecation warnings (issue #553)."""
+    X = pd.DataFrame({'c': ['a', 'b', 'a', None], 'd': ['x', 'x', 'y', 'z']})
+    with warnings.catch_warnings():
+        warnings.simplefilter('error', pd.errors.Pandas4Warning)
+        encoder().fit(X).transform(X)

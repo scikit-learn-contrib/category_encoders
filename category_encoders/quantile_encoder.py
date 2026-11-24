@@ -11,7 +11,7 @@ from typing import Sequence
 
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.exceptions import NotFittedError
 
 import category_encoders.utils as util
@@ -224,7 +224,7 @@ class QuantileEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
 
 
 # todo does not fit in schema since it is an ensemble of other encoders
-class SummaryEncoder(BaseEstimator):
+class SummaryEncoder(TransformerMixin, BaseEstimator):
     """Summary Encoding for categorical features.
 
     It's an encoder designed for creating richer representations by applying quantile
@@ -347,6 +347,14 @@ class SummaryEncoder(BaseEstimator):
         self.quantiles = quantiles
         self.m = m
         self.encoder_list = None
+
+    def set_params(self, **params):
+        """Set parameters and refresh column selection when explicitly changed."""
+        super().set_params(**params)
+        if 'cols' in params:
+            self.use_default_cols = self.cols is None
+            self.use_all_cols = isinstance(self.cols, str) and self.cols.lower() == 'all'
+        return self
 
     def fit(self, X: util.X_type, y: util.y_type) -> SummaryEncoder:
         """Fits the encoder according to X and y by fitting the individual encoders.
@@ -507,7 +515,7 @@ class SummaryEncoder(BaseEstimator):
         """
         in_feats = getattr(self, 'feature_names_in_', None)
         if isinstance(in_feats, list):
-            in_feats = np.array(in_feats)
+            in_feats = pd.Index(in_feats, dtype=object, tupleize_cols=False).to_numpy()
         if not isinstance(in_feats, np.ndarray):
             raise NotFittedError('Estimator has to be fitted to return feature names.')
         else:

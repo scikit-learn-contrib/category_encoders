@@ -1,4 +1,5 @@
 """Tests for the wrapper module."""
+
 from unittest import TestCase
 
 import category_encoders as encoders
@@ -265,6 +266,7 @@ class TestNestedCVWrapper(TestCase):
         np.testing.assert_array_equal(result.index.values, x_train.index.values)
         np.testing.assert_array_equal(result['num'].to_numpy(), x_train['num'].to_numpy())
 
+
 class TestWrapperHardening(TestCase):
     """Hardening tests for wrapper-module mutation survivors."""
 
@@ -272,15 +274,13 @@ class TestWrapperHardening(TestCase):
         """NestedCVWrapper stores its cross-validation configuration.
 
         Mutants in category_encoders/wrapper.py::NestedCVWrapper.__init__
-        (cv=5 -> 6, shuffle -> False, __name__ -> None, dropped
-        StratifiedKFold keywords) are visible on these attributes.
+        (cv=5 -> 6, shuffle -> False, __name__ -> None) are visible
+        on these attributes. Integer cv is retained as a public parameter.
         """
         wrapper = NestedCVWrapper(encoders.OrdinalEncoder())
-        self.assertEqual(wrapper.cv.n_splits, 5)
+        self.assertEqual(wrapper.cv, 5)
         self.assertTrue(wrapper.shuffle)
         self.assertIsNone(wrapper.random_state)
-        self.assertEqual(wrapper.cv.shuffle, True)
-        self.assertIsNone(wrapper.cv.random_state)
         self.assertEqual(wrapper.__name__, 'OrdinalEncoder')
 
     def test_fit_transform_with_tuple_x_test_returns_all_results(self):

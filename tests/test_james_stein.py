@@ -1,9 +1,11 @@
 """Unit tests for the James-Stein encoder."""
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
+from unittest.mock import patch
 
 import category_encoders as encoders
 import numpy as np
 import pandas as pd
+import scipy
 
 
 class TestJamesSteinEncoder(TestCase):
@@ -39,6 +41,17 @@ class TestJamesSteinEncoder(TestCase):
         y = np.array([0, 1, 1, 1, 1])
         out = encoders.JamesSteinEncoder(return_df=False, model='independent').fit_transform(X, y)
         self.assertEqual([0, 1, 1, 1, 1], list(out), 'Should not result into division by zero')
+
+    def test_constant_target_independent(self):
+        """A constant target encodes known and unseen categories to that constant."""
+        X = pd.DataFrame({'x': ['a', 'a', 'b', 'b', 'c', 'c', 'd', 'd']})
+        for target in (0.0, 3.5):
+            with self.subTest(target=target):
+                encoder = encoders.JamesSteinEncoder(cols=['x'], model='independent')
+                encoded = encoder.fit_transform(X, np.full(len(X), target))
+                np.testing.assert_array_equal(encoded['x'], target)
+                query = pd.DataFrame({'x': ['a', 'unseen', None]})
+                np.testing.assert_array_equal(encoder.transform(query)['x'], target)
 
     def test_continuous_target(self):
         """Test the James-Stein encoder with continuous target."""
@@ -245,6 +258,13 @@ class TestJamesSteinHardening(TestCase):
         expected = [-1.00064993, 0.28554869, -0.3573236, -0.3573236, 1.12007235]
         np.testing.assert_allclose(out['cat'], np.tile(expected, 4), atol=1e-6)
 
+    def test_binary_model_rejects_labels_other_than_zero_and_one(self):
+        """Reject two numeric classes that are not the required zero/one labels."""
+        X = pd.DataFrame({'cat': ['a', 'a', 'b', 'b']})
+        for labels in ([-1, 1], [0, 2]):
+            with self.subTest(labels=labels), self.assertRaisesRegex(ValueError, 'values'):
+                encoders.JamesSteinEncoder(model='binary').fit(X, labels * 2)
+
     def test_beta_model_golden_values(self):
         """Beta-model estimates match captured golden values.
 
@@ -261,3 +281,27 @@ class TestJamesSteinHardening(TestCase):
         expected = [1.95833333, 1.9375, 1.875, 2.02083333, 2.08333333]
         np.testing.assert_allclose(out['cat'], np.tile(expected, 4), atol=1e-6)
 
+    def test_binary_model_fits_do_not_share_state(self):
+        """A binary fit is not affected by another binary fit running meanwhile.
+
+        Simulates a second fit (e.g. in another thread) finishing between the
+        sigma optimization and its use. The estimated mean log-odds ratio used
+        to be stored in a module-level global, so the second fit overwrote it.
+        """
+        X = pd.DataFrame({'cat': ['a', 'b', 'c', 'd', 'e'] * 4})
+        y = pd.Series([0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1])
+        X_other = pd.DataFrame({'cat': ['a', 'b', 'c', 'd'] * 5})
+        y_other = pd.Series([1, 1, 1, 0] * 5)
+        expected = encoders.JamesSteinEncoder(model='binary').fit_transform(X, y)
+
+        minimize = scipy.optimize.minimize
+
+        def minimize_then_fit_other(*args, **kwargs):
+            result = minimize(*args, **kwargs)
+            with patch.object(scipy.optimize, 'minimize', minimize):
+                encoders.JamesSteinEncoder(model='binary').fit(X_other, y_other)
+            return result
+
+        with patch.object(scipy.optimize, 'minimize', minimize_then_fit_other):
+            out = encoders.JamesSteinEncoder(model='binary').fit_transform(X, y)
+        pd.testing.assert_frame_equal(out, expected)

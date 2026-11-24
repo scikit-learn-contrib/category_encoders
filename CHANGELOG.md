@@ -1,8 +1,55 @@
-v.2.11.1
-========
+Unreleased
+==========
 
 * Fix: ``HashingEncoder`` supports available OpenSSL algorithms without a named
   hashlib constructor, such as ``sm3`` and ``ripemd160``.
+
+* Fix: ``LeaveOneOutEncoder`` now applies ``handle_unknown`` when new labels
+  have a different type from fitted categories, instead of trying to cast them
+  to the fitted dtype first. Missing values retain their separate policy.
+
+* Fix: ``OneHotEncoder``, ``RankHotEncoder`` and ``MultiHotEncoder`` now keep
+  generated feature names unique with ``use_cat_names=True`` when category
+  names already contain ``#`` suffixes or encoded column prefixes overlap.
+  Missing/unknown indicator names share the same collision handling, without
+  changing encoded values or the default numeric-name mode.
+
+* Fix: ``CountTargetEncoder`` calculates smoothed evidence in log space so
+  large pure-category groups keep finite output instead of producing infinities.
+
+* Fix: ``get_feature_names_in`` preserves mixed-type and tuple column labels
+  as a one-dimensional array that can select the original input columns.
+
+* Fix: ``NestedCVWrapper`` constructs integer-``cv`` splitters during fitting,
+  so parameter searches honor updated ``cv``, ``shuffle`` and ``random_state``
+  values. Caller-supplied splitter objects remain unchanged.
+
+* Fix: ``PolynomialWrapper.fit`` and ``NestedCVWrapper.fit`` return the fitted
+  wrapper, allowing standard scikit-learn-style chained fitting and inference.
+
+v.2.11.2
+========
+
+* Fix: ``NestedCVWrapper.fit_transform`` now rejects cross-validation splitters
+  whose test folds omit or repeat input rows, before fitting any encoders.
+  Previously these splitters could silently duplicate rows, discard repeated
+  encodings, or fail with an out-of-bounds error when restoring row order.
+
+* Fix: ``composite_cols`` no longer raises the "separator occurs in the data"
+  ``ValueError`` for column groups containing missing values on pandas >= 3,
+  where ``astype(str)`` keeps missing values as NaN. The separator-collision
+  check now runs on complete rows only; behavior on pandas 2 is unchanged (#528).
+* Fix: ``CountEncoder`` now clears its learned rare-category groups at the start
+  of each fit, so refitting (including refitting a pipeline) with
+  ``min_group_size`` no longer applies a stale grouping from the previous fit (#529).
+* Chore: bumped ``certifi`` and ``urllib3`` in ``poetry.lock`` (#551, #535).
+
+v.2.11.1
+========
+
+* Fix: ``BaseNEncoder``, ``BinaryEncoder`` and ``GrayEncoder`` inverse transforms
+  use fitted encoded columns, preserving original columns that share a numeric
+  prefix with an encoded feature.
 
 * Fix: ``NestedCVWrapper.fit_transform`` now returns out-of-fold rows in the
   input's original order (issue#526). Previously the per-fold encodings were
