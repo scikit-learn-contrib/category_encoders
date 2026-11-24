@@ -19,6 +19,7 @@ def test_available_hash_methods(hash_method, return_df, max_process):
     df = pd.DataFrame(
         {'city': ['paris', 'tokyo', 'paris', None], 'amount': [1, 2, 3, 4]},
         index=pd.Index([13, 27, 45, 72], name='record'),
+        dtype=object,
     )
     before = df.copy(deep=True)
     expected = np.zeros((len(df), 8), dtype=int)
