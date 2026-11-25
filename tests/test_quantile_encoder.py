@@ -187,6 +187,35 @@ class TestSummaryEncoder(unittest.TestCase):
             ['summary__categories_25', 'summary__categories_75', 'remainder__num'],
         )
 
+    def test_transform_ndarray_matches_dataframe_after_dataframe_fit(self):
+        """Fit on a DataFrame, then transform(ndarray) equals transform(DataFrame) (GH #406)."""
+        X = pd.DataFrame(
+            {
+                'str_col': ['a', 'b', 'c', 'a', 'b', 'c'],
+                'cat_col': pd.Categorical(['x', 'y', 'x', 'z', 'y', 'z']),
+                'num_col': [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+            }
+        )
+        y = pd.Series([1.0, 0.0, 1.0, 0.0, 1.0, 0.0])
+        queries = pd.DataFrame(
+            {
+                'str_col': ['a', 'new', None],
+                'cat_col': ['x', 'new', None],
+                'num_col': [1.0, 2.0, 3.0],
+            }
+        )
+        encoder = encoders.SummaryEncoder().fit(X, y)
+        for values in (X, queries):
+            pd.testing.assert_frame_equal(
+                encoder.transform(values.to_numpy()), encoder.transform(values), check_dtype=False
+            )
+
+    def test_transform_ndarray_with_wrong_width_raises(self):
+        """Arraylike input keeps the strict positional width check."""
+        encoder = encoders.SummaryEncoder().fit(self.df, self.target)
+        with self.assertRaisesRegex(ValueError, 'Unexpected input dimension'):
+            encoder.transform(np.zeros((2, 3)))
+
 
 class TestSummaryEncoderHardening(unittest.TestCase):
     """Hardening tests for SummaryEncoder mutation survivors."""
