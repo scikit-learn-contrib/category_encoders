@@ -190,3 +190,55 @@ class TestMixedCategoryTypes(TestCase):
                 actual = encoder.transform(pd.DataFrame({'x': ['new', 1, np.nan]}))
                 expected = pd.DataFrame({'x': [4.0, 2.0, 6.0 if missing == 'value' else np.nan]})
                 pd.testing.assert_frame_equal(actual, expected)
+
+
+class TestCategoryMappingLabels(TestCase):
+    """Fitted category labels retain their identity when a missing key is added."""
+
+    def test_non_string_category_labels(self):
+        """Keep booleans, large integers and datetimes usable as mapping keys."""
+        cases = [
+            [False, True],
+            [2**60 + 1, 2**60 + 2],
+            pd.to_datetime(['2020-01-01', '2020-01-02']),
+            pd.date_range('2020-01-01', periods=2, tz='Europe/Paris'),
+        ]
+        for labels in cases:
+            for categorical in (False, True):
+                for with_target in (False, True):
+                    with self.subTest(labels=labels, categorical=categorical, y=with_target):
+                        values = [labels[0], labels[0], labels[1], labels[1]]
+                        X = pd.DataFrame({'x': pd.Categorical(values) if categorical else values})
+                        before = X.copy(deep=True)
+                        encoder = encoders.LeaveOneOutEncoder(cols=['x'])
+                        encoder.fit(X, [1, 3, 5, 7])
+                        query = X.iloc[[2, 0]].copy()
+                        y = [1, 1] if with_target else None
+                        actual = encoder.transform(query, y)
+                        expected = pd.DataFrame(
+                            {'x': [11.0, 3.0] if with_target else [6.0, 2.0]},
+                            index=query.index,
+                        )
+                        pd.testing.assert_frame_equal(actual, expected)
+                        pd.testing.assert_frame_equal(X, before)
+
+    def test_fit_transform_preserves_large_integer_categories(self):
+        """Adjacent integer labels beyond float precision remain distinct."""
+        X = pd.DataFrame({'x': [2**60 + 1, 2**60 + 1, 2**60 + 2, 2**60 + 2]})
+        actual = encoders.LeaveOneOutEncoder(cols=['x']).fit_transform(X, [1, 3, 5, 7])
+        pd.testing.assert_frame_equal(actual, pd.DataFrame({'x': [3.0, 1.0, 7.0, 5.0]}))
+
+    def test_missing_values_retain_their_statistics(self):
+        """Datetime labels keep a separate learned missing group."""
+        for labels in (pd.to_datetime(['2020-01-01', '2020-01-02']),):
+            for policy in ('value', 'return_nan'):
+                with self.subTest(labels=labels, policy=policy):
+                    X = pd.DataFrame(
+                        {'x': [labels[0], labels[0], labels[1], labels[1], None, None]}
+                    )
+                    encoder = encoders.LeaveOneOutEncoder(cols=['x'], handle_missing=policy)
+                    encoder.fit(X, [1, 3, 5, 7, 9, 11])
+                    query = pd.DataFrame({'x': [labels[0], None]})
+                    actual = encoder.transform(query)
+                    expected = pd.DataFrame({'x': [2.0, 10.0 if policy == 'value' else np.nan]})
+                    pd.testing.assert_frame_equal(actual, expected)
