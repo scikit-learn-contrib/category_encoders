@@ -54,3 +54,42 @@ class TestGLMMEncoder(TestCase):
         np.random.seed(123)
         encoders.GLMMEncoder(cols=['col']).fit(X, y)
         self.assertEqual(np.random.random(), expected)
+
+    @unittest.skipUnless(HAS_STATSMODELS, 'GLMMEncoder requires statsmodels')
+    def test_regression_branch_is_deterministic(self):
+        """A continuous target uses the mixedlm regression branch, reproducibly.
+
+        Covers the binomial_target=False path (smf.mixedlm) that the binary
+        tests never reach, including the auto-detected continuous-target
+        branch, and pins its determinism across fits.
+        """
+        rng = np.random.default_rng(7)
+        X = pd.DataFrame({'col': rng.choice(list('abcde'), 120)})
+        y = pd.Series(rng.normal(size=120))
+        first = encoders.GLMMEncoder(cols=['col']).fit_transform(X, y)
+        second = encoders.GLMMEncoder(cols=['col']).fit_transform(X, y)
+        pd.testing.assert_frame_equal(first, second, check_exact=True)
+        self.assertTrue(first.notna().all().all())
+
+    @unittest.skipUnless(HAS_STATSMODELS, 'GLMMEncoder requires statsmodels')
+    def test_randomized_scoring_perturbs_but_stays_deterministic(self):
+        """randomized=True scales encoded values by a seeded Gaussian draw."""
+        X, y = _binary_data()
+        plain = encoders.GLMMEncoder(cols=['col']).fit_transform(X, y)
+        randomized = encoders.GLMMEncoder(
+            cols=['col'], randomized=True, random_state=42, sigma=0.05
+        ).fit_transform(X, y)
+        self.assertFalse(np.allclose(plain, randomized))
+
+    @unittest.skipUnless(HAS_STATSMODELS, 'GLMMEncoder requires statsmodels')
+    def test_singular_matrix_returns_zero_mapping(self):
+        """A LinAlgError from the model fit degrades to an all-zero mapping."""
+        from unittest.mock import patch
+
+        X, y = _binary_data()
+        with patch(
+            'category_encoders.glmm.smf.mixedlm',
+            side_effect=np.linalg.LinAlgError('singular'),
+        ):
+            result = encoders.GLMMEncoder(cols=['col'], binomial_target=False).fit_transform(X, y)
+        self.assertTrue((result == 0).all().all())

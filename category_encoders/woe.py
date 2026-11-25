@@ -48,6 +48,23 @@ class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         the purpose of regularization is mostly to prevent division by zero.
         When regularization is 0, you may encounter division by zero.
 
+    min_group_size: int or float, optional
+        minimum group size needed for a category to be encoded as its own
+        group; smaller categories are lumped into a single "leftovers" group
+        before fitting. An int is an absolute group size, a float is a
+        fraction of the number of rows. Default None, which disables lumping.
+    min_group_name: str, optional
+        name of the leftovers group created by `min_group_size`. Default
+        None, in which case the names of the lumped categories are joined
+        alphabetically with a `_` delimiter. The generated name is suffixed
+        with `#` as needed to keep it distinct from retained categories. An
+        explicit name that matches a retained category raises `ValueError`.
+    combine_min_nan_groups: bool or 'force', optional
+        whether the missing-values group is folded into the leftovers group
+        created by `min_group_size`. True folds it in when it is itself below
+        the threshold (the default), 'force' always folds it in, and False
+        never does. 'force' requires `handle_missing` != 'return_nan'.
+
     Example
     -------
     >>> from category_encoders import *
@@ -137,27 +154,7 @@ class WOEEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
     def _fit(self, X, y, **kwargs):
         # The label must be binary with values {0,1}
         y = pd.Series(y)
-        unique = y.unique()
-        if len(unique) != 2:
-            raise ValueError(
-                'The target column y must be binary. But the target contains '
-                + str(len(unique))
-                + ' unique value(s).'
-            )
-        if y.isna().any():
-            raise ValueError('The target column y must not contain missing values.')
-        if np.max(unique) != 1:
-            msg = (
-                'The target column y must be binary with values {0, 1}. '
-                'Value 1 was not found in the target.'
-            )
-            raise ValueError(msg)
-        if np.min(unique) != 0:
-            msg = (
-                'The target column y must be binary with values {0, 1}. '
-                'Value 0 was not found in the target.'
-            )
-            raise ValueError(msg)
+        util.validate_binary_target(y)
 
         # One ordinal pass: derive the category mapping read-only, then fit the
         # helper encoder from that mapping. With a mapping supplied, fit only

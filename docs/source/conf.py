@@ -47,6 +47,12 @@ extensions = [
     'numpydoc',
 ]
 
+# numpydoc renders class members as autosummary tables whose :toctree: targets
+# were never generated (autosummary stubs don't exist in this docs layout), so
+# every member link warned "stub file not found" and pointed at a dead page.
+# Drop the toctree so members render without dead links or warnings.
+numpydoc_class_members_toctree = False
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

@@ -480,6 +480,34 @@ def evaluate_handle_callable(
     return result
 
 
+def validate_binary_target(y: pd.Series) -> None:
+    """Raise ValueError unless y holds exactly the labels {0, 1} with no missing values.
+
+    Shared contract check for the binary-target encoders (WOEEncoder always;
+    JamesSteinEncoder's model='binary' branch). Booleans and 0.0/1.0 floats are
+    accepted, matching NumPy's truthiness of the labels.
+    """
+    unique = y.unique()
+    if len(unique) != 2:
+        raise ValueError(
+            'The target column y must be binary. But the target contains '
+            + str(len(unique))
+            + ' unique value(s).'
+        )
+    if y.isna().any():
+        raise ValueError('The target column y must not contain missing values.')
+    if np.max(unique) != 1:
+        raise ValueError(
+            'The target column y must be binary with values {0, 1}. '
+            'Value 1 was not found in the target.'
+        )
+    if np.min(unique) != 0:
+        raise ValueError(
+            'The target column y must be binary with values {0, 1}. '
+            'Value 0 was not found in the target.'
+        )
+
+
 def validate_scalar_handle_value(
     value: float,
     mapping: pd.Series | pd.DataFrame,

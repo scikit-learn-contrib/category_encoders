@@ -1,12 +1,18 @@
 [tool.mutmut]
-# Mutation-testing configuration (tests/mutation-hardening).
-# Mutate only the library source and run the full test suite for every mutant.
+# Mutation-testing configuration (mutmut 3.x config keys).
+# Mutate only the library source; the full test suite runs for every mutant.
+# A whole-package campaign is far too slow for routine use (~30 h on 8 workers,
+# measured): run it scoped per module instead (see CONTRIBUTING.md).
 source_paths = ["category_encoders"]
 pytest_add_cli_args_test_selection = ["tests"]
+# NestedCVWrapper/PolynomialWrapper mutation tests spawn process pools and
+# nested cross-validation fits that hang under forked mutants (heavy timeouts,
+# low mutation value), so skip mutating the wrapper module.
+do_not_mutate_patterns = ["category_encoders/wrapper.py"]
 
 [tool.poetry]
 name = "category_encoders"
-version = "2.11.2"
+version = "2.11.3"
 description = "A package for encoding categorical variables for machine learning"
 authors = ["PaulWestenthanner <paul@westenthanner.dev>"]
 license = "BSD-3"
@@ -24,13 +30,15 @@ statsmodels = {version = ">=0.9.0", optional = true}
 glmm = ["statsmodels"]
 
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 numpydoc = "^1.8.0"
 ruff = "^0.14.3"
 sphinx = "^8.2.3"
 sphinx_rtd_theme = "^3.0.2"
 pytest = "^9.0.3"
 pytest-subtests = "^0.15.0"
+mutmut = {version = "^3.8.1", python = "<4.0"}
+pytest-cov = "^7.1.0"
 
 [tool.ruff]
 line-length = 100
