@@ -1,6 +1,10 @@
 Unreleased
 ==========
 
+* Fix: ``LeaveOneOutEncoder`` preserves boolean, large integer and datetime category
+  labels when constructing its fitted statistics, avoiding lossy float conversion
+  and incompatible dtype promotion while adding the missing-value key.
+
 * Fix: ``HashingEncoder`` supports available OpenSSL algorithms without a named
   hashlib constructor, such as ``sm3`` and ``ripemd160``.
 
