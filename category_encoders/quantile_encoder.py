@@ -463,7 +463,12 @@ class SummaryEncoder(TransformerMixin, BaseEstimator):
                 'This SummaryEncoder instance is not fitted yet: '
                 'must train encoder before it can be used to transform data.'
             )
-        X, y = util.convert_inputs(X, y)
+        # Arraylike input has no column names. The inner encoders were fitted on the
+        # same columns, so they re-attach the fitted names and dtypes (GH #406).
+        columns = self.encoder_list[0]._transform_input_columns(X)
+        X, y = util.convert_inputs(X, y, columns=columns)
+        if columns is not None:
+            X = self.encoder_list[0]._restore_fitted_dtypes(X)
 
         orig_cols = X.columns
         transformed_df = X.copy()

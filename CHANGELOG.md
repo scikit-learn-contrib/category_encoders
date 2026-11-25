@@ -1,3 +1,11 @@
+v.2.13.0
+========
+
+* Fix: ``SummaryEncoder.transform`` accepts arraylike input after a DataFrame
+  fit and re-attaches the fitted column names and dtypes, like the other
+  encoders (GH #406). It previously raised ``ValueError`` because the encoded
+  columns could not be found (#578).
+
 v.2.11.3
 ========
 
