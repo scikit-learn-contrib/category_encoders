@@ -4,6 +4,9 @@ v.2.13.0
 * Fix: ``HashingEncoder`` supports available OpenSSL algorithms without a named
   hashlib constructor, such as ``sm3`` and ``ripemd160``.
 
+* Fix: ``LeaveOneOutEncoder`` preserves missing integer categories when converting
+  categorical columns for encoding, instead of raising a dtype conversion error.
+
 * Fix: ``LeaveOneOutEncoder`` now applies ``handle_unknown`` when new labels
   have a different type from fitted categories, instead of trying to cast them
   to the fitted dtype first. Missing values retain their separate policy (#572).

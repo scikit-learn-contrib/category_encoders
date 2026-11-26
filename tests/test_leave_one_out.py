@@ -190,3 +190,82 @@ class TestMixedCategoryTypes(TestCase):
                 actual = encoder.transform(pd.DataFrame({'x': ['new', 1, np.nan]}))
                 expected = pd.DataFrame({'x': [4.0, 2.0, 6.0 if missing == 'value' else np.nan]})
                 pd.testing.assert_frame_equal(actual, expected)
+
+
+class TestCategoricalMissingValues(TestCase):
+    """Categorical inputs retain missing values while being encoded."""
+
+    def test_missing_policies(self):
+        """Encode missing categories without casting them to a non-nullable dtype."""
+        for levels in ([1, 2], [1.0, 2.0], ['a', 'b']):
+            for seen_missing in (False, True):
+                for with_target in (False, True):
+                    for missing in ('value', 'return_nan'):
+                        with self.subTest(
+                            levels=levels,
+                            seen_missing=seen_missing,
+                            with_target=with_target,
+                            missing=missing,
+                        ):
+                            values = [levels[0], levels[0], levels[1], levels[1]]
+                            target = [1, 3, 5, 7]
+                            if seen_missing:
+                                values += [None, None]
+                                target += [9, 11]
+                            X = pd.DataFrame({'x': pd.Categorical(values)})
+                            original = X.copy(deep=True)
+                            encoder = encoders.LeaveOneOutEncoder(
+                                cols=['x'],
+                                handle_missing=missing,
+                            ).fit(X, target)
+                            query = pd.DataFrame(
+                                {'x': pd.Categorical([levels[0], None])},
+                                index=[7, 2],
+                            )
+                            before = query.copy(deep=True)
+                            y = [1, 1] if with_target else None
+                            actual = encoder.transform(query, y)
+                            missing_value = (
+                                (19.0 if with_target else 10.0)
+                                if seen_missing
+                                else float(np.mean(target))
+                            )
+                            if missing == 'return_nan':
+                                missing_value = np.nan
+                            expected = pd.DataFrame(
+                                {'x': [3.0 if with_target else 2.0, missing_value]},
+                                index=query.index,
+                            )
+                            pd.testing.assert_frame_equal(actual, expected)
+                            pd.testing.assert_frame_equal(X, original)
+                            pd.testing.assert_frame_equal(query, before)
+
+    def test_fit_transform_with_missing_integer_categories(self):
+        """Fit and leave each row out when integer categories contain missing values."""
+        X = pd.DataFrame({'x': pd.Categorical([1, 1, 2, 2, None, None])})
+        encoder = encoders.LeaveOneOutEncoder(cols=['x'])
+        actual = encoder.fit_transform(X, [1, 3, 5, 7, 9, 11])
+        expected = pd.DataFrame({'x': [3.0, 1.0, 7.0, 5.0, 11.0, 9.0]})
+        pd.testing.assert_frame_equal(actual, expected)
+
+    def test_missing_error_policy(self):
+        """Reject missing categories with the configured error rather than a cast error."""
+        encoder = encoders.LeaveOneOutEncoder(cols=['x'], handle_missing='error')
+        encoder.fit(pd.DataFrame({'x': pd.Categorical([1, 1, 2, 2])}), [1, 3, 5, 7])
+        with self.assertRaisesRegex(ValueError, 'null'):
+            encoder.transform(pd.DataFrame({'x': pd.Categorical([1, None])}))
+
+    def test_unknown_categorical_values(self):
+        """Keep unknown and missing policies independent for categorical integers."""
+        for policy in ('value', 'return_nan', 'error'):
+            with self.subTest(policy=policy):
+                encoder = encoders.LeaveOneOutEncoder(cols=['x'], handle_unknown=policy)
+                encoder.fit(pd.DataFrame({'x': pd.Categorical([1, 1, 2, 2])}), [1, 3, 5, 7])
+                query = pd.DataFrame({'x': pd.Categorical([3, 1, None])})
+                if policy == 'error':
+                    with self.assertRaisesRegex(ValueError, 'cannot contain new values'):
+                        encoder.transform(query)
+                else:
+                    unknown = 4.0 if policy == 'value' else np.nan
+                    expected = pd.DataFrame({'x': [unknown, 2.0, 4.0]})
+                    pd.testing.assert_frame_equal(encoder.transform(query), expected)
