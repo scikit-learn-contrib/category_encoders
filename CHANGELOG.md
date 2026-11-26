@@ -1,4 +1,4 @@
-v.2.11.3
+v.2.13.0
 ========
 
 * Fix: ``HashingEncoder`` supports available OpenSSL algorithms without a named
