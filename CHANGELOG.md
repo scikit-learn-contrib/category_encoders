@@ -1,6 +1,11 @@
 v.2.13.0
 ========
 
+* Fix: ``CatBoostEncoder`` accepts nullable integer columns (``Int64``) that
+  contain ``pd.NA``. It raised ``TypeError: float() argument must be a string or
+  a real number, not 'NAType'`` in ``fit``; the other encoders already handled
+  these columns.
+
 * Fix: ``HashingEncoder`` supports available OpenSSL algorithms without a named
   hashlib constructor, such as ``sm3`` and ``ripemd160``.
 

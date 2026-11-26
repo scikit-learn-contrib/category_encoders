@@ -127,3 +127,36 @@ def test_cat_boost_groups_missing_representations():
     result = encoders.CatBoostEncoder(cols=['col']).fit_transform(X, y)
 
     np.testing.assert_allclose(result['col'], [0.5, 0.5, 0.75, 0.25, 2.5 / 3, 0.5 / 3])
+
+
+@pytest.mark.parametrize('handle_missing', ['value', 'return_nan'])
+def test_cat_boost_nullable_integer_with_missing(handle_missing):
+    """A nullable integer column with pd.NA is encoded like the same column with NaN."""
+    values = [1, 2, 3, 1, 2, None, 3, 2]
+    X_nullable = pd.DataFrame({'col': pd.array(values, dtype='Int64')})
+    X_float = pd.DataFrame({'col': pd.array(values, dtype='float64')})
+    y = pd.Series([0, 1, 0, 1, 1, 0, 1, 0])
+
+    expected = encoders.CatBoostEncoder(cols=['col'], handle_missing=handle_missing).fit_transform(
+        X_float, y
+    )
+    result = encoders.CatBoostEncoder(cols=['col'], handle_missing=handle_missing).fit_transform(
+        X_nullable, y
+    )
+
+    np.testing.assert_allclose(result['col'].to_numpy(dtype=float), expected['col'].to_numpy())
+
+
+def test_cat_boost_nullable_integer_missing_at_transform():
+    """A pd.NA that only appears in the data to transform gets the prior, not an error."""
+    X_train = pd.DataFrame({'col': pd.array([1, 2, 3, 1, 2, 3], dtype='Int64')})
+    X_test = pd.DataFrame({'col': pd.array([1, None, 4], dtype='Int64')})
+    y = pd.Series([0, 1, 0, 1, 1, 0])
+    encoder = encoders.CatBoostEncoder(cols=['col'], handle_missing='value', handle_unknown='value')
+    encoder.fit(X_train, y)
+
+    result = encoder.transform(X_test)
+
+    prior = y.mean()
+    encoded = result['col'].to_numpy(dtype=float)
+    np.testing.assert_allclose(encoded[1:], [prior, prior])

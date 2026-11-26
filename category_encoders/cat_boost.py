@@ -178,8 +178,15 @@ class CatBoostEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
             level_notunique = colmap['count'] > 1
 
             unique_train = colmap.index
+            # Missing values are dealt with by handle_missing, not as unseen levels. Leaving them
+            # in also fails for nullable integer columns, because float(pd.NA) is not defined.
             unseen_values = pd.Series(
-                [x for x in X[col].unique() if x not in unique_train], dtype=unique_train.dtype
+                [
+                    x
+                    for x in X[col].unique()
+                    if not (pd.api.types.is_scalar(x) and pd.isna(x)) and x not in unique_train
+                ],
+                dtype=unique_train.dtype,
             )
 
             is_nan = X[col].isna()
