@@ -178,6 +178,185 @@ v.2.11.0
   fit gets one binary column, with configurable ``delimiter`` and the usual
   ``handle_unknown``/``handle_missing`` support (issue#161).
 * Feat: Added ``composite_cols`` on supervised encoders (Target, MEstimate, WOE,
+========
+
+* Fix: ``OrdinalEncoder`` and the supervised encoders that build on it accept
+  integer category labels beyond float64 precision (such as ``2**60 + 1`` and
+  ``2**60 + 2``). Adding the missing-value sentinel to the fitted mapping
+  promoted the label index to float64, collapsing distinct labels into one key
+  and raising ``InvalidIndexError: Reindexing only valid with uniquely valued
+  Index objects`` in ``fit``/``transform``. ``CatBoostEncoder`` lost the same
+  labels when appending the missing key to its fitted statistics.
+
+* Fix: ``CatBoostEncoder`` accepts nullable integer columns (``Int64``) that
+  contain ``pd.NA``. It raised ``TypeError: float() argument must be a string or
+  a real number, not 'NAType'`` in ``fit``; the other encoders already handled
+  these columns.
+
+* Fix: ``HashingEncoder`` supports available OpenSSL algorithms without a named
+  hashlib constructor, such as ``sm3`` and ``ripemd160``.
+
+* Fix: ``LeaveOneOutEncoder`` preserves missing integer categories when converting
+  categorical columns for encoding, instead of raising a dtype conversion error.
+
+* Fix: ``LeaveOneOutEncoder`` now applies ``handle_unknown`` when new labels
+  have a different type from fitted categories, instead of trying to cast them
+  to the fitted dtype first. Missing values retain their separate policy (#572).
+
+* Fix: transforming arraylike input that carries unseen pandas ``Categorical``
+  values now retains those labels so the fitted ``handle_unknown`` policy
+  applies, matching DataFrame input. Previously unseen categories were dropped
+  from the incoming dtype and could bypass the configured unknown handling (#571).
+
+* Fix: ``RankHotEncoder.transform`` on a DataFrame with no rows returns an empty
+  frame with the fitted encoded columns instead of failing (#574).
+
+* Fix: supplied ``OrdinalEncoder`` mappings with ``None``/``NaN`` keys now encode
+  missing values identically on pandas < 3 and pandas >= 3. Keys such as ``None``
+  are canonicalised to ``NaN`` before lookup, so ``{None: 0}`` no longer encodes
+  missing values as unknown (-1) on older pandas and 0 on newer pandas (#567).
+
+* Fix: ``OrdinalEncoder`` and ``GrayEncoder`` no longer trigger ``Pandas4Warning``
+  on pandas 3.1 by relying on a deprecated private pandas setting (#554).
+
+* Fix: hierarchical target priors no longer depend on row order or category
+  ordering: child categories are keyed by their fitted ordinal code and a child
+  seen under several parents receives the mean parent prior. Previously missing
+  or ordered categories could shift the hierarchical priors (#556).
+
+* Fix: setting ``cols`` through ``set_params`` (including grid searches over
+  ``cols`` in a scikit-learn pipeline) now refreshes the encoder's automatic
+  column-selection mode, matching a fresh constructor call (#557).
+
+* Fix: rare-category ``min_group_size`` lumping keeps the generated leftovers
+  name distinct from retained categories: the default name is suffixed with
+  ``#`` as needed, and an explicit ``min_group_name`` matching a retained
+  category raises ``ValueError`` (#565).
+
+* Fix: ``BaseNEncoder``, ``BinaryEncoder`` and ``GrayEncoder`` inverse transforms
+  use the fitted encoded-column lists instead of prefix pattern matching,
+  preserving original columns that share a numeric prefix with an encoded
+  feature (#538).
+
+* Fix: ``RankHotEncoder.inverse_transform`` restores the original column when
+  the encoded columns are not in DataFrame order (#550).
+
+* Fix: ``CatBoostEncoder`` running statistics use factorized group codes so
+  distinct category values (for example ``1`` and ``'1'``) keep their identity
+  instead of being merged by a string cast (#534).
+
+* Fix: independent ``JamesSteinEncoder`` now encodes constant targets correctly.
+  Previously a constant target produced degenerate encodings (issue #530) (#531).
+
+* Fix: binary-target encoders validate that the target labels are exactly 0/1
+  (accepting booleans and 0.0/1.0 floats) and raise a clear error otherwise;
+  previously non-conforming labels silently produced invalid encodings
+  (``JamesSteinEncoder`` and ``WOEEncoder``) (#533).
+
+* Fix: ``JamesSteinEncoder`` computes the binary-model prior mean locally during
+  optimization instead of via a module-level global, so concurrent fits no
+  longer share and overwrite each other's ``mu`` (#547).
+
+* Fix: ``PolynomialWrapper`` target transformation converts arraylike targets
+  with the feature input's index before label encoding, preserving input
+  indexes across index schemes (#545).
+
+* Fix: ``NestedCVWrapper`` rejects cross-validation splitters whose test folds
+  omit or repeat input rows, before fitting any encoders. Previously these
+  splitters could silently duplicate rows, discard repeated encodings, or fail
+  with an out-of-bounds error when restoring row order (#560).
+
+* Fix: ``NestedCVWrapper`` constructs integer-``cv`` splitters during fitting,
+  so parameter searches honor updated ``cv``, ``shuffle`` and ``random_state``
+  values. Caller-supplied splitter objects remain unchanged (#543).
+
+* Fix: ``OneHotEncoder``, ``RankHotEncoder`` and ``MultiHotEncoder`` now keep
+  generated feature names unique with ``use_cat_names=True`` when category
+  names already contain ``#`` suffixes or encoded column prefixes overlap.
+  Missing/unknown indicator names share the same collision handling, without
+  changing encoded values or the default numeric-name mode (#539).
+
+* Fix: ``CountTargetEncoder`` calculates smoothed evidence in log space so
+  large pure-category groups keep finite output instead of producing
+  infinities (#544).
+
+* Fix: ``get_feature_names_in`` preserves mixed-type and tuple column labels
+  as a one-dimensional array that can select the original input columns (#549).
+
+* Fix: ``SummaryEncoder`` gains ``set_output`` (via ``TransformerMixin``), so it
+  can be used in a ``Pipeline`` or ``ColumnTransformer`` configured with
+  ``set_output(transform="pandas")`` (#562).
+
+* Fix: ``get_categorical_cols`` emits a ``UserWarning`` instead of printing to
+  stdout when no categorical columns are found, so the notice can be filtered
+  and captured like the package's other warnings (#561).
+
+* Fix: ``GLMMEncoder`` seeds ``statsmodels``' variational fit explicitly, so
+  binary-target encodings are reproducible with ``statsmodels >= 0.15``
+  (which uses fresh OS entropy by default instead of the global NumPy seed)
+  while older statsmodels keep the global-seed path (#568).
+
+* Docs: corrected the documented default of ``handle_unknown`` to 'value' in
+  ``BaseEncoder`` and ``CountEncoder`` docstrings (#563).
+
+* Chore: CI now runs the test suite against the latest released dependencies
+  (installed without the lock file) in addition to the locked set (#569).
+
+* Fix: ``PolynomialWrapper.fit`` and ``NestedCVWrapper.fit`` return the fitted
+  wrapper, allowing standard scikit-learn-style chained fitting and inference (#564).
+
+v.2.11.2
+========
+
+* Fix: ``composite_cols`` no longer raises the "separator occurs in the data"
+  ``ValueError`` for column groups containing missing values on pandas >= 3,
+  where ``astype(str)`` keeps missing values as NaN. The separator-collision
+  check now runs on complete rows only; behavior on pandas 2 is unchanged (#528).
+* Fix: ``CountEncoder`` now clears its learned rare-category groups at the start
+  of each fit, so refitting (including refitting a pipeline) with
+  ``min_group_size`` no longer applies a stale grouping from the previous fit (#529).
+* Chore: bumped ``certifi`` and ``urllib3`` in ``poetry.lock`` (#551, #535).
+
+v.2.11.1
+========
+
+* Fix: ``BaseNEncoder``, ``BinaryEncoder`` and ``GrayEncoder`` inverse transforms
+  use fitted encoded columns, preserving original columns that share a numeric
+  prefix with an encoded feature.
+
+* Fix: ``NestedCVWrapper.fit_transform`` now returns out-of-fold rows in the
+  input's original order (issue#526). Previously the per-fold encodings were
+  concatenated in cross-validation iteration order, so with a shuffling
+  splitter (including the wrapper's default ``StratifiedKFold``) positional
+  consumers (NumPy arrays, ``.iloc``, scikit-learn estimators) received rows
+  misaligned with ``y`` even though the index labels were correct.
+
+v.2.11.0
+========
+
+* Docs: Fixed issue#400 - ``OneHotEncoder``'s ``handle_missing='value'`` docstring wrongly
+  claimed missing values are zero-filled; corrected it to describe the actual (and, per
+  ``test_missing_values``, intended library-wide) behavior of treating a missing value seen
+  during fit as its own category, same as ``MultiHotEncoder``'s existing ``value``/``ignore``
+  split. No behavior change: the existing ``ignore`` option already zero-fills missing values.
+* Docs: Added a documentation page on how category_encoders differs from
+  scikit-learn conventions (issue#480).
+* Feat: Added ``handle_missing='ignore'`` to ``RankHotEncoder``, matching the option already
+  available on ``OneHotEncoder`` and ``MultiHotEncoder`` (issue#400's RankHotEncoder gap).
+  Zero-fills a missing value at both fit and transform time, without adding an extra
+  thermometer column for it; the default ``value`` behavior (own category, unchanged) still
+  matches ``test_missing_values``' library-wide invariant.
+* Feat: Added issue#420 - ``CountTargetEncoder``, a supervised count-based
+  encoder that stores per-class category counts and encodes categories as
+  smoothing-adjusted log-odds against the global target prior (binary targets
+  emit one WOE-style column, multiclass targets one column per class).
+  Classification-only for now; a binning-based regression variant is planned
+  as a follow-up.
+* Feat: Added ``MultiHotEncoder``, an unsupervised encoder for delimiter-separated
+  multi-value cells (e.g. ``'mathematics|physics'``): every distinct item seen at
+  fit gets one binary column, with configurable ``delimiter`` and the usual
+  ``handle_unknown``/``handle_missing`` support (issue#161).
+* Feat: Added ``composite_cols`` on supervised encoders (Target, MEstimate, WOE,
   JamesStein, CatBoost, GLMM, LeaveOneOut, Quantile): joint ("composite") target
   encoding of column groups passed as tuples, learning statistics over
   combinations rather than per column (issue#429). A new ``keep_components``
