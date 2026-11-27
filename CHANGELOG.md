@@ -6,6 +6,10 @@ v.2.13.0
   a real number, not 'NAType'`` in ``fit``; the other encoders already handled
   these columns.
 
+* Fix: ``LeaveOneOutEncoder`` preserves boolean, large integer and datetime category
+  labels when constructing its fitted statistics, avoiding lossy float conversion
+  and incompatible dtype promotion while adding the missing-value key.
+
 * Fix: ``HashingEncoder`` supports available OpenSSL algorithms without a named
   hashlib constructor, such as ``sm3`` and ``ripemd160``.
 
