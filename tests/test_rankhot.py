@@ -175,6 +175,50 @@ class TestRankHotEncoder(TestCase):
 
         self.assertEqual(len(with_missing.columns), len(without_missing.columns) + 1)
 
+    def test_handle_missing_return_nan_omits_sentinel_column(self):
+        """handle_missing='return_nan' does not add a rank column for the missing sentinel."""
+        train = pd.DataFrame({'grade': ['A', 'B']})
+        test = pd.DataFrame({'grade': ['A', 'B', np.nan]})
+
+        enc = encoders.RankHotEncoder(handle_missing='return_nan')
+        enc.fit(train)
+        out = enc.transform(test)
+
+        self.assertListEqual(list(out.columns), ['grade_1', 'grade_2'])
+        np.testing.assert_array_equal(out.iloc[0].to_numpy(), [1.0, 0.0])
+        np.testing.assert_array_equal(out.iloc[1].to_numpy(), [1.0, 1.0])
+        self.assertTrue(out.iloc[2].isna().all())
+
+        enc_named = encoders.RankHotEncoder(handle_missing='return_nan', use_cat_names=True)
+        out_named = enc_named.fit_transform(train)
+        self.assertListEqual(list(out_named.columns), ['grade_A', 'grade_B'])
+
+    def test_handle_missing_ignore_with_unknown_return_nan(self):
+        """handle_missing='ignore' zero-fills NaN even when handle_unknown='return_nan'."""
+        train = pd.DataFrame({'grade': ['A', 'B', np.nan]})
+        test = pd.DataFrame({'grade': ['A', 'unseen', np.nan]})
+
+        enc = encoders.RankHotEncoder(handle_missing='ignore', handle_unknown='return_nan')
+        enc.fit(train)
+        out = enc.transform(test)
+
+        np.testing.assert_array_equal(out.iloc[0].to_numpy(), [1.0, 0.0])
+        self.assertTrue(out.iloc[1].isna().all())
+        np.testing.assert_array_equal(out.iloc[2].to_numpy(), [0.0, 0.0])
+
+    def test_handle_missing_value_clean_fit_with_unknown_return_nan(self):
+        """Unseen NaN with handle_missing='value' zero-fills when handle_unknown='return_nan'."""
+        train = pd.DataFrame({'grade': ['A', 'B']})
+        test = pd.DataFrame({'grade': ['A', 'unseen', np.nan]})
+
+        enc = encoders.RankHotEncoder(handle_missing='value', handle_unknown='return_nan')
+        enc.fit(train)
+        out = enc.transform(test)
+
+        np.testing.assert_array_equal(out.iloc[0].to_numpy(), [1.0, 0.0])
+        self.assertTrue(out.iloc[1].isna().all())
+        np.testing.assert_array_equal(out.iloc[2].to_numpy(), [0.0, 0.0])
+
 
 class TestRankHotHardening(TestCase):
     """Hardening tests for RankHotEncoder mutation survivors."""
