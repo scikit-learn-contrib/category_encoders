@@ -192,8 +192,9 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             encoding_dict = {
                 i: list(row.values()) for i, row in mod.to_dict(orient='index').items()
             }
+            zero_value = [0] * len(encoding_dict)
             if self.handle_unknown == 'value':
-                default_value = [0] * len(encoding_dict)
+                default_value = zero_value
             elif self.handle_unknown == 'return_nan':
                 default_value = [np.nan] * len(encoding_dict)
             elif self.handle_unknown == 'error':
@@ -201,7 +202,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
                     unknowns_str = ', '.join([str(x) for x in unknow_elements.unique()])
                     msg = f'Unseen values {unknowns_str} during transform in column {col}.'
                     raise ValueError(msg)
-                default_value = [0] * len(encoding_dict)
+                default_value = zero_value
             else:
                 raise ValueError(
                     f"invalid option for 'handle_unknown' parameter: {self.handle_unknown}"
@@ -209,14 +210,14 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
 
             def apply_coding(row: pd.Series):
                 val = row.iloc[0]
-                if pd.isna(val):
+                if pd.isna(val) or val == util.MISSING_SENTINEL:
                     if self.handle_missing in ('value', 'ignore'):
-                        return default_value
+                        return zero_value
                     elif self.handle_missing == 'return_nan':
-                        return [np.nan] * len(default_value)
+                        return [np.nan] * len(zero_value)
                     else:
                         raise ValueError('Unhandled nan')
-                return encoding_dict.get(row.iloc[0], default_value)
+                return encoding_dict.get(val, default_value)
 
             if encode_feature_series.empty:
                 # DataFrame.apply cannot infer the output columns without any rows
@@ -309,8 +310,7 @@ class RankHotEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             col: str = switch.get('col')
             values: pd.Series = switch.get('mapping').copy(deep=True)
 
-            if self.handle_missing in ('value', 'ignore'):
-                values = values[values > 0]
+            values = values[values > 0]
 
             if len(values) == 0:
                 continue
