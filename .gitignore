@@ -70,3 +70,6 @@ runtest.py
 *~
 *.swp
 *.swo
+
+# mutmut mutation-testing sandbox
+mutants/

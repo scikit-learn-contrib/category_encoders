@@ -54,7 +54,35 @@ Running Tests
 To run the tests, use:
 
     $ poetry run pytest tests/
-    
+
+Running Mutation Tests
+======================
+
+Mutation testing (mutmut 3.x) is configured in `pyproject.toml`
+(`[tool.mutmut]`): the library source under `category_encoders/` is mutated
+and the suite under `tests/` runs against each mutant. A whole-package
+campaign is far too slow for routine use (~30 h on 8 workers, measured), so
+run it scoped to a single module while working on that module: narrow
+`source_paths` in `pyproject.toml` to that one file, add `also_copy` so the
+rest of the package is still importable inside mutmut's sandbox (mutmut only
+copies files matched by `source_paths`), run the campaign, and restore the
+wider setting afterwards:
+
+    # temporarily:
+    #   source_paths = ["category_encoders/basen.py"]
+    #   also_copy = ["category_encoders"]
+    $ poetry run mutmut run --max-children 8
+
+    # Inspect the survivors and their diffs
+    $ poetry run mutmut results
+    $ poetry run mutmut show <mutant>
+
+Use it as a test-quality check for a module you just changed: any surviving
+mutant marks behavior that the current tests do not pin down. `wrapper.py` is
+excluded from mutation (`do_not_mutate_patterns` in `pyproject.toml`) because
+its tests spawn process pools and nested cross-validation fits that hang
+under forked mutants.
+
 Easy Issues / Getting Started
 =============================
 

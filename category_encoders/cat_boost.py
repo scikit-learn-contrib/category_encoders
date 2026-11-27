@@ -58,6 +58,23 @@ class CatBoostEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
         additive smoothing (it is the same variable as "m" in m-probability estimate).
         By default, set to 1.
 
+    min_group_size: int or float, optional
+        minimum group size needed for a category to be encoded as its own
+        group; smaller categories are lumped into a single "leftovers" group
+        before fitting. An int is an absolute group size, a float is a
+        fraction of the number of rows. Default None, which disables lumping.
+    min_group_name: str, optional
+        name of the leftovers group created by `min_group_size`. Default
+        None, in which case the names of the lumped categories are joined
+        alphabetically with a `_` delimiter. The generated name is suffixed
+        with `#` as needed to keep it distinct from retained categories. An
+        explicit name that matches a retained category raises `ValueError`.
+    combine_min_nan_groups: bool or 'force', optional
+        whether the missing-values group is folded into the leftovers group
+        created by `min_group_size`. True folds it in when it is itself below
+        the threshold (the default), 'force' always folds it in, and False
+        never does. 'force' requires `handle_missing` != 'return_nan'.
+
     Example
     -------
     >>> from category_encoders import *
@@ -161,8 +178,15 @@ class CatBoostEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
             level_notunique = colmap['count'] > 1
 
             unique_train = colmap.index
+            # Missing values are dealt with by handle_missing, not as unseen levels. Leaving them
+            # in also fails for nullable integer columns, because float(pd.NA) is not defined.
             unseen_values = pd.Series(
-                [x for x in X[col].unique() if x not in unique_train], dtype=unique_train.dtype
+                [
+                    x
+                    for x in X[col].unique()
+                    if not (pd.api.types.is_scalar(x) and pd.isna(x)) and x not in unique_train
+                ],
+                dtype=unique_train.dtype,
             )
 
             is_nan = X[col].isna()

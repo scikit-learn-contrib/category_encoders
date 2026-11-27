@@ -5,6 +5,7 @@ from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 import category_encoders as encoders
 import numpy as np
 import pandas as pd
+import pytest
 
 
 class TestBaseNEncoder(TestCase):
@@ -261,3 +262,134 @@ class TestBaseNMutationHardening(TestCase):
             [], [str(w.message) for w in caught if issubclass(w.category, UserWarning)]
         )
         pd.testing.assert_frame_equal(train, restored)
+
+    def test_return_df_false_round_trip_equality(self):
+        """return_df=False survives transform and inverse_transform as ndarrays.
+
+        Pins the ``X.to_numpy()`` return paths of both _transform and
+        inverse_transform, and the round-trip equality of the encoded values.
+        """
+        df = pd.DataFrame({'x': ['a', 'b', 'c', 'd'], 'num': [1.5, 2.5, 3.5, 4.5]})
+        encoder = encoders.BaseNEncoder(base=2, return_df=False)
+        encoded = encoder.fit_transform(df)
+        self.assertIsInstance(encoded, np.ndarray)
+        restored = encoder.inverse_transform(encoded)
+        self.assertIsInstance(restored, np.ndarray)
+        converted = pd.DataFrame(restored, columns=df.columns)
+        pd.testing.assert_frame_equal(df, converted, check_dtype=False)
+
+    def test_base1_digit_calculation_skips_ceillogint(self):
+        """base=1 reserves one digit per category instead of calling _ceillogint.
+
+        _ceillogint rejects base < 2, so the base-1 branch of
+        calc_required_digits is the only thing keeping base=1 encodings alive.
+        """
+        encoder = encoders.BaseNEncoder(base=1)
+        self.assertEqual(4, encoder.calc_required_digits(['a', 'b', 'c']))
+
+    def test_inverse_transform_error_contract(self):
+        """inverse_transform raises ValueError when unfitted and on wrong-shape input."""
+        df = pd.DataFrame({'x': ['a', 'b', 'c'], 'num': [1.5, 2.5, 3.5]})
+        encoder = encoders.BaseNEncoder(base=2)
+        with self.assertRaises(ValueError) as cm:
+            encoder.inverse_transform(df)
+        self.assertIn('Must train encoder', str(cm.exception))
+
+        encoder.fit(df)
+        # Encoded columns for x without the second column: basen_to_integer
+        # succeeds, then the restored frame no longer matches the fitted width.
+        encoded = encoder.transform(df)
+        wrong_shape = encoded.drop(columns=['num'])
+        with self.assertRaises(ValueError) as cm:
+            encoder.inverse_transform(wrong_shape)
+        self.assertIn('Unexpected input dimension', str(cm.exception))
+
+    def test_ceillogint_invalid_base_error_path(self):
+        """_ceillogint rejects base < 2 and n < 1 with ValueError."""
+        from category_encoders.basen import _ceillogint
+
+        with self.assertRaisesRegex(ValueError, 'base must be >= 2'):
+            _ceillogint(5, 1)
+        with self.assertRaisesRegex(ValueError, 'base must be >= 2'):
+            _ceillogint(5, 0)
+        with self.assertRaisesRegex(ValueError, 'n must be >= 1'):
+            _ceillogint(0, 2)
+
+
+def test_ceillogint_edge_cases_and_error_messages():
+    """Exact integer-math outputs around the ceil boundary, plus both error contracts."""
+    from category_encoders.basen import _ceillogint
+
+    assert _ceillogint(1, 2) == 0
+    assert _ceillogint(2, 2) == 1
+    assert _ceillogint(3, 2) == 2
+    assert _ceillogint(4, 2) == 2
+    assert _ceillogint(5, 2) == 3
+    assert _ceillogint(9, 3) == 2
+    assert _ceillogint(10, 3) == 3
+    with pytest.raises(ValueError, match=r'^base must be >= 2$'):
+        _ceillogint(5, 1)
+    with pytest.raises(ValueError, match=r'^base must be >= 2$'):
+        _ceillogint(5, 0)
+    with pytest.raises(ValueError, match=r'^n must be >= 1$'):
+        _ceillogint(0, 2)
+    with pytest.raises(ValueError, match=r'^n must be >= 1$'):
+        _ceillogint(-3, 2)
+
+
+def test_inverse_transform_before_fit_exact_message():
+    enc = encoders.BaseNEncoder(cols=['c'])
+    with pytest.raises(
+        ValueError,
+        match=r'^Must train encoder before it can be used to inverse_transform data$',
+    ):
+        enc.inverse_transform(pd.DataFrame({'c': [1]}))
+
+
+def test_inverse_transform_wrong_dimension_exact_message():
+    X = pd.DataFrame({'col1': ['a', 'b', 'c'], 'col2': ['x', 'y', 'x']})
+    enc = encoders.BaseNEncoder(cols=['col1'], base=2).fit(X)
+    good = enc.transform(X)
+    extra = good.copy()
+    extra['junk'] = 1
+    with pytest.raises(
+        ValueError,
+        match=rf'^Unexpected input dimension \d+, expected {enc._dim}$',
+    ):
+        enc.inverse_transform(extra)
+
+
+def test_inverse_transform_drop_invariant_exact_message():
+    X = pd.DataFrame({'col1': ['a', 'b', 'c'], 'const': ['x', 'x', 'x']})
+    enc = encoders.BaseNEncoder(cols=['col1', 'const'], base=2, drop_invariant=True).fit(X)
+    good = enc.transform(X)
+    with pytest.raises(
+        ValueError,
+        match=r'^Unexpected input dimension \d+, the attribute drop_invariant should '
+        r'be False when calling inverse_transform$',
+    ):
+        enc.inverse_transform(good)
+
+
+def test_inverse_transform_return_nan_warning_full_message():
+    train = pd.DataFrame({'city': ['chicago', 'st louis', np.nan]})
+    enc = encoders.BaseNEncoder(
+        cols=['city'], handle_unknown='return_nan', handle_missing='return_nan'
+    )
+    result = enc.fit_transform(train)
+    with pytest.warns(UserWarning) as record:
+        enc.inverse_transform(result)
+    messages = [str(w.message) for w in record]
+    assert messages == [
+        'inverse_transform is not supported because transform impute '
+        'the unknown category nan when encode city'
+    ]
+
+
+def test_basen_encode_golden_values_base3():
+    """Four categories plus the sentinel need two base-3 digits; pins exact digit values."""
+    X = pd.DataFrame({'x': ['a', 'b', 'c', 'd']})
+    enc = encoders.BaseNEncoder(cols=['x'], base=3)
+    out = enc.fit_transform(X)
+    expected = pd.DataFrame({'x_0': [0, 0, 1, 1], 'x_1': [1, 2, 0, 1]})
+    pd.testing.assert_frame_equal(out.reset_index(drop=True), expected, check_dtype=False)

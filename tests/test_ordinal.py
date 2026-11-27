@@ -5,6 +5,7 @@ import warnings
 from unittest import TestCase  # or `from unittest import ...` if on Python 3.4+
 
 import category_encoders as encoders
+import category_encoders.utils as util
 import numpy as np
 import pandas as pd
 import pytest
@@ -535,3 +536,88 @@ def test_no_pandas4_warnings(encoder):
     with warnings.catch_warnings():
         warnings.simplefilter('error', pd.errors.Pandas4Warning)
         encoder().fit(X).transform(X)
+
+
+def test_inverse_transform_before_fit_exact_message():
+    enc = encoders.OrdinalEncoder(cols=['c'])
+    with pytest.raises(
+        ValueError,
+        match=r'^Must train encoder before it can be used to inverse_transform data$',
+    ):
+        enc.inverse_transform(pd.DataFrame({'c': [1]}))
+
+
+def test_inverse_transform_wrong_dimension_message():
+    X = pd.DataFrame({'col1': ['a', 'b', 'c'], 'col2': ['x', 'y', 'x']})
+    enc = encoders.OrdinalEncoder(cols=['col1', 'col2']).fit(X)
+    bad = pd.DataFrame({'col1': [1], 'col2': [1], 'col3': [2]})
+    with pytest.raises(
+        ValueError,
+        match=r'^Unexpected input dimension 3, expected 2$',
+    ):
+        enc.inverse_transform(bad)
+
+
+def test_inverse_transform_wrong_dimension_with_drop_invariant_message():
+    X = pd.DataFrame({'col1': ['a', 'b', 'c'], 'col2': ['x', 'y', 'x']})
+    enc = encoders.OrdinalEncoder(cols=['col1', 'col2']).fit(X)
+    enc.drop_invariant = True
+    bad = pd.DataFrame({'col1': [1], 'col2': [1], 'col3': [2]})
+    with pytest.raises(
+        ValueError,
+        match=r'^Unexpected input dimension 3, the attribute drop_invariant should be False when transforming the data$',
+    ):
+        enc.inverse_transform(bad)
+
+
+def test_inverse_transform_roundtrip_multiple_columns():
+    X = pd.DataFrame({
+        'col1': ['a', 'b', 'c', 'a', 'b'],
+        'col2': ['x', 'y', 'x', 'y', 'x'],
+    })
+    y = pd.Series([0, 1, 1, 0, 1])
+    enc = encoders.OrdinalEncoder(cols=['col1', 'col2'])
+    out = enc.fit_transform(X, y)
+    back = enc.inverse_transform(out)
+    pd.testing.assert_frame_equal(back, X)
+
+
+def test_inverse_transform_return_ndarray():
+    X = pd.DataFrame({'col1': ['a', 'b', 'c']})
+    enc = encoders.OrdinalEncoder(cols=['col1'], return_df=False)
+    out = enc.fit_transform(X)
+    assert isinstance(out, np.ndarray)
+    back = enc.inverse_transform(out)
+    assert isinstance(back, np.ndarray)
+    np.testing.assert_array_equal(back, X.to_numpy())
+
+
+def test_inverse_transform_unknown_sentinel_warns():
+    X = pd.DataFrame({'col1': ['a', 'b', 'c']})
+    y = pd.Series([0, 1, 1])
+    enc = encoders.OrdinalEncoder(cols=['col1'], handle_unknown='value')
+    out = enc.fit_transform(X, y)
+    unseen = out.iloc[[0]].copy()
+    unseen['col1'] = util.UNKNOWN_SENTINEL
+    with pytest.warns(UserWarning) as record:
+        enc.inverse_transform(unseen)
+    messages = [str(w.message) for w in record]
+    assert messages == [
+        'inverse_transform is not supported because transform impute '
+        f'the unknown category {util.UNKNOWN_SENTINEL} when encode col1'
+    ]
+
+
+def test_inverse_transform_missing_no_warning_when_handle_missing_is_value():
+    """With only handle_unknown set to 'return_nan', a missing value round-trip
+    must not warn: the unsupported-combination warning requires BOTH settings
+    to be 'return_nan'."""
+    train = pd.DataFrame({'city': ['chicago', 'st louis', np.nan]})
+    enc = encoders.OrdinalEncoder(
+        cols=['city'], handle_unknown='return_nan', handle_missing='value'
+    )
+    result = enc.fit_transform(train)
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        back = enc.inverse_transform(result)
+    pd.testing.assert_frame_equal(back, train)

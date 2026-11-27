@@ -43,6 +43,23 @@ class LeaveOneOutEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
         The default is to not add noise, but that leads to significantly suboptimal results.
 
 
+    min_group_size: int or float, optional
+        minimum group size needed for a category to be encoded as its own
+        group; smaller categories are lumped into a single "leftovers" group
+        before fitting. An int is an absolute group size, a float is a
+        fraction of the number of rows. Default None, which disables lumping.
+    min_group_name: str, optional
+        name of the leftovers group created by `min_group_size`. Default
+        None, in which case the names of the lumped categories are joined
+        alphabetically with a `_` delimiter. The generated name is suffixed
+        with `#` as needed to keep it distinct from retained categories. An
+        explicit name that matches a retained category raises `ValueError`.
+    combine_min_nan_groups: bool or 'force', optional
+        whether the missing-values group is folded into the leftovers group
+        created by `min_group_size`. True folds it in when it is itself below
+        the threshold (the default), 'force' always folds it in, and False
+        never does. 'force' requires `handle_missing` != 'return_nan'.
+
     Example
     -------
     >>> from category_encoders import *
@@ -185,11 +202,8 @@ class LeaveOneOutEncoder( util.SupervisedTransformerMixin,util.BaseEncoder):
             is_unknown_value = ~X[col].isin(colmap.index) & ~is_nan
             missing_unseen = not colmap.index.isna().any()
 
-            if (
-                X[col].dtype.name == 'category'
-            ):  # Pandas 0.24 tries hard to preserve categorical data type
-                index_dtype = X[col].dtype.categories.dtype
-                X[col] = X[col].astype(index_dtype)
+            if isinstance(X[col].dtype, pd.CategoricalDtype):
+                X[col] = X[col].astype(object)
 
             if self.handle_unknown == 'error' and is_unknown_value.any():
                 raise ValueError('Columns to be encoded cannot contain new values')
