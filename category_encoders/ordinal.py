@@ -409,14 +409,28 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
         )
 
         if handle_missing == 'value' and ~data.index.isna().any():
-            data.loc[nan_identity] = util.MISSING_SENTINEL
+            data = OrdinalEncoder._append_missing_sentinel(data, nan_identity)
         elif handle_missing == 'return_nan':
-            data.loc[nan_identity] = util.MISSING_SENTINEL
+            data = OrdinalEncoder._append_missing_sentinel(data, nan_identity)
         elif callable(handle_missing) or isinstance(handle_missing, util.NUMERIC_SCALARS):
             # reserve the missing code so transform can replace it with
             # the user's scalar / callable result
-            data.loc[nan_identity] = util.MISSING_SENTINEL
+            data = OrdinalEncoder._append_missing_sentinel(data, nan_identity)
 
+        return data
+
+    @staticmethod
+    def _append_missing_sentinel(data: pd.Series, nan_identity: float) -> pd.Series:
+        """Add the missing-value sentinel code without lossy index dtype promotion.
+
+        Enlarging an integer-indexed mapping with ``loc[np.nan]`` promotes the
+        index to float64, which collapses distinct labels beyond float64
+        precision and breaks the mapping with a non-unique index.
+        """
+        if data.index.dtype.kind in 'iu':
+            labels = pd.Index(list(data.index) + [nan_identity], dtype=object)
+            return pd.Series(list(data) + [util.MISSING_SENTINEL], index=labels)
+        data.loc[nan_identity] = util.MISSING_SENTINEL
         return data
 
     def _validate_supplied_mapping(
@@ -449,7 +463,12 @@ class OrdinalEncoder( util.UnsupervisedTransformerMixin,util.BaseEncoder):
             # index that stores None as NaN. The same supplied mapping would then encode
             # missing values differently depending on the installed pandas version.
             if mapping.index.hasnans or any(key is None for key in mapping.index):
-                mapping.index = pd.Index([np.nan if pd.isna(key) else key for key in mapping.index])
+                cleaned = [np.nan if pd.isna(key) else key for key in mapping.index]
+                new_index = pd.Index(cleaned)
+                non_null = [key for key in cleaned if not pd.isna(key)]
+                if not new_index.is_unique and len(set(non_null)) == len(non_null):
+                    new_index = pd.Index(cleaned, dtype=object)
+                mapping.index = new_index
             mapping_el['mapping'] = mapping
             if 'data_type' not in mapping_el:
                 mapping_el['data_type'] = mapping_el['mapping'].index.dtype
