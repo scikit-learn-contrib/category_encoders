@@ -296,7 +296,7 @@ class TestTargetEncoder(TestCase):
             },
             columns=pd.Index(['hello', 'world']),
         )
-        cols = df.select_dtypes(include='object').columns
+        cols = pd.Index(['hello'])
 
         self.hierarchical_map = {
             'hello': {'A': ('a', 'b'), 'B': ('c', 'd')},

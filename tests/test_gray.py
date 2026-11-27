@@ -69,7 +69,7 @@ class TestGrayEncoder(TestCase):
         self.assertEqual(len(encoder.mapping[0].keys()), 2)
 
         actual_ordinal_encoding = encoder.ordinal_encoder.mapping[0]['mapping']
-        actual_ordinal_encoding.index = actual_ordinal_encoding.index.fillna('nan')
+        actual_ordinal_encoding.index = actual_ordinal_encoding.index.astype(object).fillna('nan')
         self.assertDictEqual(actual_ordinal_encoding.to_dict(), expected_ordinal_mapping)
         pd.testing.assert_frame_equal(encoder.mapping[0]['mapping'], expected_mapping)
 

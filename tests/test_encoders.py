@@ -978,7 +978,7 @@ class TestEncoders(TestCase):
         df = pd.DataFrame(
             {'hello': ['a', 'b', 'c'], 'world': [0, 1, 0]}, columns=pd.Index(['hello', 'world'])
         )
-        cols = df.select_dtypes(include='object').columns
+        cols = pd.Index(['hello'])
 
         for encoder_name in set(encoders.__all__) - {'HashingEncoder'}:
             with self.subTest(encoder_name=encoder_name):
