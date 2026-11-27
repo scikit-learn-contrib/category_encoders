@@ -1,6 +1,14 @@
 v.2.13.0
 ========
 
+* Fix: ``OrdinalEncoder`` and the supervised encoders that build on it accept
+  integer category labels beyond float64 precision (such as ``2**60 + 1`` and
+  ``2**60 + 2``). Adding the missing-value sentinel to the fitted mapping
+  promoted the label index to float64, collapsing distinct labels into one key
+  and raising ``InvalidIndexError: Reindexing only valid with uniquely valued
+  Index objects`` in ``fit``/``transform``. ``CatBoostEncoder`` lost the same
+  labels when appending the missing key to its fitted statistics.
+
 * Fix: ``CatBoostEncoder`` accepts nullable integer columns (``Int64``) that
   contain ``pd.NA``. It raised ``TypeError: float() argument must be a string or
   a real number, not 'NAType'`` in ``fit``; the other encoders already handled
