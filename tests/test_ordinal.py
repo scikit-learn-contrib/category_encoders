@@ -621,3 +621,86 @@ def test_inverse_transform_missing_no_warning_when_handle_missing_is_value():
         warnings.simplefilter('error')
         back = enc.inverse_transform(result)
     pd.testing.assert_frame_equal(back, train)
+
+
+class TestOrdinalLargeIntegerCategories(TestCase):
+    """Integer category labels beyond float64 precision keep their identity in the mapping."""
+
+    def test_distinct_large_integer_categories_receive_distinct_codes(self):
+        """Distinct labels beyond float64 precision get distinct ordinal codes."""
+        labels = [2**60 + 1, 2**60 + 2, 2**60 + 3, 2**60 + 4]
+        df = pd.DataFrame({'x': labels * 2})
+        out = encoders.OrdinalEncoder(cols=['x']).fit_transform(df)
+        self.assertEqual([1, 2, 3, 4] * 2, out['x'].tolist())
+
+    def test_large_uint64_categories_receive_distinct_codes(self):
+        """uint64 labels above the int64 range also keep distinct codes."""
+        labels = [2**63 + 1, 2**63 + 2]
+        df = pd.DataFrame({'x': pd.Series(labels, dtype='uint64')})
+        out = encoders.OrdinalEncoder(cols=['x']).fit_transform(df)
+        self.assertEqual([1, 2], out['x'].tolist())
+
+    def test_inverse_transform_recovers_exact_large_integer_labels(self):
+        """inverse_transform restores the exact original large integer labels."""
+        labels = [2**60 + 1, 2**60 + 2, 2**60 + 3]
+        df = pd.DataFrame({'x': labels})
+        encoder = encoders.OrdinalEncoder(cols=['x'])
+        restored = encoder.inverse_transform(encoder.fit_transform(df))
+        self.assertEqual(labels, restored['x'].tolist())
+
+    def test_transform_time_missing_uses_sentinel_code(self):
+        """A transform-time missing value maps to the missing sentinel code."""
+        labels = [2**60 + 1, 2**60 + 2]
+        encoder = encoders.OrdinalEncoder(cols=['x'], handle_missing='value')
+        encoder.fit(pd.DataFrame({'x': labels}))
+        query = pd.DataFrame({'x': pd.Series([labels[0], pd.NA, labels[1]], dtype='Int64')})
+        out = encoder.transform(query)
+        self.assertEqual([1, util.MISSING_SENTINEL, 2], out['x'].tolist())
+
+    def test_return_nan_missing_keeps_large_integer_identity(self):
+        """handle_missing='return_nan' keeps large integer identity and returns NaN for missing."""
+        labels = [2**60 + 1, 2**60 + 2]
+        df = pd.DataFrame({'x': labels})
+        encoder = encoders.OrdinalEncoder(cols=['x'], handle_missing='return_nan')
+        out = encoder.fit_transform(df)
+        self.assertEqual([1, 2], out['x'].tolist())
+        query = pd.DataFrame({'x': pd.Series([pd.NA, labels[1]], dtype='Int64')})
+        out = encoder.transform(query)
+        self.assertTrue(pd.isna(out['x'].iloc[0]))
+        self.assertEqual(2, out['x'].iloc[1])
+
+    def test_supervised_encoders_accept_large_integer_categories(self):
+        """Supervised encoders map each large integer label deterministically."""
+        labels = [2**60 + 1, 2**60 + 2, 2**60 + 3, 2**60 + 4]
+        X = pd.DataFrame({'x': labels * 3})
+        y = pd.Series([0, 1, 1, 0] * 3)
+        for name in (
+            'TargetEncoder',
+            'WOEEncoder',
+            'MEstimateEncoder',
+            'CatBoostEncoder',
+            'QuantileEncoder',
+            'JamesSteinEncoder',
+            'GLMMEncoder',
+            'SummaryEncoder',
+        ):
+            with self.subTest(encoder=name):
+                cls = getattr(encoders, name, None)
+                if cls is None:
+                    continue
+                encoder = cls(cols=['x'])
+                out = encoder.fit_transform(X, y)
+                if name == 'CatBoostEncoder':
+                    out = encoder.transform(X)
+                encoded = [c for c in out.columns if c == 'x' or c.startswith('x_')]
+                self.assertTrue(encoded)
+                per_label = out[encoded[0]].groupby(X['x'].to_numpy()).nunique().max()
+                self.assertEqual(1, per_label)
+
+    def test_target_encoder_keeps_large_integer_groups_distinct(self):
+        """TargetEncoder keeps the per-label statistics of large integer groups distinct."""
+        labels = [2**60 + 1, 2**60 + 2, 2**60 + 3, 2**60 + 4]
+        X = pd.DataFrame({'x': labels * 3})
+        y = pd.Series([0, 1, 2, 3] * 3)
+        out = encoders.TargetEncoder(cols=['x']).fit_transform(X, y)
+        self.assertEqual(4, out['x'].nunique())
