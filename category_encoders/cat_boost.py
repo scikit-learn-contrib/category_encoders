@@ -251,9 +251,9 @@ class CatBoostEncoder(util.SupervisedTransformerMixin, util.BaseEncoder):
         codes = category.codes.copy()
 
         codes[codes == -1] = len(categories)
-        categories = np.append(categories, np.nan)
+        categories = list(categories) + [np.nan]
 
-        return_map = pd.Series(dict(enumerate(categories)))
+        return_map = pd.Series(dict(enumerate(categories)), dtype=object)
 
         result = y.groupby(codes).agg(['sum', 'count'])
         return result.rename(return_map)
